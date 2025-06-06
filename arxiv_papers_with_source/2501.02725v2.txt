@@ -1,0 +1,26 @@
+ID: http://arxiv.org/abs/2501.02725v2
+Title: Artificial Intelligence in Creative Industries: Advances Prior to 2025
+Authors: Nantheera Anantrasirichai, Fan Zhang, David Bull
+Published: 2025-01-06T02:46:33Z
+Summary: The rapid advancements in artificial intelligence (AI), particularly in
+generative AI and large language models (LLMs), have profoundly impacted the
+creative industries by enabling innovative content creation, enhancing
+workflows, and democratizing access to creative tools. This paper explores the
+significant technological shifts since our previous review in 2022,
+highlighting how these developments have expanded creative opportunities and
+efficiency. These technological advancements have enhanced the capabilities of
+text-to-image, text-to-video, and multimodal generation technologies. In
+particular, key breakthroughs in LLMs have established new benchmarks in
+conversational AI, while advancements in image generators have revolutionized
+content creation. We also discuss AI integration into post-production
+workflows, which has significantly accelerated and refined traditional
+processes. Despite these innovations, challenges remain, particularly for the
+media industry, due to the demands on communication traffic from creative
+content. We therefore include data compression and quality assessment in this
+paper. Furthermore, we highlight the trend toward unified AI frameworks capable
+of addressing multiple creative tasks and underscore the importance of human
+oversight to mitigate AI-generated inaccuracies. Finally, we explore AI's
+future potential in the creative sector, stressing the need to navigate
+emerging challenges to maximize its benefits while addressing associated risks.
+PDF Link: http://arxiv.org/pdf/2501.02725v2
+Source Link: https://arxiv.org/e-print/2501.02725v2

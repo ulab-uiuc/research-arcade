@@ -1,5 +1,3 @@
-import requests
-
 import re
 
 class multi_input:
@@ -7,26 +5,6 @@ class multi_input:
   """
   Download the compresses latex source code given the bib, arxiv id or arxiv link
   """
-
-  def download_arxiv_latex_code(self, input: str, input_type: str, dest_filename: str):
-      input_type = input_type.lower()
-      arxiv_id = ""
-      if input_type == "id" or input_type == "arxiv_id":
-          arxiv_id = input
-
-      elif input_type == "bib" or input_type == "arxiv_bib":
-          bib_dict = self.extract_bib_from_string(input)
-          arxiv_id = self.extract_arxiv_id(bib_dict)
-
-      elif input_type == "url" or input_type == "link":
-          arxiv_id = self.arxiv_url_to_id(input)
-
-      else:
-          # Raise error for unknown input_type
-          raise ValueError(f"Unknown input_type '{input_type}'. "
-                            f"Expected one of: 'id', 'arxiv_id', 'bib', 'arxiv_bib', 'url', 'link'.")
-
-      self.download_arxiv_source(arxiv_id, dest_filename)
     
   def extract_bib_from_string(self, bib_str: str) -> dict:
       """
@@ -247,70 +225,6 @@ class multi_input:
 
       # If we get here, neither "Eprint" nor "eprint" was in the dict:
       raise KeyError("No Eprint/eprint field found in this Bib entry")
+  
 
-
-
-
-  def download_arxiv_source(self, arxiv_id: str, dest_filename: str = None) -> None:
-      """
-      Download the full LaTeX source tarball for a given arXiv ID (latest version).
-      
-      Parameters:
-        arxiv_id (str): e.g. "1802.08773" (will grab the latest-vN automatically).
-        dest_filename (str, optional): 
-            If provided, save to this filename; otherwise, defaults to "<arxiv_id>.tar.gz".
-      """
-      # Build the “e-print” URL for the source tarball
-      url = f"https://arxiv.org/e-print/{arxiv_id}"
-      
-      # If user did not specify a filename, give it a .tar.gz extension
-      if dest_filename is None:
-          dest_filename = f"{arxiv_id}.tar.gz"
-      
-      # Stream the request so we can check status and write in chunks
-      response = requests.get(url, stream=True)
-      response.raise_for_status()  # will raise an HTTPError if, e.g., 404
-      
-      # Inspect headers (optional; useful for debugging)
-      print("Response headers:")
-      for header_name, header_value in response.headers.items():
-          print(f"  {header_name}: {header_value}")
-      
-      # Write out to disk in chunks
-      with open(dest_filename, "wb") as f:
-          for chunk in response.iter_content(chunk_size=8192):
-              if chunk:
-                  f.write(chunk)
-      
-      print(f"Saved source to: {dest_filename}")
-
-
-
-bib_str = """@misc{1802.08773,
-  Author  = {Jiaxuan You and Rex Ying and Xiang Ren and William L. Hamilton and Jure Leskovec},
-  Title   = {GraphRNN: Generating Realistic Graphs with Deep Auto-regressive Models},
-  Year    = {2018},
-  Eprint  = {arXiv:1802.08773},
-}"""
-
-mi = multi_input()
-# 1) Parse the BibTeX string into dict:
-bib_dict = mi.extract_bib_from_string(bib_str)
-print(bib_dict)
-print("Parsed BibTeX dict:")
-for k, v in bib_dict.items():
-  print(f"  {k}: {v}")
-
-# 2) Extract the arXiv ID from that dict:
-arxiv_id = mi.extract_arxiv_id(bib_dict)
-print("\nExtracted arXiv ID:", arxiv_id)
-
-# 3) Example: throw an error when input_type is invalid:
-try:
-  mi.download_arxiv_latex_code("some_input", "invalid_type", "out.tar.gz")
-except ValueError as e:
-  print("\nError raised as expected:", e)
-
-
-# # download_arxiv_source(arxiv_id = "1802.08773", dest_filename = "You Paper")
-# print(arxiv_url_to_id("https://arxiv.org/pdf/1802.08773"))
+  
