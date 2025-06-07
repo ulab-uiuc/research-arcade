@@ -1,0 +1,169 @@
+\begin{thebibliography}{10}
+
+\bibitem{2020T5C4}
+Colin Raffel, Noam Shazeer, Adam Roberts, Katherine Lee, Sharan Narang, Michael Matena, Yanqi Zhou, Wei Li, and Peter~J. Liu.
+\newblock Exploring the limits of transfer learning with a unified text-to-text transformer.
+\newblock {\em Journal of Machine Learning Research}, 21(140):1--67, 2020.
+
+\bibitem{2020_pile}
+Leo Gao, Stella Biderman, Sid Black, Laurence Golding, Travis Hoppe, Charles Foster, Jason Phang, Horace He, Anish Thite, Noa Nabeshima, Shawn Presser, and Connor Leahy.
+\newblock The {P}ile: An 800gb dataset of diverse text for language modeling.
+\newblock {\em arXiv preprint arXiv:2101.00027}, 2020.
+
+\bibitem{2023refinedweb}
+Guilherme Penedo, Quentin Malartic, Daniel Hesslow, Ruxandra Cojocaru, Alessandro Cappelli, Hamza Alobeidli, Baptiste Pannier, Ebtesam Almazrouei, and Julien Launay.
+\newblock The refinedweb dataset for falcon llm: Outperforming curated corpora with web data, and web data only, 2023.
+
+\bibitem{2023wanjuan}
+Conghui He, Zhenjiang Jin, Chao Xu, Jiantao Qiu, Bin Wang, Wei Li, Hang Yan, Jiaqi Wang, and Dahua Lin.
+\newblock Wanjuan: A comprehensive multimodal dataset for advancing english and chinese large models, 2023.
+
+\bibitem{brown2020language}
+Tom Brown, Benjamin Mann, Nick Ryder, Melanie Subbiah, Jared~D Kaplan, Prafulla Dhariwal, Arvind Neelakantan, Pranav Shyam, Girish Sastry, Amanda Askell, et~al.
+\newblock Language models are few-shot learners.
+\newblock {\em Advances in neural information processing systems}, 33:1877--1901, 2020.
+
+\bibitem{scao2022bloom}
+Teven~Le Scao, Angela Fan, Christopher Akiki, Ellie Pavlick, Suzana Ili{\'c}, Daniel Hesslow, Roman Castagn{\'e}, Alexandra~Sasha Luccioni, Fran{\c{c}}ois Yvon, Matthias Gall{\'e}, et~al.
+\newblock Bloom: A 176b-parameter open-access multilingual language model.
+\newblock {\em arXiv preprint arXiv:2211.05100}, 2022.
+
+\bibitem{llama}
+Hugo Touvron, Thibaut Lavril, Gautier Izacard, Xavier Martinet, Marie{-}Anne Lachaux, Timoth{\'{e}}e Lacroix, Baptiste Rozi{\`{e}}re, Naman Goyal, Eric Hambro, Faisal Azhar, Aur{\'{e}}lien Rodriguez, Armand Joulin, Edouard Grave, and Guillaume Lample.
+\newblock Llama: Open and efficient foundation language models.
+\newblock {\em CoRR}, abs/2302.13971, 2023.
+
+\bibitem{chowdhery2022palm}
+Aakanksha Chowdhery, Sharan Narang, Jacob Devlin, Maarten Bosma, Gaurav Mishra, Adam Roberts, Paul Barham, Hyung~Won Chung, Charles Sutton, Sebastian Gehrmann, et~al.
+\newblock Palm: Scaling language modeling with pathways.
+\newblock {\em arXiv preprint arXiv:2204.02311}, 2022.
+
+\bibitem{GPT4}
+OpenAI.
+\newblock {GPT-4} technical report.
+\newblock {\em CoRR}, abs/2303.08774, 2023.
+
+\bibitem{lee_deduplicating_2022}
+Katherine Lee, Daphne Ippolito, Andrew Nystrom, Chiyuan Zhang, Douglas Eck, Chris Callison-Burch, and Nicholas Carlini.
+\newblock Deduplicating {Training} {Data} {Makes} {Language} {Models} {Better}.
+\newblock In {\em Proceedings of the 60th {Annual} {Meeting} of the {Association} for {Computational} {Linguistics} ({Volume} 1: {Long} {Papers})}, pages 8424--8445, 2022.
+
+\bibitem{raffel_exploring_2020}
+Colin Raffel, Noam Shazeer, Adam Roberts, Katherine Lee, Sharan Narang, Michael Matena, Yanqi Zhou, Wei Li, and Peter~J. Liu.
+\newblock Exploring the limits of transfer learning with a unified text-to-text transformer.
+\newblock {\em The Journal of Machine Learning Research}, 21(1):5485--5551, 2020.
+\newblock ISBN: 1532-4435 Publisher: JMLRORG.
+
+\bibitem{luccioni_whats_2021}
+Alexandra Luccioni and Joseph Viviano.
+\newblock What's in the {Box}? {An} {Analysis} of {Undesirable} {Content} in the {Common} {Crawl} {Corpus}.
+\newblock In {\em Proceedings of the 59th {Annual} {Meeting} of the {Association} for {Computational} {Linguistics} and the 11th {International} {Joint} {Conference} on {Natural} {Language} {Processing} ({Volume} 2: {Short} {Papers})}, pages 182--189, Online, August 2021. Association for Computational Linguistics.
+
+\bibitem{wenzek_ccnet_2020}
+Guillaume Wenzek, Marie-Anne Lachaux, Alexis Conneau, Vishrav Chaudhary, Francisco Guzmán, Armand Joulin, and Édouard Grave.
+\newblock {CCNet}: {Extracting} {High} {Quality} {Monolingual} {Datasets} from {Web} {Crawl} {Data}.
+\newblock In {\em Proceedings of the {Twelfth} {Language} {Resources} and {Evaluation} {Conference}}, pages 4003--4012, 2020.
+
+\bibitem{devlin_bert_2018}
+Jacob Devlin, Ming-Wei Chang, Kenton Lee, and Kristina Toutanova.
+\newblock Bert: {Pre}-training of deep bidirectional transformers for language understanding.
+\newblock {\em arXiv preprint arXiv:1810.04805}, 2018.
+
+\bibitem{joulin_bag_2017}
+Armand Joulin, Édouard Grave, Piotr Bojanowski, and Tomáš Mikolov.
+\newblock Bag of {Tricks} for {Efficient} {Text} {Classification}.
+\newblock In {\em Proceedings of the 15th {Conference} of the {European} {Chapter} of the {Association} for {Computational} {Linguistics}: {Volume} 2, {Short} {Papers}}, pages 427--431, 2017.
+
+\bibitem{transformer}
+Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan~N. Gomez, Lukasz Kaiser, and Illia Polosukhin.
+\newblock Attention is all you need.
+\newblock In Isabelle Guyon, Ulrike von Luxburg, Samy Bengio, Hanna~M. Wallach, Rob Fergus, S.~V.~N. Vishwanathan, and Roman Garnett, editors, {\em Advances in Neural Information Processing Systems 30: Annual Conference on Neural Information Processing Systems 2017, December 4-9, 2017, Long Beach, CA, {USA}}, pages 5998--6008, 2017.
+
+\bibitem{word2vec}
+Tom{\'{a}}s Mikolov, Kai Chen, Greg Corrado, and Jeffrey Dean.
+\newblock Efficient estimation of word representations in vector space.
+\newblock In Yoshua Bengio and Yann LeCun, editors, {\em 1st International Conference on Learning Representations, {ICLR} 2013, Scottsdale, Arizona, USA, May 2-4, 2013, Workshop Track Proceedings}, 2013.
+
+\bibitem{raffel2020exploring}
+Colin Raffel, Noam Shazeer, Adam Roberts, Katherine Lee, Sharan Narang, Michael Matena, Yanqi Zhou, Wei Li, and Peter~J Liu.
+\newblock Exploring the limits of transfer learning with a unified text-to-text transformer.
+\newblock {\em The Journal of Machine Learning Research}, 21(1):5485--5551, 2020.
+
+\bibitem{gao2020pile}
+Leo Gao, Stella Biderman, Sid Black, Laurence Golding, Travis Hoppe, Charles Foster, Jason Phang, Horace He, Anish Thite, Noa Nabeshima, et~al.
+\newblock The pile: An 800gb dataset of diverse text for language modeling.
+\newblock {\em arXiv preprint arXiv:2101.00027}, 2020.
+
+\bibitem{presser2020books3}
+Shawn Presser.
+\newblock Books3, 2020.
+
+\bibitem{tiedemann2016finding}
+J{\"o}rg Tiedemann.
+\newblock Finding alternative translations in a large corpus of movie subtitle.
+\newblock In {\em Proceedings of the Tenth International Conference on Language Resources and Evaluation (LREC'16)}, pages 3518--3522, 2016.
+
+\bibitem{penedo2023refinedweb}
+Guilherme Penedo, Quentin Malartic, Daniel Hesslow, Ruxandra Cojocaru, Alessandro Cappelli, Hamza Alobeidli, Baptiste Pannier, Ebtesam Almazrouei, and Julien Launay.
+\newblock The refinedweb dataset for falcon llm: outperforming curated corpora with web data, and web data only.
+\newblock {\em arXiv preprint arXiv:2306.01116}, 2023.
+
+\bibitem{gunasekar2023textbooks}
+Suriya Gunasekar, Yi~Zhang, Jyoti Aneja, Caio C{\'e}sar~Teodoro Mendes, Allie Del~Giorno, Sivakanth Gopi, Mojan Javaheripi, Piero Kauffmann, Gustavo de~Rosa, Olli Saarikivi, et~al.
+\newblock Textbooks are all you need.
+\newblock {\em arXiv preprint arXiv:2306.11644}, 2023.
+
+\bibitem{he2023wanjuan}
+Conghui He, Zhenjiang Jin, Chao Xu, Jiantao Qiu, Bin Wang, Wei Li, Hang Yan, Jiaqi Wang, and Dahua Lin.
+\newblock Wanjuan: A comprehensive multimodal dataset for advancing english and chinese large models, 2023.
+
+\bibitem{stanton2021does}
+Samuel Stanton, Pavel Izmailov, Polina Kirichenko, Alexander~A Alemi, and Andrew~G Wilson.
+\newblock Does knowledge distillation really work?
+\newblock {\em Advances in Neural Information Processing Systems}, 34:6906--6919, 2021.
+
+\bibitem{grave2018learning}
+{\'E}douard Grave, Piotr Bojanowski, Prakhar Gupta, Armand Joulin, and Tom{\'a}{\v{s}} Mikolov.
+\newblock Learning word vectors for 157 languages.
+\newblock In {\em Proceedings of the Eleventh International Conference on Language Resources and Evaluation (LREC 2018)}, 2018.
+
+\bibitem{wang_use_2022}
+Yongjie Wang, Chuang Wang, Ruobing Li, and Hui Lin.
+\newblock On the use of bert for automated essay scoring: Joint learning of multi-scale essay representation.
+\newblock In Marine Carpuat, Marie-Catherine de~Marneffe, and Ivan~Vladimir Meza~Ruiz, editors, {\em Proceedings of the 2022 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies}, pages 3416--3425, Seattle, United States, July 2022. Association for Computational Linguistics.
+
+\bibitem{mesgar_neural_2018}
+Mohsen Mesgar and Michael Strube.
+\newblock A neural local coherence model for text quality assessment.
+\newblock In {\em Proceedings of the 2018 conference on empirical methods in natural language processing}, pages 4328--4339, 2018.
+
+\bibitem{liu2021temp}
+Zichen Liu, Hongyuan Xu, Yanlong Wen, Ning Jiang, Haiying Wu, and Xiaojie Yuan.
+\newblock Temp: taxonomy expansion with dynamic margin loss through taxonomy-paths.
+\newblock In {\em Proceedings of the 2021 Conference on Empirical Methods in Natural Language Processing}, pages 3854--3863, 2021.
+
+\bibitem{scudder1965probability}
+Henry Scudder.
+\newblock Probability of error of some adaptive pattern-recognition machines.
+\newblock {\em IEEE Transactions on Information Theory}, 11(3):363--371, 1965.
+
+\bibitem{mukherjee_uncertainty-aware_2020}
+Subhabrata Mukherjee and Ahmed Awadallah.
+\newblock Uncertainty-aware {Self}-training for {Few}-shot {Text} {Classification}.
+\newblock In H.~Larochelle, M.~Ranzato, R.~Hadsell, M.~F. Balcan, and H.~Lin, editors, {\em Advances in {Neural} {Information} {Processing} {Systems}}, volume~33, pages 21199--21212. Curran Associates, Inc., 2020.
+
+\bibitem{gururangan_whose_2022}
+Suchin Gururangan, Dallas Card, Sarah Dreier, Emily Gade, Leroy Wang, Zeyu Wang, Luke Zettlemoyer, and Noah~A. Smith.
+\newblock Whose {Language} {Counts} as {High} {Quality}? {Measuring} {Language} {Ideologies} in {Text} {Data} {Selection}.
+\newblock In {\em Proceedings of the 2022 {Conference} on {Empirical} {Methods} in {Natural} {Language} {Processing}}, pages 2562--2580, 2022.
+
+\bibitem{2021WuDaoCorpora}
+Sha Yuan, Hanyu Zhao, Zhengxiao Du, Ming Ding, Xiao Liu, Yukuo Cen, Xu~Zou, Zhilin Yang, and Jie Tang.
+\newblock Wudaocorpora: A super large-scale chinese corpora for pre-training language models.
+\newblock {\em AI Open}, 2:65--68, 2021.
+
+\bibitem{2023roots}
+Hugo Laurençon, Lucile Saulnier, Thomas Wang, Christopher Akiki, Albert~Villanova del Moral, Teven~Le Scao, Leandro~Von Werra, Chenghao Mou, Eduardo~González Ponferrada, Huu Nguyen, Jörg Frohberg, Mario Šaško, Quentin Lhoest, Angelina McMillan-Major, Gerard Dupont, Stella Biderman, Anna Rogers, Loubna~Ben allal, Francesco~De Toni, Giada Pistilli, Olivier Nguyen, Somaieh Nikpoor, Maraim Masoud, Pierre Colombo, Javier de~la Rosa, Paulo Villegas, Tristan Thrush, Shayne Longpre, Sebastian Nagel, Leon Weber, Manuel Muñoz, Jian Zhu, Daniel~Van Strien, Zaid Alyafeai, Khalid Almubarak, Minh~Chien Vu, Itziar Gonzalez-Dios, Aitor Soroa, Kyle Lo, Manan Dey, Pedro~Ortiz Suarez, Aaron Gokaslan, Shamik Bose, David Adelani, Long Phan, Hieu Tran, Ian Yu, Suhas Pai, Jenny Chim, Violette Lepercq, Suzana Ilic, Margaret Mitchell, Sasha~Alexandra Luccioni, and Yacine Jernite.
+\newblock The bigscience roots corpus: A 1.6tb composite multilingual dataset, 2023.
+
+\end{thebibliography}
