@@ -1,0 +1,133 @@
+\begin{thebibliography}{26}
+\providecommand{\natexlab}[1]{#1}
+
+\bibitem[{Alt, Gabryszak, and Hennig(2020)}]{alt2020tacred}
+Alt, C.; Gabryszak, A.; and Hennig, L. 2020.
+\newblock TACRED Revisited: A Thorough Evaluation of the TACRED Relation Extraction Task.
+\newblock In \emph{Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics}, 1558--1569.
+
+\bibitem[{Belov and Armstrong(2011)}]{belov2011distributions}
+Belov, D.~I.; and Armstrong, R.~D. 2011.
+\newblock Distributions of the Kullback--Leibler divergence with applications.
+\newblock \emph{British Journal of Mathematical and Statistical Psychology}, 64(2): 291--309.
+
+\bibitem[{Bowman et~al.(2015)Bowman, Angeli, Potts, and Manning}]{bowman2015large}
+Bowman, S.; Angeli, G.; Potts, C.; and Manning, C.~D. 2015.
+\newblock A large annotated corpus for learning natural language inference.
+\newblock In \emph{Proceedings of the 2015 Conference on Empirical Methods in Natural Language Processing}, 632--642.
+
+\bibitem[{Gururangan et~al.(2018)Gururangan, Swayamdipta, Levy, Schwartz, Bowman, and Smith}]{gururangan2018annotation}
+Gururangan, S.; Swayamdipta, S.; Levy, O.; Schwartz, R.; Bowman, S.; and Smith, N.~A. 2018.
+\newblock Annotation Artifacts in Natural Language Inference Data.
+\newblock In \emph{Proceedings of the 2018 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies, Volume 2 (Short Papers)}, 107--112.
+
+\bibitem[{Hendrickx et~al.(2010)Hendrickx, Kim, Kozareva, Nakov, S{\'e}aghdha, Pad{\'o}, Pennacchiotti, Romano, and Szpakowicz}]{hendrickx2010semeval}
+Hendrickx, I.; Kim, S.~N.; Kozareva, Z.; Nakov, P.; S{\'e}aghdha, D.~{\'O}.; Pad{\'o}, S.; Pennacchiotti, M.; Romano, L.; and Szpakowicz, S. 2010.
+\newblock SemEval-2010 Task 8: Multi-Way Classification of Semantic Relations between Pairs of Nominals.
+\newblock In \emph{Proceedings of the 5th International Workshop on Semantic Evaluation}, 33--38.
+
+\bibitem[{Hinton(2002)}]{hinton2002training}
+Hinton, G.~E. 2002.
+\newblock Training products of experts by minimizing contrastive divergence.
+\newblock \emph{Neural computation}, 14(8): 1771--1800.
+
+\bibitem[{Liang et~al.(2021)Liang, Wu, Li, Wang, Meng, Qin, Chen, Zhang, and Liu}]{liang2021r}
+Liang, X.; Wu, L.; Li, J.; Wang, Y.; Meng, Q.; Qin, T.; Chen, W.; Zhang, M.; and Liu, T.-Y. 2021.
+\newblock R-Drop: regularized dropout for neural networks.
+\newblock In \emph{Proceedings of the 35th International Conference on Neural Information Processing Systems}, 10890--10905.
+
+\bibitem[{Lin et~al.(2018)Lin, Goyal, Girshick, He, and Doll{\'a}r}]{lin2018focal}
+Lin, T.-Y.; Goyal, P.; Girshick, R.; He, K.; and Doll{\'a}r, P. 2018.
+\newblock Focal Loss for Dense Object Detection.
+\newblock \emph{IEEE Transactions on Pattern Analysis and Machine Intelligence}, 42(2): 318--327.
+
+\bibitem[{Longpre et~al.(2021)Longpre, Perisetla, Chen, Ramesh, DuBois, and Singh}]{longpre2021entity}
+Longpre, S.; Perisetla, K.; Chen, A.; Ramesh, N.; DuBois, C.; and Singh, S. 2021.
+\newblock Entity-Based Knowledge Conflicts in Question Answering.
+\newblock In \emph{Proceedings of the 2021 Conference on Empirical Methods in Natural Language Processing}, 7052--7063.
+
+\bibitem[{Mahabadi, Belinkov, and Henderson(2020)}]{mahabadi2020end}
+Mahabadi, R.~K.; Belinkov, Y.; and Henderson, J. 2020.
+\newblock End-to-End Bias Mitigation by Modelling Biases in Corpora.
+\newblock In \emph{Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics}, 8706--8716.
+
+\bibitem[{McCoy, Pavlick, and Linzen(2019)}]{mccoy2019right}
+McCoy, T.; Pavlick, E.; and Linzen, T. 2019.
+\newblock Right for the Wrong Reasons: Diagnosing Syntactic Heuristics in Natural Language Inference.
+\newblock In \emph{Proceedings of the 57th Annual Meeting of the Association for Computational Linguistics}, 3428--3448.
+
+\bibitem[{Peng et~al.(2020)Peng, Gao, Han, Lin, Li, Liu, Sun, and Zhou}]{peng2020learning}
+Peng, H.; Gao, T.; Han, X.; Lin, Y.; Li, P.; Liu, Z.; Sun, M.; and Zhou, J. 2020.
+\newblock Learning from Context or Names? An Empirical Study on Neural Relation Extraction.
+\newblock In \emph{Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing (EMNLP)}, 3661--3672.
+
+\bibitem[{Radford et~al.(2019)Radford, Wu, Child, Luan, Amodei, Sutskever et~al.}]{radford2019language}
+Radford, A.; Wu, J.; Child, R.; Luan, D.; Amodei, D.; Sutskever, I.; et~al. 2019.
+\newblock Language models are unsupervised multitask learners.
+\newblock \emph{OpenAI blog}, 1(8): 9.
+
+\bibitem[{Reimers and Gurevych(2019)}]{reimers2019sentence}
+Reimers, N.; and Gurevych, I. 2019.
+\newblock Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks.
+\newblock In \emph{Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP)}, 3982--3992.
+
+\bibitem[{Schuster et~al.(2019)Schuster, Shah, Yeo, Ortiz, Santus, and Barzilay}]{schuster2019towards}
+Schuster, T.; Shah, D.; Yeo, Y. J.~S.; Ortiz, D. R.~F.; Santus, E.; and Barzilay, R. 2019.
+\newblock Towards Debiasing Fact Verification Models.
+\newblock In \emph{Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP)}, 3419--3425.
+
+\bibitem[{Smith(2002)}]{smith2002tutorial}
+Smith, L.~I. 2002.
+\newblock A tutorial on principal components analysis.
+
+\bibitem[{Stoica, Platanios, and P{\'o}czos(2021)}]{stoica2021re}
+Stoica, G.; Platanios, E.~A.; and P{\'o}czos, B. 2021.
+\newblock Re-tacred: Addressing shortcomings of the tacred dataset.
+\newblock In \emph{Proceedings of the AAAI conference on artificial intelligence}, volume~35, 13843--13850.
+
+\bibitem[{Vrande{\v{c}}i{\'c} and Kr{\"o}tzsch(2014)}]{vrandevcic2014wikidata}
+Vrande{\v{c}}i{\'c}, D.; and Kr{\"o}tzsch, M. 2014.
+\newblock Wikidata: a free collaborative knowledgebase.
+\newblock \emph{Communications of the ACM}, 57(10): 78--85.
+
+\bibitem[{Wang et~al.(2023{\natexlab{a}})Wang, Mo, Wang, Zhou, and Chen}]{wang2023causal}
+Wang, F.; Mo, W.; Wang, Y.; Zhou, W.; and Chen, M. 2023{\natexlab{a}}.
+\newblock A Causal View of Entity Bias in (Large) Language Models.
+\newblock In \emph{Findings of the Association for Computational Linguistics: EMNLP 2023}, 15173--15184.
+
+\bibitem[{Wang et~al.(2022)Wang, Chen, Zhou, Cai, Liang, Liu, Yang, Liu, and Hooi}]{wang2022should}
+Wang, Y.; Chen, M.; Zhou, W.; Cai, Y.; Liang, Y.; Liu, D.; Yang, B.; Liu, J.; and Hooi, B. 2022.
+\newblock Should We Rely on Entity Mentions for Relation Extraction? Debiasing Relation Extraction with Counterfactual Analysis.
+\newblock In \emph{Proceedings of the 2022 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies}, 3071--3081.
+
+\bibitem[{Wang et~al.(2023{\natexlab{b}})Wang, Hooi, Wang, Cai, Liang, Zhou, Tang, Duan, and Chen}]{wang2023fragile}
+Wang, Y.; Hooi, B.; Wang, F.; Cai, Y.; Liang, Y.; Zhou, W.; Tang, J.; Duan, M.; and Chen, M. 2023{\natexlab{b}}.
+\newblock How Fragile is Relation Extraction under Entity Replacements?
+\newblock In \emph{Proceedings of the 27th Conference on Computational Natural Language Learning (CoNLL)}, 414--423.
+
+\bibitem[{Williams, Nangia, and Bowman(2018)}]{williams2018broad}
+Williams, A.; Nangia, N.; and Bowman, S. 2018.
+\newblock A Broad-Coverage Challenge Corpus for Sentence Understanding through Inference.
+\newblock In \emph{Proceedings of the 2018 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies, Volume 1 (Long Papers)}, 1112--1122.
+
+\bibitem[{Yamada et~al.(2020)Yamada, Asai, Shindo, Takeda, and Matsumoto}]{yamada2020luke}
+Yamada, I.; Asai, A.; Shindo, H.; Takeda, H.; and Matsumoto, Y. 2020.
+\newblock LUKE: Deep Contextualized Entity Representations with Entity-aware Self-attention.
+\newblock In \emph{Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing (EMNLP)}, 6442--6454.
+
+\bibitem[{Zhang, Qi, and Manning(2018)}]{zhang2018graph}
+Zhang, Y.; Qi, P.; and Manning, C.~D. 2018.
+\newblock Graph Convolution over Pruned Dependency Trees Improves Relation Extraction.
+\newblock In \emph{Proceedings of the 2018 Conference on Empirical Methods in Natural Language Processing}, 2205--2215.
+
+\bibitem[{Zhang et~al.(2017)Zhang, Zhong, Chen, Angeli, and Manning}]{zhang2017position}
+Zhang, Y.; Zhong, V.; Chen, D.; Angeli, G.; and Manning, C.~D. 2017.
+\newblock Position-aware Attention and Supervised Data Improve Slot Filling.
+\newblock In \emph{Proceedings of the 2017 Conference on Empirical Methods in Natural Language Processing}, 35--45.
+
+\bibitem[{Zhou and Chen(2022)}]{zhou2022improved}
+Zhou, W.; and Chen, M. 2022.
+\newblock An Improved Baseline for Sentence-level Relation Extraction.
+\newblock In \emph{Proceedings of the 2nd Conference of the Asia-Pacific Chapter of the Association for Computational Linguistics and the 12th International Joint Conference on Natural Language Processing (Volume 2: Short Papers)}, 161--168.
+
+\end{thebibliography}

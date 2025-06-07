@@ -1,0 +1,258 @@
+\begin{thebibliography}{10}
+\expandafter\ifx\csname url\endcsname\relax
+  \def\url#1{\texttt{#1}}\fi
+\expandafter\ifx\csname urlprefix\endcsname\relax\def\urlprefix{URL }\fi
+\expandafter\ifx\csname href\endcsname\relax
+  \def\href#1#2{#2} \def\path#1{#1}\fi
+
+\bibitem{Truong2024658}
+C.-D. Truong, B.~T. Doan, Optimizing the accuracy of chatbot applications based
+  on the {GPT}-3.5 turbo platform of openai to provide service prices to
+  customers, Lecture Notes in Networks and Systems 1077 LNNS (2024) 658 –
+  667.
+
+\bibitem{Mekrache202429}
+A.~Mekrache, A.~Ksentini, C.~Verikoukis, Intent-based management of
+  next-generation networks: an llm-centric approach, IEEE Network 38~(5) (2024)
+  29 – 36.
+
+\bibitem{Jin2024}
+Y.~Jin, J.~Ma, Large language model as parking planning agent in the context of
+  mixed period of autonomous vehicles and human-driven vehicles, Sustainable
+  Cities and Society 117 (2024).
+
+\bibitem{Arora2023641}
+A.~Arora, A.~Arora, The promise of large language models in health care, The
+  Lancet 401~(10377) (2023) 641.
+
+\bibitem{Sandmann2024}
+S.~Sandmann, S.~Riepenhausen, L.~Plagwitz, J.~Varghese, Systematic analysis of
+  {ChatGPT}, google search and llama 2 for clinical decision support tasks,
+  Nature Communications 15~(1) (2024).
+
+\bibitem{Patsakis2023}
+C.~Patsakis, N.~Lykousas, Man vs the machine in the struggle for effective text
+  anonymisation in the age of large language models, Scientific Reports 13~(1)
+  (2023).
+
+\bibitem{tan2020cultural}
+S.-K. Tan, H.-H. Lim, S.-H. Tan, Y.-S. Kok, A cultural creativity framework for
+  the sustainability of intangible cultural heritage, Journal of Hospitality
+  and Tourism Research 44~(3) (2020) 439--471.
+
+\bibitem{Bi2022584}
+S.~Bi, C.~Wang, B.~Wu, Y.~Gong, W.~Ni, An accurate book-localization approach
+  based on passive ultra-high-frequency rfid, Lecture Notes in Electrical
+  Engineering 920 LNEE (2022) 584 – 591.
+
+\bibitem{Bi2022}
+S.~Bi, W.~Ni, Y.~Jiang, X.~Wang, Novel recommendation-based approach for
+  multidisciplinary development of future universities, Sustainability
+  (Switzerland) 14~(10) (2022).
+
+\bibitem{imls_website}
+\href{{https://www.imls.gov/}}{{Institute of Museum and Library Services}},
+  {Accessed: [2024-11]} ({2024}).
+\newline\urlprefix\url{{https://www.imls.gov/}}
+
+\bibitem{oteros2018using}
+E.~Oteros-Rozas, B.~M{\'a}rtin-L{\'o}pez, N.~Fagerholm, C.~Bieling,
+  T.~Plieninger, Using social media photos to explore the relation between
+  cultural ecosystem services and landscape features across five european
+  sites, Ecological Indicators 94 (2018) 74--86.
+
+\bibitem{rivero2020sustainable}
+L.~D. Rivero~Moreno, Sustainable city storytelling: Cultural heritage as a
+  resource for a greener and fairer urban development, Journal of Cultural
+  Heritage Management and Sustainable Development 10~(4) (2020) 399--412.
+
+\bibitem{imls_2021_afr}
+{Institute of Museum and Library Services},
+  \href{{https://www.imls.gov/sites/default/files/2021-11/2021afr.pdf}}{{2021
+  Annual Financial Report}}, Tech. Rep. {IMLS/2021-11}, {Institute of Museum
+  and Library Services}, {Washington, D.C.} (2021).
+\newline\urlprefix\url{{https://www.imls.gov/sites/default/files/2021-11/2021afr.pdf}}
+
+\bibitem{florida2002rise}
+R.~Florida, The Rise of the Creative Class, Basic, 2002.
+
+\bibitem{chianese2013smartweet}
+A.~Chianese, F.~Marulli, V.~Moscato, F.~Piccialli, Smartweet: a location-based
+  smart application for exhibits and museums, in: International Conference on
+  Signal Image Technology and Internet Based Systems, 2013, pp. 408--415.
+
+\bibitem{amato2013talking}
+F.~Amato, A.~Chianese, A.~Mazzeo, V.~Moscato, A.~Picariello, F.~Piccialli, The
+  talking museum project, Procedia Computer Science 21 (2013) 114--121.
+
+\bibitem{chianese2015designing}
+A.~Chianese, F.~Piccialli, G.~Riccio, Designing a smart multisensor framework
+  based on beaglebone black board, computer science and its applications,
+  Computer Science and Its Applications (2015) 391--397.
+
+\bibitem{ruotsalo2013smartmuseum}
+T.~Ruotsalo, K.~Haav, A.~Stoyanov, S.~Roche, E.~Fani, R.~Deliai, E.~Makela,
+  Smartmuseum: A mobile recommender system for the web of data, Journal of Web
+  Semantics 20 (2013) 50--76.
+
+\bibitem{Shi202420769}
+Y.~Shi, P.~Fan, Z.~Zhu, C.~Peng, F.~Wang, K.~B. Letaief, Sam: An efficient
+  approach with selective aggregation of models in federated learning, IEEE
+  Internet of Things Journal 11~(11) (2024) 20769 – 20783.
+
+\bibitem{Xu202468}
+C.~Xu, Z.~Li, G.~Q. Huai, J.~Zhao, Y.~Zhu, X.~Ma, H.~Wang, Enabling lightweight
+  immersive user interaction in smart buildings through learning-based mobile
+  panorama streaming, Computer Communications 222 (2024) 68 – 76.
+
+\bibitem{hu2021distributed}
+S.~Hu, X.~Chen, W.~Ni, E.~Hossain, X.~Wang, Distributed machine learning for
+  wireless communication networks: Techniques, architectures, and applications,
+  IEEE Communications Surveys \& Tutorials 23~(3) (2021) 1458--1493.
+\newblock \href {https://doi.org/10.1109/COMST.2021.3086014}
+  {\path{doi:10.1109/COMST.2021.3086014}}.
+
+\bibitem{Bi2023}
+S.~Bi, C.~Wang, B.~Wu, S.~Hu, W.~Huang, W.~Ni, Y.~Gong, X.~Wang, A
+  comprehensive survey on applications of ai technologies to failure analysis
+  of industrial systems, Engineering Failure Analysis 148 (2023).
+
+\bibitem{Wu202421072}
+G.~Wu, F.~Liu, S.~Li, Q.~Song, Z.~Tang, Ac-dnn: An adaptive compact dnns
+  architecture for collaborative learning among heterogeneous smart devices,
+  IEEE Internet of Things Journal 11~(12) (2024) 21072 – 21082.
+
+\bibitem{li2023toward}
+K.~Li, B.~P.~L. Lau, X.~Yuan, W.~Ni, M.~Guizani, C.~Yuen, Toward ubiquitous
+  semantic metaverse: Challenges, approaches, and opportunities, IEEE Internet
+  of Things Journal 10~(24) (2023) 21855--21872.
+\newblock \href {https://doi.org/10.1109/JIOT.2023.3302159}
+  {\path{doi:10.1109/JIOT.2023.3302159}}.
+
+\bibitem{li2023when}
+K.~Li, et~al., When internet of things meets metaverse: Convergence of physical
+  and cyber worlds, IEEE Internet of Things Journal 10~(5) (2023) 4148--4173.
+\newblock \href {https://doi.org/10.1109/JIOT.2022.3232845}
+  {\path{doi:10.1109/JIOT.2022.3232845}}.
+
+\bibitem{wang2019survey}
+X.~Wang, X.~Zha, W.~Ni, R.~P. Liu, Y.~J. Guo, X.~Niu, K.~Zheng, Survey on
+  blockchain for internet of things, Computer Communications 136 (2019) 10--29.
+
+\bibitem{makhdoom2019blockchain}
+I.~Makhdoom, M.~Abolhasan, H.~Abbas, W.~Ni, Blockchain's adoption in iot: The
+  challenges, and a way forward, Journal of Network and Computer Applications
+  125 (2019) 251--279.
+
+\bibitem{yu2020survey}
+G.~Yu, X.~Wang, K.~Yu, W.~Ni, J.~A. Zhang, R.~P. Liu, Survey: Sharding in
+  blockchains, IEEE Access 8 (2020) 14155--14181.
+\newblock \href {https://doi.org/10.1109/ACCESS.2020.2965147}
+  {\path{doi:10.1109/ACCESS.2020.2965147}}.
+
+\bibitem{Thakur202413212}
+D.~Thakur, A.~Guzzo, G.~Fortino, Intelligent adaptive real-time monitoring and
+  recognition system for human activities, IEEE Transactions on Industrial
+  Informatics 20~(11) (2024) 13212 – 13222.
+
+\bibitem{wang2023adversarial}
+Y.~Wang, et~al., Adversarial attacks and defenses in machine learning-empowered
+  communication systems and networks: A contemporary survey, IEEE
+  Communications Surveys \& Tutorials 25~(4) (2023) 2245--2298.
+\newblock \href {https://doi.org/10.1109/COMST.2023.3319492}
+  {\path{doi:10.1109/COMST.2023.3319492}}.
+
+\bibitem{Ribiero2024}
+B.~Ribiero, D.~Mack, Enhancing cybersecurity and nerc compliance through
+  multi-vendor device management, 2024.
+
+\bibitem{West2021}
+A.~West, Z.~Santitos~García, Grid automation device management in the cloud,
+  2021.
+
+\bibitem{Lee2023381}
+S.-H. Lee, J.-Z. Liu, A pluggable module for enabling a trusted edge device
+  management system based on microservice, Journal of Communications and
+  Networks 25~(3) (2023) 381 – 391.
+
+\bibitem{Liu20243568}
+Y.~Liu, L.~Jia, L.~Wang, J.~Wang, J.~Zhang, Z.~Zhang, An accurate and
+  intelligent approach to predicting the power device fatigue failure process,
+  IEEE Transactions on Power Electronics 39~(3) (2024) 3568 – 3579.
+
+\bibitem{Enkhbaatar202222}
+M.~Enkhbaatar, T.~Yamazaki, Automatic visual monitoring system for data center
+  device management, 2022, p. 22 – 25.
+
+\bibitem{Liu2021}
+Z.~Liu, X.~Zhu, J.~Ma, C.~Hu, H.~Fu, K.~Zhao, Application of optimization
+  technology for overhaul decision of substation equipment based on machine
+  learning, Vol. 2066, 2021.
+
+\bibitem{Rasheed2023}
+K.~Rasheed, S.~Saad, S.~Ammad, I.~Badshah, Iot enhanced solar device
+  management: Integrating remote surveillance and energy efficiency for
+  sustainable operation, 2023.
+
+\bibitem{Sharma2024447}
+N.~Sharma, Pankaj, J.~Rai, S.~Nagarajan, Advanced deep learning approaches for
+  fault detection and localization in power distribution systems, 2024, p. 447
+  – 452.
+
+\bibitem{Balestrieri2024}
+M.~Balestrieri, J.~Capuzzi, K.~Chang, H.~Valizadehhaghi, An open-framework big
+  data analytic platform applied to timeseries sensor data, 2024.
+
+\bibitem{Guo202336452}
+F.~Guo, G.~Shen, Z.~Huang, Y.~Yang, M.~Cai, L.~Wei, Dabac: Smart contract-based
+  spatio-temporal domain access control for the internet of things, IEEE Access
+  11 (2023) 36452 – 36463.
+
+\bibitem{Liu2024}
+M.~Liu, M.~Elbadry, Y.~Hua, Z.~Xie, S.~Baral, I.~Park, F.~Ye, Proteus: An
+  easily managed home-based health monitoring infrastructure, IEEE Internet of
+  Things Journal (2024).
+
+\bibitem{Mavromatis20201718}
+A.~Mavromatis, C.~Colman-Meixner, A.~P. Silva, X.~Vasilakos, R.~Nejabati,
+  D.~Simeonidou, A software-defined iot device management framework for edge
+  and cloud computing, IEEE Internet of Things Journal 7~(3) (2020) 1718 –
+  1735.
+
+\bibitem{Loukil2021}
+F.~Loukil, C.~Ghedira-Guegan, K.~Boukadi, A.-N. Benharkat, E.~Benkhelifa, Data
+  privacy based on iot device behavior control using blockchain, ACM
+  Transactions on Internet Technology 21~(1) (2021).
+
+\bibitem{Zhang20217333}
+L.-Y. Zhang, H.-C. Lin, K.-R. Wu, Y.-B. Lin, Y.-C. Tseng, Fusiontalk: An
+  iot-based reconfigurable object identification system, IEEE Internet of
+  Things Journal 8~(9) (2021) 7333 – 7345.
+
+\bibitem{Guittoum2023325}
+A.~Guittoum, F.~Aïssaoui, S.~Bolle, F.~Boyer, N.~De~Palma, Solving the iot
+  cascading failure dilemma using a semantic multi-agent system, Lecture Notes
+  in Computer Science (including subseries Lecture Notes in Artificial
+  Intelligence and Lecture Notes in Bioinformatics) 14266 LNCS (2023) 325 –
+  344.
+
+\bibitem{Ribiero202265}
+B.~Ribiero, D.~Mack, Leveraging technology for automation and nerc compliance,
+  Vol. 2022-April, 2022, p. 65 – 67.
+
+\bibitem{Ergun20233864}
+K.~Ergun, R.~Ayoub, P.~Mercati, T.~S. Rosing, Dynamic reliability management of
+  multigateway iot edge computing systems, IEEE Internet of Things Journal
+  10~(5) (2023) 3864 – 3889.
+
+\bibitem{Angappan202589}
+S.~Angappan, A.~Nataraj, L.~N. Krishnan, A.~Palanisamy, Development of an
+  internet of things based smart cold storage with inventory monitoring system,
+  International Journal of Electrical and Computer Engineering 15~(1) (2025) 89
+  – 98.
+
+\bibitem{meta-llama-models}
+{meta-llama}, {Llama Models},
+  {\url{https://github.com/meta-llama/llama-models}} (2024).
+
+\end{thebibliography}
