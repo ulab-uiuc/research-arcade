@@ -1,0 +1,225 @@
+\documentclass[hf]{ceurart}
+\sloppy
+\usepackage{listings}
+\lstset{breaklines=true}
+
+%packages I have added in
+\usepackage{natbib}
+\usepackage[utf8]{inputenc}
+\usepackage{tikz}
+\usetikzlibrary{shapes,backgrounds,svg.path}
+\usepackage{verbatim}
+\usepackage{url}
+\usepackage{enumitem}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{xfrac}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{graphics}
+\usepackage{svg}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{color,soul}
+\usepackage{scalerel}
+\usepackage{csquotes}
+\usepackage{subcaption}
+\usepackage{multirow}
+\usepackage[ruled,vlined]{algorithm2e}
+\usepackage{nomencl}
+\usepackage{comment}
+\usepackage{float}
+
+
+% packages I have added in
+\newcommand{\citeauthornum}[1]{\citeauthor{#1} (\citeyear{#1}) \cite{#1}}
+
+
+\usepackage{color}
+\newcommand{\pinaforecomment}[4]{\colorbox{#1}{\textcolor{#4}{\parbox{.8\linewidth}{#2: #3}}}}
+\newcommand{\osullikomment}[1]{\pinaforecomment{green}{Kent}{#1}{black}}
+\newcommand{\bccomment}[1]{\pinaforecomment{red}{Brandon}{#1}{white}}
+
+\begin{document}
+
+%% Rights management information.
+%% CC-BY is default license.
+\copyrightyear{2024}
+\copyrightclause{Copyright for this paper by its authors.
+  Use permitted under Creative Commons License Attribution 4.0
+  International (CC BY 4.0).}
+
+%%
+%% This command is for the conference information
+\conference{LNSAI 2024: First International Workshop on Logical Foundations of Neuro-Symbolic AI, August 05, 2024, Jeju, South Korea}
+
+%% The "title" command
+\title{Neuro-Symbolic AI in 2024: A Systematic Review}
+
+
+%% The "author" command and its associated commands are used to define
+%% the authors and their affiliations.
+\author[1]{Brandon C. Colelough}[%
+orcid=0000-0001-8389-3403,
+email=brandcol@umd.edu,
+url=https://brandoncolelough.com/,
+]
+\cormark[1]
+\address[1]{University of Maryland, College Park,
+  8125 Paint Branch Dr, College Park, MD 20742}
+
+
+
+\author[2]{William Regli}[%
+orcid=0000-0001-7116-9338,
+email=regli@umd.edu,
+url= https://www.cs.umd.edu/people/regli,
+]
+
+%% Footnotes
+\cortext[1]{Corresponding author.}
+
+\begin{abstract}
+\textbf{Background:} The field of Artificial Intelligence has undergone cyclical periods of growth and decline, known as AI summers and winters. Currently, we are in the third AI summer, characterized by significant advancements and commercialization, particularly in the integration of Symbolic AI and Sub-Symbolic AI, leading to the emergence of Neuro-Symbolic AI.
+
+\textbf{Contributions:} (1) A definition of Meta-Cognition within Neuro-Symbolic AI. (2) A review of the key themes of the literature post the Neuro-Symbolic research explosion from 2020-2024. (3) Identification of the current gaps in the literature of Neuro-Symbolic AI
+
+
+\textbf{Objective:} This paper provides a systematic literature review of Neuro-Symbolic AI projects within the 2020-24 AI landscape, highlighting key developments, methodologies, and applications. It aims to identify where quality efforts are focused in 2024 and pinpoint existing research gaps in the field.
+
+\textbf{Methods:} The review followed the PRISMA methodology, utilizing databases such as IEEE Explore, Google Scholar, arXiv, ACM, and SpringerLink. The inclusion criteria targeted peer-reviewed papers published between 2020 and 2024. Papers were screened for relevance to Neuro-Symbolic AI, with further inclusion based on the availability of associated codebases to ensure reproducibility.
+
+\textbf{Results:} From an initial pool of 1,428 papers, 167 met the inclusion criteria and were analyzed in detail. The majority of research efforts are concentrated in the areas of learning and inference (63\%), logic and reasoning (35\%), and knowledge representation (44\%). Explainability and trustworthiness are less represented (28\%), with Meta-Cognition being the least explored area (5\%). The review identifies significant interdisciplinary opportunities, particularly in integrating explainability and trustworthiness with other research areas.
+
+\textbf{Discussion:} The findings reveal a well-integrated body of work in learning and inference, logic and reasoning, and knowledge representation. However, there is a notable gap in research focused on explainability and trustworthiness, which is critical for the deployment of reliable AI systems. The sparse representation of Meta-Cognition highlights the need for further research to develop frameworks that enable AI systems to self-monitor, evaluate, and adjust their processes, enhancing autonomy and adaptability.
+
+\textbf{Conclusion:} Neuro-Symbolic AI research has seen rapid growth since 2020, with concentrated efforts in learning and inference. Significant gaps remain in explainability, trustworthiness, and Meta-Cognition. Addressing these gaps through interdisciplinary research will be crucial for advancing the field towards more intelligent, reliable, and context-aware AI systems.
+
+\end{abstract}
+  
+
+\begin{keywords}
+  Neuro-Symbolic AI \sep 
+  Systematic Review \sep 
+  Learning and Inference\sep
+  Knowledge Representation \sep
+  Logic and Reasoning, \sep
+  Explainability and Trustworthiness \sep
+  Meta-Cognition \sep
+  PRISMA.
+\end{keywords}
+
+
+\maketitle
+
+
+\section{Introduction} \label{sec:intro}
+The field of Artificial Intelligence (AI) has experienced significant cyclical growth, known as AI summers and winters. At present, we as a community find ourselves in the third AI summer, marked by rapid scientific advances and commercialization, continuing the legacy of previous periods of AI excitement followed by setbacks \cite{Kautz2022}. A significant product of the third AI summer has been the integration of two prominent fields of AI; Symbolic AI and Sub-Symbolic AI, the fusion of which is known as Neuro-Symbolic AI. There is an ongoing debate about the necessity of Neuro-Symbolic AI \cite{Dingli2023}, opponents arguing that common sense reasoning can be addressed through the use of big data \cite{lecun2022path} and proponents arguing that \enquote{You can’t get to the moon by climbing successively taller trees} \cite{Marcus2019}. For this systematic review, we take the stance that symbolic AI is essential and that Neuro-Symbolic AI represents the best way forward for the community hence, this paper provides a systematic literature review of prominent Neuro-Symbolic projects within the 2024 AI landscape, highlighting key developments, methodologies, and applications. 
+
+\subsection{\textbf{Symbolic AI}}\label{sub:symbolic-AI}
+Symbolic AI is a \enquote{a sub-field of AI concerned with learning the internal symbolic representations of the world around it} where we can \enquote{ translate some form of implicit human knowledge into a more formalized and declarative form based on rules and logic} \cite{Dingli2023}. Examples of some of the earliest AI systems that utilised symbolic representations include SHRDLU \cite{SHRDLU}, ELIZA \cite{Weizenbaum1966},  DENDRAL \cite{Lindsay1980} and MYCIN\cite{Melle1978} and examples of some of the newest AI systems which heavily utilise symbolic processes include ConceptNet 5.5 \cite{Speer2016} CYC  \cite{Lenat2023} and Good Old Fashioned AI (GOFAI) planning systems \cite{Edelkamp2004} to name just a few.
+
+\subsection{\textbf{Sub-Symbolic AI}}
+By contrast, Sub-Symbolic AI are systems that \enquote{do not require rules or symbolic representations as inputs} and instead \enquote{learn implicit data representations on their own} \cite{Dingli2023}. Sub-Symbolic AI encompasses approaches such as machine learning, deep learning, and generative AI, which rely on algorithms to automatically extract patterns from raw data to discern relationships and make predictions based on learned representations. Examples of some of the earliest AI systems that utilised sub-symbolic representations include the Perceptron \cite{Rosenblatt1958}, Hopfield Networks \cite{Hopfield1982} and the Backpropagation Algorithm \cite{Rumelhart1986} and examples of some of the newest sub-symbolic systems include famous projects such as the Generative Pre-trained Transformer (GPT) models \cite{Vaswani2017}, the YOLO family of Convolutional Neural Networks (CNN'S) \cite{Redmon2015} and the DALLE diffusion model transformer \cite{Ramesh2021} to again just name a few. 
+
+
+\subsection{\textbf{Neuro-Symbolic AI}}
+There is at present a debate within the AI community surrounding the need for Neuro-Symbolic AI \cite{Garcez2023}. Simply described, the argument for Neuro-Symbolic AI draws on \citeauthornum{Kahneman2011} concepts of System 1 and System 2 thinking whereby System 1 is fast, intuitive, and parallel, akin to the capabilities of deep learning, while System 2 is slow, deliberate, and sequential, resembling symbolic reasoning and hence, Neuro-Symbolic AI aims to combine these two approaches to create systems that benefit from the strengths of both. We Adopt the definition provided by \citeauthornum{Garcez2023}; Hence, Neuro-Symbolic AI is \textbf{\enquote{a composite AI framework that seeks to merge the domains of Symbolic AI and Neural Networks} [or more broadly put, Sub-Symbolic AI] \enquote{to create a superior hybrid AI model possessing reasoning capabilities}}. As this definition is quite broad, for the purpose of this systematic review, we will further define the sub-components of the Neuro-Symbolic AI taxonomy we believe to be most relevant to the current AI landscape within section \ref{sec:methodology}. 
+
+
+\section{Methodology}\label{sec:methodology}
+
+\subsection{Taxonomy of Neuro-Symbolic AI}
+
+We identified five foundational research areas advancing the state of the art in Neuro-Symbolic AI. This taxonomy was synthesized from a review of six survey papers~\cite{Gibaut2023, Yu2021, Wan2024, Marra2024, MichelDeletie2024, Bouneffouf2022} and four seminal books~\cite{Dingli2023, Hitzler2023, Hitzler2021, Shakarian2023}. These areas are:
+
+\begin{enumerate}
+    \item \textbf{Knowledge Representation:} Integrating symbolic and neural representations and developing commonsense and domain-specific knowledge graphs~\cite{Gibaut2023, Hitzler2023, Shakarian2023}.
+    \item \textbf{Learning and Inference:} Combining learning and reasoning processes through end-to-end differentiable reasoning and dynamic multi-source knowledge reasoning~\cite{Yu2021, Wan2024, Dingli2023}.
+    \item \textbf{Explainability and Trustworthiness:} Creating interpretable models and reasoning processes to ensure trust and reliability in Neuro-Symbolic systems~\cite{Marra2024, MichelDeletie2024}.
+    \item \textbf{Logic and Reasoning:} Integrating logic-based methods with neural networks, including logical and probabilistic reasoning, and the syntax and semantics of Neuro-Symbolic systems~\cite{Marra2024, Shakarian2023}.
+    \item \textbf{Meta-Cognition:} The system's capacity to monitor, evaluate, and adjust its own reasoning and learning processes by integrating neural networks and symbolic representations.
+\end{enumerate}
+
+The four above categories represent the core technical areas where current efforts are concentrated. Additionally, we define \textit{Meta-Cognition} to address a gap in current taxonomies that fail to capture fields encompassing self-awareness, adaptive learning, reflective reasoning, self-regulation, and introspective monitoring. 
+
+\subsection{Meta-Cognition}\label{subsec:method_meta}
+Meta-Cognition refers to the processes that involve thinking about one's thinking, enabling self-awareness and self-regulation in cognitive tasks. Meta-Cognition is the controller that sits above the cognitive tasks of systems to direct energy effectively towards the correct system to handle a task. This higher-order cognition is crucial for tasks that require reflection, planning, and adaptation. Its importance lies in its ability to enhance learning, problem-solving, and decision-making, making it a key focus in Neuro-Symbolic AI. Present research within Neuro-Symbolic AI does not yet effectively cover meta-cognition and neglecting Meta-Cognition in Neuro-Symbolic AI research limits system autonomy, adaptability, and reliability, hindering error correction and reducing trustworthiness in dynamic environments, making self-awareness and self-regulation essential for future advancements.
+
+
+
+\subsection{Literature Review Approach}
+
+We followed the \href{https://www.prisma-statement.org/}{PRISMA} systematic review methodology to ensure a thorough and unbiased survey of the literature. Our search was conducted across five databases: \href{https://ieeexplore.ieee.org/Xplore/home.jsp}{IEEE Explore}, \href{http://scholar.google.com}{Google Scholar}, \href{https://arxiv.org/}{arXiv}, \href{http://portal.acm.org/portal.cfm}{ACM Digital Library}, and \href{http://www.springerlink.com}{SpringerLink Library}, focusing on publications from 2020 to 2024. The keywords included "Neuro-Symbolic" combined with terms related to the foundational research areas. Only peer-reviewed articles, conference papers, and books in English were considered. From an initial broad search, we refined our selection to 392 candidate papers, which were further screened for quality, relevance, and availability of a public codebase, resulting in 167 papers that were included in our review. This streamlined process allowed us to focus on the most relevant and high-quality research, identifying key findings and open problems in Neuro-Symbolic AI. For a detailed description of our methodology, please refer to the full-length version of this survey paper, which will be uploaded to \href{http://arxiv.org}{arXiv} upon paper approval.\footnote{Full manuscript will be uploaded to ARXIV upon paper approval.}
+
+
+\section{Results}\label{sec:results}
+\begin{figure}[ht]
+    \centering
+   \includesvg[width=\textwidth]{Figures/publications_by_year_v2.svg}
+    \caption{Histogram of publications per year for Neuro-Symbolic AI. The data was obtained through Google Scholar scraping, reflecting significant growth from 2020}
+    \label{fig:pubs_by_year}
+\end{figure}
+
+
+\begin{table*}[ht]
+    \centering
+    \begin{tabular}{lrrrrr}
+        Database & Knowledge & Learning \& & Explainability \& & Logic \& & Meta-Cognition \\
+         &  & Inference & Trustworthiness & Reasoning & Cognition \\
+        \hline
+        IEEE & 73 & 97 & 15 & 67 & 33  \\
+        Google Scholar & 56 & 126 & 7 & 129 & 3  \\
+        Ar\textnormal{\raisebox{0.5ex}{$\chi$}}iV & 17 & 54 & 7 & 55 & 3  \\
+        ACM & 10 & 46 & 5 & 12 & 17  \\
+        Springer & 152 & 170 & 65 & 162 & 47  \\
+        Total(after screening)   & 308 & 493 & 99 & 425 & 103  \\
+     \end{tabular}
+     \captionof{table}[Hits_Results]{The search terms "neurosymbolic" AND each of the terms required for the 5 foundational research areas within neurosymbolic AI were queried through the 5 databases. The number of pieces of literature returned from each query is shown in the table above. Note also that only publications from 2020-2024 were considered}
+\label{tab::hits_2_results}
+\end{table*}
+
+From the initial Google Scholar scraping, there was a total of 957 publications listed on Google Scholar alone from 1970 til the present. \autoref{fig:pubs_by_year} shows how research on Neuro-Symbolic AI is increasing exponentially starting in 2020, with notable increases in the years beginning from 2020 (53 publications), and peaking in 2023 (236 publications). Combining the Google Scholar literature from 2020 onwards with the literature from the four other databases queried for pieces of literature on Neuro-Symbolic AI from 2020 onwards, a total of 1,428 papers were extracted as illustrated in table \ref{tab::hits_2_results}. From the total literature extracted, 45\% (n = 641) were removed as duplicate entries and 28\% (n = 395) were removed during title and abstract screening with 28\% (n = 392) held for further analysis. From the remaining 392 papers, the literature was further split based on code/model availability. 42\% of the papers (n = 167) had associated code-base repositories (e.g. GitHub, Huggingface etc.) and 58\% (n = 225) were further excluded from this literature review as a public code-base could not be found for the associated piece of literature (except for entries on Meta-Cognition as no code-bases could be found for literature associated with this category). The remaining 167 papers gathered were then read in detail and a further 9 papers were removed for not meeting the inclusion criteria leaving 158 included papers and 234 excluded papers. These 158 papers were then sub-categorised under the five main focal research areas and the intersection found therein. There were 44\% (n=70) entries in the Knowledge Representation category, 63\% (n=99) entries in the Learning and Inference category, 28\% (n=44) entries in the Explainability and Trustworthiness category, 35\% (n=55) entries in the Logic and Reasoning category, 5\% (n=8) entries in the Meta-Cognition category. The intersection of Knowledge Representation and Learning \& Inference had 27\% (n=43) entries, the intersection of Knowledge Representation and Explainability \& Trustworthiness had 4\% (n=5), the intersection of Learning \& Inference and Logic \& Reasoning had 11.48\% (n=31), the intersection of Explainability \& Trustworthiness and Logic \& Reasoning had 3.33\% (n=9). The intersection of any of the three categories had a range from 5 to 9 entries, except for the intersection of Explainability and Trustworthiness \& Logic and Reasoning \& Knowledge Representation, which had none. There was only one entry at the intersection of all 4 of the main research focal areas (excluding Meta-Cognition) which was AlphaGeometry from Google\cite{Trinh2024}. 
+
+\section{Discussion \& Open Questions}\label{sec:discussion}
+To build upon the existing literature that has thoroughly summarized the Neuro-Symbolic landscape before 2020, we extend this discussion by analyzing the most influential projects in each sub-field of Neuro-Symbolic AI published since 2020. This section aims to highlight state-of-the-art (SOTA) technologies available to researchers, showcasing significant advancements and ongoing challenges. 
+
+\subsection{Knowledge Representation}\label{subsec:disc_knowledge}
+Research in Knowledge Representation has focused on advancing semantic grounding, representing complex relationships, and improving data efficacy. Development of commonsense knowledge bases and event-based representations \cite{Mostafazadeh2020, Hwang2021, Ismayilzada2022} has advanced AI's understanding of daily events, aiming to reduce error rates in text generation. These works are furthered through the exploration of minimal data requirements for commonsense knowledge in few-shot learning models\cite{Ribeiro2021}, and the use of Neuro-Symbolic representations to enhance training efficiency and reduce costs \cite{Ahmed2022}. Additionally, refinement of knowledge representation was demonstrated by predicting complex relationships and embedding techniques in knowledge graphs \cite{Chen2023, Perevalov2022}, and the integration of personalized knowledge was demonstrated to ensure narrative consistency in storytelling agents \cite{Gao2023}. NeuroQL, a domain-specific language for inter-subjective reasoning, captured complex and long-range relationships, demonstrating how Neuro-Symbolic approaches can `do more with less', yielding significant savings in training time and environmental impact \cite{Papoulias2023}. Open research questions remain around how Neuro-Symbolic AI can enhance the dynamic interpretation and manipulation of symbols, develop meta-cognitive abilities to monitor and adjust reasoning processes, and ensure transparent, explainable reasoning pathways for more human-like, adaptable, and robust knowledge representation.
+
+\subsection{Learning and Inference}\label{subsec:disc_learn}
+Within Learning and Inference, research has focused on Neuro-Symbolic Integration for Enhanced Learning, Advanced Problem Solving and Decision Making, and Semantic Enhancement for Model Trustworthiness. Neuro-Symbolic integration for Enhanced Learning was demonstrated through the fusion of symbolic reasoning with neural learning mechanisms which adapted commonsense knowledge for few-shot settings and transformed observations into logical facts using Logical Neural Networks \cite{Da2021, Kimura2021}. Advanced Problem Solving and Decision Making are highlighted by Plan-SOFAI \cite{Fabiano2023} and the ZeroC architecture \cite{Wu2022a}, which leverage Neuro-Symbolic methods to enhance AI planning and zero-shot concept recognition to integrate the fast and slow thinking models and the improve machine generalization. Semantic Enhancement and Model Trustworthiness were demonstrated by the introduction of a Pseudo-Semantic Loss for autoregressive models which integrated logic within the loss function \cite{Ahmed2023} and neural networks utilising Logic Tensor Networks \cite{Badreddine2022} which aim to boost logical consistency, reduce model toxicity, and enhance prediction accuracy by concentrating on relevant constraints. Open research questions remain in Neuro-Symbolic AI, including how to develop incremental learning that allows symbolic systems to evolve with new experiences, create context-aware inference mechanisms that adjust reasoning based on situational cues, achieve fine-grained explainability for complex inference chains, and explore meta-cognitive abilities enabling systems to monitor, evaluate, and optimize their learning processes in dynamic environments.
+
+\subsection{Explainability and Trustworthiness}\label{subsec:disc_xai}
+Research centred on Explainability and Trustworthiness within Neuro-Symbolic AI has looked to advance Natural Language Processing (NLP) Techniques, Enhancing Logical Reasoning, and Refining Language Understanding and Summarization. Braid introduced a logical reasoner with probabilistic rules to tackle the brittle matching problem, merging symbolic and neural knowledge to enhance logical reasoning \cite{Kalyanpur2020}. Similarly, Structure-Aware Abstractive Conversation improved summarization by incorporating discourse relations, action triples, and structured graphs for precise, context-rich summaries, advancing NLP techniques \cite{Chen2021}. Semantic-level revisions identifying and correcting \enquote{confounders} in Neuro-Symbolic scenes have improved AI decision-making clarity, fostering trust and enhancing logical reasoning by making processes more understandable \cite{Stammer2021}. Evaluating AI's humour comprehension with the New Yorker Cartoon Caption Contest underscored the need for nuanced understanding, refining language processing in complex cognitive tasks \cite{Hessel2022}. FactPEGASUS focuses on ensuring factuality in summarization by optimizing pre-training and fine-tuning methods, crucial for maintaining summary integrity and refining language understanding \cite{Huang2023}. Complementing this, Neuro-Symbolic methods enhance explainable short answer grading through logical reasoning and cue detection, bridging AI capabilities with human-like responses and advancing NLP techniques \cite{Kuennecke2024}. Open research questions remain around how Neuro-Symbolic AI can adapt and evolve symbolic representations in real-time to maintain transparency, integrate meta-cognitive mechanisms for self-monitoring and adjustment of reasoning strategies, develop explainable NLP techniques for complex cognitive tasks, and ensure factual consistency in AI outputs while providing clear, detailed explanations of the underlying reasoning process.
+
+
+
+\subsection{Logic and Reasoning}\label{subsec:disc_logic}
+From the research field of Neuro-Symbolic Logic and Reasoning, the research has gravitated largely towards the Integration of Logical Reasoning and Probabilistic Models, Commonsense Knowledge and Language Understanding and Enhanced Decision-Making. Logical Credal Networks \cite{Qian2021} combines logical reasoning with probabilistic models to handle imprecise information, while DeepStochLog \cite{Winters2021} enhances traditional logic programming with neural networks for complex reasoning tasks. 2P-Kt \cite{Ciatto2021} offers a comprehensive logic-based framework supporting various reasoning tasks and integrating symbolic and sub-symbolic AI. Research into Commonsense Knowledge and Language Understanding includes kogito, \cite{Ismayilzada2022}, which generates commonsense knowledge inferences from textual input to enhance AI adaptability, and LinkBERT \cite{Yasunaga2022}, which improves language understanding and reasoning capabilities by incorporating document links, particularly in multi-hop reasoning tasks. For Enhanced Decision-Making, \enquote{Neuro-Symbolic Commonsense Social Reasoning} \cite{Chanin2023} integrates Neuro-Symbolic methods in autonomous systems, while LASER \cite{Huang2023} combines neural networks' flexibility with the precision of symbolic logic. \enquote{Getting from Generative AI to Trustworthy AI} \cite{Lenat2023} addresses LLMs' limitations in trustworthiness and reasoning, proposing integration with symbolic AI systems for reliability. Open research questions remain around how Neuro-Symbolic AI can develop scalable frameworks that integrate traditional logic programming with neural networks for complex reasoning tasks, incorporate commonsense knowledge and advanced language understanding to enhance multi-hop reasoning capabilities, combine symbolic logic with neural networks to ensure reliable and trustworthy decision-making and integrate meta-cognitive abilities to enable self-monitoring and adjustment of reasoning strategies for clearer, more understandable explanations.
+
+
+\subsection{Intersections of the above four research areas}
+Much of the literature is cross-sectional between the four areas of research; Explainability \& Trustworthiness, Knowledge Representation, Learning \& Inference and Logic \& Reasoning. AlphaGeometry \cite{Trinh2024}, which is a Neuro-Symbolic system designed to solve Euclidean plane geometry problems at the Olympiad level, stands out as a prominent project that sits at the intersection of all four. AlphaGeometry's ability to synthesise millions of theorems and proofs, using a neural language model trained on large-scale synthetic data to guide a symbolic deduction engine, makes it a groundbreaking example of how Neuro-Symbolic AI can achieve advanced problem-solving capabilities, bridging gaps across multiple domains of AI research. However, there is a distinct lack of integration with the explainability and trustworthiness fields within the unions of the other three research areas as the density of research intersection at the unions of explainability and trustworthiness and the other three research areas is relatively sparse, indicating a significant opportunity for further interdisciplinary work in Neuro-Symbolic AI.
+
+\subsection{Meta-Cognition}\label{subsec:disc_meta}
+Recent advancements in this domain showcase Reinforcement learning (RL) to approximate Meta-Cognition, approaches to integrate cognitive architectures with LLMs to approximate meta-cognitive capabilities and the integration of many AI architectures and systems to demonstrate the Common Model of Cognition (CMC). The benefits of integrating symbolic features with RL algorithms were demonstrated through meta-reinforcement learning combined with logical program induction to improve financial trading strategies \cite{Harini2023}. Enhancing general intelligence by fusing cognitive architectures with LLMs was investigated, creating embodied agents that leverage the strengths of both approaches \cite{Joshi2024, Liu2024}. Improvements in experiential models were achieved by using LLMs to convert descriptive information into dense signals for instance-based learning \cite{McDonald2024}. Adaptive conflict resolution in AI was enhanced by coupling cognitive reasoning with generative algorithms \cite{Raja2024}. Robust AI systems were developed through modular, agency, and Neuro-Symbolic approaches to combine LLMs with cognitive architectures \cite{Romero2024, Sumers2023}. These projects align with the CMC, integrating cognitive architectures like ACT-R, Soar, and Sigma to provide a unified framework for human cognition \cite{Laird2017}. Enhancements in AI robustness and interoperability were achieved by integrating cognitive architectures with foundation models for cognitively guided few-shot learning \cite{Thomson2024}. Finally, combining generative networks with the CMC using a Neuro-Symbolic approach merged symbolic reasoning with neural networks to replicate human cognitive processes for powerful, explainable AI systems has been theorised but not yet realised\cite{West2024}. Open research questions remain around how Neuro-Symbolic AI can integrate symbolic reasoning with meta-reinforcement learning for complex decision-making, fuse cognitive architectures with LLMs to develop meta-cognitive agents, leverage LLMs to enhance instance-based learning through meta-cognitive signals, create adaptive meta-cognitive frameworks for real-time conflict resolution, combine modular and agency approaches to build meta-cognitive AI systems aligned with the Common Model of Cognition, improve few-shot learning with cognitive architectures for meta-cognitive awareness, and develop Neuro-Symbolic generative networks that replicate human-like meta-cognitive processes.
+
+
+
+\section{Meta-Cognition in Neuro-Symbolic AI}
+Whilst the initial representation of Neuro-Symbolic AI as system 1 and system 2 level thinking is a useful tool to goal-orientate the field towards a common direction for the integration of neural and symbolic processes, the current adaptation of the human-level cognitive processing ability is too simplistic and does not yet capture the full systems-level breakdown of where the community should be investing effort to push the field forward. As Kahneman himself states, \enquote{the two systems do not really exist in the brain or anywhere else. 'System 1 does X' is a shortcut for 'X occurs automatically.' And 'System 2 is mobilized to do Y' is a shortcut for 'arousal increases, pupils dilate, attention is focused, and activity Y is performed.'}. Human-level cognition manifests from a deeply complex and intricately layered yet densely connected box of systems of systems that work in unification and act with system-1 system-2 characteristics. The goal of the Neuro-Symbolic research domain is to \enquote{create a superior hybrid AI model possessing reasoning capabilities} and hence, to push the field further towards this goal we must seek to design and build systems that act with the same propensity as Kahnemans system-1 system-2 character setup through the implementation of more integrated systems of systems controlled through Meta-Cognition possessing the ability to act lazily when necessary and focused when required. 
+
+\section{Conclusion}\label{sec:conclusion}
+The field of Neuro-Symbolic AI has experienced a notable surge in research activity from 2020 onwards, reflecting the growing recognition of the importance of integrating symbolic and sub-symbolic approaches to enhance AI's reasoning capabilities. The contribution from this systematic literature review is a well-grounded definition of Meta-Cognition within Neuro-Symbolic AI,  a review of the key themes of the literature post the Neuro-Symbolic research explosion from 2020-2024 and an identification of the current gaps in the literature of Neuro-Symbolic AI. We found that the majority of the research efforts in between 2020-24 were concentrated in the areas of learning and inference, with a significant portion also dedicated to logic and reasoning, as well as knowledge representation. These areas have seen substantial advancements, with innovative projects and methodologies pushing the boundaries of what AI systems can achieve in terms of understanding, reasoning, and generating human-like responses. However, our review also identifies several critical gaps in the current literature. Despite the substantial progress in learning and inference, there remains a relative sparseness of research focused on explainability and trustworthiness. This gap is particularly concerning given the increasing deployment of AI systems in real-world applications, where transparency and reliability are paramount. Moreover, the intersection of the four main research areas—learning and inference, logic and reasoning, knowledge representation, and explainability and trustworthiness—reveals a significant opportunity for interdisciplinary work. The density of studies that effectively combine these domains indicates the field is generally well integrated. The most underrepresented area in our review is Meta-Cognition. This emerging field, which involves systems' capacity to monitor, evaluate, and adjust their own reasoning and learning processes, holds great potential for advancing AI towards more autonomous and adaptable intelligence. The few existing studies in this domain suggest promising directions, but much more work is needed to develop robust frameworks and practical implementations of Meta-Cognitive architectures.
+
+
+\renewcommand{\bibfont}{\scriptsize}
+\setlength{\bibsep}{0pt}
+\setlength{\itemsep}{0pt plus 0.3ex}
+
+\bibliography{references}
+
+\appendix
+
+
+\end{document}

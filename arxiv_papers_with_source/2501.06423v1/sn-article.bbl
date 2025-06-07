@@ -1,0 +1,224 @@
+%% BioMed_Central_Bib_Style_v1.01
+
+\begin{thebibliography}{14}
+% BibTex style file: bmc-mathphys.bst (version 2.1), 2014-07-24
+\ifx \bisbn   \undefined \def \bisbn  #1{ISBN #1}\fi
+\ifx \binits  \undefined \def \binits#1{#1}\fi
+\ifx \bauthor  \undefined \def \bauthor#1{#1}\fi
+\ifx \batitle  \undefined \def \batitle#1{#1}\fi
+\ifx \bjtitle  \undefined \def \bjtitle#1{#1}\fi
+\ifx \bvolume  \undefined \def \bvolume#1{\textbf{#1}}\fi
+\ifx \byear  \undefined \def \byear#1{#1}\fi
+\ifx \bissue  \undefined \def \bissue#1{#1}\fi
+\ifx \bfpage  \undefined \def \bfpage#1{#1}\fi
+\ifx \blpage  \undefined \def \blpage #1{#1}\fi
+\ifx \burl  \undefined \def \burl#1{\textsf{#1}}\fi
+\ifx \doiurl  \undefined \def \doiurl#1{\url{https://doi.org/#1}}\fi
+\ifx \betal  \undefined \def \betal{\textit{et al.}}\fi
+\ifx \binstitute  \undefined \def \binstitute#1{#1}\fi
+\ifx \binstitutionaled  \undefined \def \binstitutionaled#1{#1}\fi
+\ifx \bctitle  \undefined \def \bctitle#1{#1}\fi
+\ifx \beditor  \undefined \def \beditor#1{#1}\fi
+\ifx \bpublisher  \undefined \def \bpublisher#1{#1}\fi
+\ifx \bbtitle  \undefined \def \bbtitle#1{#1}\fi
+\ifx \bedition  \undefined \def \bedition#1{#1}\fi
+\ifx \bseriesno  \undefined \def \bseriesno#1{#1}\fi
+\ifx \blocation  \undefined \def \blocation#1{#1}\fi
+\ifx \bsertitle  \undefined \def \bsertitle#1{#1}\fi
+\ifx \bsnm \undefined \def \bsnm#1{#1}\fi
+\ifx \bsuffix \undefined \def \bsuffix#1{#1}\fi
+\ifx \bparticle \undefined \def \bparticle#1{#1}\fi
+\ifx \barticle \undefined \def \barticle#1{#1}\fi
+\bibcommenthead
+\ifx \bconfdate \undefined \def \bconfdate #1{#1}\fi
+\ifx \botherref \undefined \def \botherref #1{#1}\fi
+\ifx \url \undefined \def \url#1{\textsf{#1}}\fi
+\ifx \bchapter \undefined \def \bchapter#1{#1}\fi
+\ifx \bbook \undefined \def \bbook#1{#1}\fi
+\ifx \bcomment \undefined \def \bcomment#1{#1}\fi
+\ifx \oauthor \undefined \def \oauthor#1{#1}\fi
+\ifx \citeauthoryear \undefined \def \citeauthoryear#1{#1}\fi
+\ifx \endbibitem  \undefined \def \endbibitem {}\fi
+\ifx \bconflocation  \undefined \def \bconflocation#1{#1}\fi
+\ifx \arxivurl  \undefined \def \arxivurl#1{\textsf{#1}}\fi
+\csname PreBibitemsHook\endcsname
+
+%%% 1
+\bibitem[\protect\citeauthoryear{Devlin et~al.}{2017}]{devlin2017robustfill}
+\begin{bchapter}
+\bauthor{\bsnm{Devlin}, \binits{J.}},
+\bauthor{\bsnm{Bunel}, \binits{R.}},
+\bauthor{\bsnm{Singh}, \binits{R.}},
+\bauthor{\bsnm{Hausknecht}, \binits{M.}},
+\bauthor{\bsnm{Kohli}, \binits{P.}}:
+\bctitle{Robustfill: Neural program learning under noisy i/o}.
+In: \bbtitle{Proceedings of the 34th International Conference on Machine Learning (ICML'17)},
+pp. \bfpage{990}--\blpage{998}
+(\byear{2017})
+\end{bchapter}
+\endbibitem
+
+%%% 2
+\bibitem[\protect\citeauthoryear{Balog et~al.}{2017}]{balog2017deepcoder}
+\begin{bchapter}
+\bauthor{\bsnm{Balog}, \binits{M.}},
+\bauthor{\bsnm{Gaunt}, \binits{A.L.}},
+\bauthor{\bsnm{Brockschmidt}, \binits{M.}},
+\bauthor{\bsnm{Nowozin}, \binits{S.}},
+\bauthor{\bsnm{Tarlow}, \binits{D.}}:
+\bctitle{Deepcoder: Learning to write programs}.
+In: \bbtitle{Proceedings of the 5th International Conference on Learning Representations (ICLR'17)}
+(\byear{2017})
+\end{bchapter}
+\endbibitem
+
+%%% 3
+\bibitem[\protect\citeauthoryear{Reed and de~Freitas}{2015}]{reed2015neural}
+\begin{botherref}
+\oauthor{\bsnm{Reed}, \binits{S.}},
+\oauthor{\bsnm{Freitas}, \binits{N.}}:
+Neural programmer-interpreters.
+International Conference on Learning Representations
+(2015)
+\end{botherref}
+\endbibitem
+
+%%% 4
+\bibitem[\protect\citeauthoryear{Veličković et~al.}{2021}]{velivckovic2021neural}
+\begin{botherref}
+\oauthor{\bsnm{Veličković}, \binits{P.}},
+\oauthor{\bsnm{Blundell}, \binits{C.}},
+\oauthor{\bsnm{Rae}, \binits{J.}}:
+A generalist neural algorithmic learner.
+International Conference on Learning Representations
+(2021)
+\end{botherref}
+\endbibitem
+
+%%% 5
+\bibitem[\protect\citeauthoryear{Zhang and Bengio}{2022}]{zhang2022causal}
+\begin{botherref}
+\oauthor{\bsnm{Zhang}, \binits{Y.}},
+\oauthor{\bsnm{Bengio}, \binits{Y.}}:
+Neural algorithmic reasoning with causal regularisation.
+Advances in Neural Information Processing Systems
+(2022)
+\end{botherref}
+\endbibitem
+
+%%% 6
+\bibitem[\protect\citeauthoryear{Graves et~al.}{2014}]{graves2014neural}
+\begin{botherref}
+\oauthor{\bsnm{Graves}, \binits{A.}},
+\oauthor{\bsnm{Wayne}, \binits{G.}},
+\oauthor{\bsnm{Danihelka}, \binits{I.}}:
+Neural turing machines.
+arXiv preprint arXiv:1410.5401
+(2014)
+\end{botherref}
+\endbibitem
+
+%%% 7
+\bibitem[\protect\citeauthoryear{Graves et~al.}{2016}]{graves2016hybrid}
+\begin{botherref}
+\oauthor{\bsnm{Graves}, \binits{A.}},
+\oauthor{\bsnm{Wayne}, \binits{G.}},
+\oauthor{\bsnm{Danihelka}, \binits{I.}}:
+Hybrid computing using a neural network with dynamic external memory.
+Nature
+(2016)
+\end{botherref}
+\endbibitem
+
+%%% 8
+\bibitem[\protect\citeauthoryear{DeepMind}{2023}]{alphadev2023}
+\begin{botherref}
+\oauthor{\bsnm{DeepMind}}:
+Alphadev: A general ai system for optimizing algorithms.
+arXiv preprint arXiv:2305.13550
+(2023)
+\end{botherref}
+\endbibitem
+
+%%% 9
+\bibitem[\protect\citeauthoryear{Abolafia et~al.}{2018}]{abolafia2018neural}
+\begin{botherref}
+\oauthor{\bsnm{Abolafia}, \binits{D.A.}},
+\oauthor{\bsnm{Norouzi}, \binits{M.}},
+\oauthor{\bsnm{Shen}, \binits{J.}},
+\oauthor{\bsnm{Zhao}, \binits{R.}},
+\oauthor{\bsnm{Le}, \binits{Q.V.}}:
+Neural program synthesis with priority queue training.
+arXiv preprint arXiv:1801.03526
+(2018)
+\end{botherref}
+\endbibitem
+
+%%% 10
+\bibitem[\protect\citeauthoryear{Gulwani}{2011}]{gulwani2011automating}
+\begin{bchapter}
+\bauthor{\bsnm{Gulwani}, \binits{S.}}:
+\bctitle{Automating string processing in spreadsheets using input-output examples}.
+In: \bbtitle{Proceedings of the 38th ACM SIGPLAN-SIGACT Symposium on Principles of Programming Languages (POPL'11)},
+pp. \bfpage{317}--\blpage{330}
+(\byear{2011}).
+\doiurl{10.1145/1926385.1926423}
+\end{bchapter}
+\endbibitem
+
+%%% 11
+\bibitem[\protect\citeauthoryear{Solar-Lezama}{2008}]{solar2008program}
+\begin{botherref}
+\oauthor{\bsnm{Solar-Lezama}, \binits{A.}}:
+Program synthesis by sketching.
+PhD thesis,
+University of California, Berkeley
+(2008)
+\end{botherref}
+\endbibitem
+
+%%% 12
+\bibitem[\protect\citeauthoryear{Bodik et~al.}{2007}]{bodik2007angelic}
+\begin{bchapter}
+\bauthor{\bsnm{Bodik}, \binits{R.}},
+\bauthor{\bsnm{Phothilimthana}, \binits{P.}},
+\bauthor{\bsnm{Torlak}, \binits{E.}}:
+\bctitle{Angelic programming}.
+In: \bbtitle{Proceedings of the 4th International Workshop on Practical Aspects of Declarative Languages (PADL'07)},
+pp. \bfpage{201}--\blpage{215}
+(\byear{2007}).
+\doiurl{10.1007/978-3-540-69611-7_14}
+\end{bchapter}
+\endbibitem
+
+%%% 13
+\bibitem[\protect\citeauthoryear{Chen et~al.}{2021}]{chen2021evaluating}
+\begin{botherref}
+\oauthor{\bsnm{Chen}, \binits{M.}},
+\oauthor{\bsnm{Tworek}, \binits{J.}},
+\oauthor{\bsnm{Jun}, \binits{H.}},
+\oauthor{\bsnm{Yuan}, \binits{Q.}},
+\oauthor{\bsnm{Pinto}, \binits{H.P.d.O.}},
+\oauthor{\bsnm{Kaplan}, \binits{J.}},
+\oauthor{\bsnm{Edwards}, \binits{H.}},
+\oauthor{\bsnm{Burda}, \binits{Y.}},
+\oauthor{\bsnm{Joseph}, \binits{N.}},
+\oauthor{\bsnm{Brockman}, \binits{G.}}:
+Evaluating large language models trained on code.
+arXiv preprint arXiv:2107.03374
+(2021)
+\end{botherref}
+\endbibitem
+
+%%% 14
+\bibitem[\protect\citeauthoryear{Yang et~al.}{2024}]{yang2024qwen25}
+\begin{botherref}
+\oauthor{\bsnm{Yang}, \binits{A.}}, et al.:
+Qwen2.5 technical report
+(2024)
+\doiurl{10.48550/arXiv.2412.15115} .
+arXiv preprint arXiv:2412.15115
+\end{botherref}
+\endbibitem
+
+\end{thebibliography}

@@ -1,0 +1,1893 @@
+\begin{thebibliography}{100}
+
+\bibitem{UK:Large:2024}
+{Communications and Digital Committee},
+\newblock ``Large language models and generative {AI},''
+\newblock {\em 1st Report of Session 2023–24}, 2024.
+
+\bibitem{Jeary2024}
+L. Jeary and D. Gajjar,
+\newblock ``Artificial intelligence and new technology in creative industries,'' October 2024,
+\newblock Accessed: 2025-01-10.
+
+\bibitem{Bai:Train:2021}
+Y. Bai, A. Jones, K. Ndousse, et~al.,
+\newblock ``Training a helpful and harmless assistant with reinforcement learning from human feedback,''
+\newblock {\em arXiv:2204.05862}, 2021.
+
+\bibitem{openai:gpt4:2023}
+{OpenAI}, J. Achiam, S. Adler, S. Agarwal, et~al.,
+\newblock ``{GPT-4} technical report,''
+\newblock {\em arXiv: 2303.08774}, 2023.
+
+\bibitem{Wang:Painter:2023}
+X. Wang, W. Wang, Y. Cao, C. Shen, and T. Huang,
+\newblock ``Images speak in images: A generalist painter for in-context visual learning,''
+\newblock in {\em 2023 IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}, 2023, pp. 6830--6839.
+
+\bibitem{chung:human-loop:2021}
+N.~C. Chung,
+\newblock ``Human in the loop for machine creativity,''
+\newblock in {\em AAAI Conference on Human Computation and Crowdsourcing}, 2021.
+
+\bibitem{Wu:brief:2023}
+T. Wu, S. He, J. Liu, S. Sun, K. Liu, Q.-L. Han, and Y. Tang,
+\newblock ``A brief overview of {ChatGPT}: The history, status quo and potential future development,''
+\newblock {\em IEEE/CAA Journal of Automatica Sinica}, vol. 10, no. 5, pp. 1122--1136, 2023.
+
+\bibitem{Anantrasirichai:AI:2022}
+N. Anantrasirichai and D. Bull,
+\newblock ``Artificial intelligence in the creative industries: a review,''
+\newblock {\em Artificial Intelligence Review}, vol. 55, pp. 589--656, 2022.
+
+\bibitem{Bommasani2021FoundationModels}
+R. Bommasani, D.~A. Hudson, E. Adeli, R. Altman, S. Arora, et~al.,
+\newblock ``On the opportunities and risks of foundation models,''
+\newblock {\em arXiv:2108.07258}, 2021.
+
+\bibitem{Vaswani:attention:2017}
+A. Vaswani, N. Shazeer, N. Parmar, J. Uszkoreit, L. Jones, A.~N. Gomez, L.~u. Kaiser, and I. Polosukhin,
+\newblock ``Attention is all you need,''
+\newblock in {\em Advances in Neural Information Processing Systems}, 2017, vol.~30.
+
+\bibitem{Dosovitskiy:image:2021}
+A. Dosovitskiy, L. Beyer, A. Kolesnikov, D. Weissenborn, X. Zhai, T. Unterthiner, M. Dehghani, M. Minderer, G. Heigold, S. Gelly, J. Uszkoreit, and N. Houlsby,
+\newblock ``An image is worth 16$\times$16 words: {T}ransformers for image recognition at scale,''
+\newblock in {\em International Conference on Learning Representations}, 2021.
+
+\bibitem{Reed:Generalist:2022}
+S. Reed, K. Zolna, E. Parisotto, S.~G. Colmenarejo, A. Novikov, G. Barth-maron, M. Gim{\'e}nez, Y. Sulsky, J. Kay, J.~T. Springenberg, T. Eccles, J. Bruce, A. Razavi, A. Edwards, N. Heess, Y. Chen, R. Hadsell, O. Vinyals, M. Bordbar, and N. de~Freitas,
+\newblock ``A generalist agent,''
+\newblock {\em Transactions on Machine Learning Research}, 2022.
+
+\bibitem{Li:HAM:2022}
+G. Li, Q. Fang, L. Zha, X. Gao, and N. Zheng,
+\newblock ``{HAM: Hybrid} attention module in deep convolutional neural networks for image classification,''
+\newblock {\em Pattern Recognition}, vol. 129, pp. 108785, 2022.
+
+\bibitem{Woo:CBAM:2018}
+S. Woo, J. Park, J.-Y. Lee, and I.~S. Kweon,
+\newblock ``{CBAM: Convolutional} block attention module,''
+\newblock in {\em Proceedings of the European Conference on Computer Vision (ECCV)}, September 2018.
+
+\bibitem{Guo:Attention:2022}
+M.-H. Guo, T.-X. Xu, J.-J. Liu, and et~al.,
+\newblock ``Attention mechanisms in computer vision: A survey,''
+\newblock {\em Computational Visual Media}, vol. 8, pp. 331–368, 2022.
+
+\bibitem{Liu:Swin:2021}
+Z. Liu, Y. Lin, Y. Cao, H. Hu, Y. Wei, Z. Zhang, S. Lin, and B. Guo,
+\newblock ``{Swin Transformer: Hierarchical} vision transformer using shifted windows,''
+\newblock in {\em Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV)}, 2021.
+
+\bibitem{Liu:Swinv2:2022}
+Z. Liu, H. Hu, Y. Lin, Z. Yao, Z. Xie, Y. Wei, J. Ning, Y. Cao, Z. Zhang, L. Dong, F. Wei, and B. Guo,
+\newblock ``Swin transformer v2: Scaling up capacity and resolution,''
+\newblock in {\em 2022 IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}, 2022, pp. 11999--12009.
+
+\bibitem{Fan:SUNet:2022}
+C.-M. Fan, T.-J. Liu, and K.-H. Liu,
+\newblock ``{SUNet: swin} transformer unet for image denoising,''
+\newblock in {\em 2022 IEEE International Symposium on Circuits and Systems (ISCAS)}. IEEE, 2022, pp. 2333--2337.
+
+\bibitem{Neimark:video:2021}
+D. Neimark, O. Bar, M. Zohar, and D. Asselmann,
+\newblock ``Video transformer network,''
+\newblock in {\em 2021 IEEE/CVF International Conference on Computer Vision Workshops (ICCVW)}, 2021, pp. 3156--3165.
+
+\bibitem{Bertasius:Is:2021}
+G. Bertasius, H. Wang, and L. Torresani,
+\newblock ``Is space-time attention all you need for video understanding?,''
+\newblock in {\em Proceedings of the International Conference on Machine Learning (ICML)}, July 2021.
+
+\bibitem{Khan:Transformers:2022}
+S. Khan, M. Naseer, M. Hayat, S.~W. Zamir, F.~S. Khan, and M. Shah,
+\newblock ``Transformers in vision: A survey,''
+\newblock {\em ACM computing surveys (CSUR)}, vol. 54, no. 10s, sep 2022.
+
+\bibitem{Selva:video:2023}
+J. Selva, A.~S. Johansen, S. Escalera, K. Nasrollahi, T.~B. Moeslund, and A. Clapes,
+\newblock ``Video transformers: A survey,''
+\newblock {\em IEEE Transactions on Pattern Analysis and Machine Intelligence}, vol. 45, no. 11, pp. 12922--12943, nov 2023.
+
+\bibitem{gu2023mamba}
+A. Gu and T. Dao,
+\newblock ``{Mamba: Linear}-time sequence modeling with selective state spaces,''
+\newblock in {\em Conference on Language Modeling}, 2024.
+
+\bibitem{zhu2024vision}
+L. Zhu, B. Liao, Q. Zhang, X. Wang, W. Liu, and X. Wang,
+\newblock ``Vision mamba: Efficient visual representation learning with bidirectional state space model,'' 2024.
+
+\bibitem{Yang:diffusion:2023}
+L. Yang, Z. Zhang, Y. Song, S. Hong, R. Xu, Y. Zhao, W. Zhang, B. Cui, and M.-H. Yang,
+\newblock ``Diffusion models: A comprehensive survey of methods and applications,''
+\newblock {\em ACM Comput. Surv.}, vol. 56, no. 4, nov 2023.
+
+\bibitem{Rombach:LDM:2022}
+R. Rombach, A. Blattmann, D. Lorenz, P. Esser, and B. Ommer,
+\newblock ``High-resolution image synthesis with latent diffusion models,''
+\newblock in {\em IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}, 2022, pp. 10674--10685.
+
+\bibitem{Lester:power:2021}
+B. Lester, R. Al-Rfou, and N. Constant,
+\newblock ``The power of scale for parameter-efficient prompt tuning,''
+\newblock in {\em Proceedings of the 2021 Conference on Empirical Methods in Natural Language Processing}, Nov. 2021, pp. 3045--3059.
+
+\bibitem{Jia:VPT:2022}
+M. Jia, L. Tang, B.-C. Chen, C. Cardie, S. Belongie, B. Hariharan, and S.-N. Lim,
+\newblock ``Visual prompt tuning,''
+\newblock in {\em European Conference on Computer Vision (ECCV)}, 2022.
+
+\bibitem{zhao:survey:2023}
+W.~X. Zhao, K. Zhou, J. Li, T. Tang, et~al.,
+\newblock ``A survey of large language models,''
+\newblock {\em arXiv:2303.18223}, 2023.
+
+\bibitem{Chang:Survey:2024}
+Y. Chang, X. Wang, J. Wang, Y. Wu, L. Yang, et~al.,
+\newblock ``A survey on evaluation of large language models,''
+\newblock {\em ACM Trans. Intell. Syst. Technol.}, vol. 15, no. 3, mar 2024.
+
+\bibitem{YAO:Survey:2024}
+Y. Yao, J. Duan, K. Xu, Y. Cai, Z. Sun, and Y. Zhang,
+\newblock ``A survey on large language model (llm) security and privacy: The good, the bad, and the ugly,''
+\newblock {\em High-Confidence Computing}, vol. 4, no. 2, pp. 100211, 2024.
+
+\bibitem{Ye:FLASK:2024}
+S. Ye, D. Kim, S. Kim, H. Hwang, S. Kim, Y. Jo, J. Thorne, J. Kim, and M. Seo,
+\newblock ``{FLASK}: Fine-grained language model evaluation based on alignment skill sets,''
+\newblock in {\em The Twelfth International Conference on Learning Representations}, 2024.
+
+\bibitem{Kingma:auto:2014}
+D. Kingma and M. Welling,
+\newblock ``Auto-encoding variational bayes,''
+\newblock in {\em International Conference on Learning Representations}, 2014.
+
+\bibitem{Goodfellow:GAN:2014}
+I. Goodfellow, J. Pouget-Abadie, M. Mirza, B. Xu, D. Warde-Farley, S. Ozair, A. Courville, and Y. Bengio,
+\newblock ``Generative adversarial nets,''
+\newblock in {\em Advances in Neural Information Processing Systems 27}, Z. Ghahramani, M. Welling, C. Cortes, N.~D. Lawrence, and K.~Q. Weinberger, Eds., pp. 2672--2680. Curran Associates, Inc., 2014.
+
+\bibitem{Dickstein:Deep:2015}
+J. Sohl-Dickstein, E. Weiss, N. Maheswaranathan, and S. Ganguli,
+\newblock ``Deep unsupervised learning using nonequilibrium thermodynamics,''
+\newblock in {\em Proceedings of the 32nd International Conference on Machine Learning}, 07--09 Jul 2015, vol.~37, pp. 2256--2265.
+
+\bibitem{Ho:DDPM:2020}
+J. Ho, A. Jain, and P. Abbeel,
+\newblock ``Denoising diffusion probabilistic models,''
+\newblock in {\em Advances in Neural Information Processing Systems}, 2020, p. 6840–6851.
+
+\bibitem{Song:Score:2021}
+Y. Song, J. Sohl-Dickstein, D.~P. Kingma, A. Kumar, S. Ermon, and B. Poole,
+\newblock ``Score-based generative modeling through stochastic differential equations,''
+\newblock in {\em International Conference on Learning Representations}, 2021.
+
+\bibitem{Dhariwal:Diffusion:2021}
+P. Dhariwal and A.~Q. Nichol,
+\newblock ``Diffusion models beat {GAN}s on image synthesis,''
+\newblock in {\em Advances in Neural Information Processing Systems}, A. Beygelzimer, Y. Dauphin, P. Liang, and J.~W. Vaughan, Eds., 2021.
+
+\bibitem{Choi:ILVR:2021}
+J. Choi, S. Kim, Y. Jeong, Y. Gwon, and S. Yoon,
+\newblock ``{ILVR: Conditioning} method for denoising diffusion probabilistic models,''
+\newblock in {\em 2021 IEEE/CVF International Conference on Computer Vision (ICCV)}, 2021, pp. 14347--14356.
+
+\bibitem{Cao:survey:2024}
+H. Cao, C. Tan, Z. Gao, Y. Xu, G. Chen, P.-A. Heng, and S.~Z. Li,
+\newblock ``A survey on generative diffusion models,''
+\newblock {\em IEEE Transactions on Knowledge and Data Engineering}, pp. 1--20, 2024.
+
+\bibitem{xie2022neural}
+Y. Xie, T. Takikawa, S. Saito, O. Litany, S. Yan, N. Khan, F. Tombari, J. Tompkin, V. Sitzmann, and S. Sridhar,
+\newblock ``Neural fields in visual computing and beyond,''
+\newblock in {\em Computer Graphics Forum}. Wiley Online Library, 2022, vol. 41(2), pp. 641--676.
+
+\bibitem{kwan2024hinerv}
+H.~M. Kwan, G. Gao, F. Zhang, A. Gower, and D. Bull,
+\newblock ``{HiNeRV}: Video compression with hierarchical encoding-based neural representation,''
+\newblock {\em {Advances in Neural Information Processing Systems}}, vol. 36, pp. 72692--72704, 2024.
+
+\bibitem{sitzmann:siren:2020}
+V. Sitzmann, J.~N. Martel, A.~W. Bergman, D.~B. Lindell, and G. Wetzstein,
+\newblock ``Implicit neural representations with periodic activation functions,''
+\newblock in {\em Proc. NeurIPS}, 2020.
+
+\bibitem{Saragadam:wire:2023}
+V. Saragadam, D. LeJeune, J. Tan, G. Balakrishnan, A. Veeraraghavan, and R.~G. Baraniuk,
+\newblock ``Wire: Wavelet implicit neural representations,''
+\newblock in {\em Conf. Computer Vision and Pattern Recognition}, 2023.
+
+\bibitem{Mildenhall:NeRF:2020}
+B. Mildenhall, P.~P. Srinivasan, M. Tancik, J.~T. Barron, R. Ramamoorthi, and R. Ng,
+\newblock ``{NeRF: Representing} scenes as neural radiance fields for view synthesis,''
+\newblock in {\em Computer Vision -- ECCV 2020}, A. Vedaldi, H. Bischof, T. Brox, and J.-M. Frahm, Eds., 2020, pp. 405--421.
+
+\bibitem{Wang:SIMVLM:2022}
+Z. Wang, J. Yu, A.~W. Yu, Z. Dai, Y. Tsvetkov, and Y. Cao,
+\newblock ``{SIMVLM: Simple} visual language model pretraining with weak supervision,''
+\newblock in {\em International Conference on Learning Representations (ICLR)}, 2022.
+
+\bibitem{wei2024vary}
+H. Wei, L. Kong, J. Chen, L. Zhao, Z. Ge, J. Yang, J. Sun, C. Han, and X. Zhang,
+\newblock ``{Vary: Scaling} up the vision vocabulary for large vision-language models,''
+\newblock in {\em European Conference on Computer Vision}, 2024.
+
+\bibitem{Alayrac:Flamingo:2022}
+J.-B. Alayrac, J. Donahue, P. Luc, A. Miech, I. Barr, Y. Hasson, K. Lenc, A. Mensch, K. Millican, M. Reynolds, R. Ring, E. Rutherford, S. Cabi, T. Han, Z. Gong, S. Samangooei, M. Monteiro, J.~L. Menick, S. Borgeaud, A. Brock, A. Nematzadeh, S. Sharifzadeh, M.~a. Bi\'{n}kowski, R. Barreira, O. Vinyals, A. Zisserman, and K. Simonyan,
+\newblock ``Flamingo: a visual language model for few-shot learning,''
+\newblock in {\em Advances in Neural Information Processing Systems}, 2022, vol.~35, pp. 23716--23736.
+
+\bibitem{Huang:GenerSpeech:2022}
+R. Huang, Y. Ren, J. Liu, C. Cui, and Z. Zhao,
+\newblock ``{GenerSpeech: Towards} style transfer for generalizable out-of-domain text-to-speech,''
+\newblock in {\em Advances in Neural Information Processing Systems}, 2022.
+
+\bibitem{Li:Diffusion:2022}
+X. Li, J. Thickstun, I. Gulrajani, P.~S. Liang, and T.~B. Hashimoto,
+\newblock ``Diffusion-lm improves controllable text generation,''
+\newblock in {\em Advances in Neural Information Processing Systems}, 2022, vol.~35, pp. 4328--4343.
+
+\bibitem{Yang:Diffsound:2023}
+D. Yang, J. Yu, H. Wang, W. Wang, C. Weng, Y. Zou, and D. Yu,
+\newblock ``Diffsound: Discrete diffusion model for text-to-sound generation,''
+\newblock {\em IEEE/ACM Transactions on Audio, Speech, and Language Processing}, vol. 31, pp. 1720--1733, 2023.
+
+\bibitem{esser:scaling:2024}
+P. Esser, S. Kulal, A. Blattmann, R. Entezari, J. M{\"u}ller, et~al.,
+\newblock ``Scaling rectified flow transformers for high-resolution image synthesis,''
+\newblock in {\em Proceedings of the 41 st International Conference on Machine Learning}, 2024.
+
+\bibitem{Brooks:InstructPix2Pix:2023}
+T. Brooks, A. Holynski, and A.~A. Efros,
+\newblock ``{InstructPix2Pix: Learning} to follow image editing instructions,''
+\newblock in {\em Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}, June 2023, pp. 18392--18402.
+
+\bibitem{gal:Image:2023}
+R. Gal, Y. Alaluf, Y. Atzmon, O. Patashnik, A.~H. Bermano, G. Chechik, and D. Cohen-or,
+\newblock ``An image is worth one word: Personalizing text-to-image generation using textual inversion,''
+\newblock in {\em The Eleventh International Conference on Learning Representations}, 2023.
+
+\bibitem{Gandikota:Unified:2024}
+R. Gandikota, H. Orgad, Y. Belinkov, J. Materzy\'nska, and D. Bau,
+\newblock ``Unified concept editing in diffusion models,''
+\newblock in {\em Proceedings of the IEEE/CVF Winter Conference on Applications of Computer Vision (WACV)}, January 2024, pp. 5111--5120.
+
+\bibitem{Lian:LLMG:2024}
+L. Lian, B. Li, A. Yala, and T. Darrell,
+\newblock ``{LLM}-grounded diffusion: Enhancing prompt understanding of text-to-image diffusion models with large language models,''
+\newblock {\em Transactions on Machine Learning Research}, 2024,
+\newblock Featured Certification.
+
+\bibitem{ren:hypersd:2024}
+Y. Ren, X. Xia, Y. Lu, J. Zhang, J. Wu, P. Xie, X. Wang, and X. Xiao,
+\newblock ``{Hyper-SD: Trajectory} segmented consistency model for efficient image synthesis,''
+\newblock in {\em Advances in Neural Information Processing Systems}, 2024.
+
+\bibitem{hong:cogvideo:2023}
+W. Hong, M. Ding, W. Zheng, X. Liu, and J. Tang,
+\newblock ``Cogvideo: Large-scale pretraining for text-to-video generation via transformers,''
+\newblock in {\em The Eleventh International Conference on Learning Representations}, 2023.
+
+\bibitem{villegas:phenaki:2023}
+R. Villegas, M. Babaeizadeh, P.-J. Kindermans, H. Moraldo, H. Zhang, M.~T. Saffar, S. Castro, J. Kunze, and D. Erhan,
+\newblock ``{Phenaki: Variable} length video generation from open domain textual descriptions,''
+\newblock in {\em International Conference on Learning Representations}, 2023.
+
+\bibitem{Azadi:Make:2023}
+S. Azadi, A. Shah, T. Hayes, D. Parikh, and S. Gupta,
+\newblock ``{Make-An-Animation: Large}-scale text-conditional {3D} human motion generation,''
+\newblock in {\em Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV)}, October 2023, pp. 15039--15048.
+
+\bibitem{Yu:Bidirectionally:2023}
+W.-Y. Yu, L.-M. Po, R.~C. Cheung, Y. Zhao, Y. Xue, and K. Li,
+\newblock ``Bidirectionally deformable motion modulation for video-based human pose transfer,''
+\newblock in {\em 2023 IEEE/CVF International Conference on Computer Vision (ICCV)}, 2023, pp. 7468--7478.
+
+\bibitem{Liu:FETV:2023}
+Y. Liu, L. Li, S. Ren, R. Gao, S. Li, S. Chen, X. Sun, and L. Hou,
+\newblock ``{FETV: A} benchmark for fine-grained evaluation of open-domain text-to-video generation,''
+\newblock in {\em Advances in Neural Information Processing Systems}, 2023, vol.~36, pp. 62352--62387.
+
+\bibitem{wang:disco:2024}
+T. Wang, L. Li, K. Lin, Y. Zhai, C.-C. Lin, Z. Yang, H. Zhang, Z. Liu, and L. Wang,
+\newblock ``Disco: Disentangled control for realistic human dance generation,''
+\newblock in {\em Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}, June 2024, pp. 9326--9336.
+
+\bibitem{xu:VASA-1:2024}
+S. Xu, G. Chen, Y.-X. Guo, J. Yang, C. Li, Z. Zang, Y. Zhang, X. Tong, and B. Guo,
+\newblock ``{VASA}-1: Lifelike audio-driven talking faces generated in real time,''
+\newblock in {\em The Thirty-eighth Annual Conference on Neural Information Processing Systems}, 2024.
+
+\bibitem{corona:vlogger:2024}
+E. Corona, A. Zanfir, E.~G. Bazavan, N. Kolotouros, T. Alldieck, and C. Sminchisescu,
+\newblock ``Vlogger: Multimodal diffusion for embodied avatar synthesis,''
+\newblock {\em arXiv:2403.08764}, 2024.
+
+\bibitem{Gupta:Photorealistic:2024}
+A. Gupta, L. Yu, K. Sohn, X. Gu, M. Hahn, F.-F. Li, I. Essa, L. Jiang, and J. Lezama,
+\newblock ``Photorealistic video generation with diffusion models,''
+\newblock in {\em European Conference Computer Vision}, 2024, p. 393–411.
+
+\bibitem{Hu_2024_CVPR}
+L. Hu,
+\newblock ``{Animate Anyone: Consistent} and controllable image-to-video synthesis for character animation,''
+\newblock in {\em Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}, June 2024, pp. 8153--8163.
+
+\bibitem{Zhu:INFP:2024}
+Y. Zhu, L. Zhang, Z. Rong, T. Hu, S. Liang, and Z. Ge,
+\newblock ``{INFP: Audio}-driven interactive head generation in dyadic conversations,''
+\newblock {\em arXiv:2412.04037}, 2024.
+
+\bibitem{singer:Make:2023}
+U. Singer, A. Polyak, T. Hayes, X. Yin, J. An, S. Zhang, Q. Hu, H. Yang, O. Ashual, O. Gafni, D. Parikh, S. Gupta, and Y. Taigman,
+\newblock ``{Make-A-Video: Text}-to-video generation without text-video data,''
+\newblock in {\em The Eleventh International Conference on Learning Representations}, 2023.
+
+\bibitem{molad:dreamix:2023}
+E. Molad, E. Horwitz, D. Valevski, A.~R. Acha, Y. Matias, Y. Pritch, Y. Leviathan, and Y. Hoshen,
+\newblock ``Dreamix: Video diffusion models are general video editors,''
+\newblock {\em arXiv: 2302.01329}, 2023.
+
+\bibitem{wang:modelscope:2023}
+J. Wang, H. Yuan, D. Chen, Y. Zhang, X. Wang, and S. Zhang,
+\newblock ``Modelscope text-to-video technical report,''
+\newblock {\em arXiv: 2308.06571}, 2023.
+
+\bibitem{wu:tune:2023}
+J.~Z. Wu, Y. Ge, X. Wang, S.~W. Lei, Y. Gu, Y. Shi, W. Hsu, Y. Shan, X. Qie, and M.~Z. Shou,
+\newblock ``{Tune-a-video: One-shot} tuning of image diffusion models for text-to-video generation,''
+\newblock in {\em Proceedings of the IEEE/CVF International Conference on Computer Vision}, 2023, pp. 7623--7633.
+
+\bibitem{yang:Holodeck:2024}
+Y. Yang, F.-Y. Sun, L. Weihs, E. VanderBilt, A. Herrasti, W. Han, J. Wu, N. Haber, R. Krishna, L. Liu, C. Callison-Burch, M. Yatskar, A. Kembhavi, and C. Clark,
+\newblock ``{Holodeck: Language} guided generation of {3D} embodied {AI} environments,''
+\newblock in {\em Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}, 2024.
+
+\bibitem{Xu:NeuralLift:2023}
+D. Xu, Y. Jiang, P. Wang, Z. Fan, Y. Wang, and Z. Wang,
+\newblock ``{NeuralLift-360: Lifting} an in-the-wild 2d photo to a {3D} object with 360° views,''
+\newblock in {\em 2023 IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}, 2023, pp. 4479--4489.
+
+\bibitem{Melas:RealFusion:2023}
+L. Melas-Kyriazi, I. Laina, C. Rupprecht, and A. Vedaldi,
+\newblock ``Realfusion 360$^\circ$ reconstruction of any object from a single image,''
+\newblock in {\em 2023 IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}, 2023, pp. 8446--8455.
+
+\bibitem{Qian:Magic123:2024}
+G. Qian, J. Mai, A. Hamdi, J. Ren, A. Siarohin, B. Li, H.-Y. Lee, I. Skorokhodov, P. Wonka, S. Tulyakov, and B. Ghanem,
+\newblock ``{Magic123: One} image to high-quality {3D} object generation using both 2d and {3D} diffusion priors,''
+\newblock in {\em The Twelfth International Conference on Learning Representations (ICLR)}, 2024.
+
+\bibitem{tang:dreamgaussian:2024}
+J. Tang, J. Ren, H. Zhou, Z. Liu, and G. Zeng,
+\newblock ``Dreamgaussian: Generative gaussian splatting for efficient {3D} content creation,''
+\newblock in {\em The Twelfth International Conference on Learning Representations}, 2024.
+
+\bibitem{ren:dreamgaussian4d:2023}
+J. Ren, L. Pan, J. Tang, C. Zhang, A. Cao, G. Zeng, and Z. Liu,
+\newblock ``{DreamGaussian4D: Generative} 4d gaussian splatting,''
+\newblock {\em arXiv preprint arXiv:2312.17142}, 2023.
+
+\bibitem{zhao2024clear}
+Y. Zhao, M. Dasari, and T. Guo,
+\newblock ``{CleAR}: Robust context-guided generative lighting estimation for mobile augmented reality,''
+\newblock {\em arXiv preprint arXiv:2411.02179}, 2024,
+\newblock Available at https://arxiv.org/abs/2411.02179.
+
+\bibitem{sun:text:2023}
+X. Sun, X. Li, J. Li, F. Wu, S. Guo, T. Zhang, and G. Wang,
+\newblock ``Text classification via large language models,''
+\newblock in {\em The 2023 Conference on Empirical Methods in Natural Language Processing}, 2023.
+
+\bibitem{shi:chatgraph:2023}
+Y. Shi, H. Ma, W. Zhong, Q. Tan, G. Mai, X. Li, T. Liu, and J. Huang,
+\newblock ``{ChatGraph: Interpretable} text classification by converting chatgpt knowledge to graphs,''
+\newblock in {\em 2023 IEEE International Conference on Data Mining Workshops (ICDMW)}, 2023, pp. 515--520.
+
+\bibitem{Hou:promptboosting:2023}
+B. Hou, J. O'Connor, J. Andreas, S. Chang, and Y. Zhang,
+\newblock ``{P}rompt{B}oosting: Black-box text classification with ten forward passes,''
+\newblock in {\em Proceedings of the 40th International Conference on Machine Learning}, 23--29 Jul 2023, vol. 202, pp. 13309--13324.
+
+\bibitem{Mao:Biases:2023}
+R. Mao, Q. Liu, K. He, W. Li, and E. Cambria,
+\newblock ``The biases of pre-trained language models: An empirical study on prompt-based sentiment analysis and emotion detection,''
+\newblock {\em IEEE Transactions on Affective Computing}, vol. 14, no. 3, pp. 1743--1753, 2023.
+
+\bibitem{krugmann:sentiment:2024}
+J.~O. Krugmann and J. Hartmann,
+\newblock ``Sentiment analysis in the age of generative {AI},''
+\newblock {\em Customer Needs and Solutions}, vol. 11, no. 3, 2024.
+
+\bibitem{Hartmann:More:2023}
+J. Hartmann, M. Heitmann, C. Siebert, and C. Schamp,
+\newblock ``More than a feeling: Accuracy and application of sentiment analysis,''
+\newblock {\em International Journal of Research in Marketing}, vol. 40, no. 1, pp. 75--87, 2023.
+
+\bibitem{Metzler:Rethinking:2021}
+D. Metzler, Y. Tay, D. Bahri, and M. Najork,
+\newblock ``Rethinking search: making domain experts out of dilettantes,''
+\newblock {\em SIGIR Forum}, vol. 55, no. 1, jul 2021.
+
+\bibitem{Yan:Universal:2023}
+B. Yan, Y. Jiang, J. Wu, D. Wang, P. Luo, Z. Yuan, and H. Lu,
+\newblock ``Universal instance perception as object discovery and retrieval,''
+\newblock in {\em Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}, June 2023, pp. 15325--15336.
+
+\bibitem{Lu:content:2023}
+D. Lu, S.-Y. Wang, N. Kumari, R. Agarwal, M. Tang, D. Bau, and J.-Y. Zhu,
+\newblock ``Content-based search for deep generative models,''
+\newblock in {\em SIGGRAPH Asia 2023 Conference Papers}, 2023.
+
+\bibitem{Rajput:recommender:2023}
+S. Rajput, N. Mehta, A. Singh, R. Hulikal~Keshavan, T. Vu, et~al.,
+\newblock ``Recommender systems with generative retrieval,''
+\newblock in {\em Advances in Neural Information Processing Systems}, 2023, vol.~36, pp. 10299--10315.
+
+\bibitem{li:unigen:2024}
+X. Li, Y. Zhou, and Z. Dou,
+\newblock ``{UniGen: A} unified generative framework for retrieval and question answering with large language models,''
+\newblock in {\em Proceedings of the AAAI Conference on Artificial Intelligence}, 2024, vol.~38, pp. 8688--8696.
+
+\bibitem{li2024learning}
+Y. Li, N. Yang, L. Wang, F. Wei, and W. Li,
+\newblock ``Learning to rank in generative retrieval,''
+\newblock in {\em AAAI 2024}, 2024.
+
+\bibitem{Jin:DiffusionRet:2023}
+P. Jin, H. Li, Z. Cheng, K. Li, X. Ji, C. Liu, L. Yuan, and J. Chen,
+\newblock ``{DiffusionRet: Generative} text-video retrieval with diffusion model,''
+\newblock in {\em Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV)}, October 2023, pp. 2470--2481.
+
+\bibitem{King:Sasha:2024}
+E. King, H. Yu, S. Lee, and C. Julien,
+\newblock ``{Sasha: Creative} goal-oriented reasoning in smart homes with large language models,''
+\newblock {\em Proc. ACM Interact. Mob. Wearable Ubiquitous Technol.}, vol. 8, no. 1, mar 2024.
+
+\bibitem{Xu:SNR:2022}
+X. Xu, R. Wang, C.-W. Fu, and J. Jia,
+\newblock ``Snr-aware low-light image enhancement,''
+\newblock in {\em 2022 IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}, 2022, pp. 17693--17703.
+
+\bibitem{liang:RVRT:2022}
+J. Liang, Y. Fan, X. Xiang, R. Ranjan, E. Ilg, S. Green, J. Cao, K. Zhang, R. Timofte, and L. Gool,
+\newblock ``Recurrent video restoration transformer with guided deformable attention,''
+\newblock in {\em Advances in Neural Information Processing Systems}, 2022.
+
+\bibitem{Wang:Ultra:2023}
+T. Wang, K. Zhang, T. Shen, W. Luo, B. Stenger, and T. Lu,
+\newblock ``Ultra-high-definition low-light image enhancement: A benchmark and transformer-based method,''
+\newblock in {\em Proceedings of the AAAI Conference on Artificial Intelligence}, 2023, vol.~37, pp. 2654--2662.
+
+\bibitem{Lin:SPATIO:2024}
+R. Lin, N. Anantrasirichai, A. Malyugina, and D. Bull,
+\newblock ``A spatio-temporal aligned sunet model for low-light video enhancement,''
+\newblock in {\em IEEE International Conference on Image Processing}, 2024.
+
+\bibitem{Youk:FMA:2024}
+G. Youk, J. Oh, and M. Kim,
+\newblock ``{FMA-Net: Flow}-guided dynamic filtering and iterative feature refinement with multi-attention for joint video super-resolution and deblurring,''
+\newblock in {\em Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}, 2024.
+
+\bibitem{Liang:VRT:2024}
+J. Liang, J. Cao, Y. Fan, K. Zhang, R. Ranjan, Y. Li, R. Timofte, and L. Van~Gool,
+\newblock ``Vrt: A video restoration transformer,''
+\newblock {\em IEEE Transactions on Image Processing}, vol. 33, pp. 2171--2182, 2024.
+
+\bibitem{HOU:Global:2023}
+J. HOU, Z. Zhu, J. Hou, H. LIU, H. Zeng, and H. Yuan,
+\newblock ``Global structure-aware diffusion process for low-light image enhancement,''
+\newblock in {\em Advances in Neural Information Processing Systems}, 2023, vol.~36, pp. 79734--79747.
+
+\bibitem{Yi:Diff:2023}
+X. Yi, H. Xu, H. Zhang, L. Tang, and J. Ma,
+\newblock ``Diff-retinex: Rethinking low-light image enhancement with a generative diffusion model,''
+\newblock in {\em Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV)}, October 2023, pp. 12302--12311.
+
+\bibitem{Jiang:Low:2023}
+H. Jiang, A. Luo, H. Fan, S. Han, and S. Liu,
+\newblock ``Low-light image enhancement with wavelet-based diffusion models,''
+\newblock {\em ACM Transactions on Graphics (TOG)}, vol. 42, no. 6, pp. 1--14, 2023.
+
+\bibitem{lin2024lowlight}
+R. Lin, Q. Sun, and N. Anantrasirichai,
+\newblock ``Low-light video enhancement with conditional diffusion models and wavelet interscale attentions,''
+\newblock in {\em Proceedings of the 21st ACM SIGGRAPH Conference on Visual Media Production}, 2024, pp. 1--10.
+
+\bibitem{Yang:Implicit:2023}
+S. Yang, M. Ding, Y. Wu, Z. Li, and J. Zhang,
+\newblock ``Implicit neural representation for cooperative low-light image enhancement,''
+\newblock in {\em Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV)}, October 2023, pp. 12918--12927.
+
+\bibitem{Deng:StyTr2:2022}
+Y. Deng, F. Tang, W. Dong, C. Ma, X. Pan, L. Wang, and C. Xu,
+\newblock ``{StyTr2: Image} style transfer with transformers,''
+\newblock in {\em Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}, June 2022, pp. 11326--11336.
+
+\bibitem{Moon:generalizable:2023}
+J. Moon, T. Moon, and W. Seo,
+\newblock ``Generalizable style transfer for implicit neural representation,''
+\newblock in {\em International Conference on Learning Representations (ICLR)}, 2023.
+
+\bibitem{Chung_2024_CVPR}
+J. Chung, S. Hyun, and J.-P. Heo,
+\newblock ``Style injection in diffusion: A training-free approach for adapting large-scale diffusion models for style transfer,''
+\newblock in {\em Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}, June 2024, pp. 8795--8805.
+
+\bibitem{Zhang:Inversion:2023}
+Y. Zhang, N. Huang, F. Tang, H. Huang, C. Ma, W. Dong, and C. Xu,
+\newblock ``Inversion-based style transfer with diffusion models,''
+\newblock in {\em Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}, June 2023, pp. 10146--10156.
+
+\bibitem{Chai:StableVideo:2023}
+W. Chai, X. Guo, G. Wang, and Y. Lu,
+\newblock ``{StableVideo: Text}-driven consistency-aware diffusion video editing,''
+\newblock in {\em Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV)}, October 2023, pp. 23040--23050.
+
+\bibitem{Kim:Controllable:2024}
+S. Kim, Y. Min, Y. Jung, and S. Kim,
+\newblock ``Controllable style transfer via test-time training of implicit neural representation,''
+\newblock {\em Pattern Recognition}, vol. 146, pp. 109988, 2024.
+
+\bibitem{Liang:SwinIR:2021}
+J. Liang, J. Cao, G. Sun, K. Zhang, L. Van~Gool, and R. Timofte,
+\newblock ``Swinir: Image restoration using swin transformer,''
+\newblock in {\em 2021 IEEE/CVF International Conference on Computer Vision Workshops (ICCVW)}, 2021, pp. 1833--1844.
+
+\bibitem{Lu:Transformer:2022}
+Z. Lu, J. Li, H. Liu, C. Huang, L. Zhang, and T. Zeng,
+\newblock ``Transformer for single image super-resolution,''
+\newblock in {\em Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) Workshops}, June 2022, pp. 457--466.
+
+\bibitem{Liu:Learning:2022}
+C. Liu, H. Yang, J. Fu, and X. Qian,
+\newblock ``Learning trajectory-aware transformer for video super-resolution,''
+\newblock in {\em Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}, June 2022, pp. 5687--5696.
+
+\bibitem{Chen:Activating:2023}
+X. Chen, X. Wang, J. Zhou, Y. Qiao, and C. Dong,
+\newblock ``Activating more pixels in image super-resolution transformer,''
+\newblock in {\em Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}, June 2023, pp. 22367--22377.
+
+\bibitem{li:GRL:2023}
+Y. Li, Y. Fan, X. Xiang, R.~R. Denis~Demandolx, R. Timofte, , and L.~V. Gool,
+\newblock ``Efficient and explicit modelling of image hierarchies for image restoration,''
+\newblock in {\em Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition}, 2023.
+
+\bibitem{kang:gigagan:2023}
+M. Kang, J.-Y. Zhu, R. Zhang, J. Park, E. Shechtman, S. Paris, and T. Park,
+\newblock ``Scaling up gans for text-to-image synthesis,''
+\newblock in {\em Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR)}, 2023.
+
+\bibitem{xu:videogigagan:2024}
+Y. Xu, T. Park, R. Zhang, Y. Zhou, E. Shechtman, F. Liu, J.-B. Huang, and D. Liu,
+\newblock ``{VideoGigaGAN: Towards} detail-rich video super-resolution,''
+\newblock {\em arXiv:2404.12388}, 2024.
+
+\bibitem{Saharia:image:2023}
+C. Saharia, J. Ho, W. Chan, T. Salimans, D.~J. Fleet, and M. Norouzi,
+\newblock ``Image super-resolution via iterative refinement,''
+\newblock {\em IEEE Transactions on Pattern Analysis and Machine Intelligence}, vol. 45, no. 4, pp. 4713--4726, 2023.
+
+\bibitem{Moliner:solving:2023}
+E. Moliner, J. Lehtinen, and V. Välimäki,
+\newblock ``Solving audio inverse problems with a diffusion model,''
+\newblock in {\em IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP)}, 2023, pp. 1--5.
+
+\bibitem{Gao:Implicit:2023}
+S. Gao, X. Liu, B. Zeng, S. Xu, Y. Li, X. Luo, J. Liu, X. Zhen, and B. Zhang,
+\newblock ``Implicit diffusion models for continuous super-resolution,''
+\newblock in {\em Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}, June 2023, pp. 10021--10030.
+
+\bibitem{Chen:Learning:2021}
+Y. Chen, S. Liu, and X. Wang,
+\newblock ``Learning continuous image representation with local implicit image function,''
+\newblock in {\em 2021 IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}, 2021, pp. 8624--8634.
+
+\bibitem{Fei:Generative:2023}
+B. Fei, Z. Lyu, L. Pan, J. Zhang, W. Yang, T. Luo, B. Zhang, and B. Dai,
+\newblock ``Generative diffusion prior for unified image restoration and enhancement,''
+\newblock in {\em Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}, June 2023, pp. 9935--9946.
+
+\bibitem{Yin:CLE:2023}
+Y. Yin, D. Xu, C. Tan, P. Liu, Y. Zhao, and Y. Wei,
+\newblock ``{CLE Diffusion: Controllable} light enhancement diffusion model,''
+\newblock in {\em Proceedings of the 31st ACM International Conference on Multimedia}, 2023, p. 8145–8156.
+
+\bibitem{Wang:Uformer:2022}
+Z. Wang, X. Cun, J. Bao, W. Zhou, J. Liu, and H. Li,
+\newblock ``Uformer: A general u-shaped transformer for image restoration,''
+\newblock in {\em 2022 IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}, 2022, pp. 17662--17672.
+
+\bibitem{Zamir:Restormer:2022}
+S.~W. Zamir, A. Arora, S. Khan, M. Hayat, F.~S. Khan, and M. Yang,
+\newblock ``Restormer: Efficient transformer for high-resolution image restoration,''
+\newblock in {\em 2022 IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}, 2022, pp. 5718--5729.
+
+\bibitem{yang:ldp:2023}
+H. Yang, L. Pan, Y. Yang, R. Hartley, and M. Liu,
+\newblock ``{LDP}: Language-driven dual-pixel image defocus deblurring network,''
+\newblock {\em arXiv: 2307.09815}, 2023.
+
+\bibitem{Morris:DaBiT:2024}
+C. Morris, N. Anantrasirichai, F. Zhang, and D. Bull,
+\newblock ``{DaBiT: Depth} and blur informed transformer for video deblurring,''
+\newblock in {\em IEEE/CVF Winter Conference on Applications of Computer Vision Workshop}, 2025.
+
+\bibitem{Yu:DBT:2022}
+G. Yu, A. Li, H. Wang, Y. Wang, Y. Ke, and C. Zheng,
+\newblock ``Dbt-net: Dual-branch federative magnitude and phase estimation with attention-in-attention transformer for monaural speech enhancement,''
+\newblock {\em IEEE/ACM Transactions on Audio, Speech, and Language Processing}, vol. 30, pp. 2629--2644, 2022.
+
+\bibitem{Song:vision:2023}
+Y. Song, Z. He, H. Qian, and X. Du,
+\newblock ``Vision transformers for single image dehazing,''
+\newblock {\em IEEE Transactions on Image Processing}, vol. 32, pp. 1927--1941, 2023.
+
+\bibitem{Xu:Video:2023}
+J. Xu, X. Hu, L. Zhu, Q. Dou, J. Dai, Y. Qiao, and P.-A. Heng,
+\newblock ``Video dehazing via a multi-range temporal alignment network with physical prior,''
+\newblock in {\em Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}, June 2023, pp. 18053--18062.
+
+\bibitem{mao:single:2022}
+Z. Mao, A. Jaiswal, Z. Wang, and S.~H. Chan,
+\newblock ``Single frame atmospheric turbulence mitigation: A benchmark study and a new physics-inspired transformer model,''
+\newblock in {\em ECCV}, 2022.
+
+\bibitem{Zhang:Image:2024}
+X. Zhang, Z. Mao, N. Chimitt, and S.~H. Chan,
+\newblock ``Imaging through the atmosphere using turbulence mitigation transformer,''
+\newblock {\em IEEE Transactions on Computational Imaging}, vol. 10, pp. 115--128, 2024.
+
+\bibitem{zou2024deturb}
+Z. Zou and N. Anantrasirichai,
+\newblock ``{DeTurb: Atmospheric} turbulence mitigation with deformable 3d convolutions and 3d swin transformers,''
+\newblock in {\em Proceedings of the Asian Conference on Computer Vision (ACCV)}, 2024.
+
+\bibitem{yang:realworld:2023}
+C. Yang, L. Liang, and Z. Su,
+\newblock ``Real-world denoising via diffusion model,''
+\newblock {\em arXiv preprint arXiv:2305.04457}, 2023.
+
+\bibitem{Nair:AT-DDPM:2023}
+N.~G. Nair, K. Mei, and V.~M. Patel,
+\newblock ``{AT-DDPM: Restoring} faces degraded by atmospheric turbulence using denoising diffusion probabilistic models,''
+\newblock in {\em Proceedings of the IEEE/CVF Winter Conference on Applications of Computer Vision (WACV)}, January 2023, pp. 3434--3443.
+
+\bibitem{Jaiswal:Physics:2023}
+A. Jaiswal, X. Zhang, S.~H. Chan, and Z. Wang,
+\newblock ``Physics-driven turbulence image restoration with stochastic refinement,''
+\newblock in {\em Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV)}, October 2023, pp. 12170--12181.
+
+\bibitem{Jiang:NeRT:2023}
+W. Jiang, V. Boominathan, and A. Veeraraghavan,
+\newblock ``{NeRT: Implicit} neural representations for unsupervised atmospheric turbulence mitigation,''
+\newblock in {\em Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) Workshops}, June 2023, pp. 4236--4243.
+
+\bibitem{Li:MAT:2022}
+W. Li, Z. Lin, K. Zhou, L. Qi, Y. Wang, and J. Jia,
+\newblock ``{MAT: Mask}-aware transformer for large hole image inpainting,''
+\newblock in {\em Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}, June 2022, pp. 10758--10768.
+
+\bibitem{Liu:Reduce:2022}
+Q. Liu, Z. Tan, D. Chen, Q. Chu, X. Dai, Y. Chen, M. Liu, L. Yuan, and N. Yu,
+\newblock ``Reduce information loss in transformers for pluralistic image inpainting,''
+\newblock in {\em Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}, June 2022, pp. 11347--11357.
+
+\bibitem{Ren:DLFormer:2022}
+J. Ren, Q. Zheng, Y. Zhao, X. Xu, and C. Li,
+\newblock ``{DLFormer: Discrete} latent transformer for video inpainting,''
+\newblock in {\em Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}, June 2022, pp. 3511--3520.
+
+\bibitem{Zhou:ProPainter:2023}
+S. Zhou, C. Li, K.~C. Chan, and C.~C. Loy,
+\newblock ``{ProPainter: Improving} propagation and transformer for video inpainting,''
+\newblock in {\em Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV)}, October 2023, pp. 10477--10486.
+
+\bibitem{HUANG:Sparse:2024}
+W. Huang, Y. Deng, S. Hui, Y. Wu, S. Zhou, and J. Wang,
+\newblock ``Sparse self-attention transformer for image inpainting,''
+\newblock {\em Pattern Recognition}, vol. 145, pp. 109897, 2024.
+
+\bibitem{Ma:SwinFusion:2022}
+J. Ma, L. Tang, F. Fan, J. Huang, X. Mei, and Y. Ma,
+\newblock ``{SwinFusion: Cross-domain} long-range learning for general image fusion via swin transformer,''
+\newblock {\em IEEE/CAA Journal of Automatica Sinica}, vol. 9, no. 7, pp. 1200--1217, 2022.
+
+\bibitem{Rao:TGFuse:2023}
+D. Rao, T. Xu, and X.-J. Wu,
+\newblock ``{TGFuse: An} infrared and visible image fusion approach based on transformer and generative adversarial network,''
+\newblock {\em IEEE Transactions on Image Processing}, pp. 1--1, 2023.
+
+\bibitem{Liu:Multi:2023}
+J. Liu, Z. Liu, G. Wu, L. Ma, R. Liu, W. Zhong, Z. Luo, and X. Fan,
+\newblock ``Multi-interactive feature learning and a full-time multi-modality benchmark for image fusion and segmentation,''
+\newblock in {\em Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV)}, October 2023, pp. 8115--8124.
+
+\bibitem{Zhao:DDFM:2023}
+Z. Zhao, H. Bai, Y. Zhu, J. Zhang, S. Xu, Y. Zhang, K. Zhang, D. Meng, R. Timofte, and L. Van~Gool,
+\newblock ``{DDFM: Denoising} diffusion model for multi-modality image fusion,''
+\newblock in {\em Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV)}, October 2023, pp. 8082--8093.
+
+\bibitem{Shi:Motion-I2V:2024}
+X. Shi, Z. Huang, F.-Y. Wang, W. Bian, D. Li, Y. Zhang, M. Zhang, K.~C. Cheung, S. See, H. Qin, J. Dai, and H. Li,
+\newblock ``{Motion-I2V: Consistent} and controllable image-to-video generation with explicit motion modeling,''
+\newblock in {\em ACM SIGGRAPH Conference Papers}, 2024.
+
+\bibitem{guo2024liveportrait}
+J. Guo, D. Zhang, X. Liu, Z. Zhong, Y. Zhang, P. Wan, and D. Zhang,
+\newblock ``{LivePortrait: Efficient} portrait animation with stitching and retargeting control,''
+\newblock {\em arXiv preprint arXiv:2407.03168}, 2024.
+
+\bibitem{Bowen:Marked:2022}
+B. Cheng, I. Misra, A.~G. Schwing, A. Kirillov, and R. Girdhar,
+\newblock ``Masked-attention mask transformer for universal image segmentation,''
+\newblock in {\em Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}, 2022.
+
+\bibitem{Kirillov:SAM:2023}
+A. Kirillov, E. Mintun, N. Ravi, H. Mao, C. Rolland, L. Gustafson, T. Xiao, S. Whitehead, A.~C. Berg, W.-Y. Lo, P. Dollar, and R. Girshick,
+\newblock ``Segment anything,''
+\newblock in {\em Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV)}, October 2023, pp. 4015--4026.
+
+\bibitem{Ke:SAM-HQ:2023}
+L. Ke, M. Ye, M. Danelljan, Y. liu, Y.-W. Tai, C.-K. Tang, and F. Yu,
+\newblock ``Segment anything in high quality,''
+\newblock in {\em Advances in Neural Information Processing Systems}, 2023, vol.~36, pp. 29914--29934.
+
+\bibitem{Wang:SegGPT:2023}
+X. Wang, X. Zhang, Y. Cao, W. Wang, C. Shen, and T. Huang,
+\newblock ``{SegGPT}: Towards segmenting everything in context,''
+\newblock in {\em 2023 IEEE/CVF International Conference on Computer Vision (ICCV)}, 2023, pp. 1130--1140.
+
+\bibitem{Zou:Segment:2023}
+X. Zou, J. Yang, H. Zhang, F. Li, L. Li, J. Wang, L. Wang, J. Gao, and Y.~J. Lee,
+\newblock ``Segment everything everywhere all at once,''
+\newblock in {\em Advances in Neural Information Processing Systems}. 2023, vol.~36, pp. 19769--19782, Curran Associates, Inc.
+
+\bibitem{Oquab:DINOv2:2024}
+M. Oquab, T. Darcet, T. Moutakanni, H.~V. Vo, M. Szafraniec, V. Khalidov, P. Fernandez, D. HAZIZA, F. Massa, A. El-Nouby, M. Assran, N. Ballas, W. Galuba, R. Howes, P.-Y. Huang, S.-W. Li, I. Misra, M. Rabbat, V. Sharma, G. Synnaeve, H. Xu, H. Jegou, J. Mairal, P. Labatut, A. Joulin, and P. Bojanowski,
+\newblock ``{DINOv2: Learning} robust visual features without supervision,''
+\newblock {\em Transactions on Machine Learning Research}, 2024.
+
+\bibitem{ravi2024sam2}
+N. Ravi, V. Gabeur, Y.-T. Hu, R. Hu, C. Ryali, T. Ma, H. Khedr, R. R{\"a}dle, C. Rolland, L. Gustafson, E. Mintun, J. Pan, K.~V. Alwala, N. Carion, C.-Y. Wu, R. Girshick, P. Doll{\'a}r, and C. Feichtenhofer,
+\newblock ``Sam 2: Segment anything in images and videos,''
+\newblock {\em arXiv preprint arXiv:2408.00714}, 2024.
+
+\bibitem{Wu:DiffuMask:2023}
+W. Wu, Y. Zhao, M.~Z. Shou, H. Zhou, and C. Shen,
+\newblock ``{DiffuMask: Synthesizing} images with pixel-level annotations for semantic segmentation using diffusion models,''
+\newblock in {\em Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV)}, October 2023, pp. 1206--1217.
+
+\bibitem{Xu:Open:2023}
+J. Xu, S. Liu, A. Vahdat, W. Byeon, X. Wang, and S. De~Mello,
+\newblock ``Open-vocabulary panoptic segmentation with text-to-image diffusion models,''
+\newblock in {\em Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}, June 2023, pp. 2955--2966.
+
+\bibitem{Gu:Diffusioninst:2024}
+Z. Gu, H. Chen, and Z. Xu,
+\newblock ``{Diffusioninst: Diffusion} model for instance segmentation,''
+\newblock in {\em ICASSP 2024 - 2024 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP)}, 2024, pp. 2730--2734.
+
+\bibitem{Gong:Continuous:2023}
+R. Gong, Q. Wang, M. Danelljan, D. Dai, and L. Van~Gool,
+\newblock ``Continuous pseudo-label rectified domain adaptive semantic segmentation with implicit neural representations,''
+\newblock in {\em Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}, June 2023, pp. 7225--7235.
+
+\bibitem{Cen:Segment:2023}
+J. Cen, Z. Zhou, J. Fang, c. yang, W. Shen, L. Xie, D. Jiang, X. ZHANG, and Q. Tian,
+\newblock ``Segment anything in {3D with NeRFs},''
+\newblock in {\em Advances in Neural Information Processing Systems}, 2023, vol.~36, pp. 25971--25990.
+
+\bibitem{Carion:DERT:2020}
+N. Carion, F. Massa, G. Synnaeve, N. Usunier, A. Kirillov, and S. Zagoruyko,
+\newblock ``End-to-end object detection with transformers,''
+\newblock in {\em Eur. Conf. Comput. Vis.}, 2020, pp. 213--229.
+
+\bibitem{Zhu:Deformable:2021}
+X. Zhu, W. Su, L. Lu, B. Li, X. Wang, and J. Dai,
+\newblock ``{Deformable DETR: Deformable} transformers for end-to-end object detection,''
+\newblock in {\em International Conference on Learning Representations (ICLR)}, 2021.
+
+\bibitem{Huang:MonoDTR:2022}
+K.-C. Huang, T.-H. Wu, H.-T. Su, and W.~H. Hsu,
+\newblock ``{MonoDTR: Monocular} {3D} object detection with depth-aware transformer,''
+\newblock in {\em Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}, 2022.
+
+\bibitem{zhao:videoprism:2024}
+L. Zhao, N.~B. Gundavarapu, L. Yuan, H. Zhou, S. Yan, J. J., et~al.,
+\newblock ``{VideoPrism: A} foundational visual encoder for video understanding,''
+\newblock in {\em Proceedings of the 41st International Conference on Machine Learning}, 2024.
+
+\bibitem{Li:Your:2023}
+A.~C. Li, M. Prabhudesai, S. Duggal, E. Brown, and D. Pathak,
+\newblock ``Your diffusion model is secretly a zero-shot classifier,''
+\newblock in {\em 2023 IEEE/CVF International Conference on Computer Vision (ICCV)}, 2023, pp. 2206--2217.
+
+\bibitem{Chen:DiffusionDet:2023}
+S. Chen, P. Sun, Y. Song, and P. Luo,
+\newblock ``Diffusiondet: Diffusion model for object detection,''
+\newblock in {\em IEEE/CVF International Conference on Computer Vision (ICCV)}, 2023, pp. 19773--19786.
+
+\bibitem{Meinhardt:TrackFormer:2022}
+T. Meinhardt, A. Kirillov, L. Leal-Taix\'e, and C. Feichtenhofer,
+\newblock ``Trackformer: Multi-object tracking with transformers,''
+\newblock in {\em Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}, June 2022, pp. 8844--8854.
+
+\bibitem{zeng:motr:2022}
+F. Zeng, B. Dong, Y. Zhang, T. Wang, X. Zhang, and Y. Wei,
+\newblock ``Motr: End-to-end multiple-object tracking with transformer,''
+\newblock in {\em European Conference on Computer Vision (ECCV)}, 2022.
+
+\bibitem{cui:mixformer:2022}
+Y. Cui, C. Jiang, L. Wang, and G. Wu,
+\newblock ``Mixformer: End-to-end tracking with iterative mixed attention,''
+\newblock in {\em Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition}, 2022, pp. 13608--13618.
+
+\bibitem{Mayer:Transforming:2022}
+C. Mayer, M. Danelljan, G. Bhat, M. Paul, D.~P. Paudel, F. Yu, and L. Van~Gool,
+\newblock ``Transforming model prediction for tracking,''
+\newblock in {\em 2022 IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}, 2022, pp. 8721--8730.
+
+\bibitem{yang:track:2023}
+J. Yang, M. Gao, Z. Li, S. Gao, F. Wang, and F. Zheng,
+\newblock ``Track anything: Segment anything meets videos,''
+\newblock {\em arXiv:2304.11968}, 2023.
+
+\bibitem{Chen:SeqTrack:2023}
+X. Chen, H. Peng, D. Wang, H. Lu, and H. Hu,
+\newblock ``Seqtrack: Sequence to sequence learning for visual object tracking,''
+\newblock in {\em 2023 IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}, 2023, pp. 14572--14581.
+
+\bibitem{Zhang:MOTRv2:2023}
+Y. Zhang, T. Wang, and X. Zhang,
+\newblock ``{MOTRv2: Bootstrapping} end-to-end multi-object tracking by pretrained object detectors,''
+\newblock in {\em 2023 IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}, 2023, pp. 22056--22065.
+
+\bibitem{Yi:Comprehensive:2024}
+A. Yi and N. Anantrasirichai,
+\newblock ``A comprehensive study of object tracking in low-light environments,''
+\newblock {\em Sensors}, vol. 24, no. 14, 2024.
+
+\bibitem{kang2025exploring}
+B. Kang, X. Chen, S. Lai, Y. Liu, Y. Liu, and D. Wang,
+\newblock ``Exploring enhanced contextual information for video-level object tracking,''
+\newblock in {\em Proceedings of the AAAI Conference on Artificial Intelligence}, 2025.
+
+\bibitem{Luo:DiffusionTrack:2024}
+R. Luo, Z. Song, L. Ma, J. Wei, W. Yang, and M. Yang,
+\newblock ``{DiffusionTrack: Diffusion} model for multi-object tracking,''
+\newblock {\em Proceedings of the AAAI Conference on Artificial Intelligence}, vol. 38, no. 5, pp. 3991--3999, Mar. 2024.
+
+\bibitem{Xie:DiffusionTrack:2024}
+F. Xie, Z. Wang, and C. Ma,
+\newblock ``{DiffusionTrack: Point} set diffusion model for visual object tracking,''
+\newblock in {\em Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}, June 2024, pp. 19113--19124.
+
+\bibitem{Zhang:DiffusionTracker:2024}
+R. Zhang, D. Cai, L. Qian, Y. Du, H. Lu, and Y. Zhang,
+\newblock ``{DiffusionTracker: Targets} denoising based on diffusion model for visual tracking,''
+\newblock in {\em Pattern Recognition and Computer Vision}, 2024, pp. 225--237.
+
+\bibitem{Jung:AnyFlow:2023}
+H. Jung, Z. Hui, L. Luo, H. Yang, F. Liu, S. Yoo, R. Ranjan, and D. Demandolx,
+\newblock ``{AnyFlow: Arbitrary} scale optical flow with implicit neural representation,''
+\newblock in {\em Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}, June 2023, pp. 5455--5465.
+
+\bibitem{Wang:multi:2021}
+D. Wang, X. Cui, X. Chen, Z. Zou, T. Shi, S. Salcudean, Z.~J. Wang, and R. Ward,
+\newblock ``Multi-view {3D} reconstruction with transformers,''
+\newblock in {\em Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV)}, October 2021, pp. 5722--5731.
+
+\bibitem{Zhang:Lite:2023}
+N. Zhang, F. Nex, G. Vosselman, and N. Kerle,
+\newblock ``{Lite-Mono: A} lightweight cnn and transformer architecture for self-supervised monocular depth estimation,''
+\newblock in {\em Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}, June 2023, pp. 18537--18546.
+
+\bibitem{Chen:Vision:2023}
+Z. Chen, Y. Duan, W. Wang, J. He, T. Lu, J. Dai, and Y. Qiao,
+\newblock ``Vision transformer adapter for dense predictions,''
+\newblock in {\em Proceedings of the International Conference on Learning Representations (ICLR)}, 2023.
+
+\bibitem{Yang:depthanything:2024}
+L. Yang, B. Kang, Z. Huang, X. Xu, J. Feng, and H. Zhao,
+\newblock ``Depth anything: Unleashing the power of large-scale unlabeled data,''
+\newblock in {\em IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}, 2024.
+
+\bibitem{Yang:depthanythingv2:2024}
+L. Yang, B. Kang, Z. Huang, Z. Zhao, X. Xu, J. Feng, and H. Zhao,
+\newblock ``Depth anything v2,''
+\newblock in {\em Advances in Neural Information Processing Systems}, 2024.
+
+\bibitem{Barron:Mip-NeRF360:2022}
+J.~T. Barron, B. Mildenhall, D. Verbin, P.~P. Srinivasan, and P. Hedman,
+\newblock ``{Mip-NeRF 360: Unbounded} anti-aliased neural radiance fields,''
+\newblock in {\em 2022 IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}, 2022, pp. 5460--5469.
+
+\bibitem{Ji:DDP:2023}
+Y. Ji, Z. Chen, E. Xie, L. Hong, X. Liu, Z. Liu, T. Lu, Z. Li, and P. Luo,
+\newblock ``{DDP: Diffusion} model for dense visual prediction,''
+\newblock in {\em 2023 IEEE/CVF International Conference on Computer Vision (ICCV)}, 2023, pp. 21684--21695.
+
+\bibitem{wynn:diffusionerf:2023}
+J. Wynn and D. Turmukhambetov,
+\newblock ``{DiffusioNeRF: Regularizing Neural Radiance Fields with Denoising Diffusion Models},''
+\newblock in {\em Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}, 2023.
+
+\bibitem{Ke:Repurposing:2024}
+B. Ke, A. Obukhov, S. Huang, N. Metzger, R.~C. Daudt, and K. Schindler,
+\newblock ``Repurposing diffusion-based image generators for monocular depth estimation,''
+\newblock in {\em Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}, June 2024, pp. 9492--9502.
+
+\bibitem{pumarola:DNeRF:2020}
+A. Pumarola, E. Corona, G. Pons-Moll, and F. Moreno-Noguer,
+\newblock ``{D-NeRF: Neural} radiance fields for dynamic scenes,''
+\newblock in {\em Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition}, 2020.
+
+\bibitem{mueller:instant:2022}
+T. M\"uller, A. Evans, C. Schied, and A. Keller,
+\newblock ``Instant neural graphics primitives with a multiresolution hash encoding,''
+\newblock {\em ACM Trans. Graph.}, vol. 41, no. 4, pp. 102:1--102:15, July 2022.
+
+\bibitem{Mildenhall:NeRFDark:2022}
+B. Mildenhall, P. Hedman, R. Martin-Brualla, P.~P. Srinivasan, and J.~T. Barron,
+\newblock ``{NeRF in the Dark: High} dynamic range view synthesis from noisy raw images,''
+\newblock in {\em Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}, June 2022, pp. 16190--16199.
+
+\bibitem{Fang:Fast:2022}
+J. Fang, T. Yi, X. Wang, L. Xie, X. Zhang, W. Liu, M. Nie\ss{}ner, and Q. Tian,
+\newblock ``Fast dynamic radiance fields with time-aware neural voxels,''
+\newblock in {\em SIGGRAPH Asia 2022 Conference Papers}, 2022.
+
+\bibitem{Guo:neural:2022}
+H. Guo, S. Peng, H. Lin, Q. Wang, G. Zhang, H. Bao, and X. Zhou,
+\newblock ``Neural {3D} scene reconstruction with the manhattan-world assumption,''
+\newblock in {\em Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}, June 2022, pp. 5511--5520.
+
+\bibitem{azzarelli:waveplanes:2023}
+A. Azzarelli, N. Anantrasirichai, and D.~R. Bull,
+\newblock ``{WavePlanes: A} compact wavelet representation for dynamic neural radiance fields,''
+\newblock {\em arXiv preprint arXiv:2312.02218}, 2023.
+
+\bibitem{Fridovich:kplanes:2023}
+{Sara Fridovich-Keil and Giacomo Meanti}, F.~R. Warburg, B. Recht, and A. Kanazawa,
+\newblock ``K-planes: Explicit radiance fields in space, time, and appearance,''
+\newblock in {\em Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}, 2023.
+
+\bibitem{kerbl:3Dgaussians:2023}
+B. Kerbl, G. Kopanas, T. Leimk{\"u}hler, and G. Drettakis,
+\newblock ``{3D} gaussian splatting for real-time radiance field rendering,''
+\newblock {\em ACM Transactions on Graphics}, vol. 42, no. 4, July 2023.
+
+\bibitem{wu:4dgaussians:2024}
+G. Wu, T. Yi, J. Fang, L. Xie, X. Zhang, W. Wei, W. Liu, Q. Tian, and W. Xinggang,
+\newblock ``4d gaussian splatting for real-time dynamic scene rendering,''
+\newblock in {\em Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}, 2024.
+
+\bibitem{Yu:CoGS:2024}
+H. Yu, J. Julin, Z.~A. Milacski, K. Niinuma, and L.~A. Jeni,
+\newblock ``{CoGS: Controllable} gaussian splatting,''
+\newblock in {\em Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}, June 2024, pp. 21624--21633.
+
+\bibitem{Huang:SCGS:2024}
+Y.-H. Huang, Y.-T. Sun, Z. Yang, X. Lyu, Y.-P. Cao, and X. Qi,
+\newblock ``{SC-GS: Sparse}-controlled gaussian splatting for editable dynamic scenes,''
+\newblock in {\em Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}, June 2024, pp. 4220--4230.
+
+\bibitem{Wang2025}
+H. Wang, N. Anantrasirichai, F. Zhang, and D. Bull,
+\newblock ``{UW-GS: Distractor}-aware 3d gaussian splatting for enhanced underwater scene reconstruction,''
+\newblock in {\em Proceedings of the IEEE/CVF Winter Conference on Applications of Computer Vision (WACV)}, 2025.
+
+\bibitem{zhu2022transformer}
+Y. Zhu, Y. Yang, and T. Cohen,
+\newblock ``Transformer-based transform coding,''
+\newblock in {\em International Conference on Learning Representations}, 2022.
+
+\bibitem{zou2022devil}
+R. Zou, C. Song, and Z. Zhang,
+\newblock ``The devil is in the details: Window-based attention for image compression,''
+\newblock in {\em Proceedings of the IEEE/CVF conference on computer vision and pattern recognition}, 2022, pp. 17492--17501.
+
+\bibitem{liu2023learned}
+J. Liu, H. Sun, and J. Katto,
+\newblock ``Learned image compression with mixed transformer-cnn architectures,''
+\newblock in {\em Proceedings of the IEEE/CVF conference on computer vision and pattern recognition}, 2023, pp. 14388--14397.
+
+\bibitem{careil2023towards}
+M. Careil, M.~J. Muckley, J. Verbeek, and S. Lathuili{\`e}re,
+\newblock ``Towards image compression with perfect realism at ultra-low bitrates,''
+\newblock in {\em The Twelfth International Conference on Learning Representations}, 2023.
+
+\bibitem{yang2024lossy}
+R. Yang and S. Mandt,
+\newblock ``Lossy image compression with conditional diffusion models,''
+\newblock {\em Advances in Neural Information Processing Systems}, vol. 36, 2023.
+
+\bibitem{hoogeboom2023high}
+E. Hoogeboom, E. Agustsson, F. Mentzer, L. Versari, G. Toderici, and L. Theis,
+\newblock ``High-fidelity image compression with score-based generative models,''
+\newblock {\em arXiv preprint arXiv:2305.18231}, 2023.
+
+\bibitem{ghouse2023residual}
+N.~F. Ghouse, J. Petersen, A. Wiggers, T. Xu, and G. Sautiere,
+\newblock ``A residual diffusion model for high perceptual quality codec augmentation,''
+\newblock {\em arXiv preprint arXiv:2301.05489}, 2023.
+
+\bibitem{sitzmann2020implicit}
+V. Sitzmann, J. Martel, A. Bergman, D. Lindell, and G. Wetzstein,
+\newblock ``Implicit neural representations with periodic activation functions,''
+\newblock {\em Advances in neural information processing systems}, vol. 33, pp. 7462--7473, 2020.
+
+\bibitem{dupont2021coin}
+E. Dupont, A. Golinski, M. Alizadeh, Y.~W. Teh, and A. Doucet,
+\newblock ``{COIN}: Compression with implicit neural representations,''
+\newblock in {\em ICLR Workshop in Neural Compression}, 2021.
+
+\bibitem{dupontcoin++}
+E. Dupont, H. Loya, M. Alizadeh, A. Golinski, Y.~W. Teh, and A. Doucet,
+\newblock ``Coin++: Neural compression across modalities,''
+\newblock {\em Transactions on Machine Learning Research}, 2022.
+
+\bibitem{strumpler2022implicit}
+Y. Str{\"u}mpler, J. Postels, R. Yang, L.~V. Gool, and F. Tombari,
+\newblock ``Implicit neural representations for image compression,''
+\newblock in {\em European Conference on Computer Vision}. Springer, 2022, pp. 74--91.
+
+\bibitem{xiang2022mimt}
+J. Xiang, K. Tian, and J. Zhang,
+\newblock ``Mimt: Masked image modeling transformer for video compression,''
+\newblock in {\em International Conference on Learning Representations}, 2022.
+
+\bibitem{mentzer2022vct}
+F. Mentzer, G.~D. Toderici, D. Minnen, S. Caelles, S.~J. Hwang, M. Lucic, and E. Agustsson,
+\newblock ``Vct: A video compression transformer,''
+\newblock {\em Advances in Neural Information Processing Systems}, vol. 35, pp. 13091--13103, 2022.
+
+\bibitem{li2024extreme}
+B. Li, Y. Liu, X. Niu, B. Bai, L. Deng, and D. G{\"u}nd{\"u}z,
+\newblock ``Extreme video compression with pre-trained diffusion models,''
+\newblock {\em arXiv preprint arXiv:2402.08934}, 2024.
+
+\bibitem{chen2021nerv}
+H. Chen, B. He, H. Wang, Y. Ren, S.~N. Lim, and A. Shrivastava,
+\newblock ``{NeRV}: Neural representations for videos,''
+\newblock {\em Advances in Neural Information Processing Systems}, vol. 34, pp. 21557--21568, 2021.
+
+\bibitem{bai2023ps}
+Y. Bai, C. Dong, C. Wang, and C. Yuan,
+\newblock ``{PS-NeRV}: Patch-wise stylized neural representations for videos,''
+\newblock in {\em IEEE International Conference on Image Processing}. IEEE, 2023, pp. 41--45.
+
+\bibitem{kim2024c3}
+H. Kim, M. Bauer, L. Theis, J.~R. Schwarz, and E. Dupont,
+\newblock ``C3: High-performance and low-complexity neural compression from a single image or video,''
+\newblock in {\em Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition}, 2024, pp. 9347--9358.
+
+\bibitem{leguay2024cool}
+T. Leguay, T. Ladune, P. Philippe, and O. Déforges,
+\newblock ``{Cool-chic video: Learned} video coding with 800 parameters,''
+\newblock in {\em 2024 Data Compression Conference (DCC)}, 2024, pp. 23--32.
+
+\bibitem{kwan2024nvrc}
+H.~M. Kwan, G. Gao, F. Zhang, A. Gower, and D. Bull,
+\newblock ``{NVRC}: Neural video representation compression,''
+\newblock in {\em Advances in Neural Information Processing Systems}, 2024.
+
+\bibitem{gao2024pnvc}
+G. Gao, H.~M. Kwan, F. Zhang, and D. Bull,
+\newblock ``{PNVC}: Towards practical {INR}-based video compression,''
+\newblock {\em arXiv preprint arXiv:2409.00953}, 2024.
+
+\bibitem{ruan2024point}
+H. Ruan, Y. Shao, Q. Yang, L. Zhao, and D. Niyato,
+\newblock ``Point cloud compression with implicit neural representations: A unified framework,''
+\newblock {\em arXiv preprint arXiv:2405.11493}, 2024.
+
+\bibitem{kwan2024immersive}
+H.~M. Kwan, F. Zhang, A. Gower, and D. Bull,
+\newblock ``Immersive video compression using implicit neural representations,''
+\newblock in {\em Picture Coding Symposium}, 2024.
+
+\bibitem{cheon2021perceptual}
+M. Cheon, S.-J. Yoon, B. Kang, and J. Lee,
+\newblock ``Perceptual image quality assessment with transformers,''
+\newblock in {\em Proceedings of the IEEE/CVF conference on computer vision and pattern recognition}, 2021, pp. 433--442.
+
+\bibitem{golestaneh2022no}
+S.~A. Golestaneh, S. Dadsetan, and K.~M. Kitani,
+\newblock ``No-reference image quality assessment via transformers, relative ranking, and self-consistency,''
+\newblock in {\em Proceedings of the IEEE/CVF winter conference on applications of computer vision}, 2022, pp. 1220--1230.
+
+\bibitem{shi2024transformer}
+J. Shi, P. Gao, and J. Qin,
+\newblock ``Transformer-based no-reference image quality assessment via supervised contrastive learning,''
+\newblock in {\em Proceedings of the AAAI Conference on Artificial Intelligence}, 2024, vol.~38, pp. 4829--4837.
+
+\bibitem{wu2022fast}
+H. Wu, C. Chen, J. Hou, L. Liao, A. Wang, W. Sun, Q. Yan, and W. Lin,
+\newblock ``{Fast-VQA}: Efficient end-to-end video quality assessment with fragment sampling,''
+\newblock in {\em European conference on computer vision}. Springer, 2022, pp. 538--554.
+
+\bibitem{feng2024rankdvqa}
+C. Feng, D. Danier, F. Zhang, and D. Bull,
+\newblock ``Rankdvqa: Deep vqa based on ranking-inspired hybrid training,''
+\newblock in {\em Proceedings of the IEEE/CVF Winter Conference on Applications of Computer Vision}, 2024, pp. 1648--1658.
+
+\bibitem{wu2023exploringvideo}
+H. Wu, E. Zhang, L. Liao, C. Chen, J. Hou, A. Wang, W. Sun, Q. Yan, and W. Lin,
+\newblock ``Exploring video quality assessment on user generated contents from aesthetic and technical perspectives,''
+\newblock in {\em Proceedings of the IEEE/CVF International Conference on Computer Vision}, 2023, pp. 20144--20154.
+
+\bibitem{he2024cover}
+C. He, Q. Zheng, R. Zhu, X. Zeng, Y. Fan, and Z. Tu,
+\newblock ``{COVER}: A comprehensive video quality evaluator,''
+\newblock in {\em Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition}, 2024, pp. 5799--5809.
+
+\bibitem{peng2024rmt}
+T. Peng, C. Feng, D. Danier, F. Zhang, B. Vallade, A. Mackin, and D. Bull,
+\newblock ``{RMT-BVQA}: Recurrent memory transformer-based blind video quality assessment for enhanced video content,''
+\newblock in {\em European Conference on Computer Vision (ECCV) Workshop on Advances in Image Manipulation}, 2024.
+
+\bibitem{encyclopedia_ai_v1}
+S.~C. Shapiro and D. Eckroth, Eds.,
+\newblock {\em Encyclopedia of Artificial Intelligence}, vol.~1,
+\newblock John Wiley \& Sons, New York, 1987.
+
+\bibitem{Azzarelli:Reviewing:2024}
+A. Azzarelli, N. Anantrasirichai, and D. Bull,
+\newblock ``Reviewing intelligent cinematography: {AI} research for camera-based video production,''
+\newblock {\em Artificial Intelligence Review}, vol. 53, no. 108, 2025.
+
+\bibitem{ippolito:creative:2022}
+D. Ippolito, A. Yuan, A. Coenen, and S. Burnam,
+\newblock ``Creative writing with an {AI}-powered writing assistant: Perspectives from professional writers,''
+\newblock {\em arXiv:2211.05030}, 2022.
+
+\bibitem{guo:exploring:2024}
+A. Guo, P. Pataranutaporn, and P. Maes,
+\newblock ``Exploring the interaction of creative writers with {AI}-powered writing tools,''
+\newblock {\em arXiv:2402.12814}, 2024.
+
+\bibitem{Mirowski:cowriting:2023}
+P. Mirowski, K.~W. Mathewson, J. Pittman, and R. Evans,
+\newblock ``Co-writing screenplays and theatre scripts with language models: Evaluation by industry professionals,''
+\newblock in {\em Proceedings of the 2023 CHI Conference on Human Factors in Computing Systems}, 2023.
+
+\bibitem{Beckett:Generating:2023}
+C. Beckett and M. Yaseen,
+\newblock ``Generating change: {A} global survey of what news organisations are doing with {AI},''
+\newblock Tech. {R}ep., JournalismAI, 2023.
+
+\bibitem{Stefanini:From:2023}
+M. Stefanini, M. Cornia, L. Baraldi, S. Cascianelli, G. Fiameni, and R. Cucchiara,
+\newblock ``From show to tell: A survey on deep learning-based image captioning,''
+\newblock {\em IEEE Transactions on Pattern Analysis and Machine Intelligence}, vol. 45, no. 1, pp. 539--559, 2023.
+
+\bibitem{radford2021learning}
+A. Radford, J.~W. Kim, C. Hallacy, A. Ramesh, G. Goh, S. Agarwal, G. Sastry, A. Askell, P. Mishkin, J. Clark, G. Krueger, and I. Sutskever,
+\newblock ``Learning transferable visual models from natural language supervision,''
+\newblock in {\em International Conference on Machine Learning}, 2021.
+
+\bibitem{Zhang:vision:2024}
+J. Zhang, J. Huang, S. Jin, and S. Lu,
+\newblock ``Vision-language models for vision tasks: A survey,''
+\newblock {\em IEEE Transactions on Pattern Analysis and Machine Intelligence}, pp. 1--20, 2024.
+
+\bibitem{Oord:Neural:2017}
+A. van~den Oord, O. Vinyals, and K. Kavukcuoglu,
+\newblock ``Neural discrete representation learning,''
+\newblock in {\em Proceedings of the 31st International Conference on Neural Information Processing Systems}, 2017, p. 6309–6318.
+
+\bibitem{Wang:One:2022}
+Z. Wang, Q. Xie, T. Li, H. Du, L. Xie, P. Zhu, and M. Bi,
+\newblock ``One-shot voice conversion for style transfer based on speaker adaptation,''
+\newblock in {\em IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP)}, 2022, pp. 6792--6796.
+
+\bibitem{XU2025103402}
+F. Xu, T. Zhou, T. Nguyen, H. Bao, C. Lin, and J. Du,
+\newblock ``Integrating augmented reality and llm for enhanced cognitive support in critical audio communications,''
+\newblock {\em International Journal of Human-Computer Studies}, vol. 194, pp. 103402, 2025.
+
+\bibitem{deitke:Objaverse:2023}
+M. Deitke, R. Liu, M. Wallingford, H. Ngo, O. Michel, A. Kusupati, A. Fan, C. Laforte, V. Voleti, S.~Y. Gadre, E. VanderBilt, A. Kembhavi, C. Vondrick, G. Gkioxari, K. Ehsani, L. Schmidt, and A. Farhadi,
+\newblock ``{Objaverse-XL: A} universe of 10m+ {3D} objects,''
+\newblock in {\em Advances in Neural Information Processing Systems (NeurIPS)}, 7 2023.
+
+\bibitem{feizi:Online:2023}
+S. Feizi, M. Hajiaghayi, K. Rezaei, and S. Shin,
+\newblock ``Online advertisements with llms: Opportunities and challenges,''
+\newblock {\em arXiv preprint arXiv:2311.07601}, 2023.
+
+\bibitem{CHUA:AI:2023}
+A.~Y. Chua, A. Pal, and S. Banerjee,
+\newblock ``Ai-enabled investment advice: Will users buy it?,''
+\newblock {\em Computers in Human Behavior}, vol. 138, pp. 107481, 2023.
+
+\bibitem{brynjolfsson:generative:2023}
+E. Brynjolfsson, D. Li, and L. Raymond,
+\newblock ``Generative {AI} at work,''
+\newblock Tech. {R}ep., National Bureau of Economic Research, April 2023,
+\newblock NBER Working Paper No. w31161. Available at SSRN: \url{https://ssrn.com/abstract=4426942}.
+
+\bibitem{Lee:design:2024}
+M. Lee, K.~I. Gero, J.~J.~Y. Chung, S.~B. Shum, V. Raheja, H. Shen, S. Venugopalan, T. Wambsganss, D. Zhou, E.~A. Alghamdi, T. August, A. Bhat, M.~Z. Choksi, S. Dutta, J.~L. Guo, M.~N. Hoque, Y. Kim, S. Knight, S.~P. Neshaei, A. Shibani, D. Shrivastava, L. Shroff, A. Sergeyuk, J. Stark, S. Sterman, S. Wang, A. Bosselut, D. Buschek, J.~C. Chang, S. Chen, M. Kreminski, J. Park, R. Pea, E.~H.~R. Rho, Z. Shen, and P. Siangliulue,
+\newblock ``A design space for intelligent and interactive writing assistants,''
+\newblock in {\em Proceedings of the 2024 CHI Conference on Human Factors in Computing Systems}, 2024.
+
+\bibitem{sajja2024ai}
+R. Sajja, Y. Sermet, M. Cikmaz, D. Cwiertny, and I. Demir,
+\newblock ``Artificial intelligence-enabled intelligent assistant for personalized and adaptive learning in higher education,''
+\newblock {\em Information}, vol. 15, no. 10, pp. 596, 2024.
+
+\bibitem{Zhou:LEDNet:2022}
+S. Zhou, C. Li, and C. Change~Loy,
+\newblock ``Lednet: Joint low-light enhancement and deblurring in the dark,''
+\newblock in {\em Computer Vision -- ECCV 2022}, S. Avidan, G. Brostow, M. Ciss{\'e}, G.~M. Farinella, and T. Hassner, Eds., 2022, pp. 573--589.
+
+\bibitem{huang2025bayesian}
+G. Huang, N. Anantrasirichai, F. Ye, Z. Qi, R. Lin, Q. Yang, and D. Bull,
+\newblock ``Bayesian neural networks for one-to-many mapping in image enhancement,''
+\newblock {\em arXiv preprint}, vol. arXiv:2501.14265, January 2025.
+
+\bibitem{anantrasirichai:BVI:2024}
+N. Anantrasirichai, R. Lin, A. Malyugina, and D. Bull,
+\newblock ``{BVI-Lowlight: Fully} registered benchmark dataset for low-light video enhancement,''
+\newblock {\em arXiv preprint arXiv:2402.01970}, 2024.
+
+\bibitem{Lin:BVI-RLV:2024}
+R. Lin, N. Anantrasirichai, G. Huang, J. Lin, Q. Sun, A. Malyugina, and D. Bull,
+\newblock ``{BVI-RLV: A} fully registered dataset and benchmarks for low-light video enhancement,''
+\newblock {\em arXiv preprint arXiv:2407.03535}, 2024.
+
+\bibitem{Conde:Efficient:2023}
+M.~V. Conde, E. Zamfir, R. Timofte, D. Motilla, et~al.,
+\newblock ``Efficient deep models for real-time 4k image super-resolution. ntire 2023 benchmark and report,''
+\newblock in {\em 2023 IEEE/CVF Conference on Computer Vision and Pattern Recognition Workshops (CVPRW)}, 2023, pp. 1495--1521.
+
+\bibitem{Bilecen:Bicubic:2023}
+B. Bilecen and M. Ayazoglu,
+\newblock ``{Bicubic++: Slim,} slimmer, slimmest designing an industry-grade super-resolution network,''
+\newblock in {\em 2023 IEEE/CVF Conference on Computer Vision and Pattern Recognition Workshops (CVPRW)}, jun 2023, pp. 1623--1632.
+
+\bibitem{moser:diffusion:2023}
+B.~B. Moser, A.~S. Shanbhag, F. Raue, S. Frolov, S. Palacio, and A. Dengel,
+\newblock ``Diffusion models, image super-resolution, and everything: A survey,''
+\newblock {\em IEEE Transactions on Neural Networks and Learning Systems}, pp. 1--21, 2024.
+
+\bibitem{Chan:BasicVSR:2022}
+K.~C. Chan, S. Zhou, X. Xu, and C.~C. Loy,
+\newblock ``Basicvsr++: Improving video super-resolution with enhanced propagation and alignment,''
+\newblock in {\em Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}, June 2022, pp. 5972--5981.
+
+\bibitem{Fuoli:Fast:2023}
+D. Fuoli, M. Danelljan, R. Timofte, and L. Van~Gool,
+\newblock ``Fast online video super-resolution with deformable attention pyramid,''
+\newblock in {\em Proceedings of the IEEE/CVF Winter Conference on Applications of Computer Vision (WACV)}, January 2023, pp. 1735--1744.
+
+\bibitem{Pan:Deep:2023}
+J. Pan, B. Xu, J. Dong, J. Ge, and J. Tang,
+\newblock ``Deep discriminative spatial and temporal network for efficient video deblurring,''
+\newblock in {\em Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}, June 2023, pp. 22191--22200.
+
+\bibitem{Choi:Exploring:2023}
+M. Choi, H. Lee, and H.-e. Lee,
+\newblock ``Exploring positional characteristics of dual-pixel data for camera autofocus,''
+\newblock in {\em 2023 IEEE/CVF International Conference on Computer Vision (ICCV)}, 2023, pp. 13112--13122.
+
+\bibitem{Yang:K3DN:2023}
+Y. Yang, L. Pan, L. Liu, and M. Liu,
+\newblock ``{K3DN: Disparity}-aware kernel estimation for dual-pixel defocus deblurring,''
+\newblock in {\em Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}, June 2023, pp. 13263--13272.
+
+\bibitem{Atmospheric:2023}
+N. Anantrasirichai,
+\newblock ``Atmospheric turbulence removal with complex-valued convolutional neural network,''
+\newblock {\em Pattern Recognition Letters}, vol. 171, pp. 69--75, 2023.
+
+\bibitem{Hill2025}
+P. Hill, N. Anantrasirichai, A. Achim, and D. Bull,
+\newblock ``Deep learning techniques for atmospheric turbulence removal: A review,''
+\newblock {\em Artificial Intelligence Review}, vol. 58, no. 101, 2025.
+
+\bibitem{zheng:pluralistic:2019}
+C. Zheng, T.-J. Cham, and J. Cai,
+\newblock ``Pluralistic image completion,''
+\newblock in {\em Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition}, 2019, pp. 1438--1447.
+
+\bibitem{Zhang:DINet:2023}
+Z. Zhang, Z. Hu, W. Deng, C. Fan, T. Lv, and Y. Ding,
+\newblock ``{DINet: Deformation} inpainting network for realistic face visually dubbing on high resolution video,''
+\newblock in {\em Proceedings of the AAAI Conference on Artificial Intelligence}, 2023, vol.~37, pp. 3543--3551.
+
+\bibitem{quan:deep:2024}
+W. Quan, J. Chen, Y. Liu, and et~al.,
+\newblock ``Deep learning-based image and video inpainting: A survey,''
+\newblock {\em International Journal of Computer Vision}, 2024.
+
+\bibitem{Karim:Current:2023}
+S. Karim, G. Tong, J. Li, A. Qadir, U. Farooq, and Y. Yu,
+\newblock ``Current advances and future perspectives of image fusion: A comprehensive review,''
+\newblock {\em Information Fusion}, vol. 90, pp. 185--217, 2023.
+
+\bibitem{Zhang:Visible:2023}
+X. Zhang and Y. Demiris,
+\newblock ``Visible and infrared image fusion using deep learning,''
+\newblock {\em IEEE Transactions on Pattern Analysis and Machine Intelligence}, vol. 45, no. 8, pp. 10535--10554, 2023.
+
+\bibitem{Tous:Lester:2024}
+R. Tous,
+\newblock ``{Lester: Rotoscope} animation through video object segmentation and tracking,''
+\newblock {\em Algorithms}, vol. 17, no. 8, 2024.
+
+\bibitem{Baranchuk:label:2022}
+D. Baranchuk, A. Voynov, I. Rubachev, V. Khrulkov, and A. Babenko,
+\newblock ``Label-efficient semantic segmentation with diffusion models,''
+\newblock in {\em International Conference on Learning Representations}, 2022.
+
+\bibitem{Lin:Feature:2024}
+J. Lin, N. Anantrasirichai, and D. Bull,
+\newblock ``Feature denoising for low-light instance segmentation using weighted non-local blocks,''
+\newblock in {\em IEEE International Conference on Acoustics, Speech, and Signal Processing}, 2025.
+
+\bibitem{Goel:Interactive:2023}
+R. Goel, D. Sirikonda, S. Saini, and P.~J. Narayanan,
+\newblock ``Interactive segmentation of radiance fields,''
+\newblock in {\em Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}, June 2023, pp. 4201--4211.
+
+\bibitem{Ren:Faster:2027}
+S. Ren, K. He, R. Girshick, and J. Sun,
+\newblock ``Faster r-cnn: Towards real-time object detection with region proposal networks,''
+\newblock {\em IEEE Transactions on Pattern Analysis and Machine Intelligence}, vol. 39, no. 6, pp. 1137--1149, 2017.
+
+\bibitem{Zou:object:2023}
+Z. Zou, K. Chen, Z. Shi, Y. Guo, and J. Ye,
+\newblock ``Object detection in 20 years: A survey,''
+\newblock {\em Proceedings of the IEEE}, vol. 111, no. 3, pp. 257--276, 2023.
+
+\bibitem{bochkovskiy2020yolov4}
+A. Bochkovskiy, C.-Y. Wang, and H.-Y.~M. Liao,
+\newblock ``{YOLOv4: Optimal} speed and accuracy of object detection,''
+\newblock {\em arXiv preprint arXiv:2004.10934}, 2020.
+
+\bibitem{lv2:detrs:2024}
+Y. Zhao, W. Lv, S. Xu, J. Wei, G. Wang, Q. Dang, Y. Liu, and J. Chen,
+\newblock ``Detrs beat yolos on real-time object detection,''
+\newblock in {\em IEEE Conference on Computer Vision and Pattern Recognition (CVPR)}, 2024.
+
+\bibitem{wang:yolov10:2024}
+A. Wang, H. Chen, L. Liu, K. Chen, Z. Lin, J. Han, and G. Ding,
+\newblock ``{YOLOv10: Real}-time end-to-end object detection,''
+\newblock in {\em Advances in Neural Information Processing Systems}, 2024.
+
+\bibitem{Li:Transformer:2023}
+Y. Li, N. Miao, L. Ma, F. Shuang, and X. Huang,
+\newblock ``Transformer for object detection: Review and benchmark,''
+\newblock {\em Engineering Applications of Artificial Intelligence}, vol. 126, pp. 107021, 2023.
+
+\bibitem{Wu:datasetDM:2023}
+W. Wu, Y. Zhao, H. Chen, Y. Gu, R. Zhao, Y. He, H. Zhou, M.~Z. Shou, and C. Shen,
+\newblock ``{DatasetDM: Synthesizing} data with perception annotations using diffusion models,''
+\newblock in {\em Advances in Neural Information Processing Systems}. 2023, vol.~36, pp. 54683--54695, Curran Associates, Inc.
+
+\bibitem{Fang:Data:2024}
+H. Fang, B. Han, S. Zhang, S. Zhou, C. Hu, and W.-M. Ye,
+\newblock ``Data augmentation for object detection via controllable diffusion models,''
+\newblock in {\em Proceedings of the IEEE/CVF Winter Conference on Applications of Computer Vision (WACV)}, January 2024, pp. 1257--1266.
+
+\bibitem{Kugarajeevan:Transformers:2023}
+J. Kugarajeevan, T. Kokul, A. Ramanan, and S. Fernando,
+\newblock ``Transformers in single object tracking: An experimental survey,''
+\newblock {\em IEEE Access}, vol. 11, pp. 80297--80326, 2023.
+
+\bibitem{cheng:xmem:2022}
+H.~K. Cheng and A.~G. Schwing,
+\newblock ``Xmem: Long-term video object segmentation with an atkinson-shiffrin memory model,''
+\newblock in {\em ECCV}, 2022, vol. 13688, pp. 640--658.
+
+\bibitem{ge:yolox:2021}
+Z. Ge, S. Liu, F. Wang, Z. Li, and J. Sun,
+\newblock ``Yolox: Exceeding yolo series in 2021,''
+\newblock {\em arXiv preprint arXiv:2107.08430}, 2021.
+
+\bibitem{Azzarelli2024}
+A. Azzarelli, N. Anantrasirichai, and D.~R. Bull,
+\newblock ``Exploring dynamic novel view synthesis technologies for cinematography,''
+\newblock {\em arXiv: 2412.17532}, 2024.
+
+\bibitem{schoenberger:sfm:2016}
+J.~L. Sch\"{o}nberger and J.-M. Frahm,
+\newblock ``Structure-from-motion revisited,''
+\newblock in {\em Conference on Computer Vision and Pattern Recognition (CVPR)}, 2016.
+
+\bibitem{jiang:vrgs:2024}
+Y. Jiang, C. Yu, T. Xie, X. Li, Y. Feng, H. Wang, M. Li, H. Lau, F. Gao, Y. Yang, and C. Jiang,
+\newblock ``{VR-GS: A} physical dynamics-aware interactive gaussian splatting system in virtual reality,''
+\newblock in {\em ACM SIGGRAPH 2024 Conference Papers}, 2024.
+
+\bibitem{10521791}
+B. Fei, J. Xu, R. Zhang, Q. Zhou, W. Yang, and Y. He,
+\newblock ``3d gaussian splatting as new era: A survey,''
+\newblock {\em IEEE Transactions on Visualization and Computer Graphics}, pp. 1--20, 2024.
+
+\bibitem{Bull:intelligent:2021}
+D. Bull and F. Zhang,
+\newblock {\em Intelligent image and video compression: communicating pictures},
+\newblock Academic Press, 2021.
+
+\bibitem{balle2016density}
+J. Ball{\'e}, V. Laparra, and E.~P. Simoncelli,
+\newblock ``Density modeling of images using a generalized normalization transformation,''
+\newblock in {\em International Conference on Learning Representations (ICLR)}, 2016.
+
+\bibitem{balle2018variational}
+J. Ball{\'e}, D. Minnen, S. Singh, S.~J. Hwang, and N. Johnston,
+\newblock ``Variational image compression with a scale hyperprior,''
+\newblock in {\em International Conference on Learning Representations}, 2018.
+
+\bibitem{cheng2020learned}
+Z. Cheng, H. Sun, M. Takeuchi, and J. Katto,
+\newblock ``Learned image compression with discretized gaussian mixture likelihoods and attention modules,''
+\newblock in {\em Proceedings of the IEEE/CVF conference on computer vision and pattern recognition}, 2020, pp. 7939--7948.
+
+\bibitem{agustsson2019generative}
+E. Agustsson, M. Tschannen, F. Mentzer, R. Timofte, and L.~V. Gool,
+\newblock ``Generative adversarial networks for extreme learned image compression,''
+\newblock in {\em Proceedings of the IEEE/CVF International Conference on Computer Vision}, 2019, pp. 221--231.
+
+\bibitem{mentzer2020high}
+F. Mentzer, G.~D. Toderici, M. Tschannen, and E. Agustsson,
+\newblock ``High-fidelity generative image compression,''
+\newblock {\em Advances in Neural Information Processing Systems}, vol. 33, pp. 11913--11924, 2020.
+
+\bibitem{Bovik_MSSSIM}
+Z. Wang, E.~P. Simoncelli, and A.~C. Bovik,
+\newblock ``Multi-scale structural similarity for image quality assessment,''
+\newblock in {\em Asilomar Conf. Signals Syst. Comput.}, 2003, pp. 1398--1402.
+
+\bibitem{VMAFblog}
+Z. Li, A. Aaron, I. Katsavounidis, A. Moorthy, and M. Manohara,
+\newblock ``{The NETFLIX tech blog: Toward a practical perceptual video quality metric},'' \url{http://techblog.netflix.com/2016/06/toward-practical-perceptual-video.html}, note = {[Online; accessed 2018-08-04]},.
+
+\bibitem{clic}
+``{ Challenge on Learned Image Compression},'' \url{https://www.compression.cc/},
+\newblock Accessed: 2024-09-23.
+
+\bibitem{ascenso2023jpeg}
+J. Ascenso, E. Alshina, and T. Ebrahimi,
+\newblock ``The {JPEG AI standard}: Providing efficient human and machine visual data consumption,''
+\newblock {\em IEEE Multimedia}, vol. 30, no. 1, pp. 100--111, 2023.
+
+\bibitem{JPEGAIN100634}
+E. Alshina, J. Ascenso, S. Esenlik, A. Karabutov, Y. Wu, and T. Solovyev,
+\newblock ``{JPEG AI: Future Plans and Timeline v2},''
+\newblock {\em JPEG AI ISO/IEC JTC 1/SC29/WG1 N1100634}, 2024.
+
+\bibitem{JPEGAIM101081}
+A. Karabutov, Y. Wu, E. Alshina, and J. Ascenso,
+\newblock ``{JPEG AI sw v4.x status},''
+\newblock {\em JPEG AI ISO/IEC JTC 1/SC29/WG1 M101081}, 2024.
+
+\bibitem{li2021deepqtmt}
+T. Li, M. Xu, R. Tang, Y. Chen, and Q. Xing,
+\newblock ``{DeepQTMT}: A deep learning approach for fast {QTMT-based CU} partition of intra-mode {VVC},''
+\newblock {\em IEEE Transactions on Image Processing}, vol. 30, pp. 5377--5390, 2021.
+
+\bibitem{jin2021deep}
+D. Jin, J. Lei, B. Peng, W. Li, N. Ling, and Q. Huang,
+\newblock ``Deep affine motion compensation network for inter prediction in {VVC},''
+\newblock {\em IEEE Transactions on Circuits and Systems for Video Technology}, vol. 32, no. 6, pp. 3923--3933, 2021.
+
+\bibitem{feng2024low}
+Z. Feng, C. Jung, H. Zhang, Y. Liu, and M. Li,
+\newblock ``Low complexity in-loop filter for {VVC} based on convolution and transformer,''
+\newblock {\em IEEE Access}, 2024.
+
+\bibitem{zhang2023wcdann}
+H. Zhang, C. Jung, D. Zou, and M. Li,
+\newblock ``{WCDANN}: A lightweight {CNN} post-processing filter for {VVC-based} video compression,''
+\newblock {\em IEEE Access}, 2023.
+
+\bibitem{wang2023compression}
+Y. Wang, T. Isobe, X. Jia, X. Tao, H. Lu, and Y.-W. Tai,
+\newblock ``Compression-aware video super-resolution,''
+\newblock in {\em Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition}, 2023, pp. 2012--2021.
+
+\bibitem{li2023designs}
+Y. Li, J. Li, C. Lin, K. Zhang, L. Zhang, F. Galpin, T. Dumas, H. Wang, M. Coban, J. Str{\"o}m, et~al.,
+\newblock ``Designs and implementations in neural network-based video coding,''
+\newblock {\em arXiv preprint arXiv:2309.05846}, 2023.
+
+\bibitem{JVET-AG0014}
+F. Galpin, Y. Li, Y. Li, J.~N. Shingala, L. Wang, and Z. Xie,
+\newblock ``{NNVC} software development {AhG14},''
+\newblock {\em {Joint Video Experts Team (JVET) of ITU-T SG 16 WP 3 and ISO/IEC JTC 1/SC 29, doc. no. JVET-AG0014}}, January 2024.
+
+\bibitem{joshi2023switchable}
+U. Joshi, Y. Chen, I. Yoo, S. Li, F. Yang, and D. Mukherjee,
+\newblock ``Switchable cnns for in-loop restoration and super-resolution for av2,''
+\newblock in {\em Applications of Digital Image Processing XLVI}. SPIE, 2023, vol. 12674, pp. 121--130.
+
+\bibitem{kathariya2023joint}
+B. Kathariya, Z. Li, and G. Van~der Auwera,
+\newblock ``Joint pixel and frequency feature learning and fusion via channel-wise transformer for high-efficiency learned in-loop filter in vvc,''
+\newblock {\em IEEE Transactions on Circuits and Systems for Video Technology}, 2023.
+
+\bibitem{chadha2021deep}
+A. Chadha and Y. Andreopoulos,
+\newblock ``Deep perceptual preprocessing for video coding,''
+\newblock in {\em Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition}, 2021, pp. 14852--14861.
+
+\bibitem{tan2024joint}
+H. Tan, G. Xiang, X. Xie, and H. Jia,
+\newblock ``Joint frame-level and block-level rate-perception optimized preprocessing for video coding,''
+\newblock in {\em Proceedings of the 6th ACM International Conference on Multimedia in Asia}, 2024.
+
+\bibitem{lu2019dvc}
+G. Lu, W. Ouyang, D. Xu, X. Zhang, C. Cai, and Z. Gao,
+\newblock ``{DVC}: An end-to-end deep video compression framework,''
+\newblock in {\em Proceedings of the IEEE/CVF conference on computer vision and pattern recognition}, 2019, pp. 11006--11015.
+
+\bibitem{li2024neural}
+J. Li, B. Li, and Y. Lu,
+\newblock ``Neural video compression with feature modulation,''
+\newblock in {\em Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition}, 2024, pp. 26099--26108.
+
+\bibitem{Qi2024longterm}
+L. Qi, Z. Jia, J. Li, B. Li, H. Li, and Y. Lu,
+\newblock ``Long-term temporal context gathering for neural video compression,''
+\newblock in {\em European Conference on Computer Vision (ECCV)}, 2024.
+
+\bibitem{hu2021fvc}
+Z. Hu, G. Lu, and D. Xu,
+\newblock ``{FVC}: A new framework towards deep video compression in feature space,''
+\newblock in {\em Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition}, 2021, pp. 1502--1511.
+
+\bibitem{li2021deep}
+J. Li, B. Li, and Y. Lu,
+\newblock ``{Deep contextual video compression},''
+\newblock {\em {Advances in Neural Information Processing Systems}}, vol. 34, pp. 18114--18125, 2021.
+
+\bibitem{khani2021efficient}
+M. Khani, V. Sivaraman, and M. Alizadeh,
+\newblock ``Efficient video compression via content-adaptive super-resolution,''
+\newblock in {\em Proceedings of the IEEE/CVF International Conference on Computer Vision}, 2021, pp. 4521--4530.
+
+\bibitem{yang2024parameter}
+S. Oh, H. Yang, and E. Park,
+\newblock ``Parameter-efficient instance-adaptive neural video compression,''
+\newblock in {\em Asian Conference on Computer Vision}, 2024.
+
+\bibitem{li2023neural}
+J. Li, B. Li, and Y. Lu,
+\newblock ``Neural video compression with diverse contexts,''
+\newblock in {\em {IEEE/CVF Conference on Computer Vision and Pattern Recognition}}, 2023, pp. 22616--22626.
+
+\bibitem{ho2022canf}
+Y.-H. Ho, C.-P. Chang, P.-Y. Chen, A. Gnutti, and W.-H. Peng,
+\newblock ``{CANF-VC}: Conditional augmented normalizing flows for video compression,''
+\newblock in {\em European Conference on Computer Vision}. Springer, 2022, pp. 207--223.
+
+\bibitem{guo2023evc}
+W. Guo-Hua, J. Li, B. Li, and Y. Lu,
+\newblock ``Evc: Towards real-time neural image compression with mask decay,''
+\newblock in {\em International Conference on Learning Representations}, 2023.
+
+\bibitem{peng2024accelerating}
+T. Peng, G. Gao, H. Sun, F. Zhang, and D. Bull,
+\newblock ``Accelerating learnt video codecs with gradient decay and layer-wise distillation,''
+\newblock in {\em 2024 Picture Coding Symposium (PCS)}. IEEE, 2024, pp. 1--5.
+
+\bibitem{nawala2024bvi}
+J. Nawa{\l}a, Y. Jiang, F. Zhang, X. Zhu, J. Sole, and D. Bull,
+\newblock ``{BVI-AOM}: A new training dataset for deep video compression optimization,''
+\newblock in {\em IEEE Visual Communications and Image Processing (VCIP))}, 2024.
+
+\bibitem{li2022nerv}
+Z. Li, M. Wang, H. Pi, K. Xu, J. Mei, and Y. Liu,
+\newblock ``{E-NeRV}: Expedite neural video representation with disentangled spatial-temporal context,''
+\newblock in {\em European Conference on Computer Vision}. Springer, 2022, pp. 267--284.
+
+\bibitem{bossen2023vtmctc}
+F. Bossen, J. Boyce, K. Suehring, X. Li, and V. Seregin,
+\newblock ``{VTM} common test conditions and software reference configurations for {SDR} video,''
+\newblock in {\em the JVET meeting}, 2023, number {JVET-T2010}.
+
+\bibitem{zeghidour2021soundstream}
+N. Zeghidour, A. Luebs, A. Omran, J. Skoglund, and M. Tagliasacchi,
+\newblock ``Soundstream: An end-to-end neural audio codec,''
+\newblock {\em IEEE/ACM Transactions on Audio, Speech, and Language Processing}, vol. 30, pp. 495--507, 2021.
+
+\bibitem{kumar2024high}
+R. Kumar, P. Seetharaman, A. Luebs, I. Kumar, and K. Kumar,
+\newblock ``High-fidelity audio compression with improved rvqgan,''
+\newblock {\em Advances in Neural Information Processing Systems}, vol. 36, 2023.
+
+\bibitem{siuzdak2024snac}
+H. Siuzdak, F. Gr{\"o}tschla, and L.~A. Lanzend{\"o}rfer,
+\newblock ``{SNAC}: Multi-scale neural audio codec,''
+\newblock in {\em Audio Imagination: NeurIPS 2024 Workshop AI-Driven Speech, Music, and Sound Generation}, 2024.
+
+\bibitem{yang2024uniaudio}
+D. Yang, H. Guo, Y. Wang, R. Huang, X. Li, X. Tan, X. Wu, and H.~M. Meng,
+\newblock ``{UniAudio 1.5}: Large language model-driven audio codec is a few-shot audio task learner,''
+\newblock in {\em The Thirty-eighth Annual Conference on Neural Information Processing Systems}, 2024.
+
+\bibitem{yang2023uniaudio}
+D. Yang, J. Tian, X. Tan, R. Huang, S. Liu, X. Chang, J. Shi, S. Zhao, J. Bian, X. Wu, et~al.,
+\newblock ``{UniAudio}: An audio foundation model toward universal audio generation,''
+\newblock {\em arXiv preprint arXiv:2310.00704}, 2023.
+
+\bibitem{zhai2020perceptual}
+G. Zhai and X. Min,
+\newblock ``Perceptual image quality assessment: a survey,''
+\newblock {\em Science China Information Sciences}, vol. 63, pp. 1--52, 2020.
+
+\bibitem{zheng2024video}
+Q. Zheng, Y. Fan, L. Huang, T. Zhu, J. Liu, Z. Hao, S. Xing, C.-J. Chen, X. Min, A.~C. Bovik, et~al.,
+\newblock ``Video quality assessment: A comprehensive survey,''
+\newblock {\em arXiv preprint arXiv:2412.04508}, 2024.
+
+\bibitem{zhang2024quality}
+Z. Zhang, Y. Zhou, C. Li, B. Zhao, X. Liu, and G. Zhai,
+\newblock ``Quality assessment in the era of large models: A survey,''
+\newblock {\em arXiv preprint arXiv:2409.00031}, 2024.
+
+\bibitem{Bovik_SSIM}
+Z. {Wang}, A.~C. {Bovik}, H.~R. {Sheikh}, and E.~P. {Simoncelli},
+\newblock ``Image quality assessment: from error visibility to structural similarity,''
+\newblock {\em IEEE Trans. Image Process.}, vol. 13, no. 4, pp. 600--612, April 2004.
+
+\bibitem{wang2003multiscale}
+Z. Wang, E.~P. Simoncelli, and A.~C. Bovik,
+\newblock ``Multiscale structural similarity for image quality assessment,''
+\newblock in {\em The Thrity-Seventh Asilomar Conference on Signals, Systems \& Computers, 2003}. Ieee, 2003, vol.~2, pp. 1398--1402.
+
+\bibitem{rehman2015display}
+A. Rehman, K. Zeng, and Z. Wang,
+\newblock ``Display device-adapted video quality-of-experience assessment,''
+\newblock in {\em Human vision and electronic imaging XX}. SPIE, 2015, vol. 9394, pp. 27--37.
+
+\bibitem{chandler2007vsnr}
+D.~M. Chandler and S.~S. Hemami,
+\newblock ``{VSNR}: A wavelet-based visual signal-to-noise ratio for natural images,''
+\newblock {\em IEEE transactions on image processing}, vol. 16, no. 9, pp. 2284--2298, 2007.
+
+\bibitem{larson2010most}
+E.~C. Larson and D.~M. Chandler,
+\newblock ``Most apparent distortion: full-reference image quality assessment and the role of strategy,''
+\newblock {\em Journal of electronic imaging}, vol. 19, no. 1, pp. 011006--011006, 2010.
+
+\bibitem{STMAD}
+P.~V. {Vu}, C.~T. {Vu}, and D.~M. {Chandler},
+\newblock ``A spatiotemporal most-apparent-distortion model for video quality assessment,''
+\newblock in {\em IEEE ICIP}, Sep. 2011, pp. 2505--2508.
+
+\bibitem{ou2010perceptual}
+Y.-F. Ou, Z. Ma, T. Liu, and Y. Wang,
+\newblock ``Perceptual quality assessment of video considering both frame rate and quantization artifacts,''
+\newblock {\em IEEE Transactions on Circuits and Systems for Video Technology}, vol. 21, no. 3, pp. 286--298, 2010.
+
+\bibitem{zhu2014no}
+K. Zhu, C. Li, V. Asari, and D. Saupe,
+\newblock ``No-reference video quality assessment based on artifact measurement and statistical analysis,''
+\newblock {\em IEEE Transactions on Circuits and Systems for Video Technology}, vol. 25, no. 4, pp. 533--546, 2014.
+
+\bibitem{zhang2015perception}
+F. Zhang and D.~R. Bull,
+\newblock ``A perception-based hybrid model for video quality assessment,''
+\newblock {\em IEEE Transactions on Circuits and Systems for Video Technology}, vol. 26, no. 6, pp. 1017--1028, 2015.
+
+\bibitem{helmholtz1896handbook}
+H.~L.~F. von Helmholtz,
+\newblock {\em Handbook of Physiological Optics},
+\newblock Voss, Hamburg and Leipzig, Germany, 1st edition, 1896.
+
+\bibitem{kelly1977visual}
+D. Kelly,
+\newblock ``Visual contrast sensitivity,''
+\newblock {\em Optica Acta: International Journal of Optics}, vol. 24, no. 2, pp. 107--129, 1977.
+
+\bibitem{itti2001computational}
+L. Itti and C. Koch,
+\newblock ``Computational modelling of visual attention,''
+\newblock {\em Nature reviews neuroscience}, vol. 2, no. 3, pp. 194--203, 2001.
+
+\bibitem{kim2017deep}
+J. Kim and S. Lee,
+\newblock ``Deep learning of human visual sensitivity in image quality assessment framework,''
+\newblock in {\em Proceedings of the IEEE conference on computer vision and pattern recognition}, 2017, pp. 1676--1684.
+
+\bibitem{zhang2018unreasonable}
+R. Zhang, P. Isola, A.~A. Efros, E. Shechtman, and O. Wang,
+\newblock ``The unreasonable effectiveness of deep features as a perceptual metric,''
+\newblock in {\em Proceedings of the IEEE conference on computer vision and pattern recognition}, 2018, pp. 586--595.
+
+\bibitem{madhusudana2022image}
+P.~C. Madhusudana, N. Birkbeck, Y. Wang, B. Adsumilli, and A.~C. Bovik,
+\newblock ``Image quality assessment using contrastive learning,''
+\newblock {\em IEEE Transactions on Image Processing}, vol. 31, pp. 4149--4161, 2022.
+
+\bibitem{korhonen2019two}
+J. Korhonen,
+\newblock ``Two-level approach for no-reference consumer video quality assessment,''
+\newblock {\em IEEE Transactions on Image Processing}, vol. 28, no. 12, pp. 5923--5938, 2019.
+
+\bibitem{xu2020c3dvqa}
+M. Xu, J. Chen, H. Wang, S. Liu, G. Li, and Z. Bai,
+\newblock ``C3dvqa: Full-reference video quality assessment with 3d convolutional neural network,''
+\newblock in {\em IEEE international conference on acoustics, speech and signal processing (ICASSP)}. IEEE, 2020, pp. 4447--4451.
+
+\bibitem{kim2018deep}
+W. Kim, J. Kim, S. Ahn, J. Kim, and S. Lee,
+\newblock ``Deep video quality assessor: From spatio-temporal visual sensitivity to a convolutional neural aggregation network,''
+\newblock in {\em Proceedings of the European conference on computer vision (ECCV)}, 2018, pp. 219--234.
+
+\bibitem{touvron2023llama}
+H. Touvron, T. Lavril, G. Izacard, X. Martinet, M.-A. Lachaux, T. Lacroix, B. Rozi{\`e}re, N. Goyal, E. Hambro, F. Azhar, et~al.,
+\newblock ``Llama: Open and efficient foundation language models,''
+\newblock {\em arXiv preprint arXiv:2302.13971}, 2023.
+
+\bibitem{wu2024qbench}
+H. Wu, Z. Zhang, E. Zhang, C. Chen, L. Liao, A. Wang, C. Li, W. Sun, Q. Yan, G. Zhai, et~al.,
+\newblock ``Q-bench: A benchmark for general-purpose foundation models on low-level vision,''
+\newblock in {\em The Twelfth International Conference on Learning Representations}, 2024.
+
+\bibitem{wu2024qalign}
+H. Wu, Z. Zhang, W. Zhang, C. Chen, L. Liao, C. Li, Y. Gao, A. Wang, E. Zhang, W. Sun, et~al.,
+\newblock ``{Q-Align}: Teaching {LMMs} for visual scoring via discrete text-defined levels,''
+\newblock in {\em International Conference on Machine Learning}, 2024.
+
+\bibitem{chen2023x}
+Y. Chen, L. Liu, and C. Ding,
+\newblock ``{X-iqe}: explainable image quality evaluation for text-to-image generation with visual large language models,''
+\newblock {\em arXiv preprint arXiv:2305.10843}, 2023.
+
+\bibitem{zhu20242afc}
+H. Zhu, X. Sui, B. Chen, X. Liu, Y. Fang, and S. Wang,
+\newblock ``{2AFC} prompting of large multimodal models for image quality assessment,''
+\newblock {\em IEEE Transactions on Circuits and Systems for Video Technology}, 2024.
+
+\bibitem{miyata2024zen}
+T. Miyata,
+\newblock ``Zen-iqa: Zero-shot explainable and no-reference image quality assessment with vision language model,''
+\newblock {\em IEEE Access}, vol. 12, pp. 70973--70983, 2024.
+
+\bibitem{pan2023quality}
+W. Pan, Z. Yang, D. Liu, C. Fang, Y. Zhang, and P. Dai,
+\newblock ``Quality-aware clip for blind image quality assessment,''
+\newblock in {\em Chinese Conference on Pattern Recognition and Computer Vision (PRCV)}. Springer, 2023, pp. 396--408.
+
+\bibitem{chen2025promptiqa}
+Z. Chen, H. Qin, J. Wang, C. Yuan, B. Li, W. Hu, and L. Wang,
+\newblock ``Promptiqa: Boosting the performance and generalization for no-reference image quality assessment via prompts,''
+\newblock in {\em European Conference on Computer Vision}. Springer, 2025, pp. 247--264.
+
+\bibitem{wu2023exploring}
+H. Wu, L. Liao, J. Hou, C. Chen, E. Zhang, A. Wang, W. Sun, Q. Yan, and W. Lin,
+\newblock ``Exploring opinion-unaware video quality assessment with semantic affinity criterion,''
+\newblock in {\em 2023 IEEE International Conference on Multimedia and Expo (ICME)}. IEEE, 2023, pp. 366--371.
+
+\bibitem{wu2023towards}
+H. Wu, L. Liao, A. Wang, C. Chen, J. Hou, W. Sun, Q. Yan, and W. Lin,
+\newblock ``Towards robust text-prompted semantic criterion for in-the-wild video quality assessment,''
+\newblock {\em arXiv preprint arXiv:2304.14672}, 2023.
+
+\bibitem{sheikh2006astatistical}
+H.~R. Sheikh, M.~F. Sabir, , and A.~C. Bovik,
+\newblock ``A statistical evaluation of recent full reference image quality assessment algorithms,''
+\newblock {\em IEEE Transactions on image processing}, vol. 15, no. 11, pp. 3440--3451, 2006.
+
+\bibitem{ponomarenko2013color}
+N. Ponomarenko, O. Ieremeiev, V. Lukin, K. Egiazarian, L. Jin, J. Astola, B. Vozel, K. Chehdi, M. Carli, F. Battisti, and C.-C.~J. Kuo,
+\newblock ``Color image database tid2013: Peculiarities and preliminary results,''
+\newblock in {\em European Workshop on Visual Information Processing (EUVIP)}, 2013, pp. 106--111.
+
+\bibitem{seshadrinathan2010study}
+K. Seshadrinathan, R. Soundararajan, A.~C. Bovik, and L.~K. Cormack,
+\newblock ``Study of subjective and objective quality assessment of video,''
+\newblock {\em IEEE Trans. on Image Processing}, vol. 19, no. 6, pp. 1427--1441, 2010.
+
+\bibitem{hosu2017konstanz}
+V. Hosu, F. Hahn, M. Jenadeleh, H. Lin, H. Men, T. Szir{\'a}nyi, S. Li, and D. Saupe,
+\newblock ``The konstanz natural video database (konvid-1k),''
+\newblock in {\em 2017 Ninth International Conf. on Quality of Multimedia Experience (QoMEX)}. IEEE, 2017, pp. 1--6.
+
+\bibitem{wang2019youtube}
+Y. Wang, S. Inguva, and B. Adsumilli,
+\newblock ``Youtube {UGC} dataset for video compression research,''
+\newblock in {\em 2019 IEEE 21st International Workshop on Multimedia Signal Processing (MMSP)}. IEEE, 2019, pp. 1--5.
+
+\bibitem{sinno2018large}
+Z. Sinno and A.~C. Bovik,
+\newblock ``Large-scale study of perceptual video quality,''
+\newblock {\em IEEE Trans. on Image Processing}, vol. 28, no. 2, pp. 612--627, 2018.
+
+\bibitem{madhusudana2021subjective}
+P.~C. Madhusudana, X. Yu, N. Birkbeck, Y. Wang, B. Adsumilli, and A.~C. Bovik,
+\newblock ``Subjective and objective quality assessment of high frame rate videos,''
+\newblock {\em IEEE Access}, vol. 9, pp. 108069--108082, 2021.
+
+\bibitem{zhou2024database}
+F. Zhou, W. Sheng, Z. Lu, and G. Qiu,
+\newblock ``A database and model for the visual quality assessment of super-resolution videos,''
+\newblock {\em IEEE Transactions on Broadcasting}, vol. 70, no. 2, pp. 516--532, 2024.
+
+\bibitem{chen2024band2k}
+Z. Chen, W. Sun, J. Jia, F. Lu, Z. Zhang, J. Liu, R. Huang, X. Min, and G. Zhai,
+\newblock ``Band-2k: Banding artifact noticeable database for banding detection and quality assessment,''
+\newblock {\em IEEE Transactions on Circuits and Systems for Video Technology}, vol. 34, no. 7, pp. 6347--6362, 2024.
+
+\bibitem{feng2024bvi}
+C. Feng, D. Danier, F. Zhang, A. Mackin, A. Collins, and D. Bull,
+\newblock ``Bvi-artefact: An artefact detection benchmark dataset for streamed videos,''
+\newblock in {\em 2024 Picture Coding Symposium (PCS)}. IEEE, 2024, pp. 1--5.
+
+\bibitem{liu2017rankiqa}
+X. Liu, J. Van De~Weijer, and A.~D. Bagdanov,
+\newblock ``Rankiqa: Learning from rankings for no-reference image quality assessment,''
+\newblock in {\em 2017 IEEE International Conference on Computer Vision (ICCV)}, 2017, pp. 1040--1049.
+
+\bibitem{zhang2021uncertainty}
+W. Zhang, K. Ma, G. Zhai, and X. Yang,
+\newblock ``Uncertainty-aware blind image quality assessment in the laboratory and wild,''
+\newblock {\em IEEE Transactions on Image Processing}, vol. 30, pp. 3474--3486, 2021.
+
+\bibitem{hou2022perceptual}
+Q. Hou, A. Ghildyal, and F. Liu,
+\newblock ``A perceptual quality metric for video frame interpolation,''
+\newblock in {\em European Conf. on Computer Vision}. Springer, 2022, pp. 234--253.
+
+\bibitem{madhusudana2023conviqt}
+P.~C. Madhusudana, N. Birkbeck, Y. Wang, B. Adsumilli, and A.~C. Bovik,
+\newblock ``Conviqt: Contrastive video quality estimator,''
+\newblock {\em IEEE Transactions on Image Processing}, 2023.
+
+\bibitem{zhao2023quality}
+K. Zhao, K. Yuan, M. Sun, M. Li, and X. Wen,
+\newblock ``Quality-aware pre-trained models for blind image quality assessment,''
+\newblock in {\em Proceedings of the IEEE/CVF conference on computer vision and pattern recognition}, 2023, pp. 22302--22313.
+
+\bibitem{zhong:LDB:2024}
+L. Zhong, Z. Wang, and J. Shang,
+\newblock ``{LDB: A} large language model debugger via verifying runtime execution step-by-step,''
+\newblock in {\em Proceedings of the 62nd Annual Meeting of the Association for Computational Linguistics: Findings.}, 2024.
+
+\bibitem{deepseekv3}
+DeepSeek-AI, A. Liu, B. Feng, B. Xue, et~al.,
+\newblock ``Deepseek-v3 technical report,''
+\newblock {\em arXiv preprint arXiv:2412.19437}, 2024.
+
+\bibitem{qwen25}
+Q. Team,
+\newblock ``Qwen2.5 technical report,''
+\newblock {\em arXiv preprint arXiv:2412.15115}, 2024.
+
+\bibitem{CreativeIndustriesCouncil2021}
+C.~I. Council,
+\newblock ``How createch added 1+1 to make £981m,'' 2021,
+\newblock Accessed: 2025-01-10.
+
+\end{thebibliography}

@@ -1,0 +1,74 @@
+This is BibTeX, Version 0.99d (TeX Live 2024)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: elsarticle-template-num.aux
+The style file: elsarticle-num.bst
+Database file #1: sample.bib
+Repeated entry---line 162 of file sample.bib
+ : @article{Bi2022
+ :                ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 505 of file sample.bib
+ : @article{Liang2023
+ :                   ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 734 of file sample.bib
+ : @conference{West2021
+ :                     ,
+I'm skipping whatever remains of this entry
+Warning--empty booktitle in Enkhbaatar202222
+Warning--empty booktitle in Liu2021
+Warning--can't use both volume and number fields in Liu2021
+Warning--empty pages in Liu2021
+Warning--empty booktitle in Ribiero202265
+Warning--empty booktitle in Balestrieri2024
+Warning--empty pages in Balestrieri2024
+Warning--empty booktitle in Ribiero2024
+Warning--empty pages in Ribiero2024
+Warning--empty booktitle in West2021
+Warning--empty pages in West2021
+Warning--empty booktitle in Sharma2024447
+Warning--empty booktitle in Rasheed2023
+Warning--empty pages in Rasheed2023
+Warning--empty journal in Casillo2022
+You've used 51 entries,
+            2952 wiz_defined-function locations,
+            989 strings with 16265 characters,
+and the built_in function-call counts, 16374 in all, are:
+= -- 1467
+> -- 654
+< -- 8
++ -- 252
+- -- 201
+* -- 1137
+:= -- 2260
+add.period$ -- 51
+call.type$ -- 51
+change.case$ -- 50
+chr.to.int$ -- 0
+cite$ -- 66
+duplicate$ -- 520
+empty$ -- 1808
+format.name$ -- 247
+if$ -- 4211
+int.to.chr$ -- 0
+int.to.str$ -- 51
+missing$ -- 50
+newline$ -- 163
+num.names$ -- 50
+pop$ -- 336
+preamble$ -- 1
+purify$ -- 0
+quote$ -- 0
+skip$ -- 1072
+stack$ -- 0
+substring$ -- 946
+swap$ -- 127
+text.length$ -- 8
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 0
+warning$ -- 15
+while$ -- 96
+width$ -- 53
+write$ -- 423
+(There were 3 error messages)

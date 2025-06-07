@@ -1,0 +1,1375 @@
+%%% -*-BibTeX-*-
+%%% Do NOT edit. File created by BibTeX with style
+%%% ACM-Reference-Format-Journals [18-Jan-2012].
+
+\begin{thebibliography}{166}
+
+%%% ====================================================================
+%%% NOTE TO THE USER: you can override these defaults by providing
+%%% customized versions of any of these macros before the \bibliography
+%%% command.  Each of them MUST provide its own final punctuation,
+%%% except for \shownote{}, \showDOI{}, and \showURL{}.  The latter two
+%%% do not use final punctuation, in order to avoid confusing it with
+%%% the Web address.
+%%%
+%%% To suppress output of a particular field, define its macro to expand
+%%% to an empty string, or better, \unskip, like this:
+%%%
+%%% \newcommand{\showDOI}[1]{\unskip}   % LaTeX syntax
+%%%
+%%% \def \showDOI #1{\unskip}           % plain TeX syntax
+%%%
+%%% ====================================================================
+
+\ifx \showCODEN    \undefined \def \showCODEN     #1{\unskip}     \fi
+\ifx \showDOI      \undefined \def \showDOI       #1{#1}\fi
+\ifx \showISBNx    \undefined \def \showISBNx     #1{\unskip}     \fi
+\ifx \showISBNxiii \undefined \def \showISBNxiii  #1{\unskip}     \fi
+\ifx \showISSN     \undefined \def \showISSN      #1{\unskip}     \fi
+\ifx \showLCCN     \undefined \def \showLCCN      #1{\unskip}     \fi
+\ifx \shownote     \undefined \def \shownote      #1{#1}          \fi
+\ifx \showarticletitle \undefined \def \showarticletitle #1{#1}   \fi
+\ifx \showURL      \undefined \def \showURL       {\relax}        \fi
+% The following commands are used for tagged output and should be
+% invisible to TeX
+\providecommand\bibfield[2]{#2}
+\providecommand\bibinfo[2]{#2}
+\providecommand\natexlab[1]{#1}
+\providecommand\showeprint[2][]{arXiv:#2}
+
+\bibitem[Abad et~al\mbox{.}(2017)]%
+        {abad2017autonomous}
+\bibfield{author}{\bibinfo{person}{Azad Abad}, \bibinfo{person}{Moin Nabi}, {and} \bibinfo{person}{Alessandro Moschitti}.} \bibinfo{year}{2017}\natexlab{}.
+\newblock \showarticletitle{Autonomous crowdsourcing through human-machine collaborative learning}. In \bibinfo{booktitle}{\emph{Proceedings of the 40th International ACM SIGIR Conference on Research and Development in Information Retrieval}}. \bibinfo{pages}{873--876}.
+\newblock
+
+
+\bibitem[Abdelnabi et~al\mbox{.}(2024)]%
+        {abdelnabi2024cooperation}
+\bibfield{author}{\bibinfo{person}{Sahar Abdelnabi} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{Cooperation, Competition, and Maliciousness: {LLM}-Stakeholders Interactive Negotiation}. In \bibinfo{booktitle}{\emph{The Thirty-eight Conference on Neural Information Processing Systems Datasets and Benchmarks Track}}.
+\newblock
+
+
+\bibitem[Abdurahman et~al\mbox{.}(2024)]%
+        {10.1093/pnasnexus/pgae245}
+\bibfield{author}{\bibinfo{person}{Suhaib Abdurahman} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{Perils and opportunities in using large language models in psychological research}.
+\newblock \bibinfo{journal}{\emph{PNAS Nexus}} (\bibinfo{date}{Jul.} \bibinfo{year}{2024}).
+\newblock
+
+
+\bibitem[Achiam et~al\mbox{.}(2023)]%
+        {achiam2023gpt}
+\bibfield{author}{\bibinfo{person}{Josh Achiam} {et~al\mbox{.}}} \bibinfo{year}{2023}\natexlab{}.
+\newblock \showarticletitle{Gpt-4 technical report}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2303.08774}} (\bibinfo{year}{2023}).
+\newblock
+
+
+\bibitem[Aher et~al\mbox{.}(2023)]%
+        {10.5555/3618408.3618425}
+\bibfield{author}{\bibinfo{person}{Gati Aher} {et~al\mbox{.}}} \bibinfo{year}{2023}\natexlab{}.
+\newblock \showarticletitle{Using large language models to simulate multiple humans and replicate human subject studies}. In \bibinfo{booktitle}{\emph{Proceedings of the International Conference on Machine Learning}}.
+\newblock
+
+
+\bibitem[Ahn and Sentis(2021)]%
+        {ahn2021nested}
+\bibfield{author}{\bibinfo{person}{Junhyeok Ahn} {and} \bibinfo{person}{Luis Sentis}.} \bibinfo{year}{2021}\natexlab{}.
+\newblock \showarticletitle{Nested mixture of experts: Cooperative and competitive learning of hybrid dynamical system}. In \bibinfo{booktitle}{\emph{Learning for Dynamics and Control}}. PMLR, \bibinfo{pages}{779--790}.
+\newblock
+
+
+\bibitem[Akbulut et~al\mbox{.}(2024)]%
+        {Akbulut2024}
+\bibfield{author}{\bibinfo{person}{Canfer Akbulut} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{All Too Human? Mapping and Mitigating the Risk from Anthropomorphic AI}.
+\newblock \bibinfo{journal}{\emph{Proceedings of the AAAI/ACM Conference on AI, Ethics, and Society}}  \bibinfo{volume}{7} (\bibinfo{date}{Oct.} \bibinfo{year}{2024}), \bibinfo{pages}{13–26}.
+\newblock
+\showISSN{3065-8365}
+
+
+\bibitem[Anonymous(2024a)]%
+        {anonymous2024domain}
+\bibfield{author}{\bibinfo{person}{Anonymous}.} \bibinfo{year}{2024}\natexlab{a}.
+\newblock \showarticletitle{{DOMAIN} {GENERALIZATION} {VIA} {PARETO} {OPTIMAL} {GRADIENT} {MATCHING}}. In \bibinfo{booktitle}{\emph{Submitted to The Thirteenth International Conference on Learning Representations}}.
+\newblock
+\newblock
+\shownote{under review}.
+
+
+\bibitem[Anonymous(2024b)]%
+        {anonymous2024federated}
+\bibfield{author}{\bibinfo{person}{Anonymous}.} \bibinfo{year}{2024}\natexlab{b}.
+\newblock \showarticletitle{Federated Domain Generalization with Data-free On-server Gradient Matching}. In \bibinfo{booktitle}{\emph{Submitted to The Thirteenth International Conference on Learning Representations}}.
+\newblock
+\newblock
+\shownote{under review}.
+
+
+\bibitem[Ansaldo(2023)]%
+        {ansaldo2023agentspeak}
+\bibfield{author}{\bibinfo{person}{Gabriele Ansaldo}.} \bibinfo{year}{2023}\natexlab{}.
+\newblock \emph{\bibinfo{title}{AgentSpeak: A Framework for Agent-Based Modeling with Integrated Large Language Models; Case Study: Analyzing Policy Interventions in Electric Vehicle Adoption}}.
+\newblock \bibinfo{thesistype}{Master's\ thesis}. \bibinfo{school}{Northeastern University}.
+\newblock
+
+
+\bibitem[Bail(2024)]%
+        {doi:10.1073/pnas.2314021121}
+\bibfield{author}{\bibinfo{person}{Christopher~A. Bail}.} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{Can Generative AI improve social science?}
+\newblock \bibinfo{journal}{\emph{Proceedings of the National Academy of Sciences}} \bibinfo{volume}{121}, \bibinfo{number}{21} (\bibinfo{year}{2024}), \bibinfo{pages}{e2314021121}.
+\newblock
+
+
+\bibitem[Barbarroxa et~al\mbox{.}(2024)]%
+        {barbarroxa2024benchmarking}
+\bibfield{author}{\bibinfo{person}{Rafael Barbarroxa} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{Benchmarking AutoGen with different large language models}. In \bibinfo{booktitle}{\emph{2024 IEEE Conference on Artificial Intelligence (CAI)}}. IEEE, \bibinfo{pages}{263--264}.
+\newblock
+
+
+\bibitem[Bonawitz et~al\mbox{.}(2021)]%
+        {10.1145/3494834.3500240}
+\bibfield{author}{\bibinfo{person}{Kallista Bonawitz} {et~al\mbox{.}}} \bibinfo{year}{2021}\natexlab{}.
+\newblock \showarticletitle{Federated Learning and Privacy: Building privacy-preserving systems for machine learning and data science on decentralized data}.
+\newblock \bibinfo{journal}{\emph{Queue}} (\bibinfo{date}{Nov.} \bibinfo{year}{2021}).
+\newblock
+
+
+\bibitem[Braccini et~al\mbox{.}(2024)]%
+        {braccini2024swarm}
+\bibfield{author}{\bibinfo{person}{Michele Braccini} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{Swarm Intelligence: A Novel and Unconventional Approach to Dance Choreography Creation}.
+\newblock
+
+
+\bibitem[Cai et~al\mbox{.}(2024)]%
+        {cai2024surveymixtureexperts}
+\bibfield{author}{\bibinfo{person}{Weilin Cai} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{}.
+\newblock \bibinfo{title}{A Survey on Mixture of Experts}.
+\newblock
+\newblock
+\showeprint[arxiv]{2407.06204}~[cs.LG]
+
+
+\bibitem[Cao et~al\mbox{.}(2024)]%
+        {cao2024enhancing}
+\bibfield{author}{\bibinfo{person}{Chengzhi Cao} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{Enhancing Human-{AI} Collaboration Through Logic-Guided Reasoning}. In \bibinfo{booktitle}{\emph{The Twelfth International Conference on Learning Representations}}.
+\newblock
+
+
+\bibitem[Chan et~al\mbox{.}(2023)]%
+        {10.1145/3593013.3594033}
+\bibfield{author}{\bibinfo{person}{Alan Chan} {et~al\mbox{.}}} \bibinfo{year}{2023}\natexlab{}.
+\newblock \showarticletitle{Harms from Increasingly Agentic Algorithmic Systems}. In \bibinfo{booktitle}{\emph{Proceedings of the 2023 ACM Conference on Fairness, Accountability, and Transparency}} (Chicago, IL, USA) \emph{(\bibinfo{series}{FAccT '23})}. \bibinfo{publisher}{Association for Computing Machinery}, \bibinfo{address}{New York, NY, USA}, \bibinfo{pages}{651–666}.
+\newblock
+\showISBNx{9798400701924}
+
+
+\bibitem[Chan et~al\mbox{.}(2024)]%
+        {chan2024chateval}
+\bibfield{author}{\bibinfo{person}{Chi-Min Chan} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{ChatEval: Towards Better {LLM}-based Evaluators through Multi-Agent Debate}. In \bibinfo{booktitle}{\emph{The Twelfth International Conference on Learning Representations}}.
+\newblock
+
+
+\bibitem[Chang et~al\mbox{.}(2024)]%
+        {chang2024survey}
+\bibfield{author}{\bibinfo{person}{Yupeng Chang} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{A survey on evaluation of large language models}.
+\newblock \bibinfo{journal}{\emph{ACM Transactions on Intelligent Systems and Technology}} \bibinfo{volume}{15}, \bibinfo{number}{3} (\bibinfo{year}{2024}), \bibinfo{pages}{1--45}.
+\newblock
+
+
+\bibitem[Chen et~al\mbox{.}(2024a)]%
+        {ijcai2024p3}
+\bibfield{author}{\bibinfo{person}{Guangyao Chen} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{a}.
+\newblock \showarticletitle{AutoAgents: A Framework for Automatic Agent Generation}. In \bibinfo{booktitle}{\emph{Proceedings of the Thirty-Third International Joint Conference on Artificial Intelligence, {IJCAI-24}}}, \bibfield{editor}{\bibinfo{person}{Kate Larson}} (Ed.). \bibinfo{publisher}{International Joint Conferences on Artificial Intelligence Organization}, \bibinfo{pages}{22--30}.
+\newblock
+\newblock
+\shownote{Main Track}.
+
+
+\bibitem[Chen et~al\mbox{.}(2023)]%
+        {Chen2023MultiAgent}
+\bibfield{author}{\bibinfo{person}{Huaben Chen}, \bibinfo{person}{Wenkang Ji}, \bibinfo{person}{Lufeng Xu}, {and} \bibinfo{person}{Shiyu Zhao}.} \bibinfo{year}{2023}\natexlab{}.
+\newblock \showarticletitle{Multi-Agent Consensus Seeking via Large Language Models}.
+\newblock \bibinfo{journal}{\emph{ArXiv}}  \bibinfo{volume}{abs/2310.20151} (\bibinfo{year}{2023}).
+\newblock
+
+
+\bibitem[Chen et~al\mbox{.}(2024b)]%
+        {chen-etal-2024-llmarena}
+\bibfield{author}{\bibinfo{person}{Junzhe Chen} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{b}.
+\newblock \showarticletitle{{LLMA}rena: Assessing Capabilities of Large Language Models in Dynamic Multi-Agent Environments}. In \bibinfo{booktitle}{\emph{Proceedings of the 62nd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)}}. \bibinfo{publisher}{Association for Computational Linguistics}, \bibinfo{address}{Bangkok, Thailand}, \bibinfo{pages}{13055--13077}.
+\newblock
+
+
+\bibitem[Chen et~al\mbox{.}(2024d)]%
+        {chen-etal-2024-comm}
+\bibfield{author}{\bibinfo{person}{Pei Chen}, \bibinfo{person}{Shuai Zhang}, {and} \bibinfo{person}{Boran Han}.} \bibinfo{year}{2024}\natexlab{d}.
+\newblock \showarticletitle{{C}o{MM}: Collaborative Multi-Agent, Multi-Reasoning-Path Prompting for Complex Problem Solving}. In \bibinfo{booktitle}{\emph{Findings of the Association for Computational Linguistics: NAACL 2024}}, \bibfield{editor}{\bibinfo{person}{Kevin Duh}, \bibinfo{person}{Helena Gomez}, {and} \bibinfo{person}{Steven Bethard}} (Eds.). \bibinfo{publisher}{ACL}, \bibinfo{address}{Mexico City, Mexico}, \bibinfo{pages}{1720--1738}.
+\newblock
+
+
+\bibitem[Chen et~al\mbox{.}(2024c)]%
+        {chen2024agentverse}
+\bibfield{author}{\bibinfo{person}{Weize Chen} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{c}.
+\newblock \showarticletitle{AgentVerse: Facilitating Multi-Agent Collaboration and Exploring Emergent Behaviors}. In \bibinfo{booktitle}{\emph{The Twelfth International Conference on Learning Representations}}.
+\newblock
+
+
+\bibitem[Chiang et~al\mbox{.}(2024)]%
+        {chiang2024chatbot}
+\bibfield{author}{\bibinfo{person}{Wei-Lin Chiang} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{Chatbot arena: An open platform for evaluating llms by human preference}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2403.04132}} (\bibinfo{year}{2024}).
+\newblock
+
+
+\bibitem[Conitzer and Oesterheld(2024)]%
+        {Conitzer_Oesterheld_2024}
+\bibfield{author}{\bibinfo{person}{Vincent Conitzer} {and} \bibinfo{person}{Caspar Oesterheld}.} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{Foundations of Cooperative AI}.
+\newblock \bibinfo{journal}{\emph{Proceedings of the AAAI Conference on Artificial Intelligence}} \bibinfo{volume}{37}, \bibinfo{number}{13} (\bibinfo{date}{Jul.} \bibinfo{year}{2024}), \bibinfo{pages}{15359--15367}.
+\newblock
+
+
+\bibitem[Crowley et~al\mbox{.}(2023)]%
+        {9918176}
+\bibfield{author}{\bibinfo{person}{James~L. Crowley} {et~al\mbox{.}}} \bibinfo{year}{2023}\natexlab{}.
+\newblock \showarticletitle{A Hierarchical Framework for Collaborative Artificial Intelligence}.
+\newblock \bibinfo{journal}{\emph{IEEE Pervasive Computing}} \bibinfo{volume}{22}, \bibinfo{number}{1} (\bibinfo{year}{2023}), \bibinfo{pages}{9--18}.
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.1109/MPRV.2022.3208321}
+\showDOI{\tempurl}
+
+
+\bibitem[Cuconasu et~al\mbox{.}(2024)]%
+        {cuconasu2024power}
+\bibfield{author}{\bibinfo{person}{Florin Cuconasu} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{The power of noise: Redefining retrieval for rag systems}. In \bibinfo{booktitle}{\emph{Proceedings of the 47th International ACM SIGIR Conference on Research and Development in Information Retrieval}}. \bibinfo{pages}{719--729}.
+\newblock
+
+
+\bibitem[Dafoe et~al\mbox{.}(2020)]%
+        {dafoe2020openproblemscooperativeai}
+\bibfield{author}{\bibinfo{person}{Allan Dafoe} {et~al\mbox{.}}} \bibinfo{year}{2020}\natexlab{}.
+\newblock \bibinfo{title}{Open Problems in Cooperative AI}.
+\newblock
+\newblock
+\showeprint[arxiv]{2012.08630}~[cs.AI]
+
+
+\bibitem[Dafoe et~al\mbox{.}(2021)]%
+        {Dafoe2021}
+\bibfield{author}{\bibinfo{person}{Allan Dafoe} {et~al\mbox{.}}} \bibinfo{year}{2021}\natexlab{}.
+\newblock \showarticletitle{Cooperative AI: machines must learn to find common ground}.
+\newblock \bibinfo{journal}{\emph{Nature}} \bibinfo{volume}{593}, \bibinfo{number}{7857} (\bibinfo{date}{May} \bibinfo{year}{2021}), \bibinfo{pages}{33–36}.
+\newblock
+\showISSN{1476-4687}
+
+
+\bibitem[Dai et~al\mbox{.}(2024)]%
+        {dai2024artificialleviathanexploringsocial}
+\bibfield{author}{\bibinfo{person}{Gordon Dai} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{}.
+\newblock \bibinfo{title}{Artificial Leviathan: Exploring Social Evolution of LLM Agents Through the Lens of Hobbesian Social Contract Theory}.
+\newblock
+\newblock
+\showeprint[arxiv]{2406.14373}~[cs.AI]
+
+
+\bibitem[D'Arcy et~al\mbox{.}(2024)]%
+        {darcy2024margmultiagentreviewgeneration}
+\bibfield{author}{\bibinfo{person}{Mike D'Arcy} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{}.
+\newblock \bibinfo{title}{MARG: Multi-Agent Review Generation for Scientific Papers}.
+\newblock
+\newblock
+\showeprint[arxiv]{2401.04259}~[cs.CL]
+
+
+\bibitem[Das et~al\mbox{.}(2023)]%
+        {das2023enabling}
+\bibfield{author}{\bibinfo{person}{Ayushman Das} {et~al\mbox{.}}} \bibinfo{year}{2023}\natexlab{}.
+\newblock \showarticletitle{Enabling Synergistic Knowledge Sharing and Reasoning in Large Language Models with Collaborative Multi-Agents}. In \bibinfo{booktitle}{\emph{IEEE International Conference on Collaboration and Internet Computing}}.
+\newblock
+
+
+\bibitem[Davidson et~al\mbox{.}(2024)]%
+        {davidson2024evaluating}
+\bibfield{author}{\bibinfo{person}{Tim~Ruben Davidson} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{Evaluating Language Model Agency Through Negotiations}. In \bibinfo{booktitle}{\emph{The Twelfth International Conference on Learning Representations}}.
+\newblock
+
+
+\bibitem[Deshpande et~al\mbox{.}(2023)]%
+        {deshpande2023anthropomorphizationaiopportunitiesrisks}
+\bibfield{author}{\bibinfo{person}{Ameet Deshpande} {et~al\mbox{.}}} \bibinfo{year}{2023}\natexlab{}.
+\newblock \bibinfo{title}{Anthropomorphization of AI: Opportunities and Risks}.
+\newblock
+\newblock
+\showeprint[arxiv]{2305.14784}~[cs.AI]
+
+
+\bibitem[Dillion et~al\mbox{.}(2023)]%
+        {DILLION2023597}
+\bibfield{author}{\bibinfo{person}{Danica Dillion} {et~al\mbox{.}}} \bibinfo{year}{2023}\natexlab{}.
+\newblock \showarticletitle{Can AI language models replace human participants?}
+\newblock \bibinfo{journal}{\emph{Trends in Cognitive Sciences}} \bibinfo{volume}{27}, \bibinfo{number}{7} (\bibinfo{year}{2023}), \bibinfo{pages}{597--600}.
+\newblock
+\showISSN{1364-6613}
+
+
+\bibitem[Divband~Soorati et~al\mbox{.}(2022)]%
+        {divband2022intelligent}
+\bibfield{author}{\bibinfo{person}{Mohammad Divband~Soorati} {et~al\mbox{.}}} \bibinfo{year}{2022}\natexlab{}.
+\newblock \showarticletitle{From intelligent agents to trustworthy human-centred multiagent systems}.
+\newblock \bibinfo{journal}{\emph{AI Communications}} \bibinfo{volume}{35}, \bibinfo{number}{4} (\bibinfo{year}{2022}), \bibinfo{pages}{443--457}.
+\newblock
+
+
+\bibitem[Dong et~al\mbox{.}(2024b)]%
+        {dong2024can}
+\bibfield{author}{\bibinfo{person}{Manqing Dong}, \bibinfo{person}{Hao Huang}, {and} \bibinfo{person}{Longbing Cao}.} \bibinfo{year}{2024}\natexlab{b}.
+\newblock \showarticletitle{Can LLMs Serve As Time Series Anomaly Detectors?}
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2408.03475}} (\bibinfo{year}{2024}).
+\newblock
+
+
+\bibitem[Dong et~al\mbox{.}(2024a)]%
+        {dong-etal-2024-villageragent}
+\bibfield{author}{\bibinfo{person}{Yubo Dong} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{a}.
+\newblock \showarticletitle{{V}illager{A}gent: A Graph-Based Multi-Agent Framework for Coordinating Complex Task Dependencies in {M}inecraft}. In \bibinfo{booktitle}{\emph{Findings of the Association for Computational Linguistics: ACL 2024}}, \bibfield{editor}{\bibinfo{person}{Lun-Wei Ku}, \bibinfo{person}{Andre Martins}, {and} \bibinfo{person}{Vivek Srikumar}} (Eds.). \bibinfo{publisher}{Association for Computational Linguistics}, \bibinfo{address}{Bangkok, Thailand}, \bibinfo{pages}{16290--16314}.
+\newblock
+
+
+\bibitem[Dorri et~al\mbox{.}(2018)]%
+        {8352646}
+\bibfield{author}{\bibinfo{person}{Ali Dorri}, \bibinfo{person}{Salil~S. Kanhere}, {and} \bibinfo{person}{Raja Jurdak}.} \bibinfo{year}{2018}\natexlab{}.
+\newblock \showarticletitle{Multi-Agent Systems: A Survey}.
+\newblock \bibinfo{journal}{\emph{IEEE Access}}  \bibinfo{volume}{6} (\bibinfo{year}{2018}), \bibinfo{pages}{28573--28593}.
+\newblock
+
+
+\bibitem[Du et~al\mbox{.}(2023)]%
+        {du2023improvingfactualityreasoninglanguage}
+\bibfield{author}{\bibinfo{person}{Yilun Du} {et~al\mbox{.}}} \bibinfo{year}{2023}\natexlab{}.
+\newblock \bibinfo{title}{Improving Factuality and Reasoning in Language Models through Multiagent Debate}.
+\newblock
+\newblock
+\showeprint[arxiv]{2305.14325}~[cs.CL]
+
+
+\bibitem[Fan et~al\mbox{.}(2024)]%
+        {fan2024bibliometric}
+\bibfield{author}{\bibinfo{person}{Lizhou Fan} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{A bibliometric review of large language models research from 2017 to 2023}.
+\newblock \bibinfo{journal}{\emph{ACM Transactions on Intelligent Systems and Technology}} \bibinfo{volume}{15}, \bibinfo{number}{5} (\bibinfo{year}{2024}), \bibinfo{pages}{1--25}.
+\newblock
+
+
+\bibitem[Fischer et~al\mbox{.}(2021)]%
+        {fischer2021loop}
+\bibfield{author}{\bibinfo{person}{Joel~E Fischer} {et~al\mbox{.}}} \bibinfo{year}{2021}\natexlab{}.
+\newblock \showarticletitle{In-the-loop or on-the-loop? Interactional arrangements to support team coordination with a planning agent}.
+\newblock \bibinfo{journal}{\emph{Concurrency and Computation: Practice and Experience}} \bibinfo{volume}{33}, \bibinfo{number}{8} (\bibinfo{year}{2021}), \bibinfo{pages}{e4082}.
+\newblock
+
+
+\bibitem[Fourney et~al\mbox{.}(2024)]%
+        {fourney2024magenticone}
+\bibfield{author}{\bibinfo{person}{Adam Fourney} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{}.
+\newblock \bibinfo{booktitle}{\emph{Magentic-One: A Generalist Multi-Agent System for Solving Complex Tasks}}.
+\newblock \bibinfo{type}{{T}echnical {R}eport} MSR-TR-2024-47. \bibinfo{institution}{Microsoft}.
+\newblock
+
+
+\bibitem[Frith and Frith(2005)]%
+        {frith2005theory}
+\bibfield{author}{\bibinfo{person}{Chris Frith} {and} \bibinfo{person}{Uta Frith}.} \bibinfo{year}{2005}\natexlab{}.
+\newblock \showarticletitle{Theory of mind}.
+\newblock \bibinfo{journal}{\emph{Current biology}} \bibinfo{volume}{15}, \bibinfo{number}{17} (\bibinfo{year}{2005}), \bibinfo{pages}{R644--R645}.
+\newblock
+
+
+\bibitem[Gao et~al\mbox{.}(2024)]%
+        {Gao2024}
+\bibfield{author}{\bibinfo{person}{Chen Gao} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{Large language models empowered agent-based modeling and simulation: a survey and perspectives}.
+\newblock \bibinfo{journal}{\emph{Humanities and Social Sciences Communications}} \bibinfo{volume}{11}, \bibinfo{number}{1} (\bibinfo{date}{Sept.} \bibinfo{year}{2024}).
+\newblock
+\showISSN{2662-9992}
+
+
+\bibitem[Guo et~al\mbox{.}(2024)]%
+        {ijcai2024p890}
+\bibfield{author}{\bibinfo{person}{Taicheng Guo} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{Large Language Model Based Multi-agents: A Survey of Progress and Challenges}. In \bibinfo{booktitle}{\emph{Proceedings of the Thirty-Third International Joint Conference on Artificial Intelligence, {IJCAI-24}}}, \bibfield{editor}{\bibinfo{person}{Kate Larson}} (Ed.). \bibinfo{publisher}{International Joint Conferences on Artificial Intelligence Organization}, \bibinfo{pages}{8048--8057}.
+\newblock
+\newblock
+\shownote{Survey Track}.
+
+
+\bibitem[Gurcan(2024)]%
+        {gurcan2024llmaugmentedagentbasedmodellingsocial}
+\bibfield{author}{\bibinfo{person}{Onder Gurcan}.} \bibinfo{year}{2024}\natexlab{}.
+\newblock \bibinfo{title}{LLM-Augmented Agent-Based Modelling for Social Simulations: Challenges and Opportunities}.
+\newblock
+\newblock
+\showeprint[arxiv]{2405.06700}~[physics.soc-ph]
+
+
+\bibitem[Hagendorff et~al\mbox{.}(2023)]%
+        {hagendorff2023human}
+\bibfield{author}{\bibinfo{person}{Thilo Hagendorff}, \bibinfo{person}{Sarah Fabi}, {and} \bibinfo{person}{Michal Kosinski}.} \bibinfo{year}{2023}\natexlab{}.
+\newblock \showarticletitle{Human-like intuitive behavior and reasoning biases emerged in large language models but disappeared in ChatGPT}.
+\newblock \bibinfo{journal}{\emph{Nature Computational Science}} \bibinfo{volume}{3}, \bibinfo{number}{10} (\bibinfo{year}{2023}), \bibinfo{pages}{833--838}.
+\newblock
+
+
+\bibitem[Han et~al\mbox{.}(2024)]%
+        {han2024llmmultiagentsystemschallenges}
+\bibfield{author}{\bibinfo{person}{Shanshan Han} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{}.
+\newblock \bibinfo{title}{LLM Multi-Agent Systems: Challenges and Open Problems}.
+\newblock
+\newblock
+\showeprint[arxiv]{2402.03578}~[cs.MA]
+
+
+\bibitem[Hatalis et~al\mbox{.}(2023)]%
+        {hatalis2023memory}
+\bibfield{author}{\bibinfo{person}{Kostas Hatalis} {et~al\mbox{.}}} \bibinfo{year}{2023}\natexlab{}.
+\newblock \showarticletitle{Memory Matters: The Need to Improve Long-Term Memory in LLM-Agents}. In \bibinfo{booktitle}{\emph{Proceedings of the AAAI Symposium Series}}, Vol.~\bibinfo{volume}{2}. \bibinfo{pages}{277--280}.
+\newblock
+
+
+\bibitem[He et~al\mbox{.}(2024b)]%
+        {he2024llm}
+\bibfield{author}{\bibinfo{person}{Junda He}, \bibinfo{person}{Christoph Treude}, {and} \bibinfo{person}{David Lo}.} \bibinfo{year}{2024}\natexlab{b}.
+\newblock \showarticletitle{LLM-Based Multi-Agent Systems for Software Engineering: Vision and the Road Ahead}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2404.04834}} (\bibinfo{year}{2024}).
+\newblock
+
+
+\bibitem[He et~al\mbox{.}(2024a)]%
+        {he2024normviolationdetectionmultiagent}
+\bibfield{author}{\bibinfo{person}{Shawn He} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{a}.
+\newblock \bibinfo{title}{Norm Violation Detection in Multi-Agent Systems using Large Language Models: A Pilot Study}.
+\newblock
+\newblock
+\showeprint[arxiv]{2403.16517}~[cs.MA]
+
+
+\bibitem[He et~al\mbox{.}(2023)]%
+        {he-etal-2023-lego}
+\bibfield{author}{\bibinfo{person}{Zhitao He} {et~al\mbox{.}}} \bibinfo{year}{2023}\natexlab{}.
+\newblock \showarticletitle{{LEGO}: A Multi-agent Collaborative Framework with Role-playing and Iterative Feedback for Causality Explanation Generation}. In \bibinfo{booktitle}{\emph{Findings of the Association for Computational Linguistics: EMNLP 2023}}, \bibfield{editor}{\bibinfo{person}{Houda Bouamor}, \bibinfo{person}{Juan Pino}, {and} \bibinfo{person}{Kalika Bali}} (Eds.). \bibinfo{publisher}{Association for Computational Linguistics}, \bibinfo{address}{Singapore}, \bibinfo{pages}{9142--9163}.
+\newblock
+
+
+\bibitem[Hoffmann et~al\mbox{.}(2024)]%
+        {10.5555/3600270.3602446}
+\bibfield{author}{\bibinfo{person}{Jordan Hoffmann} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{Training compute-optimal large language models}. In \bibinfo{booktitle}{\emph{Proceedings of the 36th International Conference on Neural Information Processing Systems}} (New Orleans, LA, USA) \emph{(\bibinfo{series}{NIPS '22})}. \bibinfo{publisher}{Curran Associates Inc.}, \bibinfo{address}{Red Hook, NY, USA}, Article \bibinfo{articleno}{2176}, \bibinfo{numpages}{15}~pages.
+\newblock
+\showISBNx{9781713871088}
+
+
+\bibitem[Hong et~al\mbox{.}(2024)]%
+        {hong2024metagpt}
+\bibfield{author}{\bibinfo{person}{Sirui Hong} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{Meta{GPT}: Meta Programming for A Multi-Agent Collaborative Framework}. In \bibinfo{booktitle}{\emph{The Twelfth International Conference on Learning Representations}}.
+\newblock
+
+
+\bibitem[Huang et~al\mbox{.}(2023)]%
+        {huang2023survey}
+\bibfield{author}{\bibinfo{person}{Lei Huang} {et~al\mbox{.}}} \bibinfo{year}{2023}\natexlab{}.
+\newblock \showarticletitle{A survey on hallucination in large language models: Principles, taxonomy, challenges, and open questions}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2311.05232}} (\bibinfo{year}{2023}).
+\newblock
+
+
+\bibitem[Huang et~al\mbox{.}(2024)]%
+        {huang2024understanding}
+\bibfield{author}{\bibinfo{person}{Xu Huang} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{Understanding the planning of LLM agents: A survey}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2402.02716}} (\bibinfo{year}{2024}).
+\newblock
+
+
+\bibitem[Ishibashi and Nishimura(2024)]%
+        {ishibashi2024selforganizedagentsllmmultiagent}
+\bibfield{author}{\bibinfo{person}{Yoichi Ishibashi} {and} \bibinfo{person}{Yoshimasa Nishimura}.} \bibinfo{year}{2024}\natexlab{}.
+\newblock \bibinfo{title}{Self-Organized Agents: A LLM Multi-Agent Framework toward Ultra Large-Scale Code Generation and Optimization}.
+\newblock
+\newblock
+\showeprint[arxiv]{2404.02183}~[cs.SE]
+
+
+\bibitem[Islam et~al\mbox{.}(2024)]%
+        {islam-etal-2024-mapcoder}
+\bibfield{author}{\bibinfo{person}{Md.~Ashraful Islam}, \bibinfo{person}{Mohammed~Eunus Ali}, {and} \bibinfo{person}{Md~Rizwan Parvez}.} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{{M}ap{C}oder: Multi-Agent Code Generation for Competitive Problem Solving}. In \bibinfo{booktitle}{\emph{Proceedings of the Annual Meeting of the Association for Computational Linguistics}}.
+\newblock
+
+
+\bibitem[Jeyakumar et~al\mbox{.}(2024)]%
+        {jeyakumar2024advancing}
+\bibfield{author}{\bibinfo{person}{Shankar~Kumar Jeyakumar}, \bibinfo{person}{Alaa~Alameer Ahmad}, {and} \bibinfo{person}{Adrian~Garret Gabriel}.} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{Advancing Agentic Systems: Dynamic Task Decomposition, Tool Integration and Evaluation using Novel Metrics and Dataset}. In \bibinfo{booktitle}{\emph{NeurIPS 2024 Workshop on Open-World Agents}}.
+\newblock
+
+
+\bibitem[Jhunjhunwala et~al\mbox{.}(2023)]%
+        {jhunjhunwala2023fedexp}
+\bibfield{author}{\bibinfo{person}{Divyansh Jhunjhunwala}, \bibinfo{person}{Shiqiang Wang}, {and} \bibinfo{person}{Gauri Joshi}.} \bibinfo{year}{2023}\natexlab{}.
+\newblock \showarticletitle{FedExP: Speeding Up Federated Averaging via Extrapolation}. In \bibinfo{booktitle}{\emph{The Eleventh International Conference on Learning Representations}}.
+\newblock
+
+
+\bibitem[Ji et~al\mbox{.}(2024)]%
+        {ji2024testingunderstandingerroneousplanning}
+\bibfield{author}{\bibinfo{person}{Zhenlan Ji} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{}.
+\newblock \bibinfo{title}{Testing and Understanding Erroneous Planning in LLM Agents through Synthesized User Inputs}.
+\newblock
+\newblock
+\showeprint[arxiv]{2404.17833}~[cs.AI]
+
+
+\bibitem[Jiang et~al\mbox{.}(2023)]%
+        {jiang-etal-2023-llm}
+\bibfield{author}{\bibinfo{person}{Dongfu Jiang}, \bibinfo{person}{Xiang Ren}, {and} \bibinfo{person}{Bill~Yuchen Lin}.} \bibinfo{year}{2023}\natexlab{}.
+\newblock \showarticletitle{{LLM}-Blender: Ensembling Large Language Models with Pairwise Ranking and Generative Fusion}. In \bibinfo{booktitle}{\emph{Proceedings of the Annual Meeting of the Association for Computational Linguistics}}.
+\newblock
+
+
+\bibitem[Jiang et~al\mbox{.}(2024a)]%
+        {10670195}
+\bibfield{author}{\bibinfo{person}{Feibo Jiang} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{a}.
+\newblock \showarticletitle{Large AI Model Empowered Multimodal Semantic Communications}.
+\newblock \bibinfo{journal}{\emph{IEEE Communications Magazine}} (\bibinfo{year}{2024}), \bibinfo{pages}{1--7}.
+\newblock
+
+
+\bibitem[Jiang et~al\mbox{.}(2024b)]%
+        {10638533}
+\bibfield{author}{\bibinfo{person}{Feibo Jiang} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{b}.
+\newblock \showarticletitle{Large Language Model Enhanced Multi-Agent Systems for 6G Communications}.
+\newblock \bibinfo{journal}{\emph{IEEE Wireless Communications}} (\bibinfo{year}{2024}), \bibinfo{pages}{1--8}.
+\newblock
+
+
+\bibitem[Jiang et~al\mbox{.}(2024c)]%
+        {10.1145/3672456}
+\bibfield{author}{\bibinfo{person}{Xue Jiang} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{c}.
+\newblock \showarticletitle{Self-Planning Code Generation with Large Language Models}.
+\newblock \bibinfo{journal}{\emph{ACM Trans. Softw. Eng. Methodol.}} \bibinfo{volume}{33}, \bibinfo{number}{7}, Article \bibinfo{articleno}{182} (\bibinfo{date}{Sept.} \bibinfo{year}{2024}), \bibinfo{numpages}{30}~pages.
+\newblock
+\showISSN{1049-331X}
+
+
+\bibitem[Kalyani and Collier(2024)]%
+        {10.1145/3697350}
+\bibfield{author}{\bibinfo{person}{Yogeswaranathan Kalyani} {and} \bibinfo{person}{Rem Collier}.} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{The Role of Multi-Agents in Digital Twin Implementation: Short Survey}.
+\newblock \bibinfo{journal}{\emph{ACM Comput. Surv.}} \bibinfo{volume}{57}, \bibinfo{number}{3}, Article \bibinfo{articleno}{72} (\bibinfo{date}{Nov.} \bibinfo{year}{2024}), \bibinfo{numpages}{15}~pages.
+\newblock
+\showISSN{0360-0300}
+
+
+\bibitem[Kaplan et~al\mbox{.}(2020)]%
+        {kaplan2020scaling}
+\bibfield{author}{\bibinfo{person}{Jared Kaplan} {et~al\mbox{.}}} \bibinfo{year}{2020}\natexlab{}.
+\newblock \showarticletitle{Scaling laws for neural language models}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2001.08361}} (\bibinfo{year}{2020}).
+\newblock
+
+
+\bibitem[Lambiase et~al\mbox{.}(2024)]%
+        {10.1145/3704806}
+\bibfield{author}{\bibinfo{person}{Stefano Lambiase} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{Motivations, Challenges, Best Practices, and Benefits for Bots and Conversational Agents in Software Engineering: A Multivocal Literature Review}.
+\newblock \bibinfo{journal}{\emph{ACM Comput. Surv.}} \bibinfo{volume}{57}, \bibinfo{number}{4}, Article \bibinfo{articleno}{93} (\bibinfo{date}{Dec.} \bibinfo{year}{2024}), \bibinfo{numpages}{37}~pages.
+\newblock
+\showISSN{0360-0300}
+
+
+\bibitem[Leimeister(2010)]%
+        {Leimeister2010}
+\bibfield{author}{\bibinfo{person}{Jan~Marco Leimeister}.} \bibinfo{year}{2010}\natexlab{}.
+\newblock \showarticletitle{Collective Intelligence}.
+\newblock \bibinfo{journal}{\emph{Business and Information Systems Engineering}} \bibinfo{volume}{2}, \bibinfo{number}{4} (\bibinfo{date}{June} \bibinfo{year}{2010}), \bibinfo{pages}{245–248}.
+\newblock
+\showISSN{1867-0202}
+
+
+\bibitem[Leviathan et~al\mbox{.}(2023)]%
+        {leviathan2023fast}
+\bibfield{author}{\bibinfo{person}{Yaniv Leviathan}, \bibinfo{person}{Matan Kalman}, {and} \bibinfo{person}{Yossi Matias}.} \bibinfo{year}{2023}\natexlab{}.
+\newblock \showarticletitle{Fast inference from transformers via speculative decoding}. In \bibinfo{booktitle}{\emph{International Conference on Machine Learning}}. PMLR, \bibinfo{pages}{19274--19286}.
+\newblock
+
+
+\bibitem[Li et~al\mbox{.}(2024a)]%
+        {li2024cultureparkboostingcrossculturalunderstanding}
+\bibfield{author}{\bibinfo{person}{Cheng Li} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{a}.
+\newblock \bibinfo{title}{CulturePark: Boosting Cross-cultural Understanding in Large Language Models}.
+\newblock
+\newblock
+\showeprint[arxiv]{2405.15145}~[cs.AI]
+
+
+\bibitem[Li et~al\mbox{.}(2023a)]%
+        {li2023camel}
+\bibfield{author}{\bibinfo{person}{Guohao Li} {et~al\mbox{.}}} \bibinfo{year}{2023}\natexlab{a}.
+\newblock \showarticletitle{{CAMEL}: Communicative Agents for ''Mind'' Exploration of Large Language Model Society}. In \bibinfo{booktitle}{\emph{Thirty-seventh Conference on Neural Information Processing Systems}}.
+\newblock
+
+
+\bibitem[Li et~al\mbox{.}(2023b)]%
+        {li-etal-2023-theory}
+\bibfield{author}{\bibinfo{person}{Huao Li} {et~al\mbox{.}}} \bibinfo{year}{2023}\natexlab{b}.
+\newblock \showarticletitle{Theory of Mind for Multi-Agent Collaboration via Large Language Models}. In \bibinfo{booktitle}{\emph{Proceedings of the 2023 Conference on Empirical Methods in Natural Language Processing}}, \bibfield{editor}{\bibinfo{person}{Houda Bouamor}, \bibinfo{person}{Juan Pino}, {and} \bibinfo{person}{Kalika Bali}} (Eds.). \bibinfo{publisher}{Association for Computational Linguistics}, \bibinfo{address}{Singapore}, \bibinfo{pages}{180--192}.
+\newblock
+
+
+\bibitem[Li et~al\mbox{.}(2024b)]%
+        {10.1145/3649449}
+\bibfield{author}{\bibinfo{person}{Junyi Li} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{b}.
+\newblock \showarticletitle{Pre-Trained Language Models for Text Generation: A Survey}.
+\newblock \bibinfo{journal}{\emph{ACM Comput. Surv.}} \bibinfo{volume}{56}, \bibinfo{number}{9}, Article \bibinfo{articleno}{230} (\bibinfo{date}{April} \bibinfo{year}{2024}), \bibinfo{numpages}{39}~pages.
+\newblock
+\showISSN{0360-0300}
+
+
+\bibitem[Liang et~al\mbox{.}(2024)]%
+        {liang-etal-2024-encouraging}
+\bibfield{author}{\bibinfo{person}{Tian Liang} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{Encouraging Divergent Thinking in Large Language Models through Multi-Agent Debate}. In \bibinfo{booktitle}{\emph{Proceedings of the 2024 Conference on Empirical Methods in Natural Language Processing}}, \bibfield{editor}{\bibinfo{person}{Yaser Al-Onaizan}, \bibinfo{person}{Mohit Bansal}, {and} \bibinfo{person}{Yun-Nung Chen}} (Eds.). \bibinfo{publisher}{Association for Computational Linguistics}, \bibinfo{address}{Miami, Florida, USA}, \bibinfo{pages}{17889--17904}.
+\newblock
+
+
+\bibitem[Liu et~al\mbox{.}(2024a)]%
+        {10520918}
+\bibfield{author}{\bibinfo{person}{Qiang Liu} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{a}.
+\newblock \showarticletitle{LLM Enhanced Reconfigurable Intelligent Surface for Energy-Efficient and Reliable 6G IoV}.
+\newblock \bibinfo{journal}{\emph{IEEE Transactions on Vehicular Technology}} (\bibinfo{year}{2024}), \bibinfo{pages}{1--9}.
+\newblock
+
+
+\bibitem[Liu et~al\mbox{.}(2024b)]%
+        {liu2024largelanguagemodelsassume}
+\bibfield{author}{\bibinfo{person}{Ryan Liu} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{b}.
+\newblock \bibinfo{title}{Large Language Models Assume People are More Rational than We Really are}.
+\newblock
+\newblock
+\showeprint[arxiv]{2406.17055}~[cs.CL]
+
+
+\bibitem[Liu et~al\mbox{.}(2024c)]%
+        {liu2024agentbench}
+\bibfield{author}{\bibinfo{person}{Xiao Liu} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{c}.
+\newblock \showarticletitle{AgentBench: Evaluating {LLM}s as Agents}. In \bibinfo{booktitle}{\emph{The Twelfth International Conference on Learning Representations}}.
+\newblock
+
+
+\bibitem[Liu et~al\mbox{.}(2024d)]%
+        {liu2024a}
+\bibfield{author}{\bibinfo{person}{Zijun Liu} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{d}.
+\newblock \showarticletitle{A Dynamic {LLM}-Powered Agent Network for Task-Oriented Agent Collaboration}. In \bibinfo{booktitle}{\emph{First Conference on Language Modeling}}.
+\newblock
+
+
+\bibitem[Lu et~al\mbox{.}(2024)]%
+        {lu2024mergeensemblecooperatesurvey}
+\bibfield{author}{\bibinfo{person}{Jinliang Lu} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{}.
+\newblock \bibinfo{title}{Merge, Ensemble, and Cooperate! A Survey on Collaborative Strategies in the Era of Large Language Models}.
+\newblock
+\newblock
+\showeprint[arxiv]{2407.06089}~[cs.CL]
+
+
+\bibitem[Mandi et~al\mbox{.}(2024)]%
+        {mandi2024roco}
+\bibfield{author}{\bibinfo{person}{Zhao Mandi}, \bibinfo{person}{Shreeya Jain}, {and} \bibinfo{person}{Shuran Song}.} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{Roco: Dialectic multi-robot collaboration with large language models}. In \bibinfo{booktitle}{\emph{2024 IEEE International Conference on Robotics and Automation (ICRA)}}. IEEE, \bibinfo{pages}{286--299}.
+\newblock
+
+
+\bibitem[Meinke et~al\mbox{.}(2024)]%
+        {meinke2024frontiermodelscapableincontext}
+\bibfield{author}{\bibinfo{person}{Alexander Meinke} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{}.
+\newblock \bibinfo{title}{Frontier Models are Capable of In-context Scheming}.
+\newblock
+\newblock
+\showeprint[arxiv]{2412.04984}~[cs.AI]
+
+
+\bibitem[Mena-Guacas et~al\mbox{.}(2023)]%
+        {MenaGuacas2023}
+\bibfield{author}{\bibinfo{person}{Andres~F. Mena-Guacas} {et~al\mbox{.}}} \bibinfo{year}{2023}\natexlab{}.
+\newblock \showarticletitle{Collaborative learning and skill development for educational growth of artificial intelligence: A systematic review}.
+\newblock \bibinfo{journal}{\emph{Contemporary Educational Technology}} \bibinfo{volume}{15}, \bibinfo{number}{3} (\bibinfo{date}{July} \bibinfo{year}{2023}), \bibinfo{pages}{ep428}.
+\newblock
+\showISSN{1309-517X}
+
+
+\bibitem[Min et~al\mbox{.}(2023)]%
+        {10.1145/3605943}
+\bibfield{author}{\bibinfo{person}{Bonan Min} {et~al\mbox{.}}} \bibinfo{year}{2023}\natexlab{}.
+\newblock \showarticletitle{Recent Advances in Natural Language Processing via Large Pre-trained Language Models: A Survey}.
+\newblock \bibinfo{journal}{\emph{ACM Comput. Surv.}} \bibinfo{volume}{56}, \bibinfo{number}{2}, Article \bibinfo{articleno}{30} (\bibinfo{date}{Sept.} \bibinfo{year}{2023}), \bibinfo{numpages}{40}~pages.
+\newblock
+\showISSN{0360-0300}
+
+
+\bibitem[Minsky(1988)]%
+        {minsky1988society}
+\bibfield{author}{\bibinfo{person}{Marvin Minsky}.} \bibinfo{year}{1988}\natexlab{}.
+\newblock \bibinfo{booktitle}{\emph{Society of mind}}.
+\newblock \bibinfo{publisher}{Simon and Schuster}.
+\newblock
+
+
+\bibitem[Mitra et~al\mbox{.}(2024)]%
+        {mitra2024agentinstruct}
+\bibfield{author}{\bibinfo{person}{Arindam Mitra} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{Agentinstruct: Toward generative teaching with agentic flows}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2407.03502}} (\bibinfo{year}{2024}).
+\newblock
+
+
+\bibitem[Mou et~al\mbox{.}(2024)]%
+        {mou2024agentsensebenchmarkingsocialintelligence}
+\bibfield{author}{\bibinfo{person}{Xinyi Mou}, \bibinfo{person}{Jingcong Liang}, \bibinfo{person}{Jiayu Lin}, \bibinfo{person}{Xinnong Zhang}, \bibinfo{person}{Xiawei Liu}, \bibinfo{person}{Shiyue Yang}, \bibinfo{person}{Rong Ye}, \bibinfo{person}{Lei Chen}, \bibinfo{person}{Haoyu Kuang}, \bibinfo{person}{Xuanjing Huang}, {and} \bibinfo{person}{Zhongyu Wei}.} \bibinfo{year}{2024}\natexlab{}.
+\newblock \bibinfo{title}{AgentSense: Benchmarking Social Intelligence of Language Agents through Interactive Scenarios}.
+\newblock
+\newblock
+\showeprint[arxiv]{2410.19346}~[cs.CL]
+
+
+\bibitem[Mu et~al\mbox{.}(2023)]%
+        {mu2023runtime}
+\bibfield{author}{\bibinfo{person}{Yongan Mu} {et~al\mbox{.}}} \bibinfo{year}{2023}\natexlab{}.
+\newblock \showarticletitle{Runtime verification of self-adaptive multi-agent system using probabilistic timed automata}.
+\newblock \bibinfo{journal}{\emph{Journal of Intelligent \& Fuzzy Systems}} \bibinfo{volume}{45}, \bibinfo{number}{6} (\bibinfo{year}{2023}), \bibinfo{pages}{10305--10322}.
+\newblock
+
+
+\bibitem[Nascimento et~al\mbox{.}(2023)]%
+        {nascimento2023self}
+\bibfield{author}{\bibinfo{person}{Nathalia Nascimento}, \bibinfo{person}{Paulo Alencar}, {and} \bibinfo{person}{Donald Cowan}.} \bibinfo{year}{2023}\natexlab{}.
+\newblock \showarticletitle{Self-adaptive large language model (llm)-based multiagent systems}. In \bibinfo{booktitle}{\emph{2023 IEEE International Conference on Autonomic Computing and Self-Organizing Systems Companion (ACSOS-C)}}. IEEE, \bibinfo{pages}{104--109}.
+\newblock
+
+
+\bibitem[Nguyen et~al\mbox{.}(2024a)]%
+        {nguyen2024layerwisepersonalizedfederatedlearning}
+\bibfield{author}{\bibinfo{person}{Minh~Duong Nguyen} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{a}.
+\newblock \bibinfo{title}{Towards Layer-Wise Personalized Federated Learning: Adaptive Layer Disentanglement via Conflicting Gradients}.
+\newblock
+\newblock
+\showeprint[arxiv]{2410.02845}~[cs.LG]
+
+
+\bibitem[Nguyen et~al\mbox{.}(2023)]%
+        {nguyen2023vigptqa}
+\bibfield{author}{\bibinfo{person}{Minh~Thuan Nguyen} {et~al\mbox{.}}} \bibinfo{year}{2023}\natexlab{}.
+\newblock \showarticletitle{ViGPTQA-state-of-the-art LLMs for vietnamese question answering: system overview, core models training, and evaluations}. In \bibinfo{booktitle}{\emph{Proceedings of the 2023 conference on empirical methods in natural language processing: industry track}}. \bibinfo{pages}{754--764}.
+\newblock
+
+
+\bibitem[Nguyen et~al\mbox{.}(2024b)]%
+        {10.1145/3627673.3679768}
+\bibfield{author}{\bibinfo{person}{Tuan-Phong Nguyen}, \bibinfo{person}{Simon Razniewski}, {and} \bibinfo{person}{Gerhard Weikum}.} \bibinfo{year}{2024}\natexlab{b}.
+\newblock \showarticletitle{Cultural Commonsense Knowledge for Intercultural Dialogues}. In \bibinfo{booktitle}{\emph{Proceedings of the 33rd ACM International Conference on Information and Knowledge Management}} (Boise, ID, USA) \emph{(\bibinfo{series}{CIKM '24})}. \bibinfo{publisher}{Association for Computing Machinery}, \bibinfo{address}{New York, NY, USA}, \bibinfo{pages}{1774–1784}.
+\newblock
+\showISBNx{9798400704369}
+
+
+\bibitem[Ning et~al\mbox{.}(2024)]%
+        {ning2024skeletonofthought}
+\bibfield{author}{\bibinfo{person}{Xuefei Ning} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{Skeleton-of-Thought: Prompting {LLM}s for Efficient Parallel Generation}. In \bibinfo{booktitle}{\emph{The Twelfth International Conference on Learning Representations}}.
+\newblock
+
+
+\bibitem[Ouyang and Zhang(2024)]%
+        {OUYANG2024100616}
+\bibfield{author}{\bibinfo{person}{Fan Ouyang} {and} \bibinfo{person}{Liyin Zhang}.} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{AI-driven learning analytics applications and tools in computer-supported collaborative learning: A systematic review}.
+\newblock \bibinfo{journal}{\emph{Educational Research Review}}  \bibinfo{volume}{44} (\bibinfo{year}{2024}), \bibinfo{pages}{100616}.
+\newblock
+\showISSN{1747-938X}
+
+
+\bibitem[Pan et~al\mbox{.}(2024)]%
+        {pan2024agentcoordvisuallyexploringcoordination}
+\bibfield{author}{\bibinfo{person}{Bo Pan} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{}.
+\newblock \bibinfo{title}{AgentCoord: Visually Exploring Coordination Strategy for LLM-based Multi-Agent Collaboration}.
+\newblock
+\newblock
+\showeprint[arxiv]{2404.11943}~[cs.HC]
+
+
+\bibitem[Parasumanna~Gokulan and Srinivasan(2010)]%
+        {introMAC}
+\bibfield{author}{\bibinfo{person}{Balaji Parasumanna~Gokulan} {and} \bibinfo{person}{D. Srinivasan}.} \bibinfo{year}{2010}\natexlab{}.
+\newblock \bibinfo{booktitle}{\emph{An Introduction to Multi-Agent Systems}}. Vol.~\bibinfo{volume}{310}.
+\newblock \bibinfo{pages}{1--27}.
+\newblock
+\showISBNx{978-3-642-14434-9}
+\urldef\tempurl%
+\url{https://doi.org/10.1007/978-3-642-14435-6_1}
+\showDOI{\tempurl}
+
+
+\bibitem[Park et~al\mbox{.}(2023)]%
+        {10.1145/3586183.3606763}
+\bibfield{author}{\bibinfo{person}{Joon~Sung Park} {et~al\mbox{.}}} \bibinfo{year}{2023}\natexlab{}.
+\newblock \showarticletitle{Generative Agents: Interactive Simulacra of Human Behavior} \emph{(\bibinfo{series}{UIST '23})}.
+\newblock
+
+
+\bibitem[Patil et~al\mbox{.}(2024)]%
+        {patil2024gorilla}
+\bibfield{author}{\bibinfo{person}{Shishir~G Patil} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{Gorilla: Large Language Model Connected with Massive {API}s}. In \bibinfo{booktitle}{\emph{The Thirty-eighth Annual Conference on Neural Information Processing Systems}}.
+\newblock
+
+
+\bibitem[Peikos et~al\mbox{.}(2024)]%
+        {peikos2024leveraging}
+\bibfield{author}{\bibinfo{person}{Georgios Peikos}, \bibinfo{person}{Pranav Kasela}, {and} \bibinfo{person}{Gabriella Pasi}.} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{Leveraging Large Language Models for Medical Information Extraction and Query Generation}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2410.23851}} (\bibinfo{year}{2024}).
+\newblock
+
+
+\bibitem[Peng et~al\mbox{.}(2024)]%
+        {peng2024survey}
+\bibfield{author}{\bibinfo{person}{Ji-Lun Peng} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{A Survey of Useful LLM Evaluation}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2406.00936}} (\bibinfo{year}{2024}).
+\newblock
+
+
+\bibitem[Perez et~al\mbox{.}(2024)]%
+        {perez2024culturalevolutionpopulationslarge}
+\bibfield{author}{\bibinfo{person}{Jérémy Perez} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{}.
+\newblock \bibinfo{title}{Cultural evolution in populations of Large Language Models}.
+\newblock
+\newblock
+\showeprint[arxiv]{2403.08882}~[cs.MA]
+
+
+\bibitem[Puerto et~al\mbox{.}(2023)]%
+        {puerto-etal-2023-metaqa}
+\bibfield{author}{\bibinfo{person}{Haritz Puerto}, \bibinfo{person}{G{\"o}zde {\c{S}}ahin}, {and} \bibinfo{person}{Iryna Gurevych}.} \bibinfo{year}{2023}\natexlab{}.
+\newblock \showarticletitle{{M}eta{QA}: Combining Expert Agents for Multi-Skill Question Answering}. In \bibinfo{booktitle}{\emph{Proceedings of the 17th Conference of the European Chapter of the Association for Computational Linguistics}}, \bibfield{editor}{\bibinfo{person}{Andreas Vlachos} {and} \bibinfo{person}{Isabelle Augenstein}} (Eds.). \bibinfo{publisher}{Association for Computational Linguistics}, \bibinfo{address}{Dubrovnik, Croatia}, \bibinfo{pages}{3566--3580}.
+\newblock
+
+
+\bibitem[Qian et~al\mbox{.}(2024)]%
+        {qian-etal-2024-chatdev}
+\bibfield{author}{\bibinfo{person}{Chen Qian} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{{C}hat{D}ev: Communicative Agents for Software Development}. In \bibinfo{booktitle}{\emph{Proceedings of the Annual Meeting of the Association for Computational Linguistics}}.
+\newblock
+
+
+\bibitem[Qiao et~al\mbox{.}(2024)]%
+        {qiao2024autoactautomaticagentlearning}
+\bibfield{author}{\bibinfo{person}{Shuofei Qiao} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{}.
+\newblock \bibinfo{title}{AutoAct: Automatic Agent Learning from Scratch for QA via Self-Planning}.
+\newblock
+\newblock
+\showeprint[arxiv]{2401.05268}~[cs.CL]
+
+
+\bibitem[Qin et~al\mbox{.}(2024a)]%
+        {10.1145/3704435}
+\bibfield{author}{\bibinfo{person}{Yujia Qin} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{a}.
+\newblock \showarticletitle{Tool Learning with Foundation Models}.
+\newblock \bibinfo{journal}{\emph{ACM Comput. Surv.}} \bibinfo{volume}{57}, \bibinfo{number}{4}, Article \bibinfo{articleno}{101} (\bibinfo{date}{Dec.} \bibinfo{year}{2024}).
+\newblock
+\showISSN{0360-0300}
+
+
+\bibitem[Qin et~al\mbox{.}(2024b)]%
+        {10639525}
+\bibfield{author}{\bibinfo{person}{Zhijin Qin} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{b}.
+\newblock \showarticletitle{AI Empowered Wireless Communications: From Bits to Semantics}.
+\newblock \bibinfo{journal}{\emph{Proc. IEEE}} \bibinfo{volume}{112}, \bibinfo{number}{7} (\bibinfo{year}{2024}), \bibinfo{pages}{621--652}.
+\newblock
+
+
+\bibitem[Qiu et~al\mbox{.}(2024)]%
+        {qiu2024evaluatingculturalsocialawareness}
+\bibfield{author}{\bibinfo{person}{Haoyi Qiu} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{}.
+\newblock \bibinfo{title}{Evaluating Cultural and Social Awareness of LLM Web Agents}.
+\newblock
+\newblock
+\showeprint[arxiv]{2410.23252}~[cs.CL]
+
+
+\bibitem[Raiaan et~al\mbox{.}(2024)]%
+        {10433480}
+\bibfield{author}{\bibinfo{person}{Mohaimenul Azam~Khan Raiaan} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{A Review on Large Language Models: Architectures, Applications, Taxonomies, Open Issues and Challenges}.
+\newblock \bibinfo{journal}{\emph{IEEE Access}}  \bibinfo{volume}{12} (\bibinfo{year}{2024}), \bibinfo{pages}{26839--26874}.
+\newblock
+
+
+\bibitem[Rivkin et~al\mbox{.}(2024)]%
+        {10729865}
+\bibfield{author}{\bibinfo{person}{Dmitriy Rivkin} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{AIoT Smart Home via Autonomous LLM Agents}.
+\newblock \bibinfo{journal}{\emph{IEEE Internet of Things Journal}} (\bibinfo{year}{2024}), \bibinfo{pages}{1--1}.
+\newblock
+
+
+\bibitem[Rong et~al\mbox{.}(2024)]%
+        {10742575}
+\bibfield{author}{\bibinfo{person}{Yi Rong} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{Large-Scale Traffic Flow Forecast with Lightweight LLM in Edge Intelligence}.
+\newblock \bibinfo{journal}{\emph{IEEE Internet of Things Magazine}} (\bibinfo{year}{2024}), \bibinfo{pages}{1--7}.
+\newblock
+
+
+\bibitem[Schaeffer et~al\mbox{.}(2024)]%
+        {schaeffer2024emergent}
+\bibfield{author}{\bibinfo{person}{Rylan Schaeffer}, \bibinfo{person}{Brando Miranda}, {and} \bibinfo{person}{Sanmi Koyejo}.} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{Are emergent abilities of large language models a mirage?}
+\newblock \bibinfo{journal}{\emph{Advances in Neural Information Processing Systems}}  \bibinfo{volume}{36} (\bibinfo{year}{2024}).
+\newblock
+
+
+\bibitem[Sehad et~al\mbox{.}(2024)]%
+        {10731639}
+\bibfield{author}{\bibinfo{person}{Nassim Sehad} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{Generative AI for Immersive Communication: The Next Frontier in Internet-of-Senses Through 6G}.
+\newblock \bibinfo{journal}{\emph{IEEE Communications Magazine}} (\bibinfo{year}{2024}), \bibinfo{pages}{1--13}.
+\newblock
+
+
+\bibitem[Shayegani et~al\mbox{.}(2023)]%
+        {shayegani2023survey}
+\bibfield{author}{\bibinfo{person}{Erfan Shayegani} {et~al\mbox{.}}} \bibinfo{year}{2023}\natexlab{}.
+\newblock \showarticletitle{Survey of vulnerabilities in large language models revealed by adversarial attacks}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2310.10844}} (\bibinfo{year}{2023}).
+\newblock
+
+
+\bibitem[Shen et~al\mbox{.}(2024)]%
+        {10384606}
+\bibfield{author}{\bibinfo{person}{Yifei Shen} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{Large Language Models Empowered Autonomous Edge AI for Connected Intelligence}.
+\newblock \bibinfo{journal}{\emph{IEEE Communications Magazine}} \bibinfo{volume}{62}, \bibinfo{number}{10} (\bibinfo{year}{2024}), \bibinfo{pages}{140--146}.
+\newblock
+
+
+\bibitem[Shinn et~al\mbox{.}(2023)]%
+        {shinn2023reflexion}
+\bibfield{author}{\bibinfo{person}{Noah Shinn} {et~al\mbox{.}}} \bibinfo{year}{2023}\natexlab{}.
+\newblock \showarticletitle{Reflexion: language agents with verbal reinforcement learning}. In \bibinfo{booktitle}{\emph{Thirty-seventh Conference on Neural Information Processing Systems}}.
+\newblock
+
+
+\bibitem[Sun et~al\mbox{.}(2024)]%
+        {sun2024llm}
+\bibfield{author}{\bibinfo{person}{Chuanneng Sun}, \bibinfo{person}{Songjun Huang}, {and} \bibinfo{person}{Dario Pompili}.} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{LLM-based Multi-Agent Reinforcement Learning: Current and Future Directions}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2405.11106}} (\bibinfo{year}{2024}).
+\newblock
+
+
+\bibitem[Suzgun and Kalai(2024)]%
+        {suzgun2024metapromptingenhancinglanguagemodels}
+\bibfield{author}{\bibinfo{person}{Mirac Suzgun} {and} \bibinfo{person}{Adam~Tauman Kalai}.} \bibinfo{year}{2024}\natexlab{}.
+\newblock \bibinfo{title}{Meta-Prompting: Enhancing Language Models with Task-Agnostic Scaffolding}.
+\newblock
+\newblock
+\showeprint[arxiv]{2401.12954}~[cs.CL]
+
+
+\bibitem[Talebirad and Nadiri(2023)]%
+        {talebirad2023multiagentcollaborationharnessingpower}
+\bibfield{author}{\bibinfo{person}{Yashar Talebirad} {and} \bibinfo{person}{Amirhossein Nadiri}.} \bibinfo{year}{2023}\natexlab{}.
+\newblock \bibinfo{title}{Multi-Agent Collaboration: Harnessing the Power of Intelligent LLM Agents}.
+\newblock
+\newblock
+\showeprint[arxiv]{2306.03314}~[cs.AI]
+
+
+\bibitem[Tang et~al\mbox{.}(2024a)]%
+        {tang2024largelanguagemodelllmassisted}
+\bibfield{author}{\bibinfo{person}{Fengxiao Tang} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{a}.
+\newblock \bibinfo{title}{Large Language Model(LLM) assisted End-to-End Network Health Management based on Multi-Scale Semanticization}.
+\newblock
+\newblock
+\showeprint[arxiv]{2406.08305}~[cs.NI]
+
+
+\bibitem[Tang et~al\mbox{.}(2024b)]%
+        {tang-etal-2024-medagents}
+\bibfield{author}{\bibinfo{person}{Xiangru Tang} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{b}.
+\newblock \showarticletitle{{M}ed{A}gents: Large Language Models as Collaborators for Zero-shot Medical Reasoning}. In \bibinfo{booktitle}{\emph{Findings of the Association for Computational Linguistics}}.
+\newblock
+
+
+\bibitem[Team et~al\mbox{.}(2023)]%
+        {team2023gemini}
+\bibfield{author}{\bibinfo{person}{Gemini Team} {et~al\mbox{.}}} \bibinfo{year}{2023}\natexlab{}.
+\newblock \showarticletitle{Gemini: a family of highly capable multimodal models}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2312.11805}} (\bibinfo{year}{2023}).
+\newblock
+
+
+\bibitem[Touvron et~al\mbox{.}(2023)]%
+        {touvron2023llama}
+\bibfield{author}{\bibinfo{person}{Hugo Touvron} {et~al\mbox{.}}} \bibinfo{year}{2023}\natexlab{}.
+\newblock \showarticletitle{Llama 2: Open foundation and fine-tuned chat models}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2307.09288}} (\bibinfo{year}{2023}).
+\newblock
+
+
+\bibitem[Tran et~al\mbox{.}(2024a)]%
+        {tran2024uccix}
+\bibfield{author}{\bibinfo{person}{Khanh-Tung Tran}, \bibinfo{person}{Barry O'Sullivan}, {and} \bibinfo{person}{Hoang~D Nguyen}.} \bibinfo{year}{2024}\natexlab{a}.
+\newblock \showarticletitle{UCCIX: Irish-eXcellence Large Language Model}.
+\newblock \bibinfo{journal}{\emph{ECAI 2024}} (\bibinfo{year}{2024}).
+\newblock
+
+
+\bibitem[Tran et~al\mbox{.}(2024b)]%
+        {tran2024irish}
+\bibfield{author}{\bibinfo{person}{Khanh-Tung Tran}, \bibinfo{person}{Barry O’Sullivan}, {and} \bibinfo{person}{Hoang~D Nguyen}.} \bibinfo{year}{2024}\natexlab{b}.
+\newblock \showarticletitle{Irish-based Large Language Model with Extreme Low-Resource Settings in Machine Translation}.
+\newblock \bibinfo{journal}{\emph{LoResMT 2024}} (\bibinfo{year}{2024}), \bibinfo{pages}{193}.
+\newblock
+
+
+\bibitem[Vaswani et~al\mbox{.}(2017)]%
+        {vaswani2017attention}
+\bibfield{author}{\bibinfo{person}{A Vaswani} {et~al\mbox{.}}} \bibinfo{year}{2017}\natexlab{}.
+\newblock \showarticletitle{Attention is all you need}.
+\newblock \bibinfo{journal}{\emph{Advances in Neural Information Processing Systems}} (\bibinfo{year}{2017}).
+\newblock
+
+
+\bibitem[Wang et~al\mbox{.}(2024a)]%
+        {wang-etal-2024-rethinking-bounds}
+\bibfield{author}{\bibinfo{person}{Qineng Wang} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{a}.
+\newblock \showarticletitle{Rethinking the Bounds of {LLM} Reasoning: Are Multi-Agent Discussions the Key?}. In \bibinfo{booktitle}{\emph{Proceedings of the Annual Meeting of the Association for Computational Linguistics}}.
+\newblock
+
+
+\bibitem[Wang et~al\mbox{.}(2024b)]%
+        {wang2024benchmark}
+\bibfield{author}{\bibinfo{person}{Siyuan Wang} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{b}.
+\newblock \showarticletitle{Benchmark Self-Evolving: A Multi-Agent Framework for Dynamic LLM Evaluation}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2402.11443}} (\bibinfo{year}{2024}).
+\newblock
+
+
+\bibitem[Wang et~al\mbox{.}(2024c)]%
+        {wang2024largelanguagemodelenabled}
+\bibfield{author}{\bibinfo{person}{Zhenyi Wang} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{c}.
+\newblock \bibinfo{title}{Large Language Model Enabled Semantic Communication Systems}.
+\newblock
+\newblock
+\showeprint[arxiv]{2407.14112}~[eess.SP]
+
+
+\bibitem[Wang et~al\mbox{.}(2024d)]%
+        {10.1145/3626772.3657669}
+\bibfield{author}{\bibinfo{person}{Zhefan Wang} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{d}.
+\newblock \showarticletitle{MACRec: A Multi-Agent Collaboration Framework for Recommendation}. In \bibinfo{booktitle}{\emph{Proceedings of the 47th International ACM SIGIR Conference on Research and Development in Information Retrieval}} (Washington DC, USA) \emph{(\bibinfo{series}{SIGIR '24})}. \bibinfo{publisher}{Association for Computing Machinery}, \bibinfo{address}{New York, NY, USA}, \bibinfo{pages}{2760–2764}.
+\newblock
+\showISBNx{9798400704314}
+
+
+\bibitem[Wang et~al\mbox{.}(2024e)]%
+        {wang-etal-2024-unleashing}
+\bibfield{author}{\bibinfo{person}{Zhenhailong Wang} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{e}.
+\newblock \showarticletitle{Unleashing the Emergent Cognitive Synergy in Large Language Models: A Task-Solving Agent through Multi-Persona Self-Collaboration}. In \bibinfo{booktitle}{\emph{Proceedings of the 2024 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies (Volume 1: Long Papers)}}.
+\newblock
+
+
+\bibitem[Wu et~al\mbox{.}(2024a)]%
+        {wu2024perhapshumantranslationharnessing}
+\bibfield{author}{\bibinfo{person}{Minghao Wu} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{a}.
+\newblock \bibinfo{title}{(Perhaps) Beyond Human Translation: Harnessing Multi-Agent Collaboration for Translating Ultra-Long Literary Texts}.
+\newblock
+\newblock
+\showeprint[arxiv]{2405.11804}~[cs.CL]
+
+
+\bibitem[Wu et~al\mbox{.}(2024b)]%
+        {wu2024autogen}
+\bibfield{author}{\bibinfo{person}{Qingyun Wu} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{b}.
+\newblock \bibinfo{title}{AutoGen: Enabling Next-Gen {LLM} Applications via Multi-Agent Conversation}.
+\newblock
+\newblock
+
+
+\bibitem[Wu et~al\mbox{.}(2022)]%
+        {10.1145/3491102.3517582}
+\bibfield{author}{\bibinfo{person}{Tongshuang Wu}, \bibinfo{person}{Michael Terry}, {and} \bibinfo{person}{Carrie~Jun Cai}.} \bibinfo{year}{2022}\natexlab{}.
+\newblock \showarticletitle{AI Chains: Transparent and Controllable Human-AI Interaction by Chaining Large Language Model Prompts}. In \bibinfo{booktitle}{\emph{Proceedings of the 2022 CHI Conference on Human Factors in Computing Systems}} (New Orleans, LA, USA) \emph{(\bibinfo{series}{CHI '22})}. \bibinfo{publisher}{Association for Computing Machinery}, \bibinfo{address}{New York, NY, USA}, Article \bibinfo{articleno}{385}, \bibinfo{numpages}{22}~pages.
+\newblock
+\showISBNx{9781450391573}
+
+
+\bibitem[Xi et~al\mbox{.}(2023)]%
+        {xi2023risepotentiallargelanguage}
+\bibfield{author}{\bibinfo{person}{Zhiheng Xi} {et~al\mbox{.}}} \bibinfo{year}{2023}\natexlab{}.
+\newblock \bibinfo{title}{The Rise and Potential of Large Language Model Based Agents: A Survey}.
+\newblock
+\newblock
+\showeprint[arxiv]{2309.07864}~[cs.AI]
+
+
+\bibitem[Xiao et~al\mbox{.}(2024a)]%
+        {Xiao_2024}
+\bibfield{author}{\bibinfo{person}{Bin Xiao} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{a}.
+\newblock \showarticletitle{Efficient Prompting for LLM-Based Generative Internet of Things}.
+\newblock \bibinfo{journal}{\emph{IEEE Internet of Things Journal}} (\bibinfo{year}{2024}), \bibinfo{pages}{1–1}.
+\newblock
+\showISSN{2372-2541}
+
+
+\bibitem[Xiao et~al\mbox{.}(2024b)]%
+        {xiao2024chainofexperts}
+\bibfield{author}{\bibinfo{person}{Ziyang Xiao} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{b}.
+\newblock \showarticletitle{Chain-of-Experts: When {LLM}s Meet Complex Operations Research Problems}. In \bibinfo{booktitle}{\emph{The Twelfth International Conference on Learning Representations}}.
+\newblock
+
+
+\bibitem[Xie et~al\mbox{.}(2023)]%
+        {xie2023openagentsopenplatformlanguage}
+\bibfield{author}{\bibinfo{person}{Tianbao Xie} {et~al\mbox{.}}} \bibinfo{year}{2023}\natexlab{}.
+\newblock \bibinfo{title}{OpenAgents: An Open Platform for Language Agents in the Wild}.
+\newblock
+\newblock
+\showeprint[arxiv]{2310.10634}~[cs.CL]
+
+
+\bibitem[Xiong et~al\mbox{.}(2023)]%
+        {xiong-etal-2023-examining}
+\bibfield{author}{\bibinfo{person}{Kai Xiong} {et~al\mbox{.}}} \bibinfo{year}{2023}\natexlab{}.
+\newblock \showarticletitle{Examining Inter-Consistency of Large Language Models Collaboration: An In-depth Analysis via Debate}. In \bibinfo{booktitle}{\emph{Findings of the Association for Computational Linguistics: EMNLP 2023}}.
+\newblock
+
+
+\bibitem[Xu et~al\mbox{.}(2023a)]%
+        {xu2023magic}
+\bibfield{author}{\bibinfo{person}{Lin Xu} {et~al\mbox{.}}} \bibinfo{year}{2023}\natexlab{a}.
+\newblock \showarticletitle{Magic: Investigation of large language model powered multi-agent in cognition, adaptability, rationality and collaboration}. In \bibinfo{booktitle}{\emph{ICLR 2024 Workshop on Large Language Model (LLM) Agents}}.
+\newblock
+
+
+\bibitem[Xu et~al\mbox{.}(2023b)]%
+        {xu-etal-2023-federated}
+\bibfield{author}{\bibinfo{person}{Zheng Xu} {et~al\mbox{.}}} \bibinfo{year}{2023}\natexlab{b}.
+\newblock \showarticletitle{Federated Learning of Gboard Language Models with Differential Privacy}. In \bibinfo{booktitle}{\emph{Proceedings of the 61st Annual Meeting of the Association for Computational Linguistics (Volume 5: Industry Track)}}.
+\newblock
+
+
+\bibitem[Xu et~al\mbox{.}(2023c)]%
+        {xu2023towards}
+\bibfield{author}{\bibinfo{person}{Zhenran Xu} {et~al\mbox{.}}} \bibinfo{year}{2023}\natexlab{c}.
+\newblock \showarticletitle{Towards reasoning in large language models via multi-agent peer review collaboration}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2311.08152}} (\bibinfo{year}{2023}).
+\newblock
+
+
+\bibitem[Yang et~al\mbox{.}(2024a)]%
+        {yang2024socialmindllmbasedproactivear}
+\bibfield{author}{\bibinfo{person}{Bufang Yang} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{a}.
+\newblock \bibinfo{title}{SocialMind: LLM-based Proactive AR Social Assistive System with Human-like Perception for In-situ Live Interactions}.
+\newblock
+\newblock
+\showeprint[arxiv]{2412.04036}~[cs.AI]
+
+
+\bibitem[Yang et~al\mbox{.}(2024b)]%
+        {yang2024rethinkinggenerativesemanticcommunication}
+\bibfield{author}{\bibinfo{person}{Wanting Yang} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{b}.
+\newblock \bibinfo{title}{Rethinking Generative Semantic Communication for Multi-User Systems with Multi-Modal LLM}.
+\newblock
+\newblock
+\showeprint[arxiv]{2408.08765}~[cs.NI]
+
+
+\bibitem[Yin et~al\mbox{.}(2023)]%
+        {yin-etal-2023-exchange}
+\bibfield{author}{\bibinfo{person}{Zhangyue Yin} {et~al\mbox{.}}} \bibinfo{year}{2023}\natexlab{}.
+\newblock \showarticletitle{Exchange-of-Thought: Enhancing Large Language Model Capabilities through Cross-Model Communication}. In \bibinfo{booktitle}{\emph{Proceedings of the 2023 Conference on Empirical Methods in Natural Language Processing}}, \bibfield{editor}{\bibinfo{person}{Houda Bouamor}, \bibinfo{person}{Juan Pino}, {and} \bibinfo{person}{Kalika Bali}} (Eds.). \bibinfo{publisher}{Association for Computational Linguistics}, \bibinfo{address}{Singapore}, \bibinfo{pages}{15135--15153}.
+\newblock
+
+
+\bibitem[Ying et~al\mbox{.}(2024)]%
+        {Ying2024}
+\bibfield{author}{\bibinfo{person}{Lance Ying} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{Inferring the Goals of Communicating Agents from Actions and Instructions}.
+\newblock \bibinfo{journal}{\emph{Proceedings of the AAAI Symposium Series}} \bibinfo{volume}{2}, \bibinfo{number}{1} (\bibinfo{date}{Jan.} \bibinfo{year}{2024}), \bibinfo{pages}{26–33}.
+\newblock
+\showISSN{2994-4317}
+
+
+\bibitem[Zeng et~al\mbox{.}(2024)]%
+        {zeng2024exploring}
+\bibfield{author}{\bibinfo{person}{Yongchao Zeng} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{Exploring the opportunities and challenges of using large language models to represent institutional agency in land system modelling}.
+\newblock \bibinfo{journal}{\emph{EGUsphere}}  \bibinfo{volume}{2024} (\bibinfo{year}{2024}), \bibinfo{pages}{1--35}.
+\newblock
+
+
+\bibitem[Zhang et~al\mbox{.}(2024a)]%
+        {Zhang_Yang_Hu_Wang_Li_Sun_Zhang_Zhang_Liu_Zhu_Chang_Zhang_Yin_Liang_Yang_2024}
+\bibfield{author}{\bibinfo{person}{Ceyao Zhang} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{a}.
+\newblock \showarticletitle{ProAgent: Building Proactive Cooperative Agents with Large Language Models}.
+\newblock \bibinfo{journal}{\emph{Proceedings of the AAAI Conference on Artificial Intelligence}} \bibinfo{volume}{38}, \bibinfo{number}{16} (\bibinfo{date}{Mar.} \bibinfo{year}{2024}), \bibinfo{pages}{17591--17599}.
+\newblock
+
+
+\bibitem[Zhang et~al\mbox{.}(2024b)]%
+        {10.1145/3589334.3645537}
+\bibfield{author}{\bibinfo{person}{Junjie Zhang} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{b}.
+\newblock \showarticletitle{AgentCF: Collaborative Learning with Autonomous Language Agents for Recommender Systems}. In \bibinfo{booktitle}{\emph{Proceedings of the ACM Web Conference}}.
+\newblock
+
+
+\bibitem[Zhang et~al\mbox{.}(2024c)]%
+        {zhang-etal-2024-exploring}
+\bibfield{author}{\bibinfo{person}{Jintian Zhang} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{c}.
+\newblock \showarticletitle{Exploring Collaboration Mechanisms for {LLM} Agents: A Social Psychology View}. In \bibinfo{booktitle}{\emph{Proceedings of the Annual Meeting of the Association for Computational Linguistics}}.
+\newblock
+
+
+\bibitem[Zhang et~al\mbox{.}(2024d)]%
+        {zhang2024cumulativereasoninglargelanguage}
+\bibfield{author}{\bibinfo{person}{Yifan Zhang} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{d}.
+\newblock \bibinfo{title}{Cumulative Reasoning with Large Language Models}.
+\newblock
+\newblock
+\showeprint[arxiv]{2308.04371}~[cs.AI]
+
+
+\bibitem[Zhang et~al\mbox{.}(2024e)]%
+        {zhang-etal-2024-psysafe}
+\bibfield{author}{\bibinfo{person}{Zaibin Zhang} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{e}.
+\newblock \showarticletitle{{P}sy{S}afe: A Comprehensive Framework for Psychological-based Attack, Defense, and Evaluation of Multi-agent System Safety}. In \bibinfo{booktitle}{\emph{Proceedings of the Annual Meeting of the Association for Computational Linguistics}}.
+\newblock
+
+
+\bibitem[Zhang et~al\mbox{.}(2024f)]%
+        {zhang2024survey}
+\bibfield{author}{\bibinfo{person}{Zeyu Zhang} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{f}.
+\newblock \showarticletitle{A survey on the memory mechanism of large language model based agents}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2404.13501}} (\bibinfo{year}{2024}).
+\newblock
+
+
+\bibitem[Zhao et~al\mbox{.}(2024a)]%
+        {zhao2024competeai}
+\bibfield{author}{\bibinfo{person}{Qinlin Zhao} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{a}.
+\newblock \showarticletitle{Compete{AI}: Understanding the Competition Dynamics of Large Language Model-based Agents}. In \bibinfo{booktitle}{\emph{Agentic Markets Workshop at ICML 2024}}.
+\newblock
+
+
+\bibitem[Zhao et~al\mbox{.}(2023)]%
+        {zhao2023survey}
+\bibfield{author}{\bibinfo{person}{Wayne~Xin Zhao} {et~al\mbox{.}}} \bibinfo{year}{2023}\natexlab{}.
+\newblock \showarticletitle{A survey of large language models}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2303.18223}} (\bibinfo{year}{2023}).
+\newblock
+
+
+\bibitem[Zhao et~al\mbox{.}(2024b)]%
+        {10531769}
+\bibfield{author}{\bibinfo{person}{Yaru Zhao} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{b}.
+\newblock \showarticletitle{LaMoSC: Large Language Model-Driven Semantic Communication System for Visual Transmission}.
+\newblock \bibinfo{journal}{\emph{IEEE Transactions on Cognitive Communications and Networking}} \bibinfo{volume}{10}, \bibinfo{number}{6} (\bibinfo{year}{2024}), \bibinfo{pages}{2005--2018}.
+\newblock
+
+
+\bibitem[Zheng et~al\mbox{.}(2023)]%
+        {zheng2023agentsmeetokrobject}
+\bibfield{author}{\bibinfo{person}{Yi Zheng} {et~al\mbox{.}}} \bibinfo{year}{2023}\natexlab{}.
+\newblock \bibinfo{title}{Agents meet OKR: An Object and Key Results Driven Agent System with Hierarchical Self-Collaboration and Self-Evaluation}.
+\newblock
+\newblock
+\showeprint[arxiv]{2311.16542}~[cs.CV]
+
+
+\bibitem[Zhong et~al\mbox{.}(2024)]%
+        {10439991}
+\bibfield{author}{\bibinfo{person}{Ningze Zhong} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{CASIT: Collective Intelligent Agent System for Internet of Things}.
+\newblock \bibinfo{journal}{\emph{IEEE Internet of Things Journal}} \bibinfo{volume}{11}, \bibinfo{number}{11} (\bibinfo{year}{2024}), \bibinfo{pages}{19646--19656}.
+\newblock
+
+
+\bibitem[Zhou et~al\mbox{.}(2024a)]%
+        {10720863}
+\bibfield{author}{\bibinfo{person}{Li Zhou} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{a}.
+\newblock \showarticletitle{Semantic Information Extraction and Multi-Agent Communication Optimization Based on Generative Pre-Trained Transformer}.
+\newblock \bibinfo{journal}{\emph{IEEE Transactions on Cognitive Communications and Networking}} (\bibinfo{year}{2024}), \bibinfo{pages}{1--1}.
+\newblock
+
+
+\bibitem[Zhou et~al\mbox{.}(2024b)]%
+        {zhou-etal-2024-real}
+\bibfield{author}{\bibinfo{person}{Xuhui Zhou} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{b}.
+\newblock \showarticletitle{Is this the real life? Is this just fantasy? The Misleading Success of Simulating Social Interactions With {LLM}s}. In \bibinfo{booktitle}{\emph{Proceedings of the 2024 Conference on Empirical Methods in Natural Language Processing}}, \bibfield{editor}{\bibinfo{person}{Yaser Al-Onaizan}, \bibinfo{person}{Mohit Bansal}, {and} \bibinfo{person}{Yun-Nung Chen}} (Eds.). \bibinfo{publisher}{ACL}, \bibinfo{address}{Miami, Florida, USA}, \bibinfo{pages}{21692--21714}.
+\newblock
+
+
+\bibitem[Zhuang et~al\mbox{.}(2024)]%
+        {Zhuang2024PoSE}
+\bibfield{author}{\bibinfo{person}{Benhui Zhuang}, \bibinfo{person}{Chunhong Zhang}, {and} \bibinfo{person}{Zheng Hu}.} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{PoSE: Suppressing Perceptual Noise in Embodied Agents for Enhanced Semantic Navigation}.
+\newblock \bibinfo{journal}{\emph{IEEE Robotics and Automation Letters}}  \bibinfo{volume}{9} (\bibinfo{year}{2024}), \bibinfo{pages}{963--970}.
+\newblock
+
+
+\bibitem[Zhuang et~al\mbox{.}(2023)]%
+        {zhuang2024foundationmodelmeetsfederated}
+\bibfield{author}{\bibinfo{person}{Weiming Zhuang}, \bibinfo{person}{Chen Chen}, {and} \bibinfo{person}{Lingjuan Lyu}.} \bibinfo{year}{2023}\natexlab{}.
+\newblock \showarticletitle{When Foundation Model Meets Federated Learning: Motivations, Challenges, and Future Directions}. In \bibinfo{booktitle}{\emph{NIPS FL@FM}}.
+\newblock
+
+
+\bibitem[Zhuge et~al\mbox{.}(2023)]%
+        {zhuge2023mindstormsnaturallanguagebasedsocieties}
+\bibfield{author}{\bibinfo{person}{Mingchen Zhuge} {et~al\mbox{.}}} \bibinfo{year}{2023}\natexlab{}.
+\newblock \bibinfo{title}{Mindstorms in Natural Language-Based Societies of Mind}.
+\newblock
+\newblock
+\showeprint[arxiv]{2305.17066}~[cs.AI]
+
+
+\bibitem[Zhuge et~al\mbox{.}(2024a)]%
+        {zhuge2024agent}
+\bibfield{author}{\bibinfo{person}{Mingchen Zhuge} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{a}.
+\newblock \showarticletitle{Agent-as-a-Judge: Evaluate Agents with Agents}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2410.10934}} (\bibinfo{year}{2024}).
+\newblock
+
+
+\bibitem[Zhuge et~al\mbox{.}(2024b)]%
+        {pmlr-v235-zhuge24a}
+\bibfield{author}{\bibinfo{person}{Mingchen Zhuge} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{b}.
+\newblock \showarticletitle{{GPTS}warm: Language Agents as Optimizable Graphs}. In \bibinfo{booktitle}{\emph{Proceedings of the 41st International Conference on Machine Learning}} \emph{(\bibinfo{series}{Proceedings of Machine Learning Research}, Vol.~\bibinfo{volume}{235})}, \bibfield{editor}{\bibinfo{person}{Ruslan Salakhutdinov} {et~al\mbox{.}}} (Eds.). \bibinfo{publisher}{PMLR}, \bibinfo{pages}{62743--62767}.
+\newblock
+
+
+\end{thebibliography}

@@ -2,12 +2,15 @@ import os
 import requests
 import time
 import xml.etree.ElementTree as ET
-
+import tarfile
+import shutil
 # ─── CONFIGURATION ─────────────────────────────────────────────────────────────
 
 # (1) Folder where PDFs, source .tar.gz, and metadata files will be saved
 DOWNLOAD_DIR = "arxiv_papers_with_source"
 os.makedirs(DOWNLOAD_DIR, exist_ok=True)
+
+POSTFIX = ".tar.gz"
 
 # (2) How many entries to fetch per API call (50 is a polite default)
 ENTRIES_PER_CALL = 50
@@ -91,8 +94,6 @@ def parse_arxiv_feed(xml_data):
     return papers
 
 
-# ─── STREAM-DOWNLOAD A PDF ──────────────────────────────────────────────────────
-
 def download_pdf(pdf_url, dest_path):
     """
     Stream the PDF at pdf_url and write it to dest_path.
@@ -104,7 +105,6 @@ def download_pdf(pdf_url, dest_path):
             if chunk:
                 f.write(chunk)
 
-# ─── STREAM-DOWNLOAD A SOURCE TARBALL ───────────────────────────────────────────
 
 def download_source(arxiv_id, dest_path):
     """
@@ -118,7 +118,36 @@ def download_source(arxiv_id, dest_path):
             if chunk:
                 f.write(chunk)
 
-# ─── MAIN CRAWLER ───────────────────────────────────────────────────────────────
+def extract_tar_gz_files(directory):
+    """Extracts all tar.gz files in the specified directory."""
+    # for filename in os.listdir(directory):
+    #     if filename.endswith(".tar.gz"):
+    #         file_path = os.path.join(directory, filename)
+    #         try:
+    #             with tarfile.open(file_path, "r:gz") as tar:
+    #                 tar.extractall(path=directory)
+    #             print(f"Extracted: {filename}")
+    #         except tarfile.ReadError:
+    #             print(f"Error: Could not read {filename}. File might be corrupted or not a valid tar.gz file.")
+    #         except Exception as e:
+    #              print(f"Error extracting {filename}: {e}")
+    for filename in os.listdir(directory):
+        if filename.endswith(POSTFIX):
+            file_path = os.path.join(directory, filename)
+            print(filename[0: -len(POSTFIX)])
+            destination_dir = os.path.join(directory, filename[0: -len(POSTFIX)])
+            try:
+                shutil.unpack_archive(filename=file_path, extract_dir=destination_dir)
+                # with tarfile.open(file_path, "r:gz") as tar:
+                #     tar.extractall(path=file_path)
+                # print(f"Extracted: {filename}")
+            except shutil.ReadError:
+                print(f"Error: Could not read {filename}. File might be corrupted or not a valid tar.gz file.")
+            except Exception as e:
+                print(f"Error extracting {filename}: {e}")
+                # print(type(e))
+        
+
 
 def crawl_arxiv_with_source(search_query, max_results=100):
     """
@@ -183,10 +212,13 @@ def crawl_arxiv_with_source(search_query, max_results=100):
         start += batch_size
         time.sleep(PAUSE_BETWEEN_CALLS)
 
+        extract_tar_gz_files(DOWNLOAD_DIR)
+
     print(f"\nCrawling complete. Total papers processed: {downloaded}")
 
 # ─── ENTRY POINT ────────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
     # Example: fetch up to 100 “cs.AI” papers (including source) submitted between Jan 1 2025 and May 31 2025
-    crawl_arxiv_with_source(search_query, max_results=10)
+    # crawl_arxiv_with_source(search_query, max_results=10)
+    extract_tar_gz_files(directory=DOWNLOAD_DIR)
