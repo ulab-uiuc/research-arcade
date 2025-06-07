@@ -1,9 +1,7 @@
 # print(sys)
-import sys
-print(sys.path)
 
-from ..paper_collector.graph_construction import build_citation_graph_thread
-from ..paper_collector.utils import None_constraint
+from paper_collector.graph_construction import build_citation_graph_thread
+from paper_collector.utils import None_constraint
 
 # from ..paper_collector
 
@@ -32,9 +30,9 @@ from ..paper_collector.utils import None_constraint
 arxiv_list = ["2311.01149v2"]
 build_citation_graph_thread(
     arxiv_list,
-    "../data/hf_/source_code",
-    "../data/hf_/working_folder",
-    "../data/hf_/output",
+    "arxiv_papers_with_source/source_code",
+    "arxiv_papers_with_source/working_folder",
+    "arxiv_papers_with_source/output",
     None,
     None_constraint,
     len(arxiv_list),
