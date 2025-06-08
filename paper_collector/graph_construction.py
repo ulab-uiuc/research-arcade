@@ -45,6 +45,8 @@ def build_citation_graph_node_info(
         summary = result.summary
         published = str(result.published)
     bib_names, bbl_nodes = get_bib_names(ast)
+    print(f"bib_names: {bib_names}")
+    print(f"bbl_nodes: {bbl_nodes}")
     structured_data = {
         "title": title,
         "author": author,
@@ -79,7 +81,7 @@ def build_citation_graph_node_info(
             "",
             working_path,
         )
-        # print(structured_data['abstract'])
+        print(f"numbmer of citations in node info method: {len(structured_data['citations'])}")
     if get_citation_info:
         if len(bib_names) > 0:
             for bib in bib_names:
@@ -115,6 +117,11 @@ def build_citation_graph_node_info(
         if len(key2title) == 0:
             print("Cannot find the bib file")
             return structured_data
+        
+        # It seems that even though we can find the path to bib/bbl file, we still might not extract the citation information?
+        # print(f"key2title: {key2title}")
+        # print(f"key2author: {key2author}")
+
     appendix = False
     prev_citation_contexts = []
     prev_ref_contexts = []
@@ -126,6 +133,8 @@ def build_citation_graph_node_info(
     current_section_name = None
     current_subsection_name = None
     current_subsubsection_name = None
+    # The problem must lie in here!
+    # TODO
     if doc_node:
         extract_citations_from_ast(
             structured_data,
@@ -195,7 +204,6 @@ def build_citation_graph(
             cnt += 1
         visited = set([item["paper"] for item in history])
         print(cnt)
-
     # Create a tqdm progress bar
     with tqdm(total=scale, desc="Processing") as pbar:
         for _ in range(cnt):
@@ -258,6 +266,7 @@ def build_citation_graph(
                 if res["doc_node"]:
                     doc_files.append(tex_file)
             structured_data = None
+            print(f"doc_files: {doc_files}")
             for tex_file in doc_files:
                 print(f"Processing file {tex_file}!")
                 try:
@@ -381,6 +390,7 @@ def build_citation_graph_thread(
 ):
     # Shared BFS queue and visited set
     BFS_que = queue.Queue()
+    print(f"seed: {seed}")
     for seed_ in seed:
         BFS_que.put((seed_, "True"))
     visited_lock = threading.Lock()
@@ -413,8 +423,8 @@ def build_citation_graph_thread(
                 BFS_que.put(item_)
             cnt += 1
         visited = set([item["paper"] for item in history])
-        print(cnt)
-    print(BFS_que.qsize())
+        print(f"cnt: {cnt}")
+    print(f"BFS_que.qsize(): {BFS_que.qsize()}")
 
     def process_papers():
         nonlocal cnt
@@ -422,20 +432,26 @@ def build_citation_graph_thread(
         nonlocal visited
         nonlocal history
         print(f"Thread {str(threading.get_ident())} Started processing")
+        # print(f"BFS_que.qsize(): {BFS_que.qsize()}")
 
         while True:
             try:
                 try:
+                    # print(f"BFS_que: {BFS_que}")
+                    # print(f"Is BFS_que empty? {BFS_que.empty()}")
                     current_paper, published = BFS_que.get(
                         timeout=10
                     )  # Timeout to avoid infinite waiting
+                    print(f"current paper: {current_paper}")
                     if published != "True":
                         published = datetime.fromisoformat(published)
                 except queue.Empty:
+                    # print("The queue is empty")
                     break
                 print(f"Thread {str(threading.get_ident())} Processing {current_paper}")
                 with cnt_lock:
                     cnt_ = cnt
+                    # print(f"constraint(published): {constraint(published)}")
                     get_citation_info = (cnt_ < scale) and constraint(published)
                 with visited_lock:
                     if current_paper in visited:
@@ -525,7 +541,11 @@ def build_citation_graph_thread(
                             break
                     except Exception as e:
                         print(e)
-                # move the figures to output_path/figures/current_paper/...
+                
+
+                ncitations = len(structured_data["citations"])
+                print(f"number of citations collected: {ncitations}")
+
                 if structured_data:
                     if not os.path.exists(
                         os.path.join(output_path, "figures", current_paper)
@@ -563,7 +583,6 @@ def build_citation_graph_thread(
                                 os.system(
                                     f"cp {os.path.join(thread_working_path, figure_path)} {os.path.join(output_path, 'figures', current_paper, '_'.join(figure_path.split('/')))}"
                                 )
-
                 if not structured_data or len(structured_data["citations"]) == 0:
                     if structured_data:
                         with open(
@@ -580,6 +599,8 @@ def build_citation_graph_thread(
                             f"Thread {str(threading.get_ident())} Failed to process {current_paper}!"
                         )
                         continue
+
+                # print(f"number of citations collected: {ncitations}")
                 if structured_data:
                     if get_citation_info:
                         with open(
@@ -597,7 +618,6 @@ def build_citation_graph_thread(
                     print(
                         f"Thread {str(threading.get_ident())} Finished processing {current_paper} ({cnt}/{scale}) Time elapsed: {time.time()-start_time:.2f}s"
                     )
-
                 # Extend BFS queue based on citations and constraint
                 extended_list = []
                 if (structured_data["citations"]) and (cnt_ < scale):

@@ -27,16 +27,16 @@ from paper_collector.utils import None_constraint
 # build_citation_graph_thread(['2411.05902','2411.06837','2411.06606','2411.07658', '2411.07690'], '../../test-1000/source_code', '../../test-1000/working_folder', '../../test-1000/output',None, year_constraint(2024,2025), 1000, 8, True, 2000)
 # arxiv_list = ['2302.07842v1', '2306.13549v1', '1901.00596', '2310.10315v1', '2308.11269','2304.03442v1', '2310.04959v1','2401.00288v1','2304.01565v1', '2307.00067v1','2309.02427v','2306.04542v1','2312.01232v2','2312.07843v1','2202.02703v2', '2110.03063v1','2306.11768v5','2211.16742v1','2307.10500v1']
 
-arxiv_list = ["2311.01149v2"]
+arxiv_list = ["2501.02725v2"]
 build_citation_graph_thread(
     arxiv_list,
-    "arxiv_papers_with_source/source_code",
+    "arxiv_papers_with_source",
     "arxiv_papers_with_source/working_folder",
     "arxiv_papers_with_source/output",
     None,
     None_constraint,
     len(arxiv_list),
-    1,
+    100,
     True,
     len(arxiv_list),
 )
