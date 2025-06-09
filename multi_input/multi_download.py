@@ -17,7 +17,7 @@ class multi_download:
     """
 
     
-    def download_arxiv(self, input: str, input_type: str, output_type: str, dest_filename: str):
+    def download_arxiv(self, input: str, input_type: str, output_type: str, dest_dir: str = None):
         
         mi = multi_input()
         input_type = input_type.lower()
@@ -37,29 +37,26 @@ class multi_download:
             raise ValueError(f"Unknown input_type '{input_type}'. "
                             f"Expected one of: 'id', 'arxiv_id', 'bib', 'arxiv_bib', 'url', 'link'.")
         
-        search = arxiv.Search(id_list=["2503.12600"])
+        search = arxiv.Search(id_list=[arxiv_id])
         paper = next(arxiv.Client().results(search))
 
-        if output_type == "latex":
+        if output_type == "pdf":
             paper.download_pdf()
 
-        if output_type == "pdf":
-            paper.download_source()
+        if output_type == "latex":
+            paper.download_source(dirpath = dest_dir)
+        
+        if output_type == "both":
+            paper.download_source(dirpath = dest_dir)
+            paper.download_pdf(dirpath = dest_dir)
 
-        # if output_type == "html":
-            
 
 
 
-
-bib_str = """@misc{1802.08773,
-Author  = {Jiaxuan You and Rex Ying and Xiang Ren and William L. Hamilton and Jure Leskovec},
-Title   = {GraphRNN: Generating Realistic Graphs with Deep Auto-regressive Models},
-Year    = {2018},
-Eprint  = {arXiv:1802.08773},
-}"""
+id_string = "2112.10911"
+dest_path = "./download"
 
 mo = multi_download()
 
-mo.download_arxiv_latex(bib_str, "bib", "latex", None)
+mo.download_arxiv(id_string, "id", "both", dest_path)
 
