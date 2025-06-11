@@ -1,8 +1,10 @@
 import requests
 
+import os
 from multi_input import MultiInput
 import arxiv
-
+import json
+from typing import Optional
 # # Search for the paper by its arXiv ID
 # search = arxiv.Search(id_list=["2503.12600"])
 # paper = next(arxiv.Client().results(search))
@@ -35,7 +37,7 @@ class MultiDownload:
             # Raise error for unknown input_type
             raise ValueError(f"Unknown input_type '{input_type}'. "
                             f"Expected one of: 'id', 'arxiv_id', 'bib', 'arxiv_bib', 'url', 'link'.")
-        
+
         search = arxiv.Search(id_list=[arxiv_id])
         paper = next(arxiv.Client().results(search))
 
@@ -71,7 +73,7 @@ class MultiDownload:
 id_string = "2112.10911"
 dest_path = "./download"
 
-mo = multi_download()
+mo = MultiDownload()
 
 mo.download_arxiv(id_string, "id", "both", dest_path)
 
