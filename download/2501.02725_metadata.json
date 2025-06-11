@@ -1,0 +1,22 @@
+{
+  "arxiv_id": "2501.02725",
+  "title": "Artificial Intelligence in Creative Industries: Advances Prior to 2025",
+  "authors": [
+    "Nantheera Anantrasirichai",
+    "Fan Zhang",
+    "David Bull"
+  ],
+  "summary": "The rapid advancements in artificial intelligence (AI), particularly in\ngenerative AI and large language models (LLMs), have profoundly impacted the\ncreative industries, enabling more innovative content creation, enhancing\nworkflows, and democratizing access to creative tools. This paper explores\nthese technological shifts, with particular focus on how those that have\nemerged since our previous review in 2022 have expanded creative opportunities\nand improved efficiency. These technological advancements have enhanced the\ncapabilities of text-to-image, text-to-video, and multimodal generation\ntechnologies. In particular, key breakthroughs in LLMs have established new\nbenchmarks in conversational AI, while advancements in image generators have\nrevolutionized content creation. We also discuss the integration of AI into\npost-production workflows, which has significantly accelerated and improved\ntraditional processes. Once content has been created, it must be delivered to\nits audiences the media industry is facing the demands of increased\ncommunication traffic due to creative content. We therefore include a\ndiscussion of how AI is beginning to transform the way we represent and\ncompress media content. We highlight the trend toward unified AI frameworks\ncapable of addressing and integrating multiple creative tasks, and we\nunderscore the importance of human insight to drive the creative process and\noversight to mitigate AI-generated inaccuracies. Finally, we explore AI's\nfuture potential in the creative sector, stressing the need to navigate\nemerging challenges and to maximize its benefits while addressing the\nassociated risks.",
+  "published": "2025-01-06T02:46:33+00:00",
+  "updated": "2025-06-05T21:18:13+00:00",
+  "comment": "This is an updated review of our previous paper (see\n  https://doi.org/10.1007/s10462-021-10039-7)",
+  "journal_ref": null,
+  "doi": null,
+  "primary_category": "cs.AI",
+  "categories": [
+    "cs.AI"
+  ],
+  "pdf_url": "http://arxiv.org/pdf/2501.02725v3",
+  "arxiv_url": "http://arxiv.org/abs/2501.02725v3",
+  "bibtex": "@article{2501.02725,\n  title = {Artificial Intelligence in Creative Industries: Advances Prior to 2025},\n  author = {Nantheera Anantrasirichai and Fan Zhang and David Bull},\n  journal = {arXiv preprint arXiv:2501.02725},\n  year = {2025}\n}"
+}
