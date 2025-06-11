@@ -1,6 +1,6 @@
 import re
 
-class multi_input:
+class MultiInput:
 
   """
   Download the compresses latex source code given the bib, arxiv id or arxiv link
