@@ -1,6 +1,6 @@
 import requests
 
-from multi_input import multi_input
+from multi_input import MultiInput
 import arxiv
 
 # # Search for the paper by its arXiv ID
@@ -11,15 +11,14 @@ import arxiv
 # paper.download_pdf()
 # paper.download_source()
 
-class multi_download:
+class MultiDownload:
     """
     This class supports downloading arxiv latex code, pdf and html webpage using arxiv id, link or bib
     """
 
-    
-    def download_arxiv(self, input: str, input_type: str, output_type: str, dest_dir: str = None):
+    def download_arxiv(self, input: str, input_type: str, output_type: str, dest_dir: Optional[str] = None):
         
-        mi = multi_input()
+        mi = MultiInput()
         input_type = input_type.lower()
         arxiv_id = ""
         if input_type == "id" or input_type == "arxiv_id":
@@ -39,6 +38,22 @@ class multi_download:
         
         search = arxiv.Search(id_list=[arxiv_id])
         paper = next(arxiv.Client().results(search))
+
+
+        # Save metadata
+        if dest_dir:
+            metadata = {
+                'id': arxiv_id,
+                'title': paper.title,
+                'abstract': paper.summary,
+                'authors': [a.name for a in paper.authors],
+                'published': str(paper.published),
+                'categories': paper.categories,
+                'url': paper.entry_id,
+            }
+            os.makedirs(dest_dir, exist_ok=True)
+            with open(f"{dest_dir}/{arxiv_id}_metadata.json", "w", encoding="utf-8") as f:
+                json.dump(metadata, f, ensure_ascii=False, indent=2)
 
         if output_type == "pdf":
             paper.download_pdf()
