@@ -11,14 +11,14 @@ from paper_collector.latex_parser import clean_latex_code
 from semanticscholar import SemanticScholar
 
 import os
-from multi_input import MultiInput
+from multi_input.multi_input import MultiInput
 import arxiv
 import json
-from typing import Optional
+import time
+from typing import Optional, List, Dict, Any
 # # Search for the paper by its arXiv ID
 # search = arxiv.Search(id_list=["2503.12600"])
 # paper = next(arxiv.Client().results(search))
-
 # # Download the PDF and source latex code to the current directory
 # paper.download_pdf()
 # paper.download_source()
@@ -33,22 +33,7 @@ class MultiDownload:
     def download_arxiv(self, input: str, input_type: str, output_type: str, dest_dir: str = None):
 
         mi = MultiInput()
-        input_type = input_type.lower()
-        arxiv_id = ""
-        if input_type == "id" or input_type == "arxiv_id":
-            arxiv_id = input
-
-        elif input_type == "bib" or input_type == "arxiv_bib":
-            bib_dict = mi.extract_bib_from_string(input)
-            arxiv_id = mi.extract_arxiv_id(bib_dict)
-
-        elif input_type == "url" or input_type == "link":
-            arxiv_id = mi.arxiv_url_to_id(input)
-
-        else:
-            # Raise error for unknown input_type
-            raise ValueError(f"Unknown input_type '{input_type}'. "
-                            f"Expected one of: 'id', 'arxiv_id', 'bib', 'arxiv_bib', 'url', 'link'.")
+        arxiv_id = mi.extract_arxiv_id(input, input_type)
 
         try:
             search = arxiv.Search(id_list=[arxiv_id])
@@ -110,18 +95,7 @@ class MultiDownload:
     #             - 'bibtex' (a simple generated BibTeX entry)
     #     """
     #     mi = MultiInput()
-    #     input_type = input_type.lower()
-    #     arxiv_id = ""
-    #     if input_type in ("id", "arxiv_id"):
-    #         arxiv_id = input
-    #     elif input_type in ("bib", "arxiv_bib"):
-    #         bib_dict = mi.extract_bib_from_string(input)
-    #         arxiv_id = mi.extract_arxiv_id(bib_dict)
-    #     elif input_type in ("url", "link"):
-    #         arxiv_id = mi.arxiv_url_to_id(input)
-    #     else:
-    #         raise ValueError(f"Unknown input_type '{input_type}'. "
-    #                         f"Expected one of: 'id', 'arxiv_id', 'bib', 'arxiv_bib', 'url', 'link'.")
+    #     arxiv_id = mi.extract_arxiv_id(input, input_type)
 
 
     #     try:
@@ -232,22 +206,8 @@ class MultiDownload:
     def download_semantic_scholar(self, input: str, input_type: str, dest_dir: str = None) -> None:
 
         mi = MultiInput()
-        input_type = input_type.lower()
-        semantic_id = ""
-        if input_type == "id" or input_type == "arxiv_id":
-            semantic_id = input
 
-        elif input_type == "bib" or input_type == "arxiv_bib":
-            bib_dict = mi.extract_bib_from_string(input)
-            semantic_id = mi.extract_arxiv_id(bib_dict)
-
-        elif input_type == "url" or input_type == "link":
-            semantic_id = mi.arxiv_url_to_id(input)
-
-        else:
-            # Raise error for unknown input_type
-            raise ValueError(f"Unknown input_type '{input_type}'. "
-                            f"Expected one of: 'id', 'arxiv_id', 'bib', 'arxiv_bib', 'url', 'link'.")
+        semantic_id = mi.extract_arxiv_id(input, input_type)
 
         sc = SemanticScholar(timeout=TIMEOUT)
         try:
@@ -267,22 +227,7 @@ class MultiDownload:
         # Extract the paper graph of the provided paper using knowledge_debugger
         mi = MultiInput()
 
-        input_type = input_type.lower()
-        arxiv_id = ""
-        if input_type == "id" or input_type == "arxiv_id":
-            arxiv_id = input
-
-        elif input_type == "bib" or input_type == "arxiv_bib":
-            bib_dict = mi.extract_bib_from_string(input)
-            arxiv_id = mi.extract_arxiv_id(bib_dict)
-
-        elif input_type == "url" or input_type == "link":
-            arxiv_id = mi.arxiv_url_to_id(input)
-
-        else:
-            # Raise error for unknown input_type
-            raise ValueError(f"Unknown input_type '{input_type}'. "
-                            f"Expected one of: 'id', 'arxiv_id', 'bib', 'arxiv_bib', 'url', 'link'.")
+        arxiv_id = mi.extract_arxiv_id(input, input_type)
 
         arxiv_list = [arxiv_id]
         build_citation_graph_thread(
@@ -300,24 +245,9 @@ class MultiDownload:
     
     def get_abstract(self, input: str, input_type: str, dest_dir: str = None) -> str:
 
-        mi = multi_input()
+        mi = MultiInput()
 
-        input_type = input_type.lower()
-        arxiv_id = ""
-        if input_type == "id" or input_type == "arxiv_id":
-            arxiv_id = input
-
-        elif input_type == "bib" or input_type == "arxiv_bib":
-            bib_dict = mi.extract_bib_from_string(input)
-            arxiv_id = mi.extract_arxiv_id(bib_dict)
-
-        elif input_type == "url" or input_type == "link":
-            arxiv_id = mi.arxiv_url_to_id(input)
-
-        else:
-            # Raise error for unknown input_type
-            raise ValueError(f"Unknown input_type '{input_type}'. "
-                            f"Expected one of: 'id', 'arxiv_id', 'bib', 'arxiv_bib', 'url', 'link'.")
+        arxiv_id = mi.extract_arxiv_id(input, input_type)
 
         self.build_paper_graph(input, input_type, dest_dir)
 
@@ -335,22 +265,8 @@ class MultiDownload:
 
         mi = MultiInput()
 
-        input_type = input_type.lower()
-        arxiv_id = ""
-        if input_type == "id" or input_type == "arxiv_id":
-            arxiv_id = input
+        arxiv_id = mi.extract_arxiv_id(input, input_type)
 
-        elif input_type == "bib" or input_type == "arxiv_bib":
-            bib_dict = mi.extract_bib_from_string(input)
-            arxiv_id = mi.extract_arxiv_id(bib_dict)
-
-        elif input_type == "url" or input_type == "link":
-            arxiv_id = mi.arxiv_url_to_id(input)
-
-        else:
-            # Raise error for unknown input_type
-            raise ValueError(f"Unknown input_type '{input_type}'. "
-                            f"Expected one of: 'id', 'arxiv_id', 'bib', 'arxiv_bib', 'url', 'link'.")
 
         json_path = f"{dest_dir}/{arxiv_id}_metadata.json"
         # json_path = f"{dest_dir}/{arxiv_id}_metadeta.json"
@@ -366,17 +282,57 @@ class MultiDownload:
 
         return data['title']
 
+    def get_references(self, input: str, input_type: str, max_retries: int = 8) -> List[Dict[str, Any]]:
 
-id_string = "2501.02725"
+        mi = MultiInput()
+
+        arxiv_id = mi.extract_arxiv_id(input, input_type)
+
+        SEMANTIC_SCHOLAR_API_URL = 'https://api.semanticscholar.org/graph/v1/paper/'
+        url = f'{SEMANTIC_SCHOLAR_API_URL}ARXIV:{arxiv_id}/references'
+        params = {'limit': 100, 'offset': 0, 'fields': 'title,abstract'}
+        headers = {'User-Agent': 'PaperProcessor/1.0'}
+        # print(f"max_retries: {max_retries}")
+        for attempt in range(max_retries):
+            # print(f"Attempt {attempt}")
+            response = requests.get(url, params=params, headers=headers)  # type: ignore
+            if response.status_code == 200:
+                data = response.json()
+                print(f"Retrieved data: {data}")
+                references = []
+                for ref in data.get('data', []):
+                    cited_paper = ref.get('citedPaper', {})
+                    if cited_paper:
+                        ref_info = {
+                            'title': cited_paper.get('title'),
+                            'abstract': cited_paper.get('abstract'),
+                            'paper_id': cited_paper.get('paperId')
+                        }
+                        references.append(ref_info)
+                return references
+            else:
+                wait_time = 2**attempt
+                print(
+                    f'Error {response.status_code} fetching references for {arxiv_id}. Retrying in {wait_time}s...'
+                )
+                time.sleep(wait_time)  # Exponential backoff
+        print(f'Failed to fetch references for {arxiv_id} after {max_retries} attempts.')
+        return []
+
+
+id_string = "1806.08804"
 dest_path = "./download"
 
 mo = MultiDownload()
 
 # mo.download_arxiv(id_string, "id", "both", dest_path)
 # mo.download_metadata_arxiv(id_string, "id",  dest_path)
-abstract = mo.get_title(id_string, "id",  dest_path)
-
-print(abstract)
+# abstract = mo.get_title(id_string, "id",  dest_path)
+cp = mo.get_references(id_string, "id", 8)
+print("Cited Paper:")
+print(cp)
+print(len(cp))
+# print(abstract)
 
 # sc_id = "39ad6c911f3351a3b390130a6e4265355b4d593b"
 # mo = multi_download()

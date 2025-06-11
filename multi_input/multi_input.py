@@ -189,7 +189,7 @@ class MultiInput:
       raise ValueError(f"Could not extract arXiv ID from URL: {arxiv_url}")
 
 
-  def extract_arxiv_id(self, bib_entry: dict) -> str:
+  def extract_arxiv_id_from_bib(self, bib_entry: dict) -> str:
       """
       Given a single Bib entry (as a JSON‐style dict), return its arXiv ID (with version, if any).
       If no Eprint/eprint field is found, raises a KeyError.
@@ -227,4 +227,21 @@ class MultiInput:
       raise KeyError("No Eprint/eprint field found in this Bib entry")
   
 
-  
+  def extract_arxiv_id(self, input: str, input_type: str) -> str:
+        input_type = input_type.lower()
+        arxiv_id = ""
+        if input_type == "id" or input_type == "arxiv_id":
+            arxiv_id = input
+
+        elif input_type == "bib" or input_type == "arxiv_bib":
+            bib_dict = self.extract_bib_from_string(input)
+            arxiv_id = self.extract_arxiv_id_from_bib(bib_dict)
+
+        elif input_type == "url" or input_type == "link":
+            arxiv_id = self.arxiv_url_to_id(input)
+
+        else:
+            # Raise error for unknown input_type
+            raise ValueError(f"Unknown input_type '{input_type}'. "
+                            f"Expected one of: 'id', 'arxiv_id', 'bib', 'arxiv_bib', 'url', 'link'.")
+        return arxiv_id
