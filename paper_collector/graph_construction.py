@@ -432,7 +432,6 @@ def build_citation_graph_thread(
         nonlocal visited
         nonlocal history
         print(f"Thread {str(threading.get_ident())} Started processing")
-        # print(f"BFS_que.qsize(): {BFS_que.qsize()}")
 
         while True:
             try:
