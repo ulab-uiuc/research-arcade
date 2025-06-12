@@ -70,7 +70,239 @@ class MultiDownload:
         if output_type == "both":
             paper.download_source(filename = filename_latex, dirpath = dest_dir)
             paper.download_pdf(filename = filename_pdf, dirpath = dest_dir)
+    
 
+    def download_papers_by_field_and_date(
+        self,
+        field: str,
+        start_date: str,
+        output_type: str = "both",
+        max_results: Optional[int] = None,
+        dest_dir: str = "./download_by_field",
+        sort_order: str = "ascending",
+        page_size: int = 100,
+        delay_seconds: float = 15.0,
+    ):
+        """
+        Search arXiv for papers in a given subject category (e.g., "cs.AI") submitted from the start_date to today,
+        then download PDFs and/or LaTeX source along with metadata.
+        Note that due to the detection of arxiv API, the download might be incomplete, that the pdf or latex files might be missing.
+
+        Parameters:
+        - field: str, arXiv subject category, e.g., "cs.AI", "stat.ML", "math.AG", etc.
+        - start_date: str, in "YYYY-MM-DD" format (inclusive).
+        - output_type: str, one of "pdf", "latex", or "both".
+        - max_results: Optional[int], maximum total number of papers to retrieve/download. If None, retrieves as many as possible up to API limits.
+        - dest_dir: str, directory to save downloads and metadata.
+        - sort_order: str, "ascending" or "descending" by submission date.
+        - page_size: int, number of items per page/request to arXiv API (controls `page_size` in Client).
+        - delay_seconds: float, seconds to wait between API calls (to be polite to arXiv servers).
+        """
+        # Parse dates
+        try:
+            dt_start = datetime.datetime.strptime(start_date, "%Y-%m-%d")
+            # dt_end = datetime.datetime.strptime(end_date, "%Y-%m-%d")
+        except ValueError as e:
+            raise ValueError(f"start_date and end_date must be in YYYY-MM-DD format: {e}")
+
+        # if dt_end < dt_start:
+        #     raise ValueError("end_date must be the same or after start_date")
+
+        # start_str = dt_start.strftime("%Y%m%d") + "0000"
+        # end_str = dt_end.strftime("%Y%m%d") + "2359"
+
+        query = f"cat:{field}"
+
+        sort_by = arxiv.SortCriterion.SubmittedDate
+        sort_order_enum = (
+            arxiv.SortOrder.Ascending
+            if sort_order.lower() == "ascending"
+            else arxiv.SortOrder.Descending
+        )
+        print("ArXiv query:", query)
+
+        search = arxiv.Search(
+            query=query,
+            max_results=max_results,
+            sort_by=sort_by,
+            sort_order=sort_order_enum,
+        )
+
+        client = arxiv.Client(page_size=page_size, delay_seconds=delay_seconds)
+
+        os.makedirs(dest_dir, exist_ok=True)
+
+        count = 0
+        for result in client.results(search):
+            # Stop if we reached max_results
+            if max_results is not None and count >= max_results:
+                break
+            
+            # The time when the paper was updated
+            paper_date = result.updated
+
+
+            # Ensure that we are not downloading paper prior to the given date
+            if paper_date < dt_start:
+                break
+
+            # Each result has attributes: entry_id (URL), pdf_url, title, summary, authors, published, updated, primary_category, categories, comment, journal_ref, doi, etc.
+            arxiv_id = result.entry_id.split('/')[-1]
+            paper_dir = os.path.join(dest_dir, arxiv_id)
+            os.makedirs(paper_dir, exist_ok=True)
+            # paper_date = result.
+
+            # Save metadata to JSON
+            metadata = {
+                'id': arxiv_id,
+                'title': result.title,
+                'abstract': result.summary,
+                'authors': [author.name for author in result.authors],
+                'published': result.published.isoformat() if hasattr(result.published, "isoformat") else str(result.published),
+                'categories': result.categories,
+                'url': result.entry_id,
+            }
+            metadata_path = os.path.join(paper_dir, f"{arxiv_id}_metadata.json")
+            with open(metadata_path, "w", encoding="utf-8") as f:
+                json.dump(metadata, f, ensure_ascii=False, indent=2)
+
+            # Download PDF and/or LaTeX source
+            if output_type in ("pdf", "both"):
+                try:
+                    # filename defaults to {id}.pdf
+                    result.download_pdf(filename=f"{arxiv_id}.pdf", dirpath=paper_dir)
+                except Exception as e:
+                    print(f"[Warning] Failed to download PDF for {arxiv_id}: {e}")
+
+            if output_type in ("latex", "both"):
+                try:
+                    # The arxiv library may download a tar.gz of source; filename {id}.tar.gz
+                    result.download_source(filename=f"{arxiv_id}.tar.gz", dirpath=paper_dir)
+                except Exception as e:
+                    print(f"[Warning] Failed to download source for {arxiv_id}: {e}")
+
+            count += 1
+            print(f"Downloaded {count}: {arxiv_id}")
+
+        print(f"Finished: downloaded metadata for {count} papers in field '{field}' from {start_date}'")
+
+    @api_calling_error_exponential_backoff(retries=5, base_wait_time=1)
+    def download_semantic_scholar(self, input: str, input_type: str, dest_dir: str = None) -> None:
+
+        mi = MultiInput()
+
+        semantic_id = mi.extract_arxiv_id(input, input_type)
+
+        sc = SemanticScholar(timeout=TIMEOUT)
+        try:
+            paper = sc.get_paper(paper_id=semantic_id)
+        except Exception as e:
+            raise RuntimeError(f"Failed to fetch arXiv entry for {semantic_id}: {e}")
+
+        # print(paper)
+
+        print(type(paper))
+        # paper.
+
+        pass
+
+    @api_calling_error_exponential_backoff(retries=5, base_wait_time=1)
+    def build_paper_graph(self, input: str, input_type: str, dest_dir: str = None) -> None:
+        # Extract the paper graph of the provided paper using knowledge_debugger
+        mi = MultiInput()
+
+        arxiv_id = mi.extract_arxiv_id(input, input_type)
+
+        arxiv_list = [arxiv_id]
+        build_citation_graph_thread(
+            arxiv_list,
+            dest_dir,
+            f"{dest_dir}/working_folder",
+            f"{dest_dir}/output",
+            None,
+            None_constraint,
+            len(arxiv_list),
+            1000,
+            True,
+            len(arxiv_list),
+        )
+    
+    def get_abstract(self, input: str, input_type: str, dest_dir: str = None) -> str:
+
+        mi = MultiInput()
+
+        arxiv_id = mi.extract_arxiv_id(input, input_type)
+
+        self.build_paper_graph(input, input_type, dest_dir)
+
+        json_path = f"{dest_dir}/output/{arxiv_id}.json"
+
+        with open(json_path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+
+        if 'abstract' not in data:
+            raise KeyError(f"'abstract' field not found in JSON at {json_path}")
+
+        return clean_latex_code(data['abstract'])
+
+    def get_title(self, input: str, input_type: str, dest_dir: str = None) -> str:
+
+        mi = MultiInput()
+
+        arxiv_id = mi.extract_arxiv_id(input, input_type)
+
+
+        json_path = f"{dest_dir}/{arxiv_id}_metadata.json"
+        # json_path = f"{dest_dir}/{arxiv_id}_metadeta.json"
+        # print(json_path)
+        try:
+            with open(json_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+        except Exception as e:
+            raise RuntimeError(f"The paper with arxiv id {arxiv_id} is not fould in the directory {dest_dir}: {e}")
+
+        if 'title' not in data:
+            raise KeyError(f"'abstract' field not found in JSON at {json_path}")
+
+        return data['title']
+
+    def get_references(self, input: str, input_type: str, max_retries: int = 8) -> List[Dict[str, Any]]:
+
+        mi = MultiInput()
+
+        arxiv_id = mi.extract_arxiv_id(input, input_type)
+
+        SEMANTIC_SCHOLAR_API_URL = 'https://api.semanticscholar.org/graph/v1/paper/'
+        url = f'{SEMANTIC_SCHOLAR_API_URL}ARXIV:{arxiv_id}/references'
+        params = {'limit': 100, 'offset': 0, 'fields': 'title,abstract'}
+        headers = {'User-Agent': 'PaperProcessor/1.0'}
+        # print(f"max_retries: {max_retries}")
+        for attempt in range(max_retries):
+            # print(f"Attempt {attempt}")
+            response = requests.get(url, params=params, headers=headers)  # type: ignore
+            if response.status_code == 200:
+                data = response.json()
+                print(f"Retrieved data: {data}")
+                references = []
+                for ref in data.get('data', []):
+                    cited_paper = ref.get('citedPaper', {})
+                    if cited_paper:
+                        ref_info = {
+                            'title': cited_paper.get('title'),
+                            'abstract': cited_paper.get('abstract'),
+                            'paper_id': cited_paper.get('paperId')
+                        }
+                        references.append(ref_info)
+                return references
+            else:
+                wait_time = 2**attempt
+                print(
+                    f'Error {response.status_code} fetching references for {arxiv_id}. Retrying in {wait_time}s...'
+                )
+                time.sleep(wait_time)  # Exponential backoff
+        print(f'Failed to fetch references for {arxiv_id} after {max_retries} attempts.')
+        return []
+    
     # @api_calling_error_exponential_backoff(retries=5, base_wait_time=1)
     # def download_metadata_arxiv(self, input: str, input_type: str, dest_dir: str = None) -> dict:
     #     """
@@ -202,140 +434,18 @@ class MultiDownload:
 
     #     return metadata
 
-    @api_calling_error_exponential_backoff(retries=5, base_wait_time=1)
-    def download_semantic_scholar(self, input: str, input_type: str, dest_dir: str = None) -> None:
 
-        mi = MultiInput()
-
-        semantic_id = mi.extract_arxiv_id(input, input_type)
-
-        sc = SemanticScholar(timeout=TIMEOUT)
-        try:
-            paper = sc.get_paper(paper_id=semantic_id)
-        except Exception as e:
-            raise RuntimeError(f"Failed to fetch arXiv entry for {semantic_id}: {e}")
-
-        # print(paper)
-
-        print(type(paper))
-        # paper.
-
-        pass
-
-    @api_calling_error_exponential_backoff(retries=5, base_wait_time=1)
-    def build_paper_graph(self, input: str, input_type: str, dest_dir: str = None) -> None:
-        # Extract the paper graph of the provided paper using knowledge_debugger
-        mi = MultiInput()
-
-        arxiv_id = mi.extract_arxiv_id(input, input_type)
-
-        arxiv_list = [arxiv_id]
-        build_citation_graph_thread(
-            arxiv_list,
-            dest_dir,
-            f"{dest_dir}/working_folder",
-            f"{dest_dir}/output",
-            None,
-            None_constraint,
-            len(arxiv_list),
-            1000,
-            True,
-            len(arxiv_list),
-        )
-    
-    def get_abstract(self, input: str, input_type: str, dest_dir: str = None) -> str:
-
-        mi = MultiInput()
-
-        arxiv_id = mi.extract_arxiv_id(input, input_type)
-
-        self.build_paper_graph(input, input_type, dest_dir)
-
-        json_path = f"{dest_dir}/output/{arxiv_id}.json"
-
-        with open(json_path, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-
-        if 'abstract' not in data:
-            raise KeyError(f"'abstract' field not found in JSON at {json_path}")
-
-        return clean_latex_code(data['abstract'])
-
-    def get_title(self, input: str, input_type: str, dest_dir: str = None) -> str:
-
-        mi = MultiInput()
-
-        arxiv_id = mi.extract_arxiv_id(input, input_type)
-
-
-        json_path = f"{dest_dir}/{arxiv_id}_metadata.json"
-        # json_path = f"{dest_dir}/{arxiv_id}_metadeta.json"
-        # print(json_path)
-        try:
-            with open(json_path, 'r', encoding='utf-8') as f:
-                data = json.load(f)
-        except Exception as e:
-            raise RuntimeError(f"The paper with arxiv id {arxiv_id} is not fould in the directory {dest_dir}: {e}")
-
-        if 'title' not in data:
-            raise KeyError(f"'abstract' field not found in JSON at {json_path}")
-
-        return data['title']
-
-    def get_references(self, input: str, input_type: str, max_retries: int = 8) -> List[Dict[str, Any]]:
-
-        mi = MultiInput()
-
-        arxiv_id = mi.extract_arxiv_id(input, input_type)
-
-        SEMANTIC_SCHOLAR_API_URL = 'https://api.semanticscholar.org/graph/v1/paper/'
-        url = f'{SEMANTIC_SCHOLAR_API_URL}ARXIV:{arxiv_id}/references'
-        params = {'limit': 100, 'offset': 0, 'fields': 'title,abstract'}
-        headers = {'User-Agent': 'PaperProcessor/1.0'}
-        # print(f"max_retries: {max_retries}")
-        for attempt in range(max_retries):
-            # print(f"Attempt {attempt}")
-            response = requests.get(url, params=params, headers=headers)  # type: ignore
-            if response.status_code == 200:
-                data = response.json()
-                print(f"Retrieved data: {data}")
-                references = []
-                for ref in data.get('data', []):
-                    cited_paper = ref.get('citedPaper', {})
-                    if cited_paper:
-                        ref_info = {
-                            'title': cited_paper.get('title'),
-                            'abstract': cited_paper.get('abstract'),
-                            'paper_id': cited_paper.get('paperId')
-                        }
-                        references.append(ref_info)
-                return references
-            else:
-                wait_time = 2**attempt
-                print(
-                    f'Error {response.status_code} fetching references for {arxiv_id}. Retrying in {wait_time}s...'
-                )
-                time.sleep(wait_time)  # Exponential backoff
-        print(f'Failed to fetch references for {arxiv_id} after {max_retries} attempts.')
-        return []
-
-
-id_string = "1806.08804"
-dest_path = "./download"
-
+# id_string = "1806.08804"
+# dest_path = "./download"
+start_time = "2024-11-21"
+end_time = "2024-12-22"
+area = "cs.AI"
 mo = MultiDownload()
 
-# mo.download_arxiv(id_string, "id", "both", dest_path)
-# mo.download_metadata_arxiv(id_string, "id",  dest_path)
-# abstract = mo.get_title(id_string, "id",  dest_path)
-cp = mo.get_references(id_string, "id", 8)
-print("Cited Paper:")
-print(cp)
-print(len(cp))
-# print(abstract)
+# cp = mo.get_references(id_string, "id", 8)
+# print("Cited Paper:")
+# print(cp)
+# print(len(cp))
 
-# sc_id = "39ad6c911f3351a3b390130a6e4265355b4d593b"
-# mo = multi_download()
-
-# mo.download_semantic_scholar(sc_id, "id")
+mo.download_papers_by_field_and_date(field = area, start_date = start_time, max_results=20, sort_order = "descending")
 
