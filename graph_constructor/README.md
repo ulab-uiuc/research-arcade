@@ -17,3 +17,6 @@ Current Edges/Relations:
 3. citations: paper id to paper id
 4. paper figure: paper id to table/figure id
 5. author affiliation: author id to affilitation id
+
+The idea_extractor here is originally for extracting ideas from the papers. Since this step is not of high priority, ignore it first.
+
