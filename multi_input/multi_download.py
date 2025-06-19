@@ -44,8 +44,6 @@ class MultiDownload:
         filename_pdf = arxiv_id + ".pdf"
         filename_latex = arxiv_id + ".tar.gz"
 
-
-
         # Save metadata
         if dest_dir:
             metadata = {
@@ -70,7 +68,7 @@ class MultiDownload:
         if output_type == "both":
             paper.download_source(filename = filename_latex, dirpath = dest_dir)
             paper.download_pdf(filename = filename_pdf, dirpath = dest_dir)
-    
+
 
     def download_papers_by_field_and_date(
         self,
@@ -302,6 +300,21 @@ class MultiDownload:
                 time.sleep(wait_time)  # Exponential backoff
         print(f'Failed to fetch references for {arxiv_id} after {max_retries} attempts.')
         return []
+
+    def get_reference_arxiv(self, input: str, input_type: str) -> str:
+        
+
+        mi = MultiInput()
+        arxiv_id = mi.extract_arxiv_id(input, input_type)
+
+        try:
+            search = arxiv.Search(id_list=[arxiv_id])
+            paper = next(arxiv.Client().results(search))
+        except Exception as e:
+            raise RuntimeError(f"Failed to fetch arXiv entry for {arxiv_id}: {e}")
+        
+        return paper.journal_ref
+
     
     # @api_calling_error_exponential_backoff(retries=5, base_wait_time=1)
     # def download_metadata_arxiv(self, input: str, input_type: str, dest_dir: str = None) -> dict:
@@ -435,17 +448,11 @@ class MultiDownload:
     #     return metadata
 
 
-# id_string = "1806.08804"
+id_string = "1806.08804"
 # dest_path = "./download"
 start_time = "2024-11-21"
 end_time = "2024-12-22"
 area = "cs.AI"
 mo = MultiDownload()
 
-# cp = mo.get_references(id_string, "id", 8)
-# print("Cited Paper:")
-# print(cp)
-# print(len(cp))
-
-mo.download_papers_by_field_and_date(field = area, start_date = start_time, max_results=20, sort_order = "descending")
 
