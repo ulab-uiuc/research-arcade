@@ -1,13 +1,17 @@
 import psycopg2
 from psycopg2.extras import Json
 
+# Store the pwd of db server in the env or here as a global variable
+# PASSWORD = 
+PASSWORD = "Lcs20031121!"
+
 class Database:
 
     def __init__(self):
         # Store connection and cursor for reuse
         self.conn = psycopg2.connect(
             host="localhost", dbname="postgres",
-            user="postgres", password="Lcs20031121!", port="5432"
+            user="postgres", password=PASSWORD, port="5432"
         )
         # Enable autocommit
         self.conn.autocommit = True
