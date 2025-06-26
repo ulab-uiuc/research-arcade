@@ -12,10 +12,9 @@ FIELD = "cs.AI"
 
 """
 Note that this program is a in app service. For Kubernetes CronJob, we have the crawler_job.py for it.
+Ignore this file. We don't need to host the service for now.
 """
 
-
-# It seems that we don't need to host the service for now.
 
 @app.route("/")
 def hello():
