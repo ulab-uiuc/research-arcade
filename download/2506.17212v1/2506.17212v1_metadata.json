@@ -1,0 +1,21 @@
+{
+  "id": "2506.17212v1",
+  "title": "Part$^{2}$GS: Part-aware Modeling of Articulated Objects using 3D Gaussian Splatting",
+  "abstract": "Articulated objects are common in the real world, yet modeling their\nstructure and motion remains a challenging task for 3D reconstruction methods.\nIn this work, we introduce Part$^{2}$GS, a novel framework for modeling\narticulated digital twins of multi-part objects with high-fidelity geometry and\nphysically consistent articulation. Part$^{2}$GS leverages a part-aware 3D\nGaussian representation that encodes articulated components with learnable\nattributes, enabling structured, disentangled transformations that preserve\nhigh-fidelity geometry. To ensure physically consistent motion, we propose a\nmotion-aware canonical representation guided by physics-based constraints,\nincluding contact enforcement, velocity consistency, and vector-field\nalignment. Furthermore, we introduce a field of repel points to prevent part\ncollisions and maintain stable articulation paths, significantly improving\nmotion coherence over baselines. Extensive evaluations on both synthetic and\nreal-world datasets show that Part$^{2}$GS consistently outperforms\nstate-of-the-art methods by up to 10$\\times$ in Chamfer Distance for movable\nparts.",
+  "authors": [
+    "Tianjiao Yu",
+    "Vedant Shah",
+    "Muntasir Wahed",
+    "Ying Shen",
+    "Kiet A. Nguyen",
+    "Ismini Lourentzou"
+  ],
+  "published": "2025-06-20T17:59:12+00:00",
+  "categories": [
+    "cs.CV",
+    "cs.AI",
+    "cs.LG",
+    "cs.RO"
+  ],
+  "url": "http://arxiv.org/abs/2506.17212v1"
+}

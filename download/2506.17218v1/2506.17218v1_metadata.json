@@ -1,0 +1,18 @@
+{
+  "id": "2506.17218v1",
+  "title": "Machine Mental Imagery: Empower Multimodal Reasoning with Latent Visual Tokens",
+  "abstract": "Vision-language models (VLMs) excel at multimodal understanding, yet their\ntext-only decoding forces them to verbalize visual reasoning, limiting\nperformance on tasks that demand visual imagination. Recent attempts train VLMs\nto render explicit images, but the heavy image-generation pre-training often\nhinders the reasoning ability. Inspired by the way humans reason with mental\nimagery-the internal construction and manipulation of visual cues-we\ninvestigate whether VLMs can reason through interleaved multimodal trajectories\nwithout producing explicit images. To this end, we present a Machine Mental\nImagery framework, dubbed as Mirage, which augments VLM decoding with latent\nvisual tokens alongside ordinary text. Concretely, whenever the model chooses\nto ``think visually'', it recasts its hidden states as next tokens, thereby\ncontinuing a multimodal trajectory without generating pixel-level images. Begin\nby supervising the latent tokens through distillation from ground-truth image\nembeddings, we then switch to text-only supervision to make the latent\ntrajectory align tightly with the task objective. A subsequent reinforcement\nlearning stage further enhances the multimodal reasoning capability.\nExperiments on diverse benchmarks demonstrate that Mirage unlocks stronger\nmultimodal reasoning without explicit image generation.",
+  "authors": [
+    "Zeyuan Yang",
+    "Xueyang Yu",
+    "Delin Chen",
+    "Maohao Shen",
+    "Chuang Gan"
+  ],
+  "published": "2025-06-20T17:59:31+00:00",
+  "categories": [
+    "cs.CV",
+    "cs.AI"
+  ],
+  "url": "http://arxiv.org/abs/2506.17218v1"
+}

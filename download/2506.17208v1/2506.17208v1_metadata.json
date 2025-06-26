@@ -1,0 +1,16 @@
+{
+  "id": "2506.17208v1",
+  "title": "Dissecting the SWE-Bench Leaderboards: Profiling Submitters and Architectures of LLM- and Agent-Based Repair Systems",
+  "abstract": "The rapid progress in Automated Program Repair (APR) has been driven by\nadvances in AI, particularly large language models (LLMs) and agent-based\nsystems. SWE-Bench is a recent benchmark designed to evaluate LLM-based repair\nsystems using real issues and pull requests mined from 12 popular open-source\nPython repositories. Its public leaderboards, SWE-Bench Lite and SWE-Bench\nVerified, have become central platforms for tracking progress and comparing\nsolutions. However, because the submission process does not require detailed\ndocumentation, the architectural design and origin of many solutions remain\nunclear. In this paper, we present the first comprehensive study of all\nsubmissions to the SWE-Bench Lite (68 entries) and Verified (79 entries)\nleaderboards, analyzing 67 unique approaches across dimensions such as\nsubmitter type, product availability, LLM usage, and system architecture. Our\nfindings reveal the dominance of proprietary LLMs (especially Claude 3.5/3.7),\nthe presence of both agentic and non-agentic designs, and a contributor base\nspanning from individual developers to large tech companies.",
+  "authors": [
+    "Matias Martinez",
+    "Xavier Franch"
+  ],
+  "published": "2025-06-20T17:57:08+00:00",
+  "categories": [
+    "cs.SE",
+    "cs.AI",
+    "cs.CL"
+  ],
+  "url": "http://arxiv.org/abs/2506.17208v1"
+}

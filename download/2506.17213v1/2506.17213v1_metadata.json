@@ -1,0 +1,17 @@
+{
+  "id": "2506.17213v1",
+  "title": "Long-term Traffic Simulation with Interleaved Autoregressive Motion and Scenario Generation",
+  "abstract": "An ideal traffic simulator replicates the realistic long-term point-to-point\ntrip that a self-driving system experiences during deployment. Prior models and\nbenchmarks focus on closed-loop motion simulation for initial agents in a\nscene. This is problematic for long-term simulation. Agents enter and exit the\nscene as the ego vehicle enters new regions. We propose InfGen, a unified\nnext-token prediction model that performs interleaved closed-loop motion\nsimulation and scene generation. InfGen automatically switches between\nclosed-loop motion simulation and scene generation mode. It enables stable\nlong-term rollout simulation. InfGen performs at the state-of-the-art in\nshort-term (9s) traffic simulation, and significantly outperforms all other\nmethods in long-term (30s) simulation. The code and model of InfGen will be\nreleased at https://orangesodahub.github.io/InfGen",
+  "authors": [
+    "Xiuyu Yang",
+    "Shuhan Tan",
+    "Philipp Krähenbühl"
+  ],
+  "published": "2025-06-20T17:59:21+00:00",
+  "categories": [
+    "cs.CV",
+    "cs.AI",
+    "cs.RO"
+  ],
+  "url": "http://arxiv.org/abs/2506.17213v1"
+}
