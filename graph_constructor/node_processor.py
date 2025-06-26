@@ -141,6 +141,13 @@ class NodeConstructor:
 
         # Go through all the figure files following the extracted information in json
 
+        section_jsons = file_json['sections']
+
+        for title, section_json in section_jsons.iteritems():
+            is_appendix = section_json['appendix'] == 'true'
+            content = section_json['']
+            self.db.insert_section(content=content, title=title, is_appendix=is_appendix, paper_arxiv_id=arxiv_id)
+
         figure_jsons = file_json['figure']
 
         for figure_json in figure_jsons:
@@ -153,7 +160,7 @@ class NodeConstructor:
             figure_id = self.db.insert_figure(paper_arxiv_id=arxiv_id, path=path, caption=caption, label=label, name=file_name)
 
             self.db.insert_paper_figure(paper_arxiv_id=arxiv_id, figure_id=figure_id)
-        
+
 
             # We do the same thing to tables
             # For tables, we currently do not have a good way to reconstruct the table. Instead, we store the raw textual data of tables in the database directly.
@@ -180,7 +187,7 @@ class NodeConstructor:
         for category in categories:
             category_id = self.db.insert_category(category)
             self.db.insert_paper_category(category_id=category_id, paper_arxiv_id=arxiv_id)
-        
+
 
         # The last thing is to deal with citation maps.
         # For now we simply loop throught the citations part of the paper and obtain the arxiv ids of cited papers.
@@ -189,9 +196,14 @@ class NodeConstructor:
 
         for citation in file_json['citations'].values():
             cited_arxiv_id = citation.get('arxiv_id')
-
+            contexts = citation.get('context')
+            citing_sections = set()
+            for context in contexts:
+                citing_section = context['section']
+                citing_sections.add(citing_section)
+            # It seems that the cited paper sometimes does not provide arxiv id, or that column is null. How can I tackle this issue?
             if cited_arxiv_id:
-                self.db.insert_citation(citing_paper_id=arxiv_id, cited_paper_id=cited_arxiv_id)
+                self.db.insert_citation(citing_paper_id=arxiv_id, cited_paper_id=cited_arxiv_id, citing_sections=list(citing_sections))
         
     def create_tables(self):
         self.db.create_all()
