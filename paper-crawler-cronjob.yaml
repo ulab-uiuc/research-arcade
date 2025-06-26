@@ -1,0 +1,30 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: paper-crawler-daily
+spec:
+  # Schedule at 23:59 America/Chicago. If your cluster supports timeZone (K8s v1.27+), uncomment timeZone.
+  schedule: "59 23 * * *"
+  # timeZone: "America/Chicago"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: crawler
+            # Replace with your image (e.g., built in Minikube as 'paper-crawler:latest' or pushed to registry)
+            image: your-registry/paper-crawler:latest
+            imagePullPolicy: IfNotPresent
+            command: ["python", "crawler_job.py"]
+            # If you need to persist downloads in /app/download, mount a PVC at that path:
+            volumeMounts:
+            - name: download-storage
+              mountPath: /app/download
+          restartPolicy: OnFailure
+          volumes:
+          - name: download-storage
+            persistentVolumeClaim:
+              claimName: paper-crawler-pvc
+  # Optional: keep only recent Job history
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1

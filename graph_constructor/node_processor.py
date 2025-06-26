@@ -57,7 +57,7 @@ class NodeConstructor:
         
         # print(json_file)
         title = json_file['title']
-        abstract = clean_latex_format(json_file['summary'])
+        abstract = clean_latex_format(json_file['abstract'])
         submit_date = json_file['published']
         self.db.insert_paper(arxiv_id=arxiv_id, title=title, abstract=abstract, submit_date=submit_date, metadata=str(json_file))
 
@@ -97,7 +97,7 @@ class NodeConstructor:
         """
         # Find the corresponding files
         json_path = f"{dir_path}/output/endpoints/{arxiv_id}.json"
-        metadata_path = f"{dir_path}/{arxiv_id}_metadata.json"
+        metadata_path = f"{dir_path}/{arxiv_id}/{arxiv_id}_metadata.json"
 
         try:
             with open(metadata_path, 'r') as file:

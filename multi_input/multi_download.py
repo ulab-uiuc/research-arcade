@@ -3,6 +3,7 @@ import datetime
 import json
 import os
 import arxiv
+from filelock import FileLock
 
 from paper_collector.graph_construction import build_citation_graph_thread
 from paper_collector.utils import None_constraint
@@ -64,7 +65,7 @@ class MultiDownload:
 
         if output_type == "latex":
             paper.download_source(filename = filename_latex, dirpath = dest_dir)
-        
+
         if output_type == "both":
             paper.download_source(filename = filename_latex, dirpath = dest_dir)
             paper.download_pdf(filename = filename_pdf, dirpath = dest_dir)
@@ -77,7 +78,7 @@ class MultiDownload:
         output_type: str = "both",
         max_results: Optional[int] = None,
         dest_dir: str = "./download_by_field",
-        sort_order: str = "ascending",
+        sort_order: str = "descending",
         page_size: int = 100,
         delay_seconds: float = 15.0,
     ):
@@ -98,7 +99,7 @@ class MultiDownload:
         """
         # Parse dates
         try:
-            dt_start = datetime.datetime.strptime(start_date, "%Y-%m-%d")
+            dt_start = datetime.datetime.strptime(start_date, "%Y-%m-%d").date()
             # dt_end = datetime.datetime.strptime(end_date, "%Y-%m-%d")
         except ValueError as e:
             raise ValueError(f"start_date and end_date must be in YYYY-MM-DD format: {e}")
@@ -130,6 +131,7 @@ class MultiDownload:
 
         os.makedirs(dest_dir, exist_ok=True)
 
+        downloaded_ids: List[str] = []
         count = 0
         for result in client.results(search):
             # Stop if we reached max_results
@@ -141,7 +143,7 @@ class MultiDownload:
 
 
             # Ensure that we are not downloading paper prior to the given date
-            if paper_date < dt_start:
+            if paper_date.date()  < dt_start:
                 break
 
             # Each result has attributes: entry_id (URL), pdf_url, title, summary, authors, published, updated, primary_category, categories, comment, journal_ref, doi, etc.
@@ -161,8 +163,14 @@ class MultiDownload:
                 'url': result.entry_id,
             }
             metadata_path = os.path.join(paper_dir, f"{arxiv_id}_metadata.json")
-            with open(metadata_path, "w", encoding="utf-8") as f:
-                json.dump(metadata, f, ensure_ascii=False, indent=2)
+
+            lock_path = metadata_path + ".lock"
+            lock = FileLock(lock_path)
+            with lock:
+                with open(metadata_path, "w", encoding="utf-8") as f:
+                    json.dump(metadata, f, ensure_ascii=False, indent=2)
+                    f.flush()
+                    os.fsync(f.fileno())  # ensure it's flushed to disk
 
             # Download PDF and/or LaTeX source
             if output_type in ("pdf", "both"):
@@ -178,11 +186,12 @@ class MultiDownload:
                     result.download_source(filename=f"{arxiv_id}.tar.gz", dirpath=paper_dir)
                 except Exception as e:
                     print(f"[Warning] Failed to download source for {arxiv_id}: {e}")
-
+            downloaded_ids.append(arxiv_id)
             count += 1
             print(f"Downloaded {count}: {arxiv_id}")
 
         print(f"Finished: downloaded metadata for {count} papers in field '{field}' from {start_date}'")
+        return downloaded_ids
 
     @api_calling_error_exponential_backoff(retries=5, base_wait_time=1)
     def download_semantic_scholar(self, input: str, input_type: str, dest_dir: str = None) -> None:

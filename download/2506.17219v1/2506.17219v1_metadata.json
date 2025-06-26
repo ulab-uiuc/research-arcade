@@ -1,0 +1,22 @@
+{
+  "id": "2506.17219v1",
+  "title": "No Free Lunch: Rethinking Internal Feedback for LLM Reasoning",
+  "abstract": "Reinforcement learning has emerged as a powerful paradigm for post-training\nlarge language models (LLMs) to improve reasoning. Approaches like\nReinforcement Learning from Human Feedback (RLHF) and Reinforcement Learning\nwith Verifiable Rewards (RLVR) have shown strong results, but they require\nextensive external supervision. We investigate an alternative class of methods,\nReinforcement Learning from Internal Feedback (RLIF), which relies solely on\nintrinsic model-derived signals instead of external rewards. In particular, we\nleverage unsupervised reward proxies such as token-level entropy,\ntrajectory-level entropy, and self-certainty. Our theoretical analysis shows\nthese internal objectives are partially equivalent, and we empirically evaluate\nvarious RLIF strategies on challenging math reasoning benchmarks. Experimental\nresults demonstrate that RLIF can boost the reasoning performance of base LLMs\nat the beginning phase of the training, matching or surpassing RLVR techniques\non these tasks. However, when training progresses, performance degrades even\nbelow the model before training. Moreover, we find that RLIF yields little\nimprovement for instruction-tuned models, indicating diminishing returns of\nintrinsic feedback once an LLM is already instruction-tuned. We further analyze\nthis limitation by mixing model weights and explain the reason of RLIF's\ntraining behaviors, providing practical guidelines for integrating internal\nfeedback signals into LLM training. We hope our analysis of internal feedback\nwill inform more principled and effective strategies for LLM post-training.",
+  "authors": [
+    "Yanzhi Zhang",
+    "Zhaoxi Zhang",
+    "Haoxiang Guan",
+    "Yilin Cheng",
+    "Yitong Duan",
+    "Chen Wang",
+    "Yue Wang",
+    "Shuxin Zheng",
+    "Jiyan He"
+  ],
+  "published": "2025-06-20T17:59:52+00:00",
+  "categories": [
+    "cs.LG",
+    "cs.AI"
+  ],
+  "url": "http://arxiv.org/abs/2506.17219v1"
+}
