@@ -204,6 +204,9 @@ class NodeConstructor:
             # It seems that the cited paper sometimes does not provide arxiv id, or that column is null. How can I tackle this issue?
             if cited_arxiv_id:
                 self.db.insert_citation(citing_paper_id=arxiv_id, cited_paper_id=cited_arxiv_id, citing_sections=list(citing_sections))
+            else:
+                # It seems that sometimes the citation does not include the arxiv id. Hence we need to use the tile for searching.
+                pass
         
     def create_tables(self):
         self.db.create_all()
