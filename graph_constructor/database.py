@@ -22,6 +22,8 @@ class Database:
         CREATE TABLE IF NOT EXISTS papers (
             id SERIAL PRIMARY KEY,
             arxiv_id VARCHAR(100) UNIQUE,
+            base_arxiv_id VARCHAR(100),
+            version VARCHAR(100),
             title TEXT NOT NULL,
             abstract TEXT,
             submit_date DATE,
@@ -118,11 +120,13 @@ class Database:
         # citation edges by arxiv_id strings
         self.cur.execute("""
         CREATE TABLE IF NOT EXISTS citations (
+            id SERIAL PRIMARY KEY,
             citing_arxiv_id VARCHAR(100) NOT NULL REFERENCES papers(arxiv_id) ON DELETE CASCADE,
-            cited_arxiv_id VARCHAR(100) NOT NULL REFERENCES papers(arxiv_id) ON DELETE CASCADE,
+            cited_arxiv_id VARCHAR(100),
+            bib_title TEXT,
+            bib_key VARCHAR(255),
+            author_cited_paper VARCHAR(255),
             citing_sections TEXT[] DEFAULT '{}',
-            PRIMARY KEY (citing_arxiv_id, cited_arxiv_id),
-            CHECK (citing_arxiv_id <> cited_arxiv_id)
         )
         """)
 
@@ -168,8 +172,23 @@ class Database:
         self.create_paper_tables_table()
         self.create_author_affiliation_table()
 
+
+    # def create_papers_table(self):
+    #     self.cur.execute("""
+    #     CREATE TABLE IF NOT EXISTS papers (
+    #         id SERIAL PRIMARY KEY,
+    #         arxiv_id VARCHAR(100) UNIQUE,
+    #         base_arxiv_id VARCHAR(100),
+    #         version VARCHAR(100),
+    #         title TEXT NOT NULL,
+    #         abstract TEXT,
+    #         submit_date DATE,
+    #         metadata JSONB
+    #     )
+    #     """)
+
     # Insert methods for papers/authors/etc remain the same for papers:
-    def insert_paper(self, arxiv_id, title, abstract=None, submit_date=None, metadata=None):
+    def insert_paper(self, arxiv_id, base_arxiv_id, version, title, abstract=None, submit_date=None, metadata=None):
         """
         Insert a paper. Returns the generated paper id.
         - arxiv_id: str (unique) or None
@@ -179,13 +198,13 @@ class Database:
         - metadata: dict or None
         """
         sql = """
-        INSERT INTO papers (arxiv_id, title, abstract, submit_date, metadata)
+        INSERT INTO papers (arxiv_id, base_arxiv_id, version, title, abstract, submit_date, metadata)
         VALUES (%s, %s, %s, %s, %s)
         ON CONFLICT (arxiv_id) DO NOTHING
         RETURNING id
         """
         meta_val = Json(metadata) if metadata is not None else None
-        self.cur.execute(sql, (arxiv_id, title, abstract, submit_date, meta_val))
+        self.cur.execute(sql, (arxiv_id, base_arxiv_id, version, title, abstract, submit_date, meta_val))
         res = self.cur.fetchone()
         return res[0] if res else None
 
@@ -319,18 +338,31 @@ class Database:
     #     )
     #     """)
 
-    def insert_citation(self, citing_arxiv_id, cited_arxiv_id, citing_sections):
+    def insert_citation(self, citing_arxiv_id, cited_arxiv_id, bib_title, bib_key, author_cited_paper, citing_sections):
         """
         Insert a citation edge by arxiv_id strings. Returns True if inserted, False if exists or invalid.
         """
+
+        # self.cur.execute("""
+        # CREATE TABLE IF NOT EXISTS citations (
+        #     id SERIAL PRIMARY KEY,
+        #     citing_arxiv_id VARCHAR(100) NOT NULL REFERENCES papers(arxiv_id) ON DELETE CASCADE,
+        #     cited_arxiv_id VARCHAR(100),
+        #     bib_title TEXT,
+        #     bib_key VARCHAR(255),
+        #     author_cited_paper VARCHAR(255),
+        #     citing_sections TEXT[] DEFAULT '{}',
+        # )
+        # """)
+
         if citing_arxiv_id == cited_arxiv_id:
             return False
         sql = """
-        INSERT INTO citations (citing_arxiv_id, cited_arxiv_id, citing_sections)
-        VALUES (%s, %s, %s)
+        INSERT INTO citations (citing_arxiv_id, cited_arxiv_id, bib_title, bib_key, author_cited_paper, citing_sections)
+        VALUES (%s, %s, %s, %s, %s, %s)
         ON CONFLICT (citing_arxiv_id, cited_arxiv_id) DO NOTHING
         """
-        self.cur.execute(sql, (citing_arxiv_id, cited_arxiv_id, citing_sections))
+        self.cur.execute(sql, (citing_arxiv_id, cited_arxiv_id, bib_title, bib_key, author_cited_paper, citing_sections))
         return self.cur.rowcount == 1
 
     def insert_paper_figure(self, paper_arxiv_id, figure_id):
