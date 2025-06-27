@@ -5,7 +5,7 @@ from multi_input.multi_input import MultiInput
 from paper_collector.latex_parser import clean_latex_format
 import json
 import os
-
+import re
 
 
 class NodeConstructor:
@@ -27,7 +27,8 @@ class NodeConstructor:
 
     # Construct the paper node based on the full information provided
     def paper_constructor(self, arxiv_id, title, abstract=None, submit_date=None, metadata=None):
-        self.db.insert_paper(arxiv_id=arxiv_id, title=title, abstract=abstract, submit_date=submit_date, metadata=metadata)
+        base_arxiv_id, version = self.arxiv_id_processor(arxiv_id=arxiv_id)
+        self.db.insert_paper(arxiv_id=arxiv_id, base_arxiv_id=base_arxiv_id, version=version, title=title, abstract=abstract, submit_date=submit_date, metadata=metadata)
 
     # Construct the paper node based on the arxiv_id used for fetching the rest of information from SemanticScholar
     def paper_constructor_arxiv_id(self, arxiv_id):
@@ -50,7 +51,8 @@ class NodeConstructor:
         title = paper.title
         submit_date = str(paper.published)
 
-        self.db.insert_paper(arxiv_id=arxiv_id, title=title, abstract=abstract, submit_date=submit_date, metadata=metadata)
+        base_arxiv_id, version = self.arxiv_id_processor(arxiv_id=arxiv_id)
+        self.db.insert_paper(arxiv_id=arxiv_id, base_arxiv_id=base_arxiv_id, version=version, title=title, abstract=abstract, submit_date=submit_date, metadata=metadata)
 
     # Construct the paper node based on given json file with information provided
     def paper_constructor_json(self, arxiv_id, json_file):
@@ -59,7 +61,9 @@ class NodeConstructor:
         title = json_file['title']
         abstract = clean_latex_format(json_file['abstract'])
         submit_date = json_file['published']
-        self.db.insert_paper(arxiv_id=arxiv_id, title=title, abstract=abstract, submit_date=submit_date, metadata=str(json_file))
+        base_arxiv_id, version = self.arxiv_id_processor(arxiv_id=arxiv_id)
+        self.db.insert_paper(arxiv_id=arxiv_id, base_arxiv_id=base_arxiv_id, version=version, title=title, abstract=abstract, submit_date=submit_date, metadata=str(json_file))
+
 
     # Construct category node with given category name and category description
     def category_constructor(self, name, description=None):
@@ -196,20 +200,61 @@ class NodeConstructor:
 
         for citation in file_json['citations'].values():
             cited_arxiv_id = citation.get('arxiv_id')
+            bib_key = citation.get('bib_key')
+            bib_title = citation.get('bib_title')
+            bib_author = citation.get('bib_author')
             contexts = citation.get('context')
             citing_sections = set()
             for context in contexts:
                 citing_section = context['section']
                 citing_sections.add(citing_section)
             # It seems that the cited paper sometimes does not provide arxiv id, or that column is null. How can I tackle this issue?
-            if cited_arxiv_id:
-                self.db.insert_citation(citing_paper_id=arxiv_id, cited_paper_id=cited_arxiv_id, citing_sections=list(citing_sections))
-            else:
-                # It seems that sometimes the citation does not include the arxiv id. Hence we need to use the tile for searching.
-                pass
-        
+            if not cited_arxiv_id:
+                # In that case, we need to use the tile for searching.
+                # We first remove colon and plus sign in the title as they are prefix and relaitonal sign in the searching query
+                title_cleaned = re.sub(r'[:+]', '', bib_title)
+                # and we only use the family name of author
+                bib_author_surname = bib_author.split(',')[0].strip()
+                
+                cited_arxiv_id = self.search_title_name(title=title_cleaned, name=bib_author_surname)
+
+            self.db.insert_citation(citing_paper_id=arxiv_id, cited_paper_id=cited_arxiv_id, citing_sections=list(citing_sections),bib_title=bib_title, bib_key=bib_key, author_cited_paper=bib_author)
+
+        # Primarily done
+
     def create_tables(self):
         self.db.create_all()
 
     def drop_tables(self):
         self.db.drop_all()
+    
+    def search_title_name(self, title, name, max_result=20):
+        """
+        Given the title and family name of first author of a paper, search if this paper exists on arxiv.
+        - title: str
+        - name: str
+        - max_result (optional) : int
+        return the arxiv id if such a paper exists, otherwise return null
+        """
+
+        query = f"ti:{title}+AND+au:{name}"
+
+        search = arxiv.Search(query=query, max_results=max_result, sort_by=arxiv.SortCriterion.Relevance)
+
+        for result in search.results():
+            title_match = result.title.strip().lower() == title.strip().lower()
+            author_match = any(name.lower() in author.name.lower() for author in result.authors)
+
+            if title_match and author_match:
+                return result.entry_id
+        
+        return None
+
+
+    def arxiv_id_processor(self, arxiv_id):
+        """
+        Given arxiv id, return base arxiv id and version
+        - arxiv_id: str
+        """
+        return arxiv_id.split('.')
+    
