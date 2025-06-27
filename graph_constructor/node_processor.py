@@ -4,7 +4,6 @@ import arxiv
 from multi_input.multi_input import MultiInput
 from paper_collector.latex_parser import clean_latex_format
 import json
-import os
 import re
 
 
@@ -103,6 +102,8 @@ class NodeConstructor:
         json_path = f"{dir_path}/output/endpoints/{arxiv_id}.json"
         metadata_path = f"{dir_path}/{arxiv_id}/{arxiv_id}_metadata.json"
 
+        metadata_json = None
+
         try:
             with open(metadata_path, 'r') as file:
                 metadata_json = json.load(file)
@@ -113,7 +114,7 @@ class NodeConstructor:
         except Exception as e:
             print(f"An unexpected error occurred: {e}")
 
-        self.paper_constructor_json(arxiv_id=arxiv_id, json_file = metadata_json)
+        self.paper_constructor_json(arxiv_id=arxiv_id, json_file=metadata_json)
 
         # Add the author into paper directory
         paper_sch = self.sch.get_paper(f"ARXIV:{arxiv_id}")
@@ -216,7 +217,7 @@ class NodeConstructor:
                 # and we only use the family name of author
                 bib_author_surname = bib_author.split(',')[0].strip()
                 
-                cited_arxiv_id = self.search_title_name(title=title_cleaned, name=bib_author_surname)
+                cited_arxiv_id = self.search_title_with_name(title=title_cleaned, name=bib_author_surname)
 
             self.db.insert_citation(citing_paper_id=arxiv_id, cited_paper_id=cited_arxiv_id, citing_sections=list(citing_sections),bib_title=bib_title, bib_key=bib_key, author_cited_paper=bib_author)
 
@@ -228,7 +229,7 @@ class NodeConstructor:
     def drop_tables(self):
         self.db.drop_all()
     
-    def search_title_name(self, title, name, max_result=20):
+    def search_title_with_name(self, title, name, max_result=20):
         """
         Given the title and family name of first author of a paper, search if this paper exists on arxiv.
         - title: str
