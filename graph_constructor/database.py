@@ -126,7 +126,7 @@ class Database:
             bib_title TEXT,
             bib_key VARCHAR(255),
             author_cited_paper VARCHAR(255),
-            citing_sections TEXT[] DEFAULT '{}',
+            citing_sections TEXT[] DEFAULT '{}'
         )
         """)
 

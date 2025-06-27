@@ -33,6 +33,13 @@ class MultiDownload:
     @api_calling_error_exponential_backoff(retries=5, base_wait_time=1)
     def download_arxiv(self, input: str, input_type: str, output_type: str, dest_dir: str = None):
 
+        """
+        Input type: 
+            - id/arxiv_id -> arxiv id of the paper
+            - bib/arxiv_bib -> bib of the paper which has the arxiv id field
+            - url/link -> url of the link of paper on arxiv
+        """
+
         mi = MultiInput()
         arxiv_id = mi.extract_arxiv_id(input, input_type)
 
