@@ -1,6 +1,7 @@
 from graph_constructor.database import Database
 from semanticscholar import SemanticScholar
 import arxiv
+from arxiv import UnexpectedEmptyPageError
 from multi_input.multi_input import MultiInput
 from paper_collector.latex_parser import clean_latex_format
 import json
@@ -99,7 +100,9 @@ class NodeConstructor:
 
         """
         # Find the corresponding files
-        json_path = f"{dir_path}/output/endpoints/{arxiv_id}.json"
+        # json_path = f"{dir_path}/output/endpoints/{arxiv_id}.json"
+        json_path = f"{dir_path}/output/{arxiv_id}.json"
+        # metadata_path = f"{dir_path}/{arxiv_id}/{arxiv_id}_metadata.json"
         metadata_path = f"{dir_path}/{arxiv_id}/{arxiv_id}_metadata.json"
 
         metadata_json = None
@@ -116,8 +119,13 @@ class NodeConstructor:
 
         self.paper_constructor_json(arxiv_id=arxiv_id, json_file=metadata_json)
 
-        # Add the author into paper directory
-        paper_sch = self.sch.get_paper(f"ARXIV:{arxiv_id}")
+        # Add the author into paper directory if the paper is on semantic scholar
+        base_arxiv_id, version = self.arxiv_id_processor(arxiv_id)
+        try:
+            paper_sch = self.sch.get_paper(f"ARXIV:{base_arxiv_id}")
+        except e:
+            print(f"Paper with arxiv id {base_arxiv_id} is not found on semantic scholar: {e}")
+
         authors = paper_sch.authors
 
         # Add authors into database if not exist
@@ -127,7 +135,6 @@ class NodeConstructor:
             author_order += 1
             # Add paper-author edge as follows
             self.db.insert_paper_author(paper_arxiv_id=arxiv_id, author_id=author.authorId, author_sequence=author_order)
-
 
         # Add figures to papers
         # Here we store the path to figures/images instead of directly storing them inside of the database
@@ -148,9 +155,9 @@ class NodeConstructor:
 
         section_jsons = file_json['sections']
 
-        for title, section_json in section_jsons.iteritems():
+        for title, section_json in section_jsons.items():
             is_appendix = section_json['appendix'] == 'true'
-            content = section_json['']
+            content = section_json['content']
             self.db.insert_section(content=content, title=title, is_appendix=is_appendix, paper_arxiv_id=arxiv_id)
 
         figure_jsons = file_json['figure']
@@ -189,6 +196,7 @@ class NodeConstructor:
         categories = file_json['categories']
 
 
+
         for category in categories:
             category_id = self.db.insert_category(category)
             self.db.insert_paper_category(category_id=category_id, paper_arxiv_id=arxiv_id)
@@ -200,10 +208,11 @@ class NodeConstructor:
         # Recall that we have to make sure every paper can be traced to its arxiv id since only downloading from arxiv provides us full context.
 
         for citation in file_json['citations'].values():
+            # print(f"Citation: {citation}")
             cited_arxiv_id = citation.get('arxiv_id')
             bib_key = citation.get('bib_key')
             bib_title = citation.get('bib_title')
-            bib_author = citation.get('bib_author')
+            bib_author = citation.get('bib_author ')
             contexts = citation.get('context')
             citing_sections = set()
             for context in contexts:
@@ -213,13 +222,14 @@ class NodeConstructor:
             if not cited_arxiv_id:
                 # In that case, we need to use the tile for searching.
                 # We first remove colon and plus sign in the title as they are prefix and relaitonal sign in the searching query
-                title_cleaned = re.sub(r'[:+]', '', bib_title)
+                title_cleaned = bib_title.replace('+', ' ').replace(':', '')
+
                 # and we only use the family name of author
                 bib_author_surname = bib_author.split(',')[0].strip()
                 
                 cited_arxiv_id = self.search_title_with_name(title=title_cleaned, name=bib_author_surname)
-
-            self.db.insert_citation(citing_paper_id=arxiv_id, cited_paper_id=cited_arxiv_id, citing_sections=list(citing_sections),bib_title=bib_title, bib_key=bib_key, author_cited_paper=bib_author)
+                
+            self.db.insert_citation(citing_arxiv_id=arxiv_id, cited_arxiv_id=cited_arxiv_id, citing_sections=list(citing_sections),bib_title=bib_title, bib_key=bib_key, author_cited_paper=bib_author)
 
         # Primarily done
 
@@ -230,32 +240,28 @@ class NodeConstructor:
         self.db.drop_all()
     
     def search_title_with_name(self, title, name, max_result=20):
-        """
-        Given the title and family name of first author of a paper, search if this paper exists on arxiv.
-        - title: str
-        - name: str
-        - max_result (optional) : int
-        return the arxiv id if such a paper exists, otherwise return null
-        """
+        query = f"ti:{title} AND au:{name}"
+        search = arxiv.Search(
+            query=query,
+            max_results=max_result,
+            sort_by=arxiv.SortCriterion.Relevance,
+        )
 
-        query = f"ti:{title}+AND+au:{name}"
+        try:
+            for result in search.results():
+                if (result.title.strip().lower() == title.strip().lower()
+                        and any(name.lower() in a.name.lower() for a in result.authors)):
+                    return result.entry_id
+        except UnexpectedEmptyPageError:
+            # no more pages—stop iterating
+            pass
 
-        search = arxiv.Search(query=query, max_results=max_result, sort_by=arxiv.SortCriterion.Relevance)
-
-        for result in search.results():
-            title_match = result.title.strip().lower() == title.strip().lower()
-            author_match = any(name.lower() in author.name.lower() for author in result.authors)
-
-            if title_match and author_match:
-                return result.entry_id
-        
         return None
-
 
     def arxiv_id_processor(self, arxiv_id):
         """
         Given arxiv id, return base arxiv id and version
         - arxiv_id: str
         """
-        return arxiv_id.split('.')
+        return arxiv_id.split('v')
     

@@ -38,7 +38,7 @@ class Database:
             content TEXT,
             title TEXT,
             appendix BOOLEAN,
-            paper_arxiv_id VARCHAR(100) NOT NULL REFERENCES paper(arxiv_id) ON DELETE CASCADE
+            paper_arxiv_id VARCHAR(100) NOT NULL REFERENCES papers(arxiv_id) ON DELETE CASCADE
         )
         """)
 
@@ -126,7 +126,8 @@ class Database:
             bib_title TEXT,
             bib_key VARCHAR(255),
             author_cited_paper VARCHAR(255),
-            citing_sections TEXT[] DEFAULT '{}'
+            citing_sections TEXT[] DEFAULT '{}',
+            UNIQUE (citing_arxiv_id, cited_arxiv_id)
         )
         """)
 
@@ -160,6 +161,7 @@ class Database:
     def create_all(self):
         # Create tables in order respecting dependencies
         self.create_papers_table()
+        self.create_sections_table()
         self.create_authors_table()
         self.create_categories_table()
         self.create_institutions_table()
@@ -199,7 +201,7 @@ class Database:
         """
         sql = """
         INSERT INTO papers (arxiv_id, base_arxiv_id, version, title, abstract, submit_date, metadata)
-        VALUES (%s, %s, %s, %s, %s)
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
         ON CONFLICT (arxiv_id) DO NOTHING
         RETURNING id
         """
@@ -219,7 +221,7 @@ class Database:
         sql = """
         INSERT INTO sections (content, title, appendix, paper_arxiv_id)
         VALUES(%s, %s, %s, %s)
-        RETURN id
+        RETURNING id
         """
         self.cur.execute(sql, (content, title, is_appendix, paper_arxiv_id))
         res = self.cur.fetchone()
@@ -422,7 +424,8 @@ class Database:
             "categories",
             "authors",
             "institutions",
-            "papers"
+            "papers",
+            "sections"
         ]
         for tbl in tables:
             # Use IF EXISTS to avoid errors if a table is already gone
