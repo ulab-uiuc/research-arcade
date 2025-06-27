@@ -1,5 +1,3 @@
-# print(sys)
-
 from paper_collector.graph_construction import build_citation_graph_thread
 from paper_collector.utils import None_constraint
 

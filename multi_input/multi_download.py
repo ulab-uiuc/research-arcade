@@ -17,12 +17,7 @@ import arxiv
 import json
 import time
 from typing import Optional, List, Dict, Any
-# # Search for the paper by its arXiv ID
-# search = arxiv.Search(id_list=["2503.12600"])
-# paper = next(arxiv.Client().results(search))
-# # Download the PDF and source latex code to the current directory
-# paper.download_pdf()
-# paper.download_source()
+
 
 TIMEOUT = 10
 class MultiDownload:
@@ -43,6 +38,7 @@ class MultiDownload:
         mi = MultiInput()
         arxiv_id = mi.extract_arxiv_id(input, input_type)
 
+        dest_dir = f"{dest_dir}/{arxiv_id}"
         try:
             search = arxiv.Search(id_list=[arxiv_id])
             paper = next(arxiv.Client().results(search))
@@ -222,7 +218,12 @@ class MultiDownload:
 
     @api_calling_error_exponential_backoff(retries=5, base_wait_time=1)
     def build_paper_graph(self, input: str, input_type: str, dest_dir: str = None) -> None:
-        # Extract the paper graph of the provided paper using knowledge_debugger
+        """
+        Extract the paper graph of the paper using knowledge_debugger, provided the paper id/url/bib, the type of input and the directory the output is stored
+        - input: str
+        - input_type: str
+        - dest_dir: str
+        """
         mi = MultiInput()
 
         arxiv_id = mi.extract_arxiv_id(input, input_type)
@@ -230,7 +231,7 @@ class MultiDownload:
         arxiv_list = [arxiv_id]
         build_citation_graph_thread(
             arxiv_list,
-            dest_dir,
+            f"{dest_dir}/{arxiv_id}",
             f"{dest_dir}/working_folder",
             f"{dest_dir}/output",
             None,
@@ -464,11 +465,11 @@ class MultiDownload:
     #     return metadata
 
 
-id_string = "1806.08804"
-# dest_path = "./download"
-start_time = "2024-11-21"
-end_time = "2024-12-22"
-area = "cs.AI"
-mo = MultiDownload()
+# id_string = "1806.08804"
+# # dest_path = "./download"
+# start_time = "2024-11-21"
+# end_time = "2024-12-22"
+# area = "cs.AI"
+# mo = MultiDownload()
 
 
