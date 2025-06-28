@@ -3,7 +3,7 @@ This program records the time needed to search a paper on semantic scholar and f
 
 It seems that, in the node processor method, searching authors takes a long time, even longer than searching arxiv id given the titles.
 
-It turns out that it takes a long time to 
+Using an API solves the issue.
 """
 
 import sys
@@ -25,6 +25,8 @@ times = []
 nc = NodeConstructor()
 
 for i in range(NUMBER_OF_LOOPS):
+
+    print(f"Start fetching paper, the loop {i}")
 
     t0 = time.perf_counter()
     # Add the author into paper directory if the paper is on semantic scholar
