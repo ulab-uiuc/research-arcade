@@ -5,8 +5,7 @@ from arxiv import UnexpectedEmptyPageError
 from multi_input.multi_input import MultiInput
 from paper_collector.latex_parser import clean_latex_format
 import json
-import re
-
+import time
 
 class NodeConstructor:
 
@@ -99,6 +98,8 @@ class NodeConstructor:
         2. Build edge to paper authors. If the author does not exist, create one
 
         """
+        times = {}
+
         # Find the corresponding files
         # json_path = f"{dir_path}/output/endpoints/{arxiv_id}.json"
         json_path = f"{dir_path}/output/{arxiv_id}.json"
@@ -106,6 +107,8 @@ class NodeConstructor:
         metadata_path = f"{dir_path}/{arxiv_id}/{arxiv_id}_metadata.json"
 
         metadata_json = None
+
+        t0 = time.perf_counter()
 
         try:
             with open(metadata_path, 'r') as file:
@@ -116,9 +119,18 @@ class NodeConstructor:
             print(f"Error: Could not decode JSON from '{metadata_path}'. Check if the file contains valid JSON.")
         except Exception as e:
             print(f"An unexpected error occurred: {e}")
+        times['load_metadata'] = time.perf_counter() - t0
 
+        print(f"Time of loading metadata: {times['load_metadata']}")
+
+        t0 = time.perf_counter()
         self.paper_constructor_json(arxiv_id=arxiv_id, json_file=metadata_json)
+        times['paper_constructor'] = time.perf_counter() - t0
+        print(f"Time of constructing paper json file: {times['paper_constructor']}")
 
+
+
+        t0 = time.perf_counter()
         # Add the author into paper directory if the paper is on semantic scholar
         base_arxiv_id, version = self.arxiv_id_processor(arxiv_id)
         try:
@@ -136,10 +148,16 @@ class NodeConstructor:
             # Add paper-author edge as follows
             self.db.insert_paper_author(paper_arxiv_id=arxiv_id, author_id=author.authorId, author_sequence=author_order)
 
+        times['author_adding'] = time.perf_counter() - t0
+        print(f"Time of finding authors and adding authors to database: {times['author_adding']}")
+
         # Add figures to papers
         # Here we store the path to figures/images instead of directly storing them inside of the database
         # We don't really need the figure id LOL
         # Here, we use the existing json file of paper to extract the figure information
+
+
+        t0 = time.perf_counter()
 
         try:
             with open(json_path, 'r') as file:
@@ -201,11 +219,16 @@ class NodeConstructor:
             category_id = self.db.insert_category(category)
             self.db.insert_paper_category(category_id=category_id, paper_arxiv_id=arxiv_id)
 
+        times['info_extraction'] = time.perf_counter() - t0
+        print(f"Time of adding figures, tables, and sections to database: {times['info_extraction']}")
 
         # The last thing is to deal with citation maps.
         # For now we simply loop throught the citations part of the paper and obtain the arxiv ids of cited papers.
         # Comparing the semantic scholar, we choose to use extracted citations since they all provide arxiv ids.
         # Recall that we have to make sure every paper can be traced to its arxiv id since only downloading from arxiv provides us full context.
+
+
+        t0 = time.perf_counter()
 
         for citation in file_json['citations'].values():
             # print(f"Citation: {citation}")
@@ -230,8 +253,10 @@ class NodeConstructor:
                 cited_arxiv_id = self.search_title_with_name(title=title_cleaned, name=bib_author_surname)
                 
             self.db.insert_citation(citing_arxiv_id=arxiv_id, cited_arxiv_id=cited_arxiv_id, citing_sections=list(citing_sections),bib_title=bib_title, bib_key=bib_key, author_cited_paper=bib_author)
+        
+        times['citaion_extraction'] = time.perf_counter() - t0
+        print(f"Time of searching arxiv id of cited paper (if not provided) and adding citation information to database: {times['citaion_extraction']}")
 
-        # Primarily done
 
     def create_tables(self):
         self.db.create_all()
