@@ -6,6 +6,9 @@ from multi_input.multi_input import MultiInput
 from paper_collector.latex_parser import clean_latex_format
 import json
 import time
+import os
+
+from dotenv import load_dotenv
 
 class NodeConstructor:
 
@@ -16,6 +19,12 @@ class NodeConstructor:
     def __init__(self):
         self.db = Database()
         self.sch = SemanticScholar()
+        load_dotenv()
+        api_key = os.getenv('SEMANTIC_SCHOLAR_API_KEY')
+        if not api_key:
+            # We may still proceed, but it takes longer
+            print("SEMANTIC_SCHOLAR_API_KEY not set in .env")
+
     
     # Construct the author node based on his or her semantic scholar id
     def author_constructor(self, semantic_scholar_id):
