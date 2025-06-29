@@ -18,13 +18,15 @@ class NodeConstructor:
 
     def __init__(self):
         self.db = Database()
-        self.sch = SemanticScholar()
+        self.sch = None
         load_dotenv()
         api_key = os.getenv('SEMANTIC_SCHOLAR_API_KEY')
         if not api_key:
             # We may still proceed, but it takes longer
             print("SEMANTIC_SCHOLAR_API_KEY not set in .env")
-
+            self.sch = SemanticScholar()
+        else:
+            self.sch = SemanticScholar(api_key=api_key)
     
     # Construct the author node based on his or her semantic scholar id
     def author_constructor(self, semantic_scholar_id):
@@ -112,18 +114,32 @@ class NodeConstructor:
 
         paper_exists = self.db.check_exist(arxiv_id)
 
-        if paper_exists:
-            print(f"The paper with arxiv_id {arxiv_id} already exists in the database")
-            return
-
 
         times = {}
 
         # Find the corresponding files
         # json_path = f"{dir_path}/output/endpoints/{arxiv_id}.json"
-        json_path = f"{dir_path}/output/{arxiv_id}.json"
+        json_path = f"{dir_path}/output/endpoints/{arxiv_id}.json"
         # metadata_path = f"{dir_path}/{arxiv_id}/{arxiv_id}_metadata.json"
         metadata_path = f"{dir_path}/{arxiv_id}/{arxiv_id}_metadata.json"
+
+        if paper_exists:
+            print(f"The paper with arxiv_id {arxiv_id} already exists in the database")
+            return
+        # Then check if we have the json file of paper and meta_data
+        try:
+            with open(json_path, 'r') as file:
+                file_json = json.load(file)
+        except FileNotFoundError:
+            print(f"Error: The file '{file_json}' was not found.")
+            return
+        except json.JSONDecodeError:
+            print(f"Error: Could not decode JSON from '{file_json}'. Check if the file contains valid JSON.")
+            return
+        except Exception as e:
+            print(f"An unexpected error occurred: {e}")
+            return
+
 
         metadata_json = None
 
@@ -134,10 +150,14 @@ class NodeConstructor:
                 metadata_json = json.load(file)
         except FileNotFoundError:
             print(f"Error: The file '{metadata_path}' was not found.")
+            return
         except json.JSONDecodeError:
             print(f"Error: Could not decode JSON from '{metadata_path}'. Check if the file contains valid JSON.")
+            return
         except Exception as e:
             print(f"An unexpected error occurred: {e}")
+            return
+
         times['load_metadata'] = time.perf_counter() - t0
 
         print(f"Time of loading metadata: {times['load_metadata']}")
@@ -178,15 +198,6 @@ class NodeConstructor:
 
         t0 = time.perf_counter()
 
-        try:
-            with open(json_path, 'r') as file:
-                file_json = json.load(file)
-        except FileNotFoundError:
-            print(f"Error: The file '{file_json}' was not found.")
-        except json.JSONDecodeError:
-            print(f"Error: Could not decode JSON from '{file_json}'. Check if the file contains valid JSON.")
-        except Exception as e:
-            print(f"An unexpected error occurred: {e}")
 
         # Go through all the figure files following the extracted information in json
 

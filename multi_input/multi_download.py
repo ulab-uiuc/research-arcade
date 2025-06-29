@@ -144,7 +144,6 @@ class MultiDownload:
             # The time when the paper was updated
             paper_date = result.updated
 
-
             # Ensure that we are not downloading paper prior to the given date
             if paper_date.date()  < dt_start:
                 break
