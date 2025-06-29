@@ -403,6 +403,27 @@ class Database:
         self.cur.execute(sql, (author_id, institution_id))
         return self.cur.rowcount == 1
 
+    def check_exist(self, paper_arxiv_id):
+        """
+        Check if the paper with given arxiv id exists in the database
+        Return True or False as boolean value
+        - paper_arxiv_id: str
+        """
+        sql = """
+        SELECT EXISTS(
+            SELECT 1
+            FROM papers
+            WHERE arxiv_id = %s
+        );
+        """
+        # execute the query
+        self.cur.execute(sql, (paper_arxiv_id,))
+        # fetchone returns a tuple like (True,) or (False,)
+        exists, = self.cur.fetchone()
+        return exists
+
+    
+
     def close(self):
         self.cur.close()
         self.conn.close()
@@ -431,3 +452,4 @@ class Database:
             # Use IF EXISTS to avoid errors if a table is already gone
             # Use CASCADE for safety in case there are lingering dependencies
             self.cur.execute(f"DROP TABLE IF EXISTS {tbl} CASCADE")
+    

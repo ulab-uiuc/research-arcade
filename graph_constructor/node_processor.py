@@ -105,8 +105,18 @@ class NodeConstructor:
         Given a paper:
         1. Store it as a node
         2. Build edge to paper authors. If the author does not exist, create one
-
         """
+
+        # First thing first: check if the paper exists in the database
+        # If so, stop and return None
+
+        paper_exists = self.db.check_exist(arxiv_id)
+
+        if paper_exists:
+            print(f"The paper with arxiv_id {arxiv_id} already exists in the database")
+            return
+
+
         times = {}
 
         # Find the corresponding files
@@ -137,25 +147,25 @@ class NodeConstructor:
         times['paper_constructor'] = time.perf_counter() - t0
         print(f"Time of constructing paper json file: {times['paper_constructor']}")
 
-
-
         t0 = time.perf_counter()
+        authors = None
         # Add the author into paper directory if the paper is on semantic scholar
         base_arxiv_id, version = self.arxiv_id_processor(arxiv_id)
         try:
             paper_sch = self.sch.get_paper(f"ARXIV:{base_arxiv_id}")
-        except e:
-            print(f"Paper with arxiv id {base_arxiv_id} is not found on semantic scholar: {e}")
+            authors = paper_sch.authors
+        except Exception as e:
+            print(f"Paper with arxiv id {base_arxiv_id} not found on semantic scholar: {e}")
 
-        authors = paper_sch.authors
 
         # Add authors into database if not exist
         author_order = 0
-        for author in authors:
-            self.author_constructor(author.authorId)
-            author_order += 1
-            # Add paper-author edge as follows
-            self.db.insert_paper_author(paper_arxiv_id=arxiv_id, author_id=author.authorId, author_sequence=author_order)
+        if authors:
+            for author in authors:
+                self.author_constructor(author.authorId)
+                author_order += 1
+                # Add paper-author edge as follows
+                self.db.insert_paper_author(paper_arxiv_id=arxiv_id, author_id=author.authorId, author_sequence=author_order)
 
         times['author_adding'] = time.perf_counter() - t0
         print(f"Time of finding authors and adding authors to database: {times['author_adding']}")
