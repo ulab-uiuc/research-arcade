@@ -17,8 +17,11 @@ import time
 
 NUMBER_OF_LOOPS = 10
 
-arxiv_id = "2501.02725v3"
 
+# Try a new one
+
+arxiv_id = "2506.21536v1"
+arxiv_ids = []
 
 times = []
 
