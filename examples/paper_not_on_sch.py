@@ -20,7 +20,7 @@ else:
     print(f"Semantic Scholar API Key: {api_key}")
     sch = SemanticScholar(api_key=api_key)
 
-arxiv_id_list = ["2506.21532", "2506.21521", "2506.21506", "2506.21502", "2506.21552"]
+arxiv_id_list = ["2506.21532", "2506.21521", "2506.21506", "2506.21502", "2506.21552", "1706.03762"]
 
 for id in arxiv_id_list:
     try:
@@ -31,4 +31,3 @@ for id in arxiv_id_list:
     except Exception as e:
         print(f"Paper with arxiv id {id} not found on semantic scholar: {e}")
 
-        
