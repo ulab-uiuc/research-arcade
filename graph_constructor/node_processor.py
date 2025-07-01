@@ -319,3 +319,31 @@ class NodeConstructor:
         """
         return arxiv_id.split('v')
     
+
+    def post_author_processor(self, arxiv_id):
+
+        """
+        Motivation: sometimes the paper is not yet added into the semantic scholar. We can check if certain paper has author info in the db. If not, we search it on semantic scholar again.
+        """
+
+        exists = self.db.paper_authors_exist(paper_arxiv_id=arxiv_id)
+
+        if not exists:
+            # If the paper author does not exist, we re-fetch from the semantic scholar
+            base_arxiv_id, version = self.arxiv_id_processor(arxiv_id)
+            try:
+                paper_sch = self.sch.get_paper(f"ARXIV:{base_arxiv_id}")
+                authors = paper_sch.authors
+            except Exception as e:
+                print(f"Paper with arxiv id {base_arxiv_id} not found on semantic scholar: {e}")
+
+
+            # Add authors into database if not exist
+            author_order = 0
+            if authors:
+                for author in authors:
+                    self.author_constructor(author.authorId)
+                    author_order += 1
+                    # Add paper-author edge as follows
+                    self.db.insert_paper_author(paper_arxiv_id=arxiv_id, author_id=author.authorId, author_sequence=author_order)
+

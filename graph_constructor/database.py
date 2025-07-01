@@ -423,6 +423,27 @@ class Database:
         exists, = self.cur.fetchone()
         return exists
 
+    def author_exist(self, paper_arxiv_id):
+        """
+        Check if the paper with given arxiv id exists in the author database.
+        If not, it means that the paper with arxiv id is not yet added into the semantic scholar or previous fetching failed.
+        - paper_arxiv_id: str
+        """
+
+        sql = """
+        SELECT EXISTS(
+            SELECT 1
+            FROM paper_authors
+            WHERE arxiv_id = %s
+        )
+        """
+
+        self.cur.execute(sql, (paper_arxiv_id,))
+
+        exists, = self.cur.fetchone()
+
+        return exists
+
     def _dict_from_cursor(self, cursor, parser= None):
         """Convert last SELECT into list of dicts, applying parser to string fields if given."""
         cols = [col.name for col in cursor.description]
@@ -440,6 +461,7 @@ class Database:
         with self.conn.cursor() as cur:
             cur.execute(sql)
             return self._dict_from_cursor(cur, parser)
+
 
     def serialize_all(self, tables, schema = 'public', parser = None):
         """Dump multiple tables into a dict, applying parser to string fields."""
