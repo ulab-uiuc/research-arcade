@@ -134,8 +134,12 @@ def build_citation_graph_node_info(
     current_subsection_name = None
     current_subsubsection_name = None
     # The problem must lie in here!
-    # TODO
+
+    # print(f"doc_node: {doc_node}")
+
     if doc_node:
+        # TODO: remove the print statement below
+        print("Extracting citation information")
         extract_citations_from_ast(
             structured_data,
             flattened_data,
@@ -387,7 +391,7 @@ def build_citation_graph_thread(
     num_threads: int = 4,
     clear_source: bool = False,
     max_figure: int = 200000,
-):
+): 
     # Shared BFS queue and visited set
     BFS_que = queue.Queue()
     print(f"seed: {seed}")
@@ -431,7 +435,9 @@ def build_citation_graph_thread(
         nonlocal BFS_que
         nonlocal visited
         nonlocal history
-        print(f"Thread {str(threading.get_ident())} Started processing")
+
+        # TODO: uncomment the print statement below
+        # print(f"Thread {str(threading.get_ident())} Started processing")
 
         while True:
             try:
@@ -454,11 +460,13 @@ def build_citation_graph_thread(
                     get_citation_info = (cnt_ < scale) and constraint(published)
                 with visited_lock:
                     if current_paper in visited:
+                        print("Here!4")
                         continue
                     visited.add(current_paper)
 
                 download_latex_source(current_paper, source_path)
 
+                
                 # Clear the working directory
                 thread_working_path = os.path.join(
                     working_path, str(threading.get_ident())
@@ -490,6 +498,7 @@ def build_citation_graph_thread(
                                 file.split("/")[-1].lower()
                             ] = os.path.join(root, file)
                 # Identify the main .tex file
+                # print("Here!")
                 tex_files = [
                     f for f in os.listdir(thread_working_path) if f.endswith(".tex")
                 ]
@@ -506,7 +515,6 @@ def build_citation_graph_thread(
                         f"Thread {str(threading.get_ident())} Failed to process {current_paper}"
                     )
                     continue
-
                 for tex_file in tex_files:
                     try:
                         with open(
@@ -536,11 +544,12 @@ def build_citation_graph_thread(
                             current_paper,
                             get_citation_info=get_citation_info,
                         )
+                        
                         if structured_data.get("sections"):
                             break
                     except Exception as e:
                         print(e)
-                
+                # print(f"structured_data: {structured_data}")
 
                 ncitations = len(structured_data["citations"])
                 print(f"number of citations collected: {ncitations}")

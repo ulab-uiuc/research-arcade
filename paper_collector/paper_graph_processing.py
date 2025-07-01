@@ -5,7 +5,6 @@ data_dir_path = "/Users/chongshan0lin/Documents/Research/UIUC/paper-crawler/arxi
 figures_dir_path = "/Users/chongshan0lin/Documents/Research/UIUC/paper-crawler/arxiv_papers_with_source/2501.01149v2/images"
 output_dir_path = "/Users/chongshan0lin/Documents/Research/UIUC/paper-crawler/arxiv_papers_extracted_json"
 
-
 # It seems that nothing is extracted. Why?
 # process_all_papers reads json files only. I need to first convert the papers into json format from latex code. How can I do that?
 

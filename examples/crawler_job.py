@@ -18,21 +18,20 @@ def main():
     time_paper_graph = []
     time_paper_database = []
 
-    two_days_ago_str = k_days_ago_str(3)
+    days_ago_str = k_days_ago_str(30)
+
+    print(f"Day Query: {days_ago_str}")
 
     today_str = datetime.date.today().strftime("%Y-%m-%d")
+
+    # Here, we use ascending to download older paper first
     ids = md.download_papers_by_field_and_date(
         field=FIELD,
-        start_date=two_days_ago_str,
+        start_date=days_ago_str,
         dest_dir=PATH,
-        max_results = 10
+        max_results = 400,
+        sort_order="descending"
     )
-
-    # print(ids)
-    # return
-
-    nc.drop_tables()
-    nc.create_tables()
 
 
     for arxiv_id in ids:

@@ -279,21 +279,20 @@ class NodeConstructor:
 
                 # and we only use the family name of author
                 bib_author_surname = bib_author.split(',')[0].strip()
-                
+
                 cited_arxiv_id = self.search_title_with_name(title=title_cleaned, name=bib_author_surname)
-                
+
             self.db.insert_citation(citing_arxiv_id=arxiv_id, cited_arxiv_id=cited_arxiv_id, citing_sections=list(citing_sections),bib_title=bib_title, bib_key=bib_key, author_cited_paper=bib_author)
-        
+
         times['citaion_extraction'] = time.perf_counter() - t0
         print(f"Time of searching arxiv id of cited paper (if not provided) and adding citation information to database: {times['citaion_extraction']}")
-
 
     def create_tables(self):
         self.db.create_all()
 
     def drop_tables(self):
         self.db.drop_all()
-    
+
     def search_title_with_name(self, title, name, max_result=20):
         query = f"ti:{title} AND au:{name}"
         search = arxiv.Search(

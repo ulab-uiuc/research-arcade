@@ -190,7 +190,7 @@ def extract_section_info_from_ast(
                         flat_data.append(unknown_info)
                     # if unknown_info:
                     #    structured_data['unknown'].append(unknown_info)
-
+                
                 if node.environmentname == "abstract":
                     abstract = node.latex_verbatim()
                     if "\\input" in abstract:
@@ -710,6 +710,10 @@ def load_bib_info(
         parser = ErrorHandlerBibTexParser()
         bib_database = bibtexparser.load(bib_file, parser=parser)
 
+    # TODO to be deleted: check if the bib_file is loaded
+    print("The bib is loaded as below:")
+    print(bib_file)
+    
     # Iterate through all entries
     for entry in bib_database.entries:
         if entry.get("ID"):
@@ -720,8 +724,10 @@ def load_bib_info(
                 key2author[id] = author.split("and")[0].strip()
             else:
                 key2author[id] = ""
+    # print(f"key2title: {key2title}")
+    # print(f"key2author: {key2author}")
     return key2title, key2author
-
+    
 
 def parse_MathNode(node: LatexMathNode) -> str:
     try:
