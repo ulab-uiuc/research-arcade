@@ -145,8 +145,8 @@ class MultiDownload:
             paper_date = result.updated
 
             # Ensure that we are not downloading paper prior to the given date
-            if paper_date.date()  < dt_start:
-                break
+            if paper_date.date() < dt_start:
+                continue
 
             # Each result has attributes: entry_id (URL), pdf_url, title, summary, authors, published, updated, primary_category, categories, comment, journal_ref, doi, etc.
             arxiv_id = result.entry_id.split('/')[-1]
@@ -318,11 +318,11 @@ class MultiDownload:
         return []
 
     def get_reference_arxiv(self, input: str, input_type: str) -> str:
-        
+
 
         mi = MultiInput()
         arxiv_id = mi.extract_arxiv_id(input, input_type)
-
+        
         try:
             search = arxiv.Search(id_list=[arxiv_id])
             paper = next(arxiv.Client().results(search))

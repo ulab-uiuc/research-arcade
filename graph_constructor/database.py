@@ -1,5 +1,6 @@
 import psycopg2
 from psycopg2.extras import Json
+import json
 
 # Store the pwd of db server in the env or here as a global variable
 # PASSWORD = 
@@ -422,7 +423,43 @@ class Database:
         exists, = self.cur.fetchone()
         return exists
 
+    def _dict_from_cursor(self, cursor, parser= None):
+        """Convert last SELECT into list of dicts, applying parser to string fields if given."""
+        cols = [col.name for col in cursor.description]
+        result = []
+        for row in cursor.fetchall():
+            rd = {}
+            for col, val in zip(cols, row):
+                rd[col] = parser(val) if parser and isinstance(val, str) else val
+            result.append(rd)
+        return result
     
+    def serialize_table(self, table_name, schema, parser=None):
+        """Fetch all rows from schema.table_name and return list of dicts."""
+        sql = f'SELECT * FROM "{schema}"."{table_name}"'
+        with self.conn.cursor() as cur:
+            cur.execute(sql)
+            return self._dict_from_cursor(cur, parser)
+
+    def serialize_all(self, tables, schema = 'public', parser = None):
+        """Dump multiple tables into a dict, applying parser to string fields."""
+        if tables is None:
+            tables = [
+                'papers', 'sections', 'authors', 'categories', 'institutions',
+                'figures', 'tables', 'paper_authors', 'paper_category',
+                'citations', 'paper_figures', 'paper_tables', 'author_affiliation'
+            ]
+        out = {}
+        for t in tables:
+            out[t] = self.serialize_table(t, schema, parser)
+        return out
+
+    def export_to_json(self, path: str, tables = None, parser = None, **json_kwargs) -> None:
+        """Write out schema (or subset) to JSON file, parsing text if provided."""
+        data = self.serialize_all(tables, parser=parser)
+        with open(path, 'w') as f:
+            json.dump(data, f, **json_kwargs)
+
 
     def close(self):
         self.cur.close()
