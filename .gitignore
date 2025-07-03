@@ -75,7 +75,11 @@ docs/_build/
 .pybuilder/
 target/
 
+# Downloaded latex files
 download/
+
+# System output files storing the printed information when executing python files
+system_output/
 
 # Jupyter Notebook
 .ipynb_checkpoints
