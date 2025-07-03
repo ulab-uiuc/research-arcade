@@ -29,7 +29,7 @@ def main():
         field=FIELD,
         start_date=days_ago_str,
         dest_dir=PATH,
-        max_results = 400,
+        max_results = 4,
         sort_order="descending"
     )
 
