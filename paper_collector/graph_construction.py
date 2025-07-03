@@ -139,7 +139,7 @@ def build_citation_graph_node_info(
 
     if doc_node:
         # TODO: remove the print statement below
-        print("Extracting citation information")
+        # print("Extracting citation information")
         extract_citations_from_ast(
             structured_data,
             flattened_data,
@@ -437,7 +437,7 @@ def build_citation_graph_thread(
         nonlocal history
 
         # TODO: uncomment the print statement below
-        # print(f"Thread {str(threading.get_ident())} Started processing")
+        print(f"Thread {str(threading.get_ident())} Started processing")
 
         while True:
             try:
@@ -460,7 +460,6 @@ def build_citation_graph_thread(
                     get_citation_info = (cnt_ < scale) and constraint(published)
                 with visited_lock:
                     if current_paper in visited:
-                        print("Here!4")
                         continue
                     visited.add(current_paper)
 
