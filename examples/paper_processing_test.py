@@ -16,9 +16,9 @@ dir_path = "download"
 md.download_arxiv(input=arxiv_id, input_type="id", output_type="both", dest_dir=dir_path)
 md.build_paper_graph(input=arxiv_id, input_type="id", dest_dir=dir_path)
 
-nc.drop_tables()
+# nc.drop_tables()
 
 # At least I need to first download the paper
-nc.create_tables()
+# nc.create_tables()
 nc.process_paper(arxiv_id=arxiv_id, dir_path=dir_path)
 

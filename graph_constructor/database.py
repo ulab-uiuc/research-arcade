@@ -423,7 +423,7 @@ class Database:
         exists, = self.cur.fetchone()
         return exists
 
-    def author_exist(self, paper_arxiv_id):
+    def paper_authors_exist(self, paper_arxiv_id):
         """
         Check if the paper with given arxiv id exists in the author database.
         If not, it means that the paper with arxiv id is not yet added into the semantic scholar or previous fetching failed.

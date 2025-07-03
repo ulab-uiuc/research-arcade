@@ -347,3 +347,4 @@ class NodeConstructor:
                     # Add paper-author edge as follows
                     self.db.insert_paper_author(paper_arxiv_id=arxiv_id, author_id=author.authorId, author_sequence=author_order)
 
+        
