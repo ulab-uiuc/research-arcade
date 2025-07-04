@@ -3,6 +3,11 @@ import openai
 import os
 import numpy as np
 
+"""
+We don't this program at current stage.
+As we focus on data crawling and non-llm paper breakdown first.
+"""
+
 
 class EdgeConstructor:
 
@@ -36,8 +41,6 @@ class EdgeConstructor:
         return float(np.dot(a, b) / (norm_a * norm_b))
 
 
-
-        
     def match_node_to_idea_embedding(self, node_description : str, ideas: List[str]) -> int:
         """
         node_description: the textual description of node representing figures, tables, links and so on.
@@ -69,7 +72,7 @@ class EdgeConstructor:
 
         except Exception as e:
             return None
-        
+
 
     def match_node_to_idea_llm(self, node_description : str, ideas: List[str]) -> int:
             try:
@@ -103,6 +106,5 @@ class EdgeConstructor:
                 return None
             except Exception:
                 return None
-
 
     pass
