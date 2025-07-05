@@ -114,3 +114,40 @@ We will first discuss related work, then detail our methodol-
 ogy, and early experimental findings. Examples and code
 are available in the Appendix and Supplementary materials.
 1
+<pikepdf.Dictionary({
+  "/ColorSpace": {
+    "/pgfprgb": [ "/Pattern", "/DeviceRGB" ]
+  },
+  "/ExtGState": {
+
+  },
+  "/Font": {
+    "/F113": {
+      "/BaseFont": "/OOEQLW+NimbusRomNo9L-Medi",
+      "/Encoding": {
+        "/Differences": [ 2, "/fi", "/fl", 31, "/quotesingle", 34, "/quotedbl", "/numbersign", 38, "/ampersand", "/quoteright", "/parenleft", "/parenright", "/asterisk", "/plus", "/comma", "/hyphen", "/period", "/slash", "/zero", "/one", "/two", "/three", "/four", "/five", "/six", "/seven", "/eight", "/nine", <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...>, <...> ],
+        "/Type": <...>
+      },
+      "/FirstChar": <...>,
+      "/FontDescriptor": <...>,
+      "/LastChar": <...>,
+      "/Subtype": <...>,
+      "/ToUnicode": <...>,
+      "/Type": <...>,
+      "/Widths": <...>
+    },
+    "/F119": <...>,
+    "/F148": <...>,
+    "/F153": <...>,
+    "/F64": <...>,
+    "/Times-Roman": <...>
+  },
+  "/Pattern": {
+
+  },
+  "/ProcSet": [ <...>, <...> ],
+  "/XObject": {
+    "/Im1": <...>
+  }
+})>
+Wrapped PDF written to figure_im1_wrapped.pdf
