@@ -10,10 +10,10 @@ md = MultiDownload()
 
 # First download the paper
 # Why no citation?
-arxiv_id = "2506.21506v1"
+arxiv_id = "2507.02822v1"
 dir_path = "download"
 
-md.download_arxiv(input=arxiv_id, input_type="id", output_type="both", dest_dir=dir_path)
+# md.download_arxiv(input=arxiv_id, input_type="id", output_type="both", dest_dir=dir_path)
 md.build_paper_graph(input=arxiv_id, input_type="id", dest_dir=dir_path)
 
 # nc.drop_tables()
