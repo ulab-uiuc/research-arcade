@@ -34,7 +34,7 @@ class NodeConstructor:
         name = author.name
         url = author.url
         self.db.insert_author(semantic_scholar_id=semantic_scholar_id, name=name, homepage=url)
-
+    
     # Construct the paper node based on the full information provided
     def paper_constructor(self, arxiv_id, title, abstract=None, submit_date=None, metadata=None):
         base_arxiv_id, version = self.arxiv_id_processor(arxiv_id=arxiv_id)

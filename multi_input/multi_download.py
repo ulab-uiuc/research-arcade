@@ -147,7 +147,7 @@ class MultiDownload:
             # Ensure that we are not downloading paper prior to the given date
             if paper_date.date() < dt_start:
                 continue
-
+            
             # Each result has attributes: entry_id (URL), pdf_url, title, summary, authors, published, updated, primary_category, categories, comment, journal_ref, doi, etc.
             arxiv_id = result.entry_id.split('/')[-1]
             paper_dir = os.path.join(dest_dir, arxiv_id)
