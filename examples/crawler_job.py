@@ -7,14 +7,21 @@ import time
 
 from graph_constructor.node_processor import NodeConstructor
 from multi_input.multi_download import MultiDownload
+from graph_constructor.paragraph_processor import ParagraphProcessor
 
 PATH = "download"
 FIELD = "cs.AI"
 
 def main():
     md = MultiDownload()
-    nc = NodeConstructor()
+    nc = NodeConstructor()  
+    data_dir = f"{PATH}/output/endpoints"
+    figures_dir = f"{PATH}/output/figures"
+    output_dir = f"{PATH}/output/paragraphs"
 
+    pp = ParagraphProcessor(data_dir=data_dir, figures_dir=figures_dir, output_dir=output_dir)
+
+    nc.create_tables()
     time_paper_graph = []
     time_paper_database = []
 
@@ -29,7 +36,7 @@ def main():
         field=FIELD,
         start_date=days_ago_str,
         dest_dir=PATH,
-        max_results = 4,
+        max_results = 10,
         sort_order="descending"
     )
 
@@ -56,6 +63,12 @@ def main():
     print(f"Cron job completed at {datetime.datetime.now().isoformat()}, processed {len(ids)} papers.")
     print(f"Time needed in each loop for json processing: {time_paper_graph}")
     print(f"Time needed in each loop for graph database processing: {time_paper_database}")
+
+    # After we build all the jobs, we extract the paragraph informaiton
+
+    pp.extract_paragraphs()
+
+    nc.process_paragraphs("download")
 
 
 def k_days_ago_str(k: int) -> str:

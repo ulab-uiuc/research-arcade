@@ -91,6 +91,12 @@ class NodeConstructor:
     def figure_constructor(self, paper_id, table_index, path, caption=None):
         self.db.insert_figure(paper_arxiv_id=paper_id, table_index=table_index, path=path, caption=caption)
 
+    # Construct the paragraph given the paper id, index of paragraph, index of section, and the arxiv id that this paper belongs to
+    def paragraph_constructor(self, paragraph, paragraph_index, section_index, arxiv_id):
+
+        
+
+        pass
 
     '''
     Here, not that in the future when we process papers, we can authomatically add figures and tables into database and construct the papers into it
@@ -107,6 +113,8 @@ class NodeConstructor:
         Given a paper:
         1. Store it as a node
         2. Build edge to paper authors. If the author does not exist, create one
+
+        Assume that all the papers have been fully extracted.
         """
 
         # First thing first: check if the paper exists in the database
@@ -286,6 +294,23 @@ class NodeConstructor:
 
         times['citaion_extraction'] = time.perf_counter() - t0
         print(f"Time of searching arxiv id of cited paper (if not provided) and adding citation information to database: {times['citaion_extraction']}")
+
+    def process_paragraphs(self, dir_path):
+        """
+        Process all the paragraphs after calling process_paper
+        """
+
+        paragraph_path = f"{dir_path}/output/paragraphs/text_nodes.jsonl"
+        with open(paragraph_path) as f:
+            data = [json.loads(line) for line in f]
+
+        for paragraph in data:
+            paragraph_id = paragraph.get('id')
+            content = paragraph.get('content')
+            paper_arxiv_id = paragraph.get('paper_id')
+            paper_section = paragraph.get('section')
+            self.db.insert_paragraph(paragraph_id=paragraph_id, content=content, paper_arxiv_id=paper_arxiv_id, paper_section=paper_section)
+        # print("Read with json.loads:", data[0].get('id'))
 
     def create_tables(self):
         self.db.create_all()
