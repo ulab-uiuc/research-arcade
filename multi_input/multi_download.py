@@ -236,7 +236,7 @@ class MultiDownload:
             debug_path=None,
             constraint=None_constraint,
             num_threads=len(arxiv_list),
-            scale=1000,
+            scale=1,
             clear_source=True
         )
     
@@ -262,9 +262,17 @@ class MultiDownload:
             debug_path=None,
             constraint=None_constraint,
             num_threads=len(arxiv_list),
-            scale=1000,
+            scale=len(input),
             clear_source=True
         )
+
+    def build_paragraphs(self, dest_dir: str):
+        """
+        - dest_dir: str
+        """
+
+        
+
 
     def get_abstract(self, input: str, input_type: str, dest_dir: str = None) -> str:
 
@@ -283,6 +291,7 @@ class MultiDownload:
             raise KeyError(f"'abstract' field not found in JSON at {json_path}")
 
         return clean_latex_code(data['abstract'])
+        
 
     def get_title(self, input: str, input_type: str, dest_dir: str = None) -> str:
 

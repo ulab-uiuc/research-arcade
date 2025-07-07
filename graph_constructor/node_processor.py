@@ -133,20 +133,20 @@ class NodeConstructor:
 
         if paper_exists:
             print(f"The paper with arxiv_id {arxiv_id} already exists in the database")
-            return
+            return False
         # Then check if we have the json file of paper and meta_data
         try:
             with open(json_path, 'r') as file:
                 file_json = json.load(file)
         except FileNotFoundError:
             print(f"Error: The file '{file_json}' was not found.")
-            return
+            return False
         except json.JSONDecodeError:
             print(f"Error: Could not decode JSON from '{file_json}'. Check if the file contains valid JSON.")
-            return
+            return False
         except Exception as e:
             print(f"An unexpected error occurred: {e}")
-            return
+            return False
 
 
         metadata_json = None
@@ -158,13 +158,13 @@ class NodeConstructor:
                 metadata_json = json.load(file)
         except FileNotFoundError:
             print(f"Error: The file '{metadata_path}' was not found.")
-            return
+            return False
         except json.JSONDecodeError:
             print(f"Error: Could not decode JSON from '{metadata_path}'. Check if the file contains valid JSON.")
-            return
+            return False
         except Exception as e:
             print(f"An unexpected error occurred: {e}")
-            return
+            return False
 
         times['load_metadata'] = time.perf_counter() - t0
 
@@ -177,13 +177,15 @@ class NodeConstructor:
 
         t0 = time.perf_counter()
         authors = None
+
+        # TODO: since a lot of latest papers are not yet on semantic scholar, we choose to move this process in later stages
         # Add the author into paper directory if the paper is on semantic scholar
-        base_arxiv_id, version = self.arxiv_id_processor(arxiv_id)
-        try:
-            paper_sch = self.sch.get_paper(f"ARXIV:{base_arxiv_id}")
-            authors = paper_sch.authors
-        except Exception as e:
-            print(f"Paper with arxiv id {base_arxiv_id} not found on semantic scholar: {e}")
+        # base_arxiv_id, version = self.arxiv_id_processor(arxiv_id)
+        # try:
+        #     paper_sch = self.sch.get_paper(f"ARXIV:{base_arxiv_id}")
+        #     authors = paper_sch.authors
+        # except Exception as e:
+        #     print(f"Paper with arxiv id {base_arxiv_id} not found on semantic scholar: {e}")
 
 
         # Add authors into database if not exist
@@ -295,11 +297,13 @@ class NodeConstructor:
         times['citaion_extraction'] = time.perf_counter() - t0
         print(f"Time of searching arxiv id of cited paper (if not provided) and adding citation information to database: {times['citaion_extraction']}")
 
+        return True
+
     def process_paragraphs(self, dir_path):
         """
         Process all the paragraphs after calling process_paper
         """
-
+        
         paragraph_path = f"{dir_path}/output/paragraphs/text_nodes.jsonl"
         with open(paragraph_path) as f:
             data = [json.loads(line) for line in f]
@@ -345,7 +349,7 @@ class NodeConstructor:
         return arxiv_id.split('v')
     
 
-    def post_author_processor(self, arxiv_id):
+    def author_processor(self, arxiv_id):
 
         """
         Motivation: sometimes the paper is not yet added into the semantic scholar. We can check if certain paper has author info in the db. If not, we search it on semantic scholar again.

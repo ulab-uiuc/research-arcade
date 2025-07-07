@@ -459,3 +459,53 @@ class PaperGraphProcessor:
         print("Paper count: ", cnt)
         self.save_processed_data("w")
         print(discarded)
+
+
+    def process_papers(self, paper_paths):
+        for paper_path in tqdm(paper_paths):
+            if "history" in paper_path:
+                continue
+            paper_data, paper_id = self.load_paper(paper_path)
+            if paper_data:
+                abstract = paper_data["abstract"]
+                if not abstract:
+                    abstract = ""
+                paper_node = self.create_paper_node(
+                    paper_id, clean_latex_code(abstract), paper_data["title"]
+                )
+                self.paper_nodes.append(paper_node)
+                self.paper_id2node[paper_id] = paper_node["id"]
+                # for key, cite in paper_data['citations'].items():
+                #    if cite['similar_score'] and (cite['similar_score'] > self.threshold):
+                #        id = cite['short_id']
+                #        abstract = cite['abstract']
+                #        title = cite['title']
+                #        paper_node = self.create_paper_node(id, clean_latex_code(abstract), title)
+                #        self.paper_nodes.append(paper_node)
+                #        self.paper_id2node[id] = paper_node['id']
+
+        # self.save_processed_data('w')
+        for paper_path in tqdm(paper_paths):
+            if "history" in paper_path:
+                continue
+            paper_data, paper_id = self.load_paper(paper_path)
+            if paper_data:
+                cnt += 1
+                print(paper_id)
+                self.process_paper(paper_data, paper_id)
+                citations = {}
+                for key, cite in paper_data["citations"].items():
+                    if cite["similar_score"] and (
+                        cite["similar_score"] > self.threshold
+                    ):
+                        citations[key] = cite
+                paper_data["citations"] = citations
+                os.makedirs(os.path.join(self.output_dir, "papers"), exist_ok=True)
+                # shutil.copy(paper_path, os.path.join(self.output_dir, 'papers', os.path.basename(paper_path)))
+                with open(
+                    os.path.join(
+                        self.output_dir, "papers", os.path.basename(paper_path)
+                    ),
+                    "w",
+                ) as f:
+                    json.dump(paper_data, f)
