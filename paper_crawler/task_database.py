@@ -39,12 +39,13 @@ class TaskDatabase:
             paper_arxiv_id VARCHAR(100) UNIQUE,
             downloaded BOOLEAN,
             paper_graph BOOLEAN,
+            citation BOOLEAN,
             semantic_scholar BOOLEAN
         )
         """)
 
 
-    def set_states(self, paper_arxiv_id, downloaded=None, paper_graph=None, semantic_scholar=None):
+    def set_states(self, paper_arxiv_id, downloaded=None, paper_graph=None, semantic_scholar=None, citation=None):
 
         """
         Change the task states of a paper.
@@ -67,6 +68,9 @@ class TaskDatabase:
         if semantic_scholar is not None:
             fields.append("semantic_scholar = %s")
             params.append(semantic_scholar)
+        if semantic_scholar is not None:
+            fields.append("citation = %s")
+            params.append(citation)
         if not fields:
             return
         params.append(paper_arxiv_id)
@@ -83,4 +87,4 @@ class TaskDatabase:
         """
         Add a paper into task db with all task states being false.
         """
-        self.set_states(paper_arxiv_id=paper_arxiv_id, downloaded=False, paper_graph=False, semantic_scholar=False)
+        self.set_states(paper_arxiv_id=paper_arxiv_id, downloaded=False, paper_graph=False, semantic_scholar=False, citation=False)

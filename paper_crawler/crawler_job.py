@@ -152,27 +152,22 @@ class CrawlerJob:
 
 
 
-
     def process_paper_citations(self, arxiv_ids):
         """
         For papers with arxiv ids, search in database and see if any paper does not have arxiv id/semantic scholar/...
         If so, search paper title online and see if the cited papers have been uploaded
         """
-        # TODO
 
-        # Go into database, fetch papers that does not have citations and search paper names on arxiv and semantic scholars (?)
+        # Go into database, fetch papers that does not have citations and search paper names on arxiv
         
         for arxiv_id in arxiv_ids:
             # Go to citation table in the database
-            sql = """
-                SELECT * FROM citations where paper_arxiv_id = %s
-            """
 
-            result = self.db.cur.execute(sql, (arxiv_id,))
+            added = self.nc.citation_processor(arxiv_id=arxiv)
 
+            if added:
+                self.tdb.set_states(arxiv_id=arxiv_id, citation=added)
 
-
-        
 
     def process_paper_authors(self, arxiv_ids):
         """
@@ -181,33 +176,10 @@ class CrawlerJob:
 
         for arxiv_id in arxiv_ids:
 
-            base_arxiv_id, version = self.arxiv_id_processor(arxiv_id)
-            try:
-                paper_sch = self.sch.get_paper(f"ARXIV:{base_arxiv_id}")
-                authors = paper_sch.authors
-            except Exception as e:
-                print(f"Paper with arxiv id {base_arxiv_id} not found on semantic scholar: {e}")
-
-        print(authors)
-
-        #TODO then add authors into database
-
-
-    def arxiv_id_processor(self, arxiv_id):
-        """
-        Given arxiv id, return base arxiv id and version
-        - arxiv_id: str
-        """
-        return arxiv_id.split('v')
+            added = self.nc.author_processor(arxiv_id)
+            if added:
+                self.tdb.set_states(paper_arxiv_id=arxiv_id, semantic_scholar=added)
+            
 
 
 
-'''
-After funishing the two TODO's. I run it!
-'''
-
-
-
-    
-    
-    

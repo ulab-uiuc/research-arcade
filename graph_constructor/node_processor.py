@@ -282,15 +282,15 @@ class NodeConstructor:
                 citing_section = context['section']
                 citing_sections.add(citing_section)
             # It seems that the cited paper sometimes does not provide arxiv id, or that column is null. How can I tackle this issue?
-            if not cited_arxiv_id:
-                # In that case, we need to use the tile for searching.
-                # We first remove colon and plus sign in the title as they are prefix and relaitonal sign in the searching query
-                title_cleaned = bib_title.replace('+', ' ').replace(':', '')
+            # if not cited_arxiv_id:
+            #     # In that case, we need to use the tile for searching.
+            #     # We first remove colon and plus sign in the title as they are prefix and relaitonal sign in the searching query
+            #     title_cleaned = bib_title.replace('+', ' ').replace(':', '')
 
-                # and we only use the family name of author
-                bib_author_surname = bib_author.split(',')[0].strip()
+            #     # and we only use the family name of author
+            #     bib_author_surname = bib_author.split(',')[0].strip()
 
-                cited_arxiv_id = self.search_title_with_name(title=title_cleaned, name=bib_author_surname)
+            #     cited_arxiv_id = self.search_title_with_name(title=title_cleaned, name=bib_author_surname)
 
             self.db.insert_citation(citing_arxiv_id=arxiv_id, cited_arxiv_id=cited_arxiv_id, citing_sections=list(citing_sections),bib_title=bib_title, bib_key=bib_key, author_cited_paper=bib_author)
 
@@ -365,6 +365,7 @@ class NodeConstructor:
                 authors = paper_sch.authors
             except Exception as e:
                 print(f"Paper with arxiv id {base_arxiv_id} not found on semantic scholar: {e}")
+                return False
 
 
             # Add authors into database if not exist
@@ -376,4 +377,53 @@ class NodeConstructor:
                     # Add paper-author edge as follows
                     self.db.insert_paper_author(paper_arxiv_id=arxiv_id, author_id=author.authorId, author_sequence=author_order)
 
-        
+        return True
+
+
+    def citation_processor(self, arxiv_id):
+        """
+        For all citations where we know the citing paper but the cited_arxiv_id is NULL or empty,
+        try to look it up via title + author surname, and update the record in the DB.
+        """
+        # 1. Pull the relevant citation rows
+        select_sql = """
+            SELECT id, bib_title, author_cited_paper
+            FROM citations
+            WHERE citing_arxiv_id = %s
+            AND (cited_arxiv_id IS NULL OR cited_arxiv_id = '')
+        """
+        self.db.cur.execute(select_sql, (arxiv_id,))
+        rows = self.db.cur.fetchall()
+
+        # 2. For each, try to look up the arXiv ID and write it back
+        for row in rows:
+            citation_id, bib_title, bib_author_full = row
+
+            # clean up the title to remove problematic characters
+            title_cleaned = bib_title.replace('+', ' ').replace(':', '')
+            # assume bib_author_full is "Last, First" or similar
+            author_surname = bib_author_full.split(',')[0].strip()
+
+            found_id = self.search_title_with_name(title=title_cleaned, name=author_surname)
+            if found_id:
+                update_sql = """
+                    UPDATE citations
+                    SET cited_arxiv_id = %s
+                    WHERE id = %s
+                """
+                self.db.cur.execute(update_sql, (found_id, citation_id))
+                print(f"Updated citation id {citation_id} → {found_id}")
+            else:
+                print(f"Could not find arXiv ID for citation {citation_id}: '{bib_title}' by {author_surname}")
+
+        # 3. Commit once at the end (if your Database requires it)
+        # If you're using autocommit=True, this is optional.
+        try:
+            self.db.conn.commit()
+        except Exception:
+            pass
+
+        return True
+
+
+
