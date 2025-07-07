@@ -25,6 +25,9 @@ class CrawlerJob:
         self.nc = NodeConstructor()
         self.md = MultiDownload()
         self.dest_dir = dest_dir
+    
+    def create_database(self):
+        self.tdb.create_paper_task_table()
 
     def crawl_recent_arxiv_paper(self, year, month, day, max_result=100):
         """
@@ -74,7 +77,7 @@ class CrawlerJob:
         """
         for arxiv_id in arxiv_ids:
             try:
-                self.md.download_arxiv(input=arxiv_id, output_type="both", dest_dir=self.dest_dir)
+                self.md.download_arxiv(input=arxiv_id, input_type = "id", output_type="both", dest_dir=self.dest_dir)
                 self.tdb.set_states(downloaded=True, paper_arxiv_id=arxiv_id)
             except RuntimeError as e:
                 self.tdb.conn.rollback()
@@ -91,19 +94,22 @@ class CrawlerJob:
         """
         Build paper graph using the knowledge debugger
         """
-        try:
-            for arxiv_id in arxiv_ids:
+
+        processed_paper_id = []
+
+        for arxiv_id in arxiv_ids:
+            try:
                 self.md.build_paper_graph(
-                    input=arxiv_id,
+                    input=arxiv_ids,
                     input_type="id",
                     dest_dir=self.dest_dir
                 )
                 # Store the processed data into database afterward
-                nc.process_paper(arxiv_id=arxiv_id, dir_path=self.dest_dir)
+                # nc.process_paper(arxiv_id=arxiv_id, dir_path=self.dest_dir)
 
                 # Build the paragraphs json files
-                # Use the node processor function in knowledge debugger
+                # Use the node processor function in knowledge debugge
                 
-        except Exception as e:
-            print(f"[Warning] Failed to process {arxiv_id}: {e}")
-
+            except Exception as e:
+                print(f"[Warning] Failed to process {arxiv_id}: {e}")
+                continue
