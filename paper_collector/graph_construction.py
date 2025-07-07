@@ -460,11 +460,11 @@ def build_citation_graph_thread(
                     get_citation_info = (cnt_ < scale) and constraint(published)
                 with visited_lock:
                     if current_paper in visited:
-                        print("Here!4")
                         continue
                     visited.add(current_paper)
 
                 # TODO: see what would happen if we comment out this line
+                # Here, we separate the paper downloading and paper processing stages
                 # download_latex_source(current_paper, source_path)
 
                 # Clear the working directory
