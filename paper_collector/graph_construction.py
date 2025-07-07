@@ -464,9 +464,9 @@ def build_citation_graph_thread(
                         continue
                     visited.add(current_paper)
 
-                download_latex_source(current_paper, source_path)
+                # TODO: see what would happen if we comment out this line
+                # download_latex_source(current_paper, source_path)
 
-                
                 # Clear the working directory
                 thread_working_path = os.path.join(
                     working_path, str(threading.get_ident())

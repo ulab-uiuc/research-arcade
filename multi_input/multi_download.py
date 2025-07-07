@@ -5,7 +5,7 @@ import os
 import arxiv
 from filelock import FileLock
 
-from paper_collector.graph_construction import build_citation_graph_thread
+from paper_collector.graph_construction import build_citation_graph_thread, build_citation_graph
 from paper_collector.utils import None_constraint
 from utils.error_handler import api_calling_error_exponential_backoff
 from paper_collector.latex_parser import clean_latex_code
@@ -229,18 +229,43 @@ class MultiDownload:
 
         arxiv_list = [arxiv_id]
         build_citation_graph_thread(
-            arxiv_list,
-            f"{dest_dir}/{arxiv_id}",
-            f"{dest_dir}/working_folder",
-            f"{dest_dir}/output",
-            None,
-            None_constraint,
-            len(arxiv_list),
-            1000,
-            True,
-            len(arxiv_list),
+            seed=arxiv_list,
+            source_path=f"{dest_dir}/{arxiv_id}",
+            working_path=f"{dest_dir}/working_folder",
+            output_path=f"{dest_dir}/output",
+            debug_path=None,
+            constraint=None_constraint,
+            num_threads=len(arxiv_list),
+            scale=1000,
+            clear_source=True
         )
     
+    @api_calling_error_exponential_backoff(retries=5, base_wait_time=1)
+    def build_paper_graphs(self, input: list[str], input_type: str, dest_dir: str = None) -> None:
+        """
+        Extract the paper graph of the paper using knowledge_debugger, provided the paper id/url/bib, the type of input and the directory the output is stored
+        - input: str
+        - input_type: str
+        - dest_dir: str
+        """
+        mi = MultiInput()
+        arxiv_list = []
+        for id in input:
+            arxiv_id = mi.extract_arxiv_id(id, input_type)
+            arxiv_list.append(arxiv_id)
+
+        build_citation_graph_thread(
+            seed=arxiv_list,
+            source_path=f"{dest_dir}/{arxiv_id}",
+            working_path=f"{dest_dir}/working_folder",
+            output_path=f"{dest_dir}/output",
+            debug_path=None,
+            constraint=None_constraint,
+            num_threads=len(arxiv_list),
+            scale=1000,
+            clear_source=True
+        )
+
     def get_abstract(self, input: str, input_type: str, dest_dir: str = None) -> str:
 
         mi = MultiInput()

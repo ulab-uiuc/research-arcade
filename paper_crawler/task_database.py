@@ -59,13 +59,13 @@ class TaskDatabase:
         params = []
         
         if downloaded is not None:
-            fields.append("downloaded")
+            fields.append("downloaded = %s")
             params.append(downloaded)
         if paper_graph is not None:
-            fields.append("paper_graph")
+            fields.append("paper_graph = %s")
             params.append(paper_graph)
         if semantic_scholar is not None:
-            fields.append("semantic_scholar")
+            fields.append("semantic_scholar = %s")
             params.append(semantic_scholar)
         if not fields:
             return
@@ -74,7 +74,7 @@ class TaskDatabase:
         sql = f"""
         UPDATE paper_task
             SET {','.join(fields)}
-        where id = %s
+        where paper_arxiv_id = %s
         """
 
         self.cur.execute(sql, params)
