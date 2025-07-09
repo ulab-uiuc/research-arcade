@@ -17,6 +17,7 @@ import arxiv
 import json
 import time
 from typing import Optional, List, Dict, Any
+import sys
 
 
 TIMEOUT = 10
@@ -241,7 +242,7 @@ class MultiDownload:
         )
     
     @api_calling_error_exponential_backoff(retries=5, base_wait_time=1)
-    def build_paper_graphs(self, input: list[str], input_type: str, dest_dir: str = None) -> None:
+    def build_paper_graphs(self, input: List[str], input_type: str, dest_dir: str = None) -> None:
         """
         Extract the paper graph of the paper using knowledge_debugger, provided the paper id/url/bib, the type of input and the directory the output is stored
         - input: str
@@ -254,24 +255,23 @@ class MultiDownload:
             arxiv_id = mi.extract_arxiv_id(id, input_type)
             arxiv_list.append(arxiv_id)
 
-        build_citation_graph_thread(
-            seed=arxiv_list,
-            source_path=f"{dest_dir}/{arxiv_id}",
-            working_path=f"{dest_dir}/working_folder",
-            output_path=f"{dest_dir}/output",
-            debug_path=None,
-            constraint=None_constraint,
-            num_threads=len(arxiv_list),
-            scale=len(input),
-            clear_source=True
-        )
+            build_citation_graph_thread(
+                seed=arxiv_list,
+                source_path=f"{dest_dir}/{arxiv_id}",
+                working_path=f"{dest_dir}/working_folder",
+                output_path=f"{dest_dir}/output",
+                debug_path=None,
+                constraint=None_constraint,
+                num_threads=len(arxiv_list),
+                scale=len(input)+1000,
+                clear_source=True,
+                max_figure = sys.maxsize
+            )
 
     def build_paragraphs(self, dest_dir: str):
         """
         - dest_dir: str
         """
-
-        
 
 
     def get_abstract(self, input: str, input_type: str, dest_dir: str = None) -> str:

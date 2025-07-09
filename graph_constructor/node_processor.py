@@ -26,7 +26,8 @@ class NodeConstructor:
             print("SEMANTIC_SCHOLAR_API_KEY not set in .env")
             self.sch = SemanticScholar()
         else:
-            self.sch = SemanticScholar(api_key=api_key)
+            # self.sch = SemanticScholar(api_key=api_key)
+            self.sch = SemanticScholar()
     
     # Construct the author node based on his or her semantic scholar id
     def author_constructor(self, semantic_scholar_id):
@@ -126,8 +127,9 @@ class NodeConstructor:
         times = {}
 
         # Find the corresponding files
-        # json_path = f"{dir_path}/output/endpoints/{arxiv_id}.json"
-        json_path = f"{dir_path}/output/endpoints/{arxiv_id}.json"
+        # json_path = f"{dir_path}/output/{arxiv_id}.json"
+        json_path = f"{dir_path}/output/{arxiv_id}.json"
+        print(f"File path: {json_path}")
         # metadata_path = f"{dir_path}/{arxiv_id}/{arxiv_id}_metadata.json"
         metadata_path = f"{dir_path}/{arxiv_id}/{arxiv_id}_metadata.json"
 
@@ -307,7 +309,7 @@ class NodeConstructor:
         paragraph_path = f"{dir_path}/output/paragraphs/text_nodes.jsonl"
         with open(paragraph_path) as f:
             data = [json.loads(line) for line in f]
-
+        
         for paragraph in data:
             paragraph_id = paragraph.get('id')
             content = paragraph.get('content')
@@ -360,6 +362,7 @@ class NodeConstructor:
         if not exists:
             # If the paper author does not exist, we re-fetch from the semantic scholar
             base_arxiv_id, version = self.arxiv_id_processor(arxiv_id)
+            print(f"base_arxiv_id: {base_arxiv_id}")
             try:
                 paper_sch = self.sch.get_paper(f"ARXIV:{base_arxiv_id}")
                 authors = paper_sch.authors

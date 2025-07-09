@@ -11,8 +11,8 @@ If this does not work well, we might need alternativ approaches
 The result shows that we can only search paper authors with base arxiv id, instead of the full one with version (v1, v2, v3...)
 """
 
-arxiv_id1 = "2501.02725v3"
-arxiv_id2 = "2501.02725"
+arxiv_id1 = "2011.08843v2"
+arxiv_id2 = "2011.08843"
 
 sch = SemanticScholar()
 paper_sch = sch.get_paper(f"ARXIV:{arxiv_id2}")

@@ -462,6 +462,7 @@ class PaperGraphProcessor:
 
 
     def process_papers(self, paper_paths):
+        cnt  = 0
         for paper_path in tqdm(paper_paths):
             if "history" in paper_path:
                 continue
@@ -509,3 +510,7 @@ class PaperGraphProcessor:
                     "w",
                 ) as f:
                     json.dump(paper_data, f)
+
+        print("Paper count: ", cnt)
+        self.save_processed_data("w")
+        print(discarded)
