@@ -45,8 +45,8 @@ def build_citation_graph_node_info(
         summary = result.summary
         published = str(result.published)
     bib_names, bbl_nodes = get_bib_names(ast)
-    print(f"bib_names: {bib_names}")
-    print(f"bbl_nodes: {bbl_nodes}")
+    # print(f"bib_names: {bib_names}")
+    # print(f"bbl_nodes: {bbl_nodes}")
     structured_data = {
         "title": title,
         "author": author,
@@ -549,7 +549,6 @@ def build_citation_graph_thread(
                             break
                     except Exception as e:
                         print(e)
-                # print(f"structured_data: {structured_data}")
 
                 ncitations = len(structured_data["citations"])
                 print(f"number of citations collected: {ncitations}")
@@ -608,7 +607,6 @@ def build_citation_graph_thread(
                         )
                         continue
 
-                # print(f"number of citations collected: {ncitations}")
                 if structured_data:
                     if get_citation_info:
                         with open(

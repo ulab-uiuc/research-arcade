@@ -40,12 +40,18 @@ class TaskDatabase:
             downloaded BOOLEAN,
             paper_graph BOOLEAN,
             citation BOOLEAN,
-            semantic_scholar BOOLEAN
+            semantic_scholar BOOLEAN,
+            paragraph BOOLEAN
         )
+        """)
+    
+    def drop_paper_task_table(self):
+        ("""
+        DROP TABLE IF EXISTS paper_task
         """)
 
 
-    def set_states(self, paper_arxiv_id, downloaded=None, paper_graph=None, semantic_scholar=None, citation=None):
+    def set_states(self, paper_arxiv_id, downloaded=None, paper_graph=None, semantic_scholar=None, citation=None, paragraph=None):
 
         """
         Change the task states of a paper.
@@ -58,7 +64,6 @@ class TaskDatabase:
         
         fields = []
         params = []
-        
         if downloaded is not None:
             fields.append("downloaded = %s")
             params.append(downloaded)
@@ -68,9 +73,12 @@ class TaskDatabase:
         if semantic_scholar is not None:
             fields.append("semantic_scholar = %s")
             params.append(semantic_scholar)
-        if semantic_scholar is not None:
+        if citation is not None:
             fields.append("citation = %s")
             params.append(citation)
+        if paragraph is not None:
+            fields.append("paragraph = %s")
+            params.append(paragraph)
         if not fields:
             return
         params.append(paper_arxiv_id)
@@ -87,4 +95,13 @@ class TaskDatabase:
         """
         Add a paper into task db with all task states being false.
         """
-        self.set_states(paper_arxiv_id=paper_arxiv_id, downloaded=False, paper_graph=False, semantic_scholar=False, citation=False)
+        sql = """
+        INSERT INTO paper_task
+          (paper_arxiv_id, downloaded, paper_graph, citation, semantic_scholar, paragraph)
+        VALUES (%s, %s, %s, %s, %s, %s)
+        ON CONFLICT (paper_arxiv_id) DO NOTHING
+        RETURNING id
+        """
+
+        params = (paper_arxiv_id, False, False, False, False, False)
+        self.cur.execute(sql, params)

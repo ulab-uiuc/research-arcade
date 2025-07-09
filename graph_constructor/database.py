@@ -479,7 +479,7 @@ class Database:
         SELECT EXISTS(
             SELECT 1
             FROM paper_authors
-            WHERE arxiv_id = %s
+            WHERE paper_arxiv_id = %s
         )
         """
 

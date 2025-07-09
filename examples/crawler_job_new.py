@@ -7,7 +7,11 @@ from paper_crawler.crawler_job import CrawlerJob
 
 cj = CrawlerJob(dest_dir="download")
 
-cj.create_database()
+cj.drop_task_database()
+cj.create_task_database()
+cj.db.drop_all()
+cj.db.create_all()
+
 
 arxiv_ids = cj.crawl_recent_arxiv_paper(year=2025, month=1, day=1, max_result=10)
 
@@ -16,3 +20,5 @@ print(f"arxiv ids: {arxiv_ids}")
 cj.download_papers(arxiv_ids=arxiv_ids)
 
 cj.process_paper_graphs(arxiv_ids=arxiv_ids)
+cj.process_paper_paragraphs(arxiv_ids=arxiv_ids)
+
