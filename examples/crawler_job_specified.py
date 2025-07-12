@@ -18,18 +18,18 @@ cj = CrawlerJob(dest_dir="download")
 
 # arxiv_ids = cj.crawl_recent_arxiv_paper(year=2025, month=1, day=1, max_result=10)
 
-arxiv_ids = {'2011.08843v2'}
+arxiv_ids = {'2410.03834v2', '2412.17767v2'}
 
-# cj.initialize_paper_tasks(arxiv_ids=arxiv_ids)
+cj.initialize_paper_tasks(arxiv_ids=arxiv_ids)
 
-# print(f"arxiv ids: {arxiv_ids}")
+print(f"arxiv ids: {arxiv_ids}")
 
-# cj.download_papers(arxiv_ids=arxiv_ids)
+cj.download_papers(arxiv_ids=arxiv_ids)
 
-# cj.process_paper_graphs(arxiv_ids=arxiv_ids)
-# cj.process_paper_paragraphs(arxiv_ids=arxiv_ids)
+cj.process_paper_graphs(arxiv_ids=arxiv_ids)
+cj.process_paper_paragraphs(arxiv_ids=arxiv_ids)
 
 # Here, we also include the part of author searching on semantic scholar and citation processing
 cj.process_paper_authors(arxiv_ids=arxiv_ids)
-# cj.process_paper_citations(arxiv_ids=arxiv_ids)
+cj.process_paper_citations(arxiv_ids=arxiv_ids)
 
