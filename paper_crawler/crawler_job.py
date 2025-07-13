@@ -148,13 +148,12 @@ class CrawlerJob:
                 continue
                 
                 
-        
+                
         return processed_paper_ids
 
         # Build the paragraphs json files later?
         # Use the node processor function in knowledge debugger
-
-
+        
     def process_paper_paragraphs(self, arxiv_ids=None):
         """
         Convert the existing paper's paper graph json file into a collection of multiple jsons, including paragraph files.
@@ -167,7 +166,6 @@ class CrawlerJob:
             self.pgp.process_all_papers()
         else:
             # We loop through the provided arxiv ids of paper.
-
             for arxiv_id in arxiv_ids:
                 paper_paths.append(f"{self.dest_dir}/output/{arxiv_id}.json")
             print(paper_paths)

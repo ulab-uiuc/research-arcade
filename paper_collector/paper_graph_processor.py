@@ -127,10 +127,14 @@ class PaperGraphProcessor:
         return re.findall(pattern, text)
 
     def find_cites(self, text: str) -> List[str]:
-        """Find all figure references in text."""
-        pattern = r"\\cite\w*\{([^}]+)\}"
+        """
+        Find all citation keys in text, for commands like
+        \citet{}, \citet*{}, \citep{}, \citep*{},
+        \citeauthor{}, \citeyear{}
+        """
+        pattern = r"\\cite(?:t|p|author|year)\*?\{([^}]+)\}"
         return re.findall(pattern, text)
-
+        
     def create_figure_node(self, figure: dict, paper_id: str) -> Dict:
         """Create a figure node for the graph."""
         have_paths = False
@@ -182,18 +186,35 @@ class PaperGraphProcessor:
     def create_text_node(
         self, text: str, key2citation: Dict[str, Any], label2id: Dict[str, int]
     ) -> Dict:
-        """Create a text node for the graph."""
+        """Create a text node for the graph.
+            Return the list of bib keys of cited papers.
+        """
+        # print("Here!")
         cites_ = self.find_cites(text)
         cites = []
         for cite in cites_:
             cites.extend(cite.split(","))
         cites = [cite.strip() for cite in cites]
+        # print("Raw Cite:")
+        # print(cites)
+        # The problem is, it looks for short id/arxiv id when searching up citations in the citation part
+        # In most cases, as is stated before, the arxiv id is missing
+        # We can use bib_key for reference, as it is unique when combinede with arxiv id of the citing paper
         cites = [
-            key2citation[cite]["short_id"] for cite in cites if cite in key2citation
+            key2citation[cite]["bib_key"] for cite in cites if cite in key2citation
         ]
+        # print("Cite after looking up:")
+        # print(cites)
         refs = self.find_references(text)
         refs = [label2id[ref] for ref in refs if ref in label2id]
+
         isolation = (len(refs) == 0) and (len(cites) == 0)
+        # print("key2citation")
+        # print(key2citation)
+        # print("cites")
+        # print(cites)
+        # print("refs")
+        # print(refs)
         return {
             "id": "text_" + str(self.get_node_id()),
             "cites": cites,
@@ -234,12 +255,17 @@ class PaperGraphProcessor:
                 temp_table_nodes.append(table_node)
 
         for key, citation in data["citations"].items():
+            # TODO Not quite sure why we need the similarity score. We can drop it.
             if citation["similar_score"] and (
                 citation["similar_score"] > self.threshold
             ):
                 citations[key] = citation
                 neighbors.append(citation["short_id"])
-
+            elif not citation["similar_score"]:
+                citations[key] = citation
+                neighbors.append(citation["short_id"])
+        # print("Citations:")
+        # print(citations)
         for section, content in data["sections"].items():
             # section_node = self.create_section_node(section)
             # nodes[section_node['id']] = section_node
@@ -250,11 +276,15 @@ class PaperGraphProcessor:
             ]
             pre_node = None
             for chunk in chunks:
+                # print("Chunk:")
+                # print(chunk)
                 ########################################
                 if ENV_RE.search(chunk):
                     continue
                 ########################################
                 text_node = self.create_text_node(chunk, citations, label2id)
+                print("text_node")
+                print(text_node)
                 text_node["paper_id"] = paper_id
                 text_node["section"] = section
                 if True:  # not text_node['isolation']:
