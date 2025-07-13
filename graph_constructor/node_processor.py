@@ -316,8 +316,12 @@ class NodeConstructor:
             paper_arxiv_id = paragraph.get('paper_id')
             paper_section = paragraph.get('section')
             self.db.insert_paragraph(paragraph_id=paragraph_id, content=content, paper_arxiv_id=paper_arxiv_id, paper_section=paper_section)
-        # print("Read with json.loads:", data[0].get('id'))
 
+            paragraph_cite_bib_keys = paragraph.get('cites')
+            for bib_key in paragraph_cite_bib_keys:
+                self.db.insert_citation_paragraph(paper_arxiv_id=paper_arxiv_id, paragraph_id=paragraph_id, bib_key=bib_key)
+
+            
     def create_tables(self):
         self.db.create_all()
 
