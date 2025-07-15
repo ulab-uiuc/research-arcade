@@ -376,7 +376,7 @@ def extract_citations_from_ast(
     next_ref_context: str = "",
     working_path: str = "",
     flag: bool = False,
-):
+):  
     try:
         (
             current_section_name,
@@ -557,6 +557,10 @@ def extract_citations_from_ast(
                                     if is_complete:
                                         break
 
+
+                                # TODO
+                                # For short id, it corresponds to the arxiv id
+                                # However, arxiv id is often stored in the journal part of paper
                                 if structured_data["citations"].get(key.strip()):
                                     citation_data = structured_data["citations"][
                                         key.strip()
@@ -573,6 +577,7 @@ def extract_citations_from_ast(
                                     citation_data["importance_score"] += cite_importance
                                 else:
                                     paper, score = query_and_match(title_, author_)
+                                    # Since the method query_and_match() returns None only, ignore what's inside of the if statement below.
                                     if paper:
                                         citation_context = {
                                             "section": current_section_name,
@@ -582,6 +587,9 @@ def extract_citations_from_ast(
                                             "_pos": len(next_context),
                                         }
                                         prev_citation_contexts.append(citation_context)
+                                        # Also loook at the journal part and see if arxiv id is available
+
+                                        print(f"paper: {paper}")
                                         structured_data["citations"][key.strip()] = {
                                             "bib_key": key.strip(),
                                             "bib_title": title_,
@@ -619,6 +627,8 @@ def extract_citations_from_ast(
                                             "context": [citation_context],
                                             "importance_score": cite_importance,
                                         }
+                                        # print("Result of Citation:")
+                                        # print(structured_data["citations"][key.strip()])
 
             # Recursively check child nodes if the node is an environment (e.g., document or section)
             if hasattr(node, "nodelist"):
@@ -710,12 +720,9 @@ def load_bib_info(
         parser = ErrorHandlerBibTexParser()
         bib_database = bibtexparser.load(bib_file, parser=parser)
 
-    # TODO to be deleted: check if the bib_file is loaded
-    print("The bib is loaded as below:")
-    print(bib_file)
-    
     # Iterate through all entries
     for entry in bib_database.entries:
+        # print(f"entry: {entry}")
         if entry.get("ID"):
             id = entry.get("ID").strip()
             key2title[id] = entry.get("title")
@@ -724,10 +731,42 @@ def load_bib_info(
                 key2author[id] = author.split("and")[0].strip()
             else:
                 key2author[id] = ""
-    # print(f"key2title: {key2title}")
-    # print(f"key2author: {key2author}")
     return key2title, key2author
+
+
+# We can use this to extract arxiv id written in the journal part of citations
+def load_bib_key_to_arxiv_id(
+    path: str, key2id: Dict[str, Any]
+) -> Dict[str, Any]:
     
+    pattern = re.compile(
+        r'arxiv:(?P<id>(?:\d{4}\.\d{4,5}(?:v\d+)?)|(?:[a-z\-]+/\d{7}(?:v\d+)?))',
+        re.IGNORECASE
+    )
+    # print(f"pattern: {pattern}")
+
+    with open(path, "r") as bib_file:
+        parser = ErrorHandlerBibTexParser()
+        bib_database = bibtexparser.load(bib_file, parser=parser)
+    for entry in bib_database.entries:
+        # print(f"entry: {entry}")
+        if entry.get("ID"):
+            bib_key = entry.get("ID", "").strip()
+            journal_field = entry.get("journal", "")
+            # print(f"journal: {journal}")
+            if not journal_field:
+                continue
+            journal_text = journal_field.strip().lower()
+            match = pattern.search(journal_text)
+            if match:
+                key2id[bib_key] = match.group('id')
+            else:
+                # Optional: try other fields or at least log it
+                # e.g. check entry.get("eprint"), entry.get("archiveprefix")...
+                # print(f"[!] No arXiv ID found in journal for bib key {bib_key!r}: {journal_text!r}")
+                pass
+    return key2id
+
 
 def parse_MathNode(node: LatexMathNode) -> str:
     try:
@@ -922,6 +961,7 @@ def load_bbl_info(
     key2title: Dict[str, str],
     key2author: Dict[str, str],
 ):
+    print("Info Processing")
     bbl_text = bbl_node.latex_verbatim()
     bbl_list = re.sub(r"\[.*\]", "", bbl_text).split("\\bibitem")
     for bbl_item in bbl_list[1:]:
@@ -946,3 +986,14 @@ def load_bbl_info(
             title = clean_latex_format(" ".join(title.split("\n")))
             key2title[key] = title
             key2author[key] = authors
+
+def extract_arxiv_id():
+    """
+    Extract arxiv id from latex by recognizing possible patterns
+    Example: journal={arXiv preprint arXiv:(arxiv id)}
+    We need to map the arxiv id to the bib_key
+    Possibly store it somewhere
+    """
+
+
+    pass
