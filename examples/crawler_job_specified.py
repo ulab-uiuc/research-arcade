@@ -1,12 +1,9 @@
+
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from paper_crawler.crawler_job import CrawlerJob
-
-
-
-
 
 cj = CrawlerJob(dest_dir="download")
 
@@ -24,12 +21,11 @@ arxiv_ids = {'2412.17767v2'}
 
 print(f"arxiv ids: {arxiv_ids}")
 
-# cj.download_papers(arxiv_ids=arxiv_ids)
+cj.download_papers(arxiv_ids=arxiv_ids)
 
-# cj.process_paper_graphs(arxiv_ids=arxiv_ids)
-cj.process_paper_paragraphs(arxiv_ids=arxiv_ids)
+cj.process_paper_graphs(arxiv_ids=arxiv_ids)
+# cj.process_paper_paragraphs(arxiv_ids=arxiv_ids)
 
-# Here, we also include the part of author searching on semantic scholar and citation processing
 # cj.process_paper_authors(arxiv_ids=arxiv_ids)
 # cj.process_paper_citations(arxiv_ids=arxiv_ids)
 

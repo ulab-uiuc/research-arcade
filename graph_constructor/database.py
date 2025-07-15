@@ -415,32 +415,32 @@ class Database:
         return self.cur.rowcount == 1
     
 
-def insert_citation_paragraph(self, paper_arxiv_id: str, paragraph_id: str, bib_key: str) -> None:
-    """
-    Add a paragraph reference to the citing_paragraphs array for a given citation.
-    If the paragraph_id is already present, this will add a duplicate; if you
-    want to avoid duplicates, see the note below.
-    """
-    sql = """
-    UPDATE citations
-       SET citing_paragraphs = array_append(
-        COALESCE(citing_paragraphs, '{}'), %s)
-     WHERE citing_arxiv_id = %s
-       AND bib_key = %s
-    """
-    try:
-        self.cur.execute(sql, (paragraph_id, paper_arxiv_id, bib_key))
-        self.conn.commit()
-    except Exception as e:
-        self.conn.rollback()
-        raise
+    def insert_citation_paragraph(self, paper_arxiv_id: str, paragraph_id: str, bib_key: str) -> None:
+        """
+        Add a paragraph reference to the citing_paragraphs array for a given citation.
+        If the paragraph_id is already present, this will add a duplicate; if you
+        want to avoid duplicates, see the note below.
+        """
+        sql = """
+        UPDATE citations
+        SET citing_paragraphs = array_append(
+            COALESCE(citing_paragraphs, '{}'), %s)
+        WHERE citing_arxiv_id = %s
+        AND bib_key = %s
+        """
+        try:
+            self.cur.execute(sql, (paragraph_id, paper_arxiv_id, bib_key))
+            self.conn.commit()
+        except Exception as e:
+            self.conn.rollback()
+            raise
 
-    # Optional: check rowcount to see if an update actually happened
-    if self.cur.rowcount == 0:
-        # no existing citation row to update
-        # you could choose to INSERT a new citation here if that makes sense:
-        # self.insert_citation(paper_arxiv_id, ..., citing_paragraphs=[paragraph_id])
-        pass
+        # Optional: check rowcount to see if an update actually happened
+        if self.cur.rowcount == 0:
+            # no existing citation row to update
+            # you could choose to INSERT a new citation here if that makes sense:
+            # self.insert_citation(paper_arxiv_id, ..., citing_paragraphs=[paragraph_id])
+            pass
         
 
     def insert_paper_figure(self, paper_arxiv_id, figure_id):
@@ -485,6 +485,10 @@ def insert_citation_paragraph(self, paper_arxiv_id: str, paragraph_id: str, bib_
         Return True or False as boolean value
         - paper_arxiv_id: str
         """
+
+        # TODO: this should be removed later
+
+        return False
         sql = """
         SELECT EXISTS(
             SELECT 1

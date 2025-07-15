@@ -4,6 +4,7 @@ import arxiv
 from arxiv import UnexpectedEmptyPageError
 from multi_input.multi_input import MultiInput
 from paper_collector.latex_parser import clean_latex_format
+import re
 import json
 import time
 import os
@@ -95,7 +96,7 @@ class NodeConstructor:
     # Construct the paragraph given the paper id, index of paragraph, index of section, and the arxiv id that this paper belongs to
     def paragraph_constructor(self, paragraph, paragraph_index, section_index, arxiv_id):
 
-        
+
 
         pass
 
@@ -336,10 +337,14 @@ class NodeConstructor:
             sort_by=arxiv.SortCriterion.Relevance,
         )
 
+        print("Title of Cited Paper:")
+        print(title)
         try:
+            print("Result:")
             for result in search.results():
-                if (result.title.strip().lower() == title.strip().lower()
-                        and any(name.lower() in a.name.lower() for a in result.authors)):
+                print(result.title)
+                if (self.title_cleaner(result.title )== title):
+                        # and any(name.lower() in a.name.lower() for a in result.authors)):
                     return result.entry_id
         except UnexpectedEmptyPageError:
             # no more pages—stop iterating
@@ -361,28 +366,26 @@ class NodeConstructor:
         Motivation: sometimes the paper is not yet added into the semantic scholar. We can check if certain paper has author info in the db. If not, we search it on semantic scholar again.
         """
 
-        exists = self.db.paper_authors_exist(paper_arxiv_id=arxiv_id)
+        # exists = self.db.paper_authors_exist(paper_arxiv_id=arxiv_id)
 
-        if not exists:
-            # If the paper author does not exist, we re-fetch from the semantic scholar
-            base_arxiv_id, version = self.arxiv_id_processor(arxiv_id)
-            print(f"base_arxiv_id: {base_arxiv_id}")
-            try:
-                paper_sch = self.sch.get_paper(f"ARXIV:{base_arxiv_id}")
-                authors = paper_sch.authors
-            except Exception as e:
-                print(f"Paper with arxiv id {base_arxiv_id} not found on semantic scholar: {e}")
-                return False
+        base_arxiv_id, version = self.arxiv_id_processor(arxiv_id)
+        print(f"base_arxiv_id: {base_arxiv_id}")
+        try:
+            paper_sch = self.sch.get_paper(f"ARXIV:{base_arxiv_id}")
+            authors = paper_sch.authors
+        except Exception as e:
+            print(f"Paper with arxiv id {base_arxiv_id} not found on semantic scholar: {e}")
+            return False
 
 
-            # Add authors into database if not exist
-            author_order = 0
-            if authors:
-                for author in authors:
-                    self.author_constructor(author.authorId)
-                    author_order += 1
-                    # Add paper-author edge as follows
-                    self.db.insert_paper_author(paper_arxiv_id=arxiv_id, author_id=author.authorId, author_sequence=author_order)
+        # Add authors into database if not exist
+        author_order = 0
+        if authors:
+            for author in authors:
+                self.author_constructor(author.authorId)
+                author_order += 1
+                # Add paper-author edge as follows
+                self.db.insert_paper_author(paper_arxiv_id=arxiv_id, author_id=author.authorId, author_sequence=author_order)
 
         return True
 
@@ -407,7 +410,7 @@ class NodeConstructor:
             citation_id, bib_title, bib_author_full = row
 
             # clean up the title to remove problematic characters
-            title_cleaned = bib_title.replace('+', ' ').replace(':', '')
+            title_cleaned = self.title_cleaner(bib_title)
             # assume bib_author_full is "Last, First" or similar
             author_surname = bib_author_full.split(',')[0].strip()
 
@@ -432,5 +435,14 @@ class NodeConstructor:
 
         return True
 
-
+    def title_cleaner(self, title: str) -> str:
+        """
+        Remove all symbols (non-alphanumeric, non-space characters) from the title.
+        Collapses multiple spaces down to one and trims ends.
+        """
+        # Remove anything that isn't a letter, number, or whitespace
+        cleaned = re.sub(r'[^A-Za-z0-9\s]', '', title)
+        # Collapse multiple spaces and strip leading/trailing spaces
+        cleaned = re.sub(r'\s+', ' ', cleaned).strip()
+        return cleaned.strip().lower()
 
