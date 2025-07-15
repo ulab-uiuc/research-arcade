@@ -3,6 +3,7 @@ import pandas as pd
 from datetime import datetime
 from tqdm import tqdm
 from database import Database
+from pdf_utils import get_pdf, connect_diffs_and_paragraphs
 
 class sqlDatabaseConstructor:
     def __init__(self):
@@ -172,13 +173,26 @@ class sqlDatabaseConstructor:
                 paper_id = submission.id
                 # get revisions and their time
                 revisions = {}
+                all_diffs = []
                 note_edits = self.client.get_note_edits(note_id=paper_id)
                 try:
-                    for note in note_edits:
+                    original_pdf = "original.pdf"
+                    modified_pdf = "modified.pdf"
+                    filter_list = ["Under review as a conference paper at ICLR 2025", "Published as a conference paper at ICLR 2025"]
+                    original_id = None
+                    modified_id = None
+                    for idx, note in enumerate(note_edits):
                         revisions[note.id] = {
                             "Time": datetime.fromtimestamp(note.cdate / 1000).strftime("%Y-%m-%d %H:%M:%S"),
                             "Title": note.invitation.split('/')[-1]
                         }
+                        original_id = modified_id
+                        modified_id = note.id
+                        if idx > 1:
+                            get_pdf(original_id, original_pdf)
+                            get_pdf(modified_id, modified_pdf)
+                            formatted_diffs = connect_diffs_and_paragraphs(original_pdf, modified_pdf, filter_list)
+                            all_diffs.append(formatted_diffs)
                 except:
                     pass
                 # get title
@@ -192,4 +206,4 @@ class sqlDatabaseConstructor:
                 # get paper's pdf
                 pdf = submission.content["pdf"]["value"]
                 # add to paper table
-                self.db.insert_paper(venue_id, paper_id, title, abstract, author_ids, fullnames, decision, pdf, revisions)
+                self.db.insert_paper(venue_id, paper_id, title, abstract, author_ids, fullnames, decision, pdf, revisions, all_diffs)

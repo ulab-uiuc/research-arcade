@@ -25,7 +25,8 @@ class Database:
             author_full_names TEXT,
             paper_decision TEXT,
             paper_pdf_link TEXT,
-            revisions JSONB
+            revisions JSONB,
+            all_diffs JSONB
         );
         """
         self.cur.execute(create_table_sql)
@@ -134,7 +135,7 @@ class Database:
         res = self.cur.fetchone()
         return res[0] if res else None
     
-    def insert_paper(self, venue, paper_openreview_id, title, abstract, author_openreview_ids, author_full_names, paper_decision, paper_pdf_link, revisions):
+    def insert_paper(self, venue, paper_openreview_id, title, abstract, author_openreview_ids, author_full_names, paper_decision, paper_pdf_link, revisions, all_diffs):
         """
         Insert a paper into the papers table. Returns the inserted paper id or None if it fails.
         - venue: str, the venue where the paper is submitted.
@@ -147,16 +148,17 @@ class Database:
         - paper_pdf_link: str or None, a link to the paper's PDF (optional).
         """
         insert_sql = """
-        INSERT INTO papers (venue, paper_openreview_id, title, abstract, author_openreview_ids, author_full_names, paper_decision, paper_pdf_link, revisions)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+        INSERT INTO papers (venue, paper_openreview_id, title, abstract, author_openreview_ids, author_full_names, paper_decision, paper_pdf_link, revisions, all_diffs)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         ON CONFLICT (paper_openreview_id) DO NOTHING
         RETURNING paper_openreview_id;
         """
         # clean revisions
         cleaned_revisions = self.clean_json_content(revisions)
+        cleaned_all_diffs = self.clean_json_content(all_diffs)
         
         # Execute the insertion query
-        self.cur.execute(insert_sql, (venue, paper_openreview_id, title, abstract, author_openreview_ids, author_full_names, paper_decision, paper_pdf_link, Json(cleaned_revisions)))
+        self.cur.execute(insert_sql, (venue, paper_openreview_id, title, abstract, author_openreview_ids, author_full_names, paper_decision, paper_pdf_link, Json(cleaned_revisions), Json(cleaned_all_diffs)))
         
         # Get the inserted paper id (if any)
         res = self.cur.fetchone()
