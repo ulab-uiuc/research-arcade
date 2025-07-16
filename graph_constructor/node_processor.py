@@ -321,8 +321,8 @@ class NodeConstructor:
             paragraph_cite_bib_keys = paragraph.get('cites')
             for bib_key in paragraph_cite_bib_keys:
                 self.db.insert_citation_paragraph(paper_arxiv_id=paper_arxiv_id, paragraph_id=paragraph_id, bib_key=bib_key)
+                
 
-            
     def create_tables(self):
         self.db.create_all()
 
