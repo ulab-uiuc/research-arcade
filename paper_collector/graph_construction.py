@@ -146,8 +146,6 @@ def build_citation_graph_node_info(
 
 
     if doc_node:
-        # TODO: remove the print statement below
-        print("Extracting citation information")
         extract_citations_from_ast(
             structured_data,
             flattened_data,
@@ -165,7 +163,6 @@ def build_citation_graph_node_info(
             next_ref_context,
             working_path,
         )
-    print(f"structured_data: {structured_data}")
     
     # Add the extracted arxiv id to the database
     if key2id:
@@ -176,7 +173,6 @@ def build_citation_graph_node_info(
                 entry['short_id'] = arxiv_id
 
 
-    print(f"structured_data after modification: {structured_data}")
 
     return structured_data
 
@@ -222,7 +218,6 @@ def build_citation_graph(
     if os.path.exists(os.path.join(output_path, "history.json")):
         with open(os.path.join(output_path, "history.json"), "r") as f:
             history = json.load(f)
-        # print(history)
         for item in history:
             for item_ in item["extended"]:
                 BFS_que.put(item_)
@@ -485,7 +480,7 @@ def build_citation_graph_thread(
                     visited.add(current_paper)
 
                 # TODO: see what would happen if we comment out this line
-                # Here, we separate the paper downloading and paper processing stages
+                # Here, we separate the paper downloading and paper processing stages, which is different from what is was like.
                 # download_latex_source(current_paper, source_path)
 
                 # Clear the working directory
@@ -571,8 +566,6 @@ def build_citation_graph_thread(
                     except Exception as e:
                         print(e)
 
-                ncitations = len(structured_data["citations"])
-                print(f"number of citations collected: {ncitations}")
 
                 if structured_data:
                     if not os.path.exists(
