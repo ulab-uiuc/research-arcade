@@ -223,7 +223,6 @@ def extract_section_info_from_ast(
                     try:
                         input = safe_extract_chars(node.nodeargd.argnlist[0])
                         input = input.replace(".tex", "").strip()
-                        print(f"Processing input {input}")
                         with open(
                             os.path.join(working_path, f"{input}.tex"),
                             "r",
@@ -431,7 +430,6 @@ def extract_citations_from_ast(
                     try:
                         input = safe_extract_chars(node.nodeargd.argnlist[0])
                         input = input.replace(".tex", "").strip()
-                        print(f"Processing input {input}")
                         with open(
                             os.path.join(working_path, f"{input}.tex"),
                             "r",
@@ -589,7 +587,6 @@ def extract_citations_from_ast(
                                         prev_citation_contexts.append(citation_context)
                                         # Also loook at the journal part and see if arxiv id is available
 
-                                        print(f"paper: {paper}")
                                         structured_data["citations"][key.strip()] = {
                                             "bib_key": key.strip(),
                                             "bib_title": title_,
@@ -961,7 +958,6 @@ def load_bbl_info(
     key2title: Dict[str, str],
     key2author: Dict[str, str],
 ):
-    print("Info Processing")
     bbl_text = bbl_node.latex_verbatim()
     bbl_list = re.sub(r"\[.*\]", "", bbl_text).split("\\bibitem")
     for bbl_item in bbl_list[1:]:
