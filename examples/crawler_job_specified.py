@@ -24,7 +24,7 @@ print(f"arxiv ids: {arxiv_ids}")
 cj.download_papers(arxiv_ids=arxiv_ids)
 
 cj.process_paper_graphs(arxiv_ids=arxiv_ids)
-# cj.process_paper_paragraphs(arxiv_ids=arxiv_ids)
+cj.process_paper_paragraphs(arxiv_ids=arxiv_ids)
 
 # cj.process_paper_authors(arxiv_ids=arxiv_ids)
 # cj.process_paper_citations(arxiv_ids=arxiv_ids)
