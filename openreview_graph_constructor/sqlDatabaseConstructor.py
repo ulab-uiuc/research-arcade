@@ -1,4 +1,6 @@
 import openreview
+import arxiv
+from arxiv import UnexpectedEmptyPageError
 import pandas as pd
 from datetime import datetime
 from tqdm import tqdm
@@ -207,3 +209,66 @@ class sqlDatabaseConstructor:
                 pdf = submission.content["pdf"]["value"]
                 # add to paper table
                 self.db.insert_paper(venue_id, paper_id, title, abstract, author_ids, fullnames, decision, pdf, revisions, all_diffs)
+    
+    def _title_cleaner(self, title: str) -> str:
+        """
+        Remove all symbols (non-alphanumeric, non-space characters) from the title.
+        Collapses multiple spaces down to one and trims ends.
+        """
+        # Remove anything that isn't a letter, number, or whitespace
+        cleaned = re.sub(r'[^A-Za-z0-9\s]', '', title)
+        # Collapse multiple spaces and strip leading/trailing spaces
+        cleaned = re.sub(r'\s+', ' ', cleaned).strip()
+        return cleaned.strip().lower()
+    
+    def _search_title_with_name(self, title, name, max_result=20):
+        query = f"ti:{title} AND au:{name}"
+        search = arxiv.Search(
+            query=query,
+            max_results=max_result,
+            sort_by=arxiv.SortCriterion.Relevance,
+        )
+
+        # print("Title of Cited Paper:")
+        # print(title)
+        try:
+            # print("Result:")
+            for result in search.results():
+                # print(result.title)
+                if (self._title_cleaner(result.title) == self._title_cleaner(title)):
+                    return result.entry_id
+        except UnexpectedEmptyPageError:
+            return None
+    
+    def construct_openreview_arxiv_table(self, venue_id):
+        # create sql table
+        self.db.create_openreview_arxiv_table()
+        
+        # get papers from papers table
+        # submissions = self.db.get_papers()
+        
+        # get papers through openreview api
+        submissions = self.client.get_all_notes(invitation=f'{venue_id}/-/Submission')
+        # match openreview_id with arxiv_id
+        for submission in tqdm(submissions):
+            # get paper decision and remove withdrawn papers
+            decision = submission.content["venueid"]["value"].split('/')[-1]
+            if decision == "Withdrawn_Submission":
+                continue
+            else:
+                # get paper openreview id
+                openreview_id = submission.id
+                # openreview_id = submission[0]
+                
+                # get title
+                title = submission.content["title"]["value"]
+                # title = submission[1]
+                
+                # get author full names
+                author_names = submission.content["authors"]["value"]
+                # author_names = submission[2]
+                
+                # get arxiv id based on title and the first author
+                arxiv_id = self._search_title_with_name(title, author_names[0])
+                # insert into openreview_arxiv table
+                self.db.insert_openreview_arxiv(openreview_id, arxiv_id, title, author_names)
