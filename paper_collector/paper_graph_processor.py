@@ -206,15 +206,23 @@ class PaperGraphProcessor:
         # print("Cite after looking up:")
         # print(cites)
         refs = self.find_references(text)
+        print("raw refs")
+        print(refs)
+        # IMPORTANT
+        # TODO
+        # Here, we pick the label as key, since it (should be) unique
+        raw_refs = refs
         refs = [label2id[ref] for ref in refs if ref in label2id]
+        print("raw refs2")
+        print(raw_refs)
 
         isolation = (len(refs) == 0) and (len(cites) == 0)
         # print("key2citation")
         # print(key2citation)
         # print("cites")
         # print(cites)
-        # print("refs")
-        # print(refs)
+        print("refs after processing")
+        print(refs)
         return {
             "id": "text_" + str(self.get_node_id()),
             "cites": cites,
@@ -222,6 +230,7 @@ class PaperGraphProcessor:
             "content": text,
             "type": "textNode",
             "isolation": isolation,
+            "ref_labels": raw_refs
         }
 
     def process_paper(self, data: dict, paper_id: str) -> Optional[Dict]:
@@ -264,8 +273,9 @@ class PaperGraphProcessor:
             elif not citation["similar_score"]:
                 citations[key] = citation
                 neighbors.append(citation["short_id"])
-        # print("Citations:")
+        # print("key to citations:")
         # print(citations)
+        print(f"Key to References: {label2id}")
         for section, content in data["sections"].items():
             # section_node = self.create_section_node(section)
             # nodes[section_node['id']] = section_node
@@ -275,6 +285,7 @@ class PaperGraphProcessor:
                 if chunk.strip()
             ]
             pre_node = None
+            # print
             for chunk in chunks:
                 # print("Chunk:")
                 # print(chunk)

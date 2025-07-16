@@ -115,7 +115,7 @@ class CrawlerJob:
                 )
                 print(f"[ERROR] Failed to download {arxiv_id}: {e}")
                 continue
-                
+
 
     def process_paper_graphs(self, arxiv_ids):
         """
@@ -147,19 +147,17 @@ class CrawlerJob:
                 print(f"[Warning] Failed to add paper with arxiv id {arxiv_id} to database: {e}")
                 continue
                 
-                
-                
         return processed_paper_ids
 
         # Build the paragraphs json files later?
         # Use the node processor function in knowledge debugger
-        
+
     def process_paper_paragraphs(self, arxiv_ids=None):
         """
         Convert the existing paper's paper graph json file into a collection of multiple jsons, including paragraph files.
         Then store the paragraph information into database
         """
-        
+
         paper_paths = []
         # We first build paper node
         if not arxiv_ids:
@@ -174,9 +172,9 @@ class CrawlerJob:
         self.nc.process_paragraphs(dir_path=self.dest_dir)
 
         for arxiv_id in arxiv_ids:
-            
+
             self.tdb.set_states(paper_arxiv_id=arxiv_id, paragraph=True)
-        
+
 
 
 

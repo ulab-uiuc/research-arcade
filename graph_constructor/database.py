@@ -413,7 +413,7 @@ class Database:
         """
         self.cur.execute(sql, (citing_arxiv_id, cited_arxiv_id, bib_title, bib_key, author_cited_paper, citing_sections))
         return self.cur.rowcount == 1
-    
+
 
     def insert_citation_paragraph(self, paper_arxiv_id: str, paragraph_id: str, bib_key: str) -> None:
         """
