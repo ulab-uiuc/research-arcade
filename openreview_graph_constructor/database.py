@@ -31,6 +31,20 @@ class Database:
         """
         self.cur.execute(create_table_sql)
         print("Table 'papers' created successfully.")
+    
+    def get_papers(self):
+        # Select query to get paper_openreview_id, title, and author_full_names
+        select_query = """
+        SELECT paper_openreview_id, title, author_full_names
+        FROM papers;
+        """
+        self.cur.execute(select_query)
+        
+        # Fetch all the results
+        papers = self.cur.fetchall()
+        
+        # Return the result as a list of tuples (paper_openreview_id, title, author_full_names)
+        return papers
         
     def create_author_table(self):
         create_table_sql = """
@@ -65,6 +79,19 @@ class Database:
         # Execute the SQL to create the table
         self.cur.execute(create_table_sql)
         print("Table 'reviews' created successfully.")
+        
+    def create_openreview_arxiv_table(self):
+        create_table_sql = """
+        CREATE TABLE IF NOT EXISTS openreview_arxiv (
+            openreview_id VARCHAR(255) PRIMARY KEY,
+            arxiv_id VARCHAR(255),
+            title TEXT,
+            author_names TEXT
+        );
+        """
+        # Execute the SQL to create the table
+        self.cur.execute(create_table_sql)
+        print("Table 'openreview_arxiv' created successfully.")
         
     def insert_author(self, venue, author_openreview_id, author_full_name, email, affiliation, homepage, dblp):
         """
@@ -161,5 +188,26 @@ class Database:
         self.cur.execute(insert_sql, (venue, paper_openreview_id, title, abstract, author_openreview_ids, author_full_names, paper_decision, paper_pdf_link, Json(cleaned_revisions), Json(cleaned_all_diffs)))
         
         # Get the inserted paper id (if any)
+        res = self.cur.fetchone()
+        return res[0] if res else None
+    
+    def insert_openreview_arxiv(self, openreview_id, arxiv_id, title, author_names):
+        """
+        Insert a connection between openreview id with arxiv id into the openreview_arxiv table. Returns the inserted openreview id or None if it fails.
+        - openreview_id: str, unique identifier for the paper in openreview system(primary key).
+        - arxiv_id: str, unique identifier for the paper in arxiv system.
+        - title: str, the title of the paper.
+        """
+        insert_sql = """
+        INSERT INTO openreview_arxiv (openreview_id, arxiv_id, title, author_names)
+        VALUES (%s, %s, %s, %s)
+        ON CONFLICT (openreview_id) DO NOTHING
+        RETURNING openreview_id;
+        """
+        
+        # Execute the insertion query
+        self.cur.execute(insert_sql, (openreview_id, arxiv_id, title, author_names))
+        
+        # Get the inserted paper's openreview id (if any)
         res = self.cur.fetchone()
         return res[0] if res else None
