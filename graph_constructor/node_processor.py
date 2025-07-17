@@ -124,6 +124,8 @@ class NodeConstructor:
 
         paper_exists = self.db.check_exist(arxiv_id)
 
+        # TODO: remove it
+        paper_exists = False
 
         times = {}
 
@@ -272,7 +274,7 @@ class NodeConstructor:
 
 
         t0 = time.perf_counter()
-
+        print("Now processing citations")
         for citation in file_json['citations'].values():
             # print(f"Citation: {citation}")
             cited_arxiv_id = citation.get('arxiv_id')
@@ -342,7 +344,21 @@ class NodeConstructor:
             paragraph_cite_bib_keys = paragraph.get('cites')
             for bib_key in paragraph_cite_bib_keys:
                 self.db.insert_citation_paragraph(paper_arxiv_id=paper_arxiv_id, paragraph_id=id_zero_based, bib_key=bib_key)
-                
+
+
+            paragraph_ref_labels = paragraph.get('ref_labels')
+
+
+            # def insert_paragraph_reference(self, paragraph_id, paper_arxiv_id, reference_label, reference_type=None):
+
+            for ref_label in paragraph_ref_labels:
+                self.db.insert_paragraph_reference(paragraph_id=id_zero_based, paper_arxiv_id=paper_arxiv_id, reference_label=ref_label)
+
+
+
+            # For here, we also need to call insert_paragraph_reference and insert paragraphs-refs(including tables, figures, and more in the future) into the database
+
+
 
     def create_tables(self):
         self.db.create_all()

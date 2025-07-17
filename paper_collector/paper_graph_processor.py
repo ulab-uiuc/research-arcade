@@ -294,8 +294,8 @@ class PaperGraphProcessor:
                     continue
                 ########################################
                 text_node = self.create_text_node(chunk, citations, label2id)
-                print("text_node")
-                print(text_node)
+                # print("text_node")
+                # print(text_node)
                 text_node["paper_id"] = paper_id
                 text_node["section"] = section
                 if True:  # not text_node['isolation']:

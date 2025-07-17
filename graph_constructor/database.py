@@ -171,9 +171,7 @@ class Database:
         self.cur.execute("""
         CREATE TABLE IF NOT EXISTS paragraph_references (
             id SERIAL PRIMARY KEY,
-            paragraph_id   INT    NOT NULL
-                REFERENCES paragraphs(id)
-                ON DELETE CASCADE,
+            paragraph_id   INT    NOT NULL,
             paper_arxiv_id VARCHAR(100) NOT NULL
                 REFERENCES papers(arxiv_id)
                 ON DELETE CASCADE,
@@ -463,11 +461,14 @@ class Database:
             # you could choose to INSERT a new citation here if that makes sense:
             # self.insert_citation(paper_arxiv_id, ..., citing_paragraphs=[paragraph_id])
             pass
-    
+
+
+
+
     def insert_paragraph_reference(self, paragraph_id, paper_arxiv_id, reference_label, reference_type=None):
             sql = """
             INSERT INTO paragraph_references
-            (paragraph_ref_id, paper_arxiv_id, reference_label, reference_type)
+            (paragraph_id, paper_arxiv_id, reference_label, reference_type)
             VALUES (%s, %s, %s, %s)
             RETURNING id
             """
