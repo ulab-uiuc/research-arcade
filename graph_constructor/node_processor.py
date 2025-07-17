@@ -354,7 +354,7 @@ class NodeConstructor:
             for ref_label in paragraph_ref_labels:
                 self.db.insert_paragraph_reference(paragraph_id=id_zero_based, paper_arxiv_id=paper_arxiv_id, reference_label=ref_label)
 
-
+                
 
             # For here, we also need to call insert_paragraph_reference and insert paragraphs-refs(including tables, figures, and more in the future) into the database
 

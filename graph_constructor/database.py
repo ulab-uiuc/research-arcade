@@ -168,13 +168,13 @@ class Database:
         self.cur.execute("""
         CREATE TABLE IF NOT EXISTS paragraph_citations (
             id SERIAL PRIMARY KEY,
-            paragraph_id   INT    NOT NULL,
+            paragraph_id INT NOT NULL,
             paper_section TEXT,
             citing_arxiv_id VARCHAR(100) NOT NULL
                 REFERENCES papers(arxiv_id)
                 ON DELETE CASCADE,
-            bib_key VARCHAR(255),
-        )
+            bib_key VARCHAR(255)
+        );
         """)
 
 
@@ -472,20 +472,6 @@ class Database:
             pass
 
 
-    def create_paragraph_citations_table(self):
-        self.cur.execute("""
-        CREATE TABLE IF NOT EXISTS citations (
-            id SERIAL PRIMARY KEY,
-            paragraph_id   INT    NOT NULL,
-            paper_section TEXT,
-            citing_arxiv_id VARCHAR(100) NOT NULL
-                REFERENCES papers(arxiv_id)
-                ON DELETE CASCADE,
-            cited_arxiv_id VARCHAR(100),
-            bib_title TEXT,
-            bib_key VARCHAR(255),
-        )
-        """)
 
         # CREATE TABLE IF NOT EXISTS citations (
         #     id SERIAL PRIMARY KEY,
@@ -502,7 +488,7 @@ class Database:
             sql = """
             INSERT INTO paragraph_citations
             (paragraph_id, paper_section, citing_arxiv_id, bib_key)
-            VALUES (%s, %s, %s, %s, %s, %s)
+            VALUES (%s, %s, %s, %s)
             RETURNING id
             """
             self.cur.execute(sql, (paragraph_id, paper_section, citing_arxiv_id, bib_key))
