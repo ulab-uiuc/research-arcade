@@ -8,7 +8,7 @@ from paper_crawler.crawler_job import CrawlerJob
 cj = CrawlerJob(dest_dir="download")
 
 # cj.drop_task_database()
-cj.create_task_database()
+# cj.create_task_database()
 # cj.db.drop_all()
 cj.db.create_all()
 

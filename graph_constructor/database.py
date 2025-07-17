@@ -166,15 +166,13 @@ class Database:
     
     def create_paragraph_citations_table(self):
         self.cur.execute("""
-        CREATE TABLE IF NOT EXISTS citations (
+        CREATE TABLE IF NOT EXISTS paragraph_citations (
             id SERIAL PRIMARY KEY,
             paragraph_id   INT    NOT NULL,
             paper_section TEXT,
             citing_arxiv_id VARCHAR(100) NOT NULL
                 REFERENCES papers(arxiv_id)
                 ON DELETE CASCADE,
-            cited_arxiv_id VARCHAR(100),
-            bib_title TEXT,
             bib_key VARCHAR(255),
         )
         """)
@@ -224,6 +222,8 @@ class Database:
         self.create_paper_figures_table()
         self.create_paper_tables_table()
         self.create_author_affiliation_table()
+        self.create_paragraph_references_table()
+        self.create_paragraph_citations_table()
         self.create_paragraph_references_table()
 
     # def create_papers_table(self):
@@ -487,14 +487,25 @@ class Database:
         )
         """)
 
-    def insert_paragraph_citations(self, paragraph_id, paper_section, citing_arxiv_id, bib_title, bib_key, cited_arxiv_id=None):
+        # CREATE TABLE IF NOT EXISTS citations (
+        #     id SERIAL PRIMARY KEY,
+        #     paragraph_id   INT    NOT NULL,
+        #     paper_section TEXT,
+        #     citing_arxiv_id VARCHAR(100) NOT NULL
+        #         REFERENCES papers(arxiv_id)
+        #         ON DELETE CASCADE,
+        #     bib_key VARCHAR(255),
+        # )
+
+
+    def insert_paragraph_citations(self, paragraph_id, paper_section, citing_arxiv_id, bib_key):
             sql = """
-            INSERT INTO paragraph_references
-            (paragraph_id, paper_section, citing_arxiv_id, cited_arxiv_id, bib_title, bib_key)
+            INSERT INTO paragraph_citations
+            (paragraph_id, paper_section, citing_arxiv_id, bib_key)
             VALUES (%s, %s, %s, %s, %s, %s)
             RETURNING id
             """
-            self.cur.execute(sql, (paragraph_id, paper_section, citing_arxiv_id, cited_arxiv_id, bib_title, bib_key))
+            self.cur.execute(sql, (paragraph_id, paper_section, citing_arxiv_id, bib_key))
             res = self.cur.fetchone()
             return res[0] if res else None
 
