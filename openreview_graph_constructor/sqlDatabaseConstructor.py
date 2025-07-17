@@ -191,9 +191,12 @@ class sqlDatabaseConstructor:
                         original_id = modified_id
                         modified_id = note.id
                         if idx > 1:
+                            formatted_diffs = {
+                                "Time": datetime.fromtimestamp(note.cdate / 1000).strftime("%Y-%m-%d %H:%M:%S")
+                            }
                             get_pdf(original_id, original_pdf)
                             get_pdf(modified_id, modified_pdf)
-                            formatted_diffs = connect_diffs_and_paragraphs(original_pdf, modified_pdf, filter_list)
+                            formatted_diffs["Content"] = connect_diffs_and_paragraphs(original_pdf, modified_pdf, filter_list)
                             all_diffs.append(formatted_diffs)
                 except:
                     pass
