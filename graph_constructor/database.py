@@ -3,7 +3,7 @@ from psycopg2.extras import Json
 import json
 
 # Store the pwd of db server in the env or here as a global variable
-# PASSWORD = 
+# PASSWORD =
 PASSWORD = "Lcs20031121!"
 
 class Database:
@@ -17,7 +17,7 @@ class Database:
         # Enable autocommit
         self.conn.autocommit = True
         self.cur = self.conn.cursor()
-    
+
     def create_papers_table(self):
         self.cur.execute("""
         CREATE TABLE IF NOT EXISTS papers (
@@ -47,11 +47,12 @@ class Database:
         self.cur.execute("""
         CREATE TABLE IF NOT EXISTS paragraphs (
             id SERIAL PRIMARY KEY,
-            paragraph_id VARCHAR(100),
+            paragraph_id INT NOT NULL,
             content TEXT,
             paper_arxiv_id VARCHAR(100) NOT NULL REFERENCES papers(arxiv_id) ON DELETE CASCADE,
-            paper_section TEXT
-        )
+            paper_section TEXT,
+            UNIQUE (paragraph_id, paper_arxiv_id, paper_section)
+        );
         """)
 
     def create_authors_table(self):
@@ -139,7 +140,7 @@ class Database:
             bib_key VARCHAR(255),
             author_cited_paper VARCHAR(255),
             citing_sections TEXT[] DEFAULT '{}',
-            citing_paragraphs TEXT[] DEFAULT '{}',
+            citing_paragraphs INT[] DEFAULT '{}',
             UNIQUE (citing_arxiv_id, cited_arxiv_id)
         )
         """)
@@ -160,6 +161,25 @@ class Database:
             table_id INT NOT NULL REFERENCES tables(id) ON DELETE CASCADE,
             PRIMARY KEY (paper_arxiv_id, table_id)
         )
+        """)
+
+    def create_paragraph_references_table(self):
+        """
+        Stores references that appear within paragraphs—
+        e.g. figures, tables, equations, etc.
+        """
+        self.cur.execute("""
+        CREATE TABLE IF NOT EXISTS paragraph_references (
+            id SERIAL PRIMARY KEY,
+            paragraph_id   INT    NOT NULL
+                REFERENCES paragraphs(id)
+                ON DELETE CASCADE,
+            paper_arxiv_id VARCHAR(100) NOT NULL
+                REFERENCES papers(arxiv_id)
+                ON DELETE CASCADE,
+            reference_label TEXT    NOT NULL,
+            reference_type  TEXT
+        );
         """)
 
     def create_author_affiliation_table(self):
@@ -188,6 +208,7 @@ class Database:
         self.create_paper_figures_table()
         self.create_paper_tables_table()
         self.create_author_affiliation_table()
+        self.create_paragraph_references_table()
 
     # def create_papers_table(self):
     #     self.cur.execute("""
@@ -262,13 +283,14 @@ class Database:
         - paper_section: str
         """
 
+    def insert_paragraph(self, paragraph_id, content, paper_arxiv_id, paper_section):
         sql = """
         INSERT INTO paragraphs (paragraph_id, content, paper_arxiv_id, paper_section)
         VALUES (%s, %s, %s, %s)
+        ON CONFLICT (paragraph_id, paper_arxiv_id, paper_section) DO NOTHING
         RETURNING id
         """
         self.cur.execute(sql, (paragraph_id, content, paper_arxiv_id, paper_section))
-
         res = self.cur.fetchone()
         return res[0] if res else None
 
@@ -441,6 +463,22 @@ class Database:
             # you could choose to INSERT a new citation here if that makes sense:
             # self.insert_citation(paper_arxiv_id, ..., citing_paragraphs=[paragraph_id])
             pass
+    
+    def insert_paragraph_reference(self, paragraph_id, paper_arxiv_id, reference_label, reference_type=None):
+            sql = """
+            INSERT INTO paragraph_references
+            (paragraph_ref_id, paper_arxiv_id, reference_label, reference_type)
+            VALUES (%s, %s, %s, %s)
+            RETURNING id
+            """
+            self.cur.execute(sql,
+                            (paragraph_id,
+                            paper_arxiv_id,
+                            reference_label,
+                            reference_type))
+            res = self.cur.fetchone()
+            return res[0] if res else None
+
         
 
     def insert_paper_figure(self, paper_arxiv_id, figure_id):
@@ -479,6 +517,7 @@ class Database:
         self.cur.execute(sql, (author_id, institution_id))
         return self.cur.rowcount == 1
 
+
     def check_exist(self, paper_arxiv_id):
         """
         Check if the paper with given arxiv id exists in the database
@@ -488,7 +527,7 @@ class Database:
 
         # TODO: this should be removed later
 
-        return False
+        # return False
         sql = """
         SELECT EXISTS(
             SELECT 1

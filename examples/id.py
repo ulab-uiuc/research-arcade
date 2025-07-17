@@ -1,15 +1,7 @@
 import re
 
-pattern = re.compile(
-    r'arxiv:'                                # now lowercase
-    r'(?P<id>'
-      r'(?:\d{4}\.\d{4,5}(?:v\d+)?)'
-      r'|'
-      r'(?:[a-z\-]+\/\d{7}(?:v\d+)?)'
-    r')'
-)
-
-text = "arXiv preprint arXiv:2502.01456".lower()
-m = pattern.search(text)
+s = "text_123"
+m = re.match(r'^text_(\d+)$', s)
 if m:
-    print("Found arXiv ID:", m.group('id'))
+    num = int(m.group(1))  # 123
+    print(num)
