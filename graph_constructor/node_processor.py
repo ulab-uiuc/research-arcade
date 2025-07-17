@@ -343,7 +343,7 @@ class NodeConstructor:
 
             paragraph_cite_bib_keys = paragraph.get('cites')
             for bib_key in paragraph_cite_bib_keys:
-                self.db.insert_citation_paragraph(paper_arxiv_id=paper_arxiv_id, paragraph_id=id_zero_based, bib_key=bib_key)
+                self.db.insert_paragraph_citations(paragraph_id=id_zero_based, paper_section=paper_section, citing_arxiv_id=paper_arxiv_id, bib_key=bib_key)
 
 
             paragraph_ref_labels = paragraph.get('ref_labels')
