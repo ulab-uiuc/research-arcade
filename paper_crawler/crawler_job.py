@@ -146,7 +146,7 @@ class CrawlerJob:
             except Exception as e:
                 print(f"[Warning] Failed to add paper with arxiv id {arxiv_id} to database: {e}")
                 continue
-                
+
         return processed_paper_ids
 
         # Build the paragraphs json files later?
@@ -175,7 +175,7 @@ class CrawlerJob:
 
             self.tdb.set_states(paper_arxiv_id=arxiv_id, paragraph=True)
 
-        
+
 
 
     def process_paper_citations(self, arxiv_ids):
