@@ -168,14 +168,14 @@ class CrawlerJob:
                 paper_paths.append(f"{self.dest_dir}/output/{arxiv_id}.json")
             print(paper_paths)
             self.pgp.process_papers(paper_paths)
-
+        
         self.nc.process_paragraphs(dir_path=self.dest_dir)
 
         for arxiv_id in arxiv_ids:
 
             self.tdb.set_states(paper_arxiv_id=arxiv_id, paragraph=True)
 
-
+        
 
 
     def process_paper_citations(self, arxiv_ids):

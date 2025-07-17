@@ -21,9 +21,9 @@ arxiv_ids = {'2412.17767v2'}
 
 print(f"arxiv ids: {arxiv_ids}")
 
-# cj.download_papers(arxiv_ids=arxiv_ids)
+cj.download_papers(arxiv_ids=arxiv_ids)
 
-# cj.process_paper_graphs(arxiv_ids=arxiv_ids)
+cj.process_paper_graphs(arxiv_ids=arxiv_ids)
 cj.process_paper_paragraphs(arxiv_ids=arxiv_ids)
 
 # cj.process_paper_authors(arxiv_ids=arxiv_ids)
