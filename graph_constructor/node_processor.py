@@ -352,9 +352,22 @@ class NodeConstructor:
             # def insert_paragraph_reference(self, paragraph_id, paper_arxiv_id, reference_label, reference_type=None):
 
             for ref_label in paragraph_ref_labels:
-                self.db.insert_paragraph_reference(paragraph_id=id_zero_based, paper_arxiv_id=paper_arxiv_id, reference_label=ref_label)
 
-                
+                ref_type = None
+                # First search bib_key in databases.
+                # If presented in one of them, we can determine the type of reference
+
+                is_figure = self.db.check_exist_figure(bib_key=ref_label)
+                is_table = self.db.check_exist_table(bib_key=ref_label)
+                if is_figure:
+                    ref_type = 'figure'
+                elif is_table:
+                    ref_type = 'table'
+
+
+                self.db.insert_paragraph_reference(paragraph_id=id_zero_based, paper_section=paper_section, paper_arxiv_id=paper_arxiv_id, reference_label=ref_label, reference_type=ref_type)
+
+
 
             # For here, we also need to call insert_paragraph_reference and insert paragraphs-refs(including tables, figures, and more in the future) into the database
 
