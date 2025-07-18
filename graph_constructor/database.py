@@ -224,7 +224,6 @@ class Database:
         self.create_author_affiliation_table()
         self.create_paragraph_references_table()
         self.create_paragraph_citations_table()
-        self.create_paragraph_references_table()
 
     # def create_papers_table(self):
     #     self.cur.execute("""
@@ -485,31 +484,44 @@ class Database:
 
 
     def insert_paragraph_citations(self, paragraph_id, paper_section, citing_arxiv_id, bib_key):
-            sql = """
-            INSERT INTO paragraph_citations
-            (paragraph_id, paper_section, citing_arxiv_id, bib_key)
-            VALUES (%s, %s, %s, %s)
-            RETURNING id
-            """
-            self.cur.execute(sql, (paragraph_id, paper_section, citing_arxiv_id, bib_key))
-            res = self.cur.fetchone()
-            return res[0] if res else None
+        sql = """
+        INSERT INTO paragraph_citations
+        (paragraph_id, paper_section, citing_arxiv_id, bib_key)
+        VALUES (%s, %s, %s, %s)
+        RETURNING id
+        """
+        self.cur.execute(sql, (paragraph_id, paper_section, citing_arxiv_id, bib_key))
+        res = self.cur.fetchone()
+        return res[0] if res else None
 
+        # self.cur.execute("""
+        # CREATE TABLE IF NOT EXISTS paragraph_references (
+        #     id SERIAL PRIMARY KEY,
+        #     paragraph_id   INT    NOT NULL,
+        #     paper_section TEXT,
+        #     paper_arxiv_id VARCHAR(100) NOT NULL
+        #         REFERENCES papers(arxiv_id)
+        #         ON DELETE CASCADE,
+        #     reference_label TEXT    NOT NULL,
+        #     reference_type  TEXT
+        # );
+        # """)
 
-    def insert_paragraph_reference(self, paragraph_id, paper_arxiv_id, reference_label, reference_type=None):
-            sql = """
-            INSERT INTO paragraph_references
-            (paragraph_id, paper_arxiv_id, reference_label, reference_type)
-            VALUES (%s, %s, %s, %s)
-            RETURNING id
-            """
-            self.cur.execute(sql,
-                            (paragraph_id,
-                            paper_arxiv_id,
-                            reference_label,
-                            reference_type))
-            res = self.cur.fetchone()
-            return res[0] if res else None
+    def insert_paragraph_reference(self, paragraph_id, paper_section, paper_arxiv_id, reference_label, reference_type=None):
+        sql = """
+        INSERT INTO paragraph_references
+        (paragraph_id, paper_section, paper_arxiv_id, reference_label, reference_type)
+        VALUES (%s, %s, %s, %s, %s)
+        RETURNING id
+        """
+        self.cur.execute(sql,
+                        (paragraph_id,
+                        paper_section,
+                        paper_arxiv_id,
+                        reference_label,
+                        reference_type))
+        res = self.cur.fetchone()
+        return res[0] if res else None
 
         
 
@@ -549,6 +561,34 @@ class Database:
         self.cur.execute(sql, (author_id, institution_id))
         return self.cur.rowcount == 1
 
+    def check_exist_figure(self, bib_key):
+        entry = f"\\label{{{bib_key}}}"
+        sql = """
+        SELECT EXISTS(
+            SELECT 1
+            FROM figures
+            WHERE label = %s
+        );
+        """
+
+        self.cur.execute(sql, (entry,))
+        exists, = self.cur.fetchone()
+        return exists
+    
+    def check_exist_table(self, bib_key):
+        entry = f"\\label{{{bib_key}}}"
+        print(entry)
+        sql = """
+        SELECT EXISTS(
+            SELECT 1
+            FROM tables
+            WHERE label = %s
+        );
+        """
+        
+        self.cur.execute(sql, (entry,))
+        exists, = self.cur.fetchone()
+        return exists
 
     def check_exist(self, paper_arxiv_id):
         """
