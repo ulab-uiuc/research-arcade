@@ -17,7 +17,7 @@ class DatabaseSerializer:
         xml_str = serializer.to_xml(root_element="records", item_element="record")
     """
 
-    def __init__(self, records):
+    def __init__(self):
         """
         Initialize with a sequence of records, where each record is a dict
         mapping column names to values.
