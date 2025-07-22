@@ -12,7 +12,6 @@ cj = CrawlerJob(dest_dir="download")
 # cj.db.drop_all()
 cj.db.create_all()
 
-
 # arxiv_ids = cj.crawl_recent_arxiv_paper(year=2025, month=1, day=1, max_result=10)
 
 arxiv_ids = {'2412.17767v2'}

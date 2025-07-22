@@ -63,10 +63,10 @@ class DatabaseSerializer:
         :return: The output path.
         """
         records = self._fetch_records(query)
-        if not records:
-            # create empty file
-            open(output_path, 'w').close()
-            return output_path
+        # if not records:
+        #     # create empty file
+        #     open(output_path, 'w').close()
+        #     return output_path
 
         fieldnames = list(records[0].keys())
         with open(output_path, 'w', newline='', encoding='utf-8') as f:
