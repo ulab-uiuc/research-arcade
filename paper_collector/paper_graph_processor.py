@@ -469,7 +469,7 @@ class PaperGraphProcessor:
                 #        paper_node = self.create_paper_node(id, clean_latex_code(abstract), title)
                 #        self.paper_nodes.append(paper_node)
                 #        self.paper_id2node[id] = paper_node['id']
-
+    
         # self.save_processed_data('w')
         for paper_path in tqdm(self.list_json_files(self.data_dir)):
             if "history" in paper_path:
