@@ -834,14 +834,25 @@ def extract_figure_info(
     for node in nodes:
         try:
             if isinstance(node, LatexMacroNode):
+                # print(f"node: {node}")
+
                 if node.macroname == "caption":
                     res["caption"] = node.latex_verbatim()
                 if node.macroname == "label":
+                    # It seems that here, there may be multiple labels in nodes, but it only takes the last one.
+
                     res["label"] = node.latex_verbatim()
                 if node.macroname == "includegraphics":
+                    # We can use this part to extract label-path pairs
+                    # print(f"node of figure: {node}")
+                    # print(f"node of figure verbatim: {node.latex_verbatim()}")
+                    print(f"node.macroname: {node.macroname}")
+                    print(f"node.latex_verbatim(): {node.latex_verbatim()}")
                     for argd, arg_node in zip(
                         node.nodeargd.argspec, node.nodeargd.argnlist
                     ):
+                        # print(f"argd: {argd}")
+                        # print(f"arg_node: {arg_node}")
                         if argd == "{":
                             res["figure_paths"].append(
                                 arg_node.latex_verbatim().strip("{}")
@@ -871,7 +882,9 @@ def parse_figureEnv(node: LatexEnvironmentNode) -> Dict[str, Any]:
             "subfigures": [],
             "figure_paths": [],
         }
+        print(f"res before parsing: {res}")
         extract_figure_info(node.nodelist, res)
+        print(f"parsed figure info: {res}")
         return res
     except Exception as e:
         print(e)
