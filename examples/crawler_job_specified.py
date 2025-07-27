@@ -10,19 +10,22 @@ cj = CrawlerJob(dest_dir="download")
 # cj.drop_task_database()
 # cj.create_task_database()
 # cj.db.drop_all()
-cj.db.create_all()
+# cj.db.create_all()
 
-# arxiv_ids = cj.crawl_recent_arxiv_paper(year=2025, month=1, day=1, max_result=10)
+arxiv_ids = cj.crawl_recent_arxiv_paper(year=2020, month=1, day=1, max_result=1000)
 
-arxiv_ids = {'2412.17767v2'}
+# print(arxiv_ids)
+# print(len(arxiv_ids))
 
-# cj.initialize_paper_tasks(arxiv_ids=arxiv_ids)
+# arxiv_ids = {'2011.08843v2'}
 
-print(f"arxiv ids: {arxiv_ids}")
+cj.initialize_paper_tasks(arxiv_ids=arxiv_ids)
 
-cj.download_papers(arxiv_ids=arxiv_ids)
+# print(f"arxiv ids: {arxiv_ids}")
 
-cj.process_paper_graphs(arxiv_ids=arxiv_ids)
+# cj.download_papers(arxiv_ids=arxiv_ids)
+
+# cj.process_paper_graphs(arxiv_ids=arxiv_ids)
 # cj.process_paper_paragraphs(arxiv_ids=arxiv_ids)
 
 # cj.process_paper_authors(arxiv_ids=arxiv_ids)
