@@ -7,6 +7,7 @@ import psycopg2
 from psycopg2 import errorcodes, errors
 import pytz
 import json
+from arxiv import UnexpectedEmptyPageError
 
 import datetime
 import arxiv
@@ -44,28 +45,39 @@ class CrawlerJob:
     
     def drop_task_database(self):
         self.tdb.drop_paper_task_table()
-            
+    
 
     def crawl_recent_arxiv_paper(self, year, month, day, max_result=100):
         """
-        Crawl arxiv paper ids of papers published after the given date
-        - year: int
-        - month: int
-        - dat: int
+        Crawl arxiv paper ids of papers published after the given date.
+        Stops when either:
+          •  the paper's published date is older than cutoff, or
+          •  arXiv returns an empty page (no more results).
         """
-
         cutoff = datetime.datetime(year, month, day, tzinfo=pytz.UTC)
         search = arxiv.Search(
-            query    = "cat:cs.AI",
-            sort_by  = arxiv.SortCriterion.SubmittedDate,
-            sort_order = arxiv.SortOrder.Descending,
+            query       = "cat:cs.AI",
+            sort_by     = arxiv.SortCriterion.SubmittedDate,
+            sort_order  = arxiv.SortOrder.Descending,
             max_results = max_result
         )
+
         recent_ids = []
-        for result in search.results():
-            if result.published < cutoff:
-                break
-            recent_ids.append(result.get_short_id())
+        iterator = search.results()
+
+        try:
+            for result in iterator:
+                # stop early if we’ve gone past the cutoff
+                if result.published < cutoff:
+                    break
+                recent_ids.append(result.get_short_id())
+                # optional: break if we hit our max
+                if len(recent_ids) >= max_result:
+                    break
+
+        except UnexpectedEmptyPageError:
+            # arXiv had no entries on the next page—just stop
+            pass
 
         return recent_ids
 
@@ -176,6 +188,26 @@ class CrawlerJob:
             self.tdb.set_states(paper_arxiv_id=arxiv_id, paragraph=True)
 
 
+    def select_unproceeded_task(self, task_type, max_results=100):
+
+        valid_types = {
+            'downloaded',
+            'paper_graph',
+            'paragraph',
+            'citation',
+            'semantic_scholar',
+        }
+        if task_type not in valid_types:
+            raise ValueError(f"Invalid task_type: {task_type!r}")
+
+        
+        sql = f"""
+        SELECT paper_arxiv_id FROM paper_task WHERE {task_type} = FALSE ORDER BY id ASC LIMIT %s
+        """
+
+        self.cur.execute(sql, (max_results,))
+        rows = self.cur.fetchall()
+        return [row[0] for row in rows]
 
 
     def process_paper_citations(self, arxiv_ids):
