@@ -1,5 +1,7 @@
 import openreview
 import arxiv
+import os
+import re
 from arxiv import UnexpectedEmptyPageError
 import pandas as pd
 from datetime import datetime
@@ -175,29 +177,13 @@ class sqlDatabaseConstructor:
                 paper_id = submission.id
                 # get revisions and their time
                 revisions = {}
-                all_diffs = []
                 note_edits = self.client.get_note_edits(note_id=paper_id)
                 try:
-                    original_pdf = "original.pdf"
-                    modified_pdf = "modified.pdf"
-                    filter_list = ["Under review as a conference paper at ICLR 2025", "Published as a conference paper at ICLR 2025"]
-                    original_id = None
-                    modified_id = None
-                    for idx, note in enumerate(note_edits):
+                    for note in note_edits:
                         revisions[note.id] = {
                             "Time": datetime.fromtimestamp(note.cdate / 1000).strftime("%Y-%m-%d %H:%M:%S"),
                             "Title": note.invitation.split('/')[-1]
                         }
-                        original_id = modified_id
-                        modified_id = note.id
-                        if idx > 1:
-                            formatted_diffs = {
-                                "Time": datetime.fromtimestamp(note.cdate / 1000).strftime("%Y-%m-%d %H:%M:%S")
-                            }
-                            get_pdf(original_id, original_pdf)
-                            get_pdf(modified_id, modified_pdf)
-                            formatted_diffs["Content"] = connect_diffs_and_paragraphs(original_pdf, modified_pdf, filter_list)
-                            all_diffs.append(formatted_diffs)
                 except:
                     pass
                 # get title
@@ -211,7 +197,70 @@ class sqlDatabaseConstructor:
                 # get paper's pdf
                 pdf = submission.content["pdf"]["value"]
                 # add to paper table
-                self.db.insert_paper(venue_id, paper_id, title, abstract, author_ids, fullnames, decision, pdf, revisions, all_diffs)
+                self.db.insert_paper(venue_id, paper_id, title, abstract, author_ids, fullnames, decision, pdf, revisions)
+    
+    def construct_revision_table(self, venue_id, filter_list, pdf_dir):
+        # create sql table
+        self.db.create_revisions_table()
+        # get all submissions
+        submissions = self.client.get_all_notes(invitation=f'{venue_id}/-/Submission')
+        for submission in tqdm(submissions):
+            # get paper decision and remove withdrawn papers
+            decision = submission.content["venueid"]["value"].split('/')[-1]
+            if decision == "Withdrawn_Submission":
+                continue
+            else:
+                # get paper openreview id
+                paper_id = submission.id
+                # get revisions and their time
+                revisions = {}
+                # all_diffs = []
+                note_edits = self.client.get_note_edits(note_id=paper_id)
+                try:
+                    for note in note_edits:
+                        revisions[note.id] = {
+                            "Time": datetime.fromtimestamp(note.cdate / 1000).strftime("%Y-%m-%d %H:%M:%S"),
+                            "Title": note.invitation.split('/')[-1]
+                        }
+                    # sorted by time
+                    sorted_revisions = sorted(revisions.items(), key=lambda x: datetime.strptime(x[1]["Time"], "%Y-%m-%d %H:%M:%S"))
+                    num_revision = len(sorted_revisions)
+                    
+                    if num_revision <= 1:
+                        continue
+                    else:
+                        # original_pdf = "original.pdf"
+                        # modified_pdf = "modified.pdf"
+                        original_id = None
+                        modified_id = None
+                        
+                        for idx, revision in enumerate(sorted_revisions):
+
+                            original_id = modified_id
+                            modified_id = revision[0]
+                            original_pdf = str(pdf_dir)+str(original_id)+".pdf"
+                            modified_pdf = str(pdf_dir)+str(modified_id)+".pdf"
+                            if idx > 1:
+                                time = revision[1]["Time"]
+                                
+                                # get_pdf(original_id, original_pdf)
+                                # get_pdf(modified_id, modified_pdf)
+                                content = connect_diffs_and_paragraphs(original_pdf, modified_pdf, filter_list)
+                                
+                                self.db.insert_revision(venue_id, paper_id, original_id, modified_id, content, time)
+                                if os.path.exists(original_pdf):
+                                    os.remove(original_pdf)
+                                    print(original_pdf+" Deleted")
+                                else:
+                                    print("File not exist")
+                                if idx == num_revision - 1:
+                                    if os.path.exists(modified_pdf):
+                                        os.remove(modified_pdf)
+                                        print(modified_pdf+" Deleted")
+                                    else:
+                                        print("File not exist")
+                except:
+                    pass
     
     def _title_cleaner(self, title: str) -> str:
         """
@@ -275,3 +324,44 @@ class sqlDatabaseConstructor:
                 arxiv_id = self._search_title_with_name(title, author_names[0])
                 # insert into openreview_arxiv table
                 self.db.insert_openreview_arxiv(openreview_id, arxiv_id, title, author_names)
+    
+    def construct_revisions_reviews_table(self):
+        # create sql table
+        self.db.create_revisions_reviews_table()
+        
+        # get reviews
+        reviews = self.db.get_all_reviews() # id, venue, paper_openreview_id, review_openreview_id, replyto_openreview_id, time 
+        reviews_df = pd.DataFrame(reviews, columns=["id", "venue", "paper_openreview_id", "review_openreview_id", "replyto_openreview_id", "time"])
+        
+        # get revisions
+        revisions = self.db.get_all_revisions() # id, venue, paper_openreview_id, original_openreivew_id, modified_openreview_id, time
+        revisions_df = pd.DataFrame(revisions, columns=["id", "venue", "paper_openreview_id", "original_openreivew_id", "modified_openreview_id", "time"])
+
+        # get all unique paper_id in revisions_df
+        unique_paper_ids = revisions_df['paper_openreview_id'].unique()
+
+        # match revisions with reviews
+        for paper_id in tqdm(unique_paper_ids):
+            filtered_revisions_df = revisions_df[revisions_df['paper_openreview_id'] == paper_id]
+            filtered_reviews_df = reviews_df[reviews_df['paper_openreview_id'] == paper_id]
+            start_idx = 0
+            for revision in filtered_revisions_df.itertuples():
+                venue_id = revision.venue
+                original_id = revision.original_openreivew_id
+                modified_id = revision.modified_openreview_id
+                time = revision.time
+                reviews = []
+                revision_time = datetime.strptime(time, "%Y-%m-%d %H:%M:%S")
+                for review in filtered_reviews_df.iloc[start_idx:].itertuples():
+                    review_time = datetime.strptime(review.time, "%Y-%m-%d %H:%M:%S")
+                    if review_time <= revision_time:
+                        review_example = {
+                            "review_openreview_id": review.review_openreview_id,
+                            "replyto_openreview_id": review.replyto_openreview_id,
+                            "time": review.time
+                        }
+                        reviews.append(review_example)
+                        start_idx += 1
+                    else:
+                        break
+                self.db.insert_revision_reviews(venue_id, paper_id, original_id, modified_id, reviews, time)
