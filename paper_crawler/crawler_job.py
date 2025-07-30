@@ -116,6 +116,7 @@ class CrawlerJob:
         for arxiv_id in arxiv_ids:
             try:
                 self.md.download_arxiv(input=arxiv_id, input_type = "id", output_type="both", dest_dir=self.dest_dir)
+                print(f"paper with id {arxiv_id} downloaded")
                 self.tdb.set_states(downloaded=True, paper_arxiv_id=arxiv_id)
                 downloaded_paper_ids.append(arxiv_id)
             except RuntimeError as e:
@@ -188,6 +189,27 @@ class CrawlerJob:
             self.tdb.set_states(paper_arxiv_id=arxiv_id, paragraph=True)
 
 
+    def select_proceeded_task(self, task_type, max_results=100):
+
+        valid_types = {
+            'downloaded',
+            'paper_graph',
+            'paragraph',
+            'citation',
+            'semantic_scholar',
+        }
+        if task_type not in valid_types:
+            raise ValueError(f"Invalid task_type: {task_type!r}")
+
+        
+        sql = f"""
+        SELECT paper_arxiv_id FROM paper_task WHERE {task_type} = TRUE ORDER BY id ASC LIMIT %s
+        """
+
+        self.tdb.cur.execute(sql, (max_results,))
+        rows = self.tdb.cur.fetchall()
+        return [row[0] for row in rows]
+    
     def select_unproceeded_task(self, task_type, max_results=100):
 
         valid_types = {
@@ -205,9 +227,10 @@ class CrawlerJob:
         SELECT paper_arxiv_id FROM paper_task WHERE {task_type} = FALSE ORDER BY id ASC LIMIT %s
         """
 
-        self.cur.execute(sql, (max_results,))
-        rows = self.cur.fetchall()
+        self.tdb.cur.execute(sql, (max_results,))
+        rows = self.tdb.cur.fetchall()
         return [row[0] for row in rows]
+
 
 
     def process_paper_citations(self, arxiv_ids):
