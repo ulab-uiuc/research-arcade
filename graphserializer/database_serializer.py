@@ -107,3 +107,16 @@ class DatabaseSerializer:
         with open(output_path, 'w', encoding='utf-8') as f:
             f.write("\n".join(xml_lines))
         return output_path
+
+    def all_to_csv(self, table_name, file_name, dir_path, max_results=100):
+
+        sql = f"""
+        SELECT * FROM {table_name}
+        LIMIT {max_results}
+        """
+
+        dest_path = f"{dir_path}/{file_name}"
+
+        op = self.query_to_csv_file(query=sql, output_path=dest_path)
+
+        return op
