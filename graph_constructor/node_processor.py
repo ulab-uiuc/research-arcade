@@ -225,12 +225,14 @@ class NodeConstructor:
 
         figure_jsons = file_json['figure']
 
+        #TODO here we change the way we store file path
+        # We can test it alongside with new figure detection method
         for figure_json in figure_jsons:
             label = figure_json['label']
             caption = figure_json['caption']
             file_name = figure_json['figure_paths'][0]
-            file_name = file_name.split('/')[-1]
-            path = f"{dir_path}/output/figures/figures_{file_name}"
+            # path = f"{dir_path}/output/figures/figures_{file_name}"
+            path = file_name
 
             figure_id = self.db.insert_figure(paper_arxiv_id=arxiv_id, path=path, caption=caption, label=label, name=file_name)
 
