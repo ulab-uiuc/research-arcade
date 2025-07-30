@@ -1,4 +1,5 @@
 import re
+import os
 import difflib
 import requests
 from tqdm import tqdm
@@ -24,7 +25,10 @@ def get_pdf(id, pdf_name):
 
 # extract text from pdf
 def extract_text_from_pdf(pdf_path):
-    return extract_text(pdf_path)
+    if os.path.isfile(pdf_path):
+        return extract_text(pdf_path)
+    else:
+        return None
 
 # compare the differences between two pdfs
 def compare_texts(text1, text2):
@@ -64,13 +68,11 @@ def parse_diff(diff_text):
             current_diff['context_before'] = current_diff['context_before'] + line.strip() + " "
         elif line.strip() != "" and (current_diff['original_lines'] != "" or current_diff['modified_lines'] != ""):
             current_diff['context_after'] = current_diff['context_after'] + line.strip() + " "
-            
-    print("successfully build current_diff")
     
     return all_diff
 
 # more than 3 math-related symbols and less than 10 characters
-def check_str_regex(s: str) -> bool: 
+def check_str_regex(s: str) -> bool:
     math_symbol_pattern = r'[0-9+\-*/=]'
     math_count = len(re.findall(math_symbol_pattern, s))
     letter_count = len(re.findall(r'[A-Za-z]', s))
@@ -96,7 +98,7 @@ def preprocess_lines_in_paragraphs(lines: list) -> list:
     return formatted_lines
 
 # finally format pdf into paragraphs
-def extract_paragraphs_from_pdf(pdf_path: Path, filter_list: Optional[List[str]] = None):
+def extract_paragraphs_from_pdf_new(pdf_path: Path, filter_list: Optional[List[str]] = None):
     # extract all the text from pdf
     full_text = extract_text(pdf_path)
     
@@ -117,10 +119,10 @@ def extract_paragraphs_from_pdf(pdf_path: Path, filter_list: Optional[List[str]]
             print("can not find abstract")
     end = len(formatted_lines)
     try:
-        end = formatted_lines.index("Appendix")
+        end = formatted_lines.index("References")
     except:
         try:
-            end = formatted_lines.index("APPENDIX")
+            end = formatted_lines.index("REFERENCES")
         except:
             print("can not find appendix")
 
@@ -198,11 +200,11 @@ def extract_paragraphs_from_pdf(pdf_path: Path, filter_list: Optional[List[str]]
             current_section = "Abstract"
             structured_content[current_section] = []
         # reference
-        if line == "REFERENCES" or line == "References":
-            is_chapter = True
-            # before_section = current_section
-            current_section = "References"
-            structured_content[current_section] = []
+        # if line == "REFERENCES" or line == "References":
+        #     is_chapter = True
+        #     # before_section = current_section
+        #     current_section = "References"
+        #     structured_content[current_section] = []
         # chapter
         if before_context.isdigit() and len(line) <= 20:
             is_chapter = True
@@ -234,9 +236,16 @@ def extract_paragraphs_from_pdf(pdf_path: Path, filter_list: Optional[List[str]]
 def connect_diffs_and_paragraphs(original_pdf_path: Path, modified_pdf_path: Path, filter_list: Optional[List[str]] = None):
     # extract text
     original_text = extract_text_from_pdf(original_pdf_path)
-    print("Successfully extract text from the original pdf")
+    if original_text is not None:
+        print("Successfully extract text from the original pdf")
+    else:
+        print("File "+str(original_pdf_path)+" not existed")
     modified_text = extract_text_from_pdf(modified_pdf_path)
-    print("Successfully extract text from the modified pdf")
+    if modified_text is not None:
+        print("Successfully extract text from the modified pdf")
+    else:
+        print("File "+str(modified_pdf_path)+" not existed")
+    
 
     # get the differences
     all_diff_result = compare_texts(original_text, modified_text)
@@ -247,52 +256,141 @@ def connect_diffs_and_paragraphs(original_pdf_path: Path, modified_pdf_path: Pat
     print("Successfully get formatted differences")
     
     # get the structured paragraphs from modified paper
-    structured_paragraphs_from_modified = extract_paragraphs_from_pdf(modified_pdf_path, filter_list)
+    structured_paragraphs_from_modified = extract_paragraphs_from_pdf_new(modified_pdf_path, filter_list)
     print("Successfully extract paragraphs from the modified pdf")
     
     # connect differences with paragraphs
     all_diff_loc = []
     for diff in formatted_diff_result:
+        diff_context = diff["modified_lines"]
         diff_before_context = diff["context_before"]
         diff_after_context = diff["context_after"]
         idx = 0
-        before_list = []
-        after_list = []
+        paragraph_list = {
+            "paragraph_before": {
+                "section": "",
+                "paragraph_idx": 1,
+                "paragraph_content": ""
+            },
+            "paragraph_current": {
+                "section": "",
+                "paragraph_idx": 2,
+                "paragraph_content": ""
+            },
+            "paragraph_after": {
+                "section": "",
+                "paragraph_idx": 3,
+                "paragraph_content": ""
+            },
+        }
+        total_diff_examples = []
         for key, val in zip(structured_paragraphs_from_modified.keys(), structured_paragraphs_from_modified.values()):
             for paragraph in val:
                 idx = idx + 1
-                if diff_before_context[:10] in paragraph:
-                    diff_sample = {}
-                    diff_sample["context_before"] = diff["context_before"]
-                    diff_sample["context_after"] = diff["context_after"]
-                    diff_sample["original_lines"] = diff["original_lines"]
-                    diff_sample["modified_lines"] = diff["modified_lines"]
-                    diff_sample["section"] = key
-                    diff_sample["paragraph_idx"] = idx
-                    before_list.append(diff_sample)
-                if diff_after_context[:10] in paragraph:
-                    diff_sample = {}
-                    diff_sample["context_before"] = diff["context_before"]
-                    diff_sample["context_after"] = diff["context_after"]
-                    diff_sample["original_lines"] = diff["original_lines"]
-                    diff_sample["modified_lines"] = diff["modified_lines"]
-                    diff_sample["section"] = key
-                    diff_sample["paragraph_idx"] = idx
-                    after_list.append(diff_sample)
-        if len(before_list) == 1:
-            all_diff_loc.append(before_list[0])
-        elif len(after_list) == 1:
-            all_diff_loc.append(after_list[0])
-        elif len(before_list) > 1 and len(after_list) > 1:
+                if idx == 1:
+                    paragraph_list["paragraph_before"]["section"] = key
+                    paragraph_list["paragraph_before"]["paragraph_idx"] = idx
+                    paragraph_list["paragraph_before"]["paragraph_content"] = paragraph
+                elif idx == 2:
+                    paragraph_list["paragraph_current"]["section"] = key
+                    paragraph_list["paragraph_current"]["paragraph_idx"] = idx
+                    paragraph_list["paragraph_current"]["paragraph_content"] = paragraph
+                elif idx == 3:
+                    paragraph_list["paragraph_after"]["section"] = key
+                    paragraph_list["paragraph_after"]["paragraph_idx"] = idx
+                    paragraph_list["paragraph_after"]["paragraph_content"] = paragraph
+                    if diff_context[:10] in paragraph_list["paragraph_current"]["paragraph_content"]:
+                        diff_sample = {}
+                        diff_sample["context_before"] = diff["context_before"]
+                        diff_sample["context_after"] = diff["context_after"]
+                        diff_sample["original_lines"] = diff["original_lines"]
+                        diff_sample["modified_lines"] = diff["modified_lines"]
+                        diff_sample["section"] = paragraph_list["paragraph_current"]["section"]
+                        diff_sample["paragraph_idx"] = paragraph_list["paragraph_current"]["paragraph_idx"]
+                        # check diff before context
+                        if diff_before_context[:10] in paragraph_list["paragraph_current"]["paragraph_content"]:
+                            diff_sample["before_section"] = paragraph_list["paragraph_current"]["section"]
+                            diff_sample["before_paragraph_idx"] = paragraph_list["paragraph_current"]["paragraph_idx"]
+                        elif diff_before_context[:10] in paragraph_list["paragraph_before"]["paragraph_content"]:
+                            diff_sample["before_section"] = paragraph_list["paragraph_before"]["section"]
+                            diff_sample["before_paragraph_idx"] = paragraph_list["paragraph_before"]["paragraph_idx"]
+                        else:
+                            diff_sample["before_section"] = None
+                            diff_sample["before_paragraph_idx"] = None
+                        # check diff after context
+                        if diff_after_context[:10] in paragraph_list["paragraph_current"]["paragraph_content"]:
+                            diff_sample["after_section"] = paragraph_list["paragraph_current"]["section"]
+                            diff_sample["after_paragraph_idx"] = paragraph_list["paragraph_current"]["paragraph_idx"]
+                        elif diff_after_context[:10] in paragraph_list["paragraph_after"]["paragraph_content"]:
+                            diff_sample["after_section"] = paragraph_list["paragraph_after"]["section"]
+                            diff_sample["after_paragraph_idx"] = paragraph_list["paragraph_after"]["paragraph_idx"]
+                        else:
+                            diff_sample["after_section"] = None
+                            diff_sample["after_paragraph_idx"] = None
+                        total_diff_examples.append(diff_sample)
+                elif idx > 3:
+                    # move the list
+                    paragraph_list["paragraph_before"]["section"] = paragraph_list["paragraph_current"]["section"]
+                    paragraph_list["paragraph_before"]["paragraph_idx"] = paragraph_list["paragraph_current"]["paragraph_idx"]
+                    paragraph_list["paragraph_before"]["paragraph_content"] = paragraph_list["paragraph_current"]["paragraph_content"]
+                    
+                    paragraph_list["paragraph_current"]["section"] = paragraph_list["paragraph_after"]["section"]
+                    paragraph_list["paragraph_current"]["paragraph_idx"] = paragraph_list["paragraph_after"]["paragraph_idx"]
+                    paragraph_list["paragraph_current"]["paragraph_content"] = paragraph_list["paragraph_after"]["paragraph_content"]
+                    
+                    paragraph_list["paragraph_after"]["section"] = key
+                    paragraph_list["paragraph_after"]["paragraph_idx"] = idx
+                    paragraph_list["paragraph_after"]["paragraph_content"] = paragraph
+                    
+                    # start match the differences
+                    if diff_context[:10] in paragraph_list["paragraph_current"]["paragraph_content"]:
+                        diff_sample = {}
+                        diff_sample["context_before"] = diff["context_before"]
+                        diff_sample["context_after"] = diff["context_after"]
+                        diff_sample["original_lines"] = diff["original_lines"]
+                        diff_sample["modified_lines"] = diff["modified_lines"]
+                        diff_sample["section"] = paragraph_list["paragraph_current"]["section"]
+                        diff_sample["paragraph_idx"] = paragraph_list["paragraph_current"]["paragraph_idx"]
+                        # check diff before context
+                        if diff_before_context[:10] in paragraph_list["paragraph_current"]["paragraph_content"]:
+                            diff_sample["before_section"] = paragraph_list["paragraph_current"]["section"]
+                            diff_sample["before_paragraph_idx"] = paragraph_list["paragraph_current"]["paragraph_idx"]
+                        elif diff_before_context[:10] in paragraph_list["paragraph_before"]["paragraph_content"]:
+                            diff_sample["before_section"] = paragraph_list["paragraph_before"]["section"]
+                            diff_sample["before_paragraph_idx"] = paragraph_list["paragraph_before"]["paragraph_idx"]
+                        else:
+                            diff_sample["before_section"] = None
+                            diff_sample["before_paragraph_idx"] = None
+                        # check diff after context
+                        if diff_after_context[:10] in paragraph_list["paragraph_current"]["paragraph_content"]:
+                            diff_sample["after_section"] = paragraph_list["paragraph_current"]["section"]
+                            diff_sample["after_paragraph_idx"] = paragraph_list["paragraph_current"]["paragraph_idx"]
+                        elif diff_after_context[:10] in paragraph_list["paragraph_after"]["paragraph_content"]:
+                            diff_sample["after_section"] = paragraph_list["paragraph_after"]["section"]
+                            diff_sample["after_paragraph_idx"] = paragraph_list["paragraph_after"]["paragraph_idx"]
+                        else:
+                            diff_sample["after_section"] = None
+                            diff_sample["after_paragraph_idx"] = None
+                        total_diff_examples.append(diff_sample)
+        if len(total_diff_examples) == 1:
+            all_diff_loc.append(total_diff_examples[0])
+        elif len(total_diff_examples) > 1:
             is_find = False
-            for before_dict in before_list:
-                for after_dict in after_list:
-                    if before_dict["paragraph_idx"] == after_dict["paragraph_idx"]:
-                        all_diff_loc.append(before_dict)
+            # before and after match
+            for diff_example in total_diff_examples:
+                if diff_sample["before_section"] is not None and diff_sample["after_section"] is not None:
+                    all_diff_loc.append(diff_example)
+                    is_find = True
+                    break
+            if not is_find:
+                # before or after match
+                for diff_example in total_diff_examples:
+                    if diff_sample["before_section"] is not None or diff_sample["after_section"] is not None:
+                        all_diff_loc.append(diff_example)
                         is_find = True
                         break
-                if is_find:
-                    break    
+                if not is_find:
+                    all_diff_loc.append(total_diff_examples[0])   
                     
     print("Successfully connect differences with paragraphs")
                     
