@@ -8,8 +8,8 @@ import re
 import json
 import time
 import os
-
 from dotenv import load_dotenv
+from typing import List, Tuple
 
 class NodeConstructor:
 
@@ -86,19 +86,19 @@ class NodeConstructor:
         self.db.insert_institution(name=name, location=location)
 
     # Construct figure node given the paper id, index of figure (?), path to figure and caption/label
-    def figure_constructor(self, paper_id, figure_index, path, caption=None):
-        self.db.insert_figure(paper_arxiv_id=paper_id, figure_index=figure_index, path=path, caption=caption)
+    # def figure_constructor(self, paper_id, figure_index, path, caption=None):
+    #     self.db.insert_figure(paper_arxiv_id=paper_id, figure_index=figure_index, path=path, caption=caption)
 
     # Construct tabel node given the paper id, index of figure (?), path to figure and caption/label
-    def figure_constructor(self, paper_id, table_index, path, caption=None):
-        self.db.insert_figure(paper_arxiv_id=paper_id, table_index=table_index, path=path, caption=caption)
+    # def figure_constructor(self, paper_id, table_index, path, caption=None):
+    #     self.db.insert_figure(paper_arxiv_id=paper_id, table_index=table_index, path=path, caption=caption)
 
     # Construct the paragraph given the paper id, index of paragraph, index of section, and the arxiv id that this paper belongs to
-    def paragraph_constructor(self, paragraph, paragraph_index, section_index, arxiv_id):
+    # def paragraph_constructor(self, paragraph, paragraph_index, section_index, arxiv_id):
 
 
 
-        pass
+    #     pass
 
     '''
     Here, not that in the future when we process papers, we can authomatically add figures and tables into database and construct the papers into it
@@ -225,16 +225,22 @@ class NodeConstructor:
 
         figure_jsons = file_json['figure']
 
-        #TODO here we change the way we store file path
-        # We can test it alongside with new figure detection method
+        # TODO: recursively add figures
+        # Iterate through subfigures first
+        # Extremely important
         for figure_json in figure_jsons:
-            label = figure_json['label']
-            caption = figure_json['caption']
-            file_name = figure_json['figure_paths'][0]
+            # label = figure_json['label']
+            # caption = figure_json['caption']
+            # file_name = figure_json['figure_paths'][0]
             # path = f"{dir_path}/output/figures/figures_{file_name}"
-            path = file_name
+            # path = file_name
 
-            figure_id = self.db.insert_figure(paper_arxiv_id=arxiv_id, path=path, caption=caption, label=label, name=file_name)
+            figures = self.figure_iteration_recursive(figure_json=figure_json)
+
+            for figure in figures:
+                path, caption, label = figure
+                print(path, caption, label)
+                figure_id = self.db.insert_figure(paper_arxiv_id=arxiv_id, path=path, caption=caption, label=label, name=None)
 
             self.db.insert_paper_figure(paper_arxiv_id=arxiv_id, figure_id=figure_id)
 
@@ -305,6 +311,32 @@ class NodeConstructor:
         print(f"Time of searching arxiv id of cited paper (if not provided) and adding citation information to database: {times['citaion_extraction']}")
 
         return True
+    
+    def figure_iteration_recursive(self, figure_json):
+
+        # Create a set of figures along with the
+        # list represents (path, caption, label)
+        path_to_info: List[Tuple[str, str, str]] = []
+
+        # First iterate through parent, then go into the children
+
+        def figure_iteration(figure_json):
+            nonlocal path_to_info
+
+            if not figure_json:
+                return
+
+            path = figure_json['figure_paths'][0]
+            caption = figure_json['caption']
+            label = figure_json['label']
+            path_to_info.append((path, caption, label))
+            subfigures = figure_json['subfigures']
+            
+            for subfigure in subfigures:
+                figure_iteration(subfigure)
+        
+        figure_iteration(figure_json=figure_json)
+        return path_to_info
 
     def process_paragraphs(self, dir_path):
         """
