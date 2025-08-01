@@ -695,7 +695,10 @@ class Database:
             "authors",
             "institutions",
             "papers",
-            "sections"
+            "sections",
+            "paragraphs",
+            "paragraph_citations",
+            "paragraph_references"
         ]
         for tbl in tables:
             # Use IF EXISTS to avoid errors if a table is already gone

@@ -228,21 +228,24 @@ class NodeConstructor:
         # TODO: recursively add figures
         # Iterate through subfigures first
         # Extremely important
+        # print(f"figure_jsons: {figure_jsons}")
         for figure_json in figure_jsons:
             # label = figure_json['label']
             # caption = figure_json['caption']
             # file_name = figure_json['figure_paths'][0]
             # path = f"{dir_path}/output/figures/figures_{file_name}"
             # path = file_name
+            # print(f"figure_json: {figure_json}")
 
             figures = self.figure_iteration_recursive(figure_json=figure_json)
 
             for figure in figures:
                 path, caption, label = figure
-                print(path, caption, label)
+                # print("Figure tuple:")
+                # print(path, caption, label)
                 figure_id = self.db.insert_figure(paper_arxiv_id=arxiv_id, path=path, caption=caption, label=label, name=None)
 
-            self.db.insert_paper_figure(paper_arxiv_id=arxiv_id, figure_id=figure_id)
+                self.db.insert_paper_figure(paper_arxiv_id=arxiv_id, figure_id=figure_id)
 
 
             # We do the same thing to tables
@@ -325,11 +328,11 @@ class NodeConstructor:
 
             if not figure_json:
                 return
-
-            path = figure_json['figure_paths'][0]
-            caption = figure_json['caption']
-            label = figure_json['label']
-            path_to_info.append((path, caption, label))
+            if figure_json['figure_paths']:
+                path = figure_json['figure_paths'][0]
+                caption = figure_json['caption']
+                label = figure_json['label']
+                path_to_info.append((path, caption, label))
             subfigures = figure_json['subfigures']
             
             for subfigure in subfigures:
