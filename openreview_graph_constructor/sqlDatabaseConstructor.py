@@ -404,44 +404,44 @@ class sqlDatabaseConstructor:
                 # insert into openreview_arxiv table
                 self.db.insert_openreview_arxiv(openreview_id, arxiv_id, title, author_names)
     
-    # def construct_revisions_reviews_table(self):
-    #     # create sql table
-    #     self.db.create_revisions_reviews_table()
+    def construct_papers_revisions_reviews_table(self):
+        # create sql table
+        self.db.create_papers_revisions_reviews_table()
         
-    #     # get reviews
-    #     reviews_df = self.db.get_all_reviews() # venue, paper_openreview_id, review_openreview_id, replyto_openreview_id, time 
+        # get reviews
+        papers_reviews_df = self.db.get_all_papers_reviews()
         
-    #     # get revisions
-    #     revisions_df = self.db.get_all_revisions() # venue, paper_openreview_id, original_openreivew_id, modified_openreview_id, time
+        # get revisions
+        paper_revisions_df = self.db.get_all_papers_revisions()
 
-    #     # get all unique paper_id in revisions_df
-    #     unique_paper_ids = revisions_df['paper_openreview_id'].unique()
+        # get all unique paper_id in revisions_df
+        unique_paper_ids = paper_revisions_df['paper_openreview_id'].unique()
 
-    #     # match revisions with reviews
-    #     for paper_id in tqdm(unique_paper_ids):
-    #         filtered_revisions_df = revisions_df[revisions_df['paper_openreview_id'] == paper_id]
-    #         filtered_reviews_df = reviews_df[reviews_df['paper_openreview_id'] == paper_id]
-    #         start_idx = 0
-    #         for revision in filtered_revisions_df.itertuples():
-    #             venue = revision.venue
-    #             original_id = revision.original_openreivew_id
-    #             modified_id = revision.modified_openreview_id
-    #             time = revision.time
-    #             reviews = []
-    #             revision_time = datetime.strptime(time, "%Y-%m-%d %H:%M:%S")
-    #             for review in filtered_reviews_df.iloc[start_idx:].itertuples():
-    #                 review_time = datetime.strptime(review.time, "%Y-%m-%d %H:%M:%S")
-    #                 if review_time <= revision_time:
-    #                     review_example = {
-    #                         "review_openreview_id": review.review_openreview_id,
-    #                         "replyto_openreview_id": review.replyto_openreview_id,
-    #                         "time": review.time
-    #                     }
-    #                     reviews.append(review_example)
-    #                     start_idx += 1
-    #                 else:
-    #                     break
-    #             self.db.insert_revision_reviews(venue, paper_id, original_id, modified_id, reviews, time)
+        # match revisions with reviews
+        for paper_id in tqdm(unique_paper_ids):
+            revisions = paper_revisions_df[paper_revisions_df['paper_openreview_id'] == paper_id]
+            revisions_sorted = revisions.sort_values(by='time', ascending=True)
+            
+            reviews = papers_reviews_df[papers_reviews_df['paper_openreview_id'] == paper_id]
+            reviews_sorted = reviews.sort_values(by='time', ascending=True)
+            
+            start_idx = 0
+            for revision in revisions_sorted.itertuples():
+                venue = revision.venue
+                
+                revision_id = revision.revision_openreview_id
+                revision_time = revision.time
+                _revision_time = datetime.strptime(revision_time, "%Y-%m-%d %H:%M:%S")
+                for review in reviews_sorted.iloc[start_idx:].itertuples():
+                    review_id = review.review_openreview_id
+                    review_time = review.time
+                    _review_time = datetime.strptime(review_time, "%Y-%m-%d %H:%M:%S")
+                    if _review_time <= _revision_time:
+                        self.db.insert_paper_revision_review(venue, paper_id, revision_id, review_id, revision_time, review_time)
+                        # print(venue, paper_id, revision_id, review_id, revision_time, review_time)
+                        start_idx += 1
+                    else:
+                        break
     
     # node          
     def insert_node(self, table: str, node_features: dict):
