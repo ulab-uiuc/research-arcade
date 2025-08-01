@@ -985,12 +985,12 @@ def parse_figureEnv(node: LatexEnvironmentNode) -> Dict[str, Any]:
             "figure_paths": [],
         }
         res2 = res
-        print(f"res before parsing: {res}")
-        extract_figure_info(node.nodelist, res)
-        print(f"parsed figure info: {res}")
+        # print(f"res before parsing: {res}")
+        # extract_figure_info(node.nodelist, res)
+        # print(f"parsed figure info: {res}")
         extract_figure_info_new(node.nodelist, res2)
-        print(f"parsed figure info with consideration of subfigures: {res2}")
-        return res
+        # print(f"parsed figure info with consideration of subfigures: {res2}")
+        return res2
     except Exception as e:
         print(e)
         return None
