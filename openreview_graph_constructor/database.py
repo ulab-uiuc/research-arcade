@@ -1065,47 +1065,45 @@ class Database:
         return res[0] if res else None
     
     # revisions -> papers -> reviews
-    # def create_revisions_reviews_table(self):
-    #     create_table_sql = """
-    #     CREATE TABLE IF NOT EXISTS revisions_reviews (
-    #         id SERIAL UNIQUE,
-    #         venue TEXT,
-    #         paper_openreview_id VARCHAR(255),
-    #         original_openreview_id VARCHAR(255),
-    #         revision_openreview_id VARCHAR(255) PRIMARY KEY,
-    #         reviews JSONB,
-    #         time TEXT
-    #     );
-    #     """
-    #     # Execute the SQL to create the table
-    #     self.cur.execute(create_table_sql)
-    #     print("Table 'revisions_reviews' created successfully.")
+    def create_papers_revisions_reviews_table(self):
+        create_table_sql = """
+        CREATE TABLE IF NOT EXISTS papers_revisions_reviews (
+            venue TEXT,
+            paper_openreview_id VARCHAR(255),
+            revision_openreview_id VARCHAR(255),
+            review_openreview_id VARCHAR(255),
+            revision_time TEXT,
+            review_time TEXT,
+            PRIMARY KEY (paper_openreview_id, revision_openreview_id, review_openreview_id)
+        );
+        """
+        # Execute the SQL to create the table
+        self.cur.execute(create_table_sql)
+        print("Table 'papers_revisions_reviews' created successfully.")
         
-    # def insert_revision_reviews(self, venue, paper_id, original_id, modified_id, reviews, time):
-    #     """
-    #     Insert a revision into the revisions table. Returns the inserted revision id or None if it fails.
-    #     - venue: str, the venue where the paper is submitted.
-    #     - paper_openreview_id: str, unique identifier for the paper.
-    #     - original_openreview_id: str, unique identifier for the revision's original paper.
-    #     - revision_openreview_id: str, unique identifier for the revision's original paper (primary key).
-    #     - reviews: json file.
-    #     - time: text
-    #     """
-    #     insert_sql = """
-    #     INSERT INTO revisions_reviews (venue, paper_openreview_id, original_openreview_id, revision_openreview_id, reviews, time)
-    #     VALUES (%s, %s, %s, %s, %s, %s)
-    #     ON CONFLICT (revision_openreview_id) DO NOTHING
-    #     RETURNING revision_openreview_id;
-    #     """
-    #     # clean reviews
-    #     cleaned_reviews = self._clean_json_content(reviews)
+    def insert_paper_revision_review(self, venue, paper_openreview_id, revision_openreview_id, review_openreview_id, revision_time, review_time):
+        """
+        Insert a revision into the revisions table. Returns the inserted revision id or None if it fails.
+        - venue: str, the venue where the paper is submitted.
+        - paper_openreview_id: str, unique identifier for the paper.
+        - original_openreview_id: str, unique identifier for the revision's original paper.
+        - revision_openreview_id: str, unique identifier for the revision's original paper (primary key).
+        - reviews: json file.
+        - time: text
+        """
+        insert_sql = """
+        INSERT INTO papers_revisions_reviews (venue, paper_openreview_id, revision_openreview_id, review_openreview_id, revision_time, review_time)
+        VALUES (%s, %s, %s, %s, %s, %s)
+        ON CONFLICT (paper_openreview_id, revision_openreview_id, review_openreview_id) DO NOTHING
+        RETURNING (paper_openreview_id, revision_openreview_id, review_openreview_id);
+        """
 
-    #     # Execute the insertion query
-    #     self.cur.execute(insert_sql, (venue, paper_id, original_id, modified_id, Json(cleaned_reviews), time))
+        # Execute the insertion query
+        self.cur.execute(insert_sql, (venue, paper_openreview_id, revision_openreview_id, review_openreview_id, revision_time, review_time))
         
-    #     # Get the inserted paper's openreview id (if any)
-    #     res = self.cur.fetchone()
-    #     return res[0] if res else None
+        # Get the inserted paper's openreview id (if any)
+        res = self.cur.fetchone()
+        return res[0] if res else None
     
     def _clean_json_content(self, content):
         """
