@@ -46,7 +46,7 @@ class TaskDatabase:
         """)
     
     def drop_paper_task_table(self):
-        ("""
+        self.cur.execute("""
         DROP TABLE IF EXISTS paper_task
         """)
 
