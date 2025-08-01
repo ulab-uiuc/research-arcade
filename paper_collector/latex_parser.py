@@ -14,8 +14,19 @@ from pylatexenc.latexwalker import (
     get_default_latex_context_db,
 )
 from pylatexenc.macrospec import MacroSpec
-
 from .utils import query_and_match
+
+_SUBFIGURE_ENVS = {
+    "figure",
+    "figure*",
+    "minipage",
+    "subfigure",          # from subcaption / subfigure packages
+    "wrapfigure",
+    "floatrow",
+    "sidewaysfigure",
+}
+
+_SUBFIGURE_MACROS = {"subfloat"}
 
 
 def clean_latex_code(latex_str: str) -> str:
@@ -190,7 +201,7 @@ def extract_section_info_from_ast(
                         flat_data.append(unknown_info)
                     # if unknown_info:
                     #    structured_data['unknown'].append(unknown_info)
-                
+
                 if node.environmentname == "abstract":
                     abstract = node.latex_verbatim()
                     if "\\input" in abstract:
@@ -846,8 +857,6 @@ def extract_figure_info(
                     # We can use this part to extract label-path pairs
                     # print(f"node of figure: {node}")
                     # print(f"node of figure verbatim: {node.latex_verbatim()}")
-                    print(f"node.macroname: {node.macroname}")
-                    print(f"node.latex_verbatim(): {node.latex_verbatim()}")
                     for argd, arg_node in zip(
                         node.nodeargd.argspec, node.nodeargd.argnlist
                     ):
@@ -872,6 +881,99 @@ def extract_figure_info(
         if hasattr(node, "nodelist"):
             extract_figure_info(node.nodelist, res)
 
+def is_implicit_subfigure(node):
+    has_graphic = False
+    has_caption_or_label = False
+
+    def walk(n):
+        nonlocal has_graphic, has_caption_or_label
+        if isinstance(n, LatexMacroNode):
+            if n.macroname == "includegraphics":
+                has_graphic = True
+            if n.macroname in ("caption", "label"):
+                has_caption_or_label = True
+        if hasattr(n, "nodelist") and n.nodelist:
+            for child in n.nodelist:
+                walk(child)
+    
+    walk(node)
+    return has_graphic and has_caption_or_label
+
+
+def extract_figure_info_new(
+    nodes: Union[list, LatexCharsNode, LatexMacroNode, LatexEnvironmentNode],
+    res: Dict[str, Any],
+):
+    """
+    Extract subfigures inside of the figure
+    """
+    if not nodes:
+        return
+
+    # Normalize to iterable
+    if not isinstance(nodes, (list, tuple)):
+        nodes = [nodes]
+
+    for node in nodes:
+        try:
+            # If this node itself is a subfigure-like container, create a fresh context
+            if isinstance(node, LatexEnvironmentNode) and node.environmentname in _SUBFIGURE_ENVS:
+                # New subfigure dict
+                subfigure = {
+                    "caption": "",
+                    "label": None,
+                    "figure_paths": [],
+                    "subfigures": [],
+                }
+                # Recurse into its content
+                extract_figure_info(node.nodelist, subfigure)
+                # Append to current result's subfigures
+                res.setdefault("subfigures", []).append(subfigure)
+                # Also continue into its children in case of nested structures
+                continue
+
+            # explicit subfloat-style macro
+            if isinstance(node, LatexMacroNode) and node.macroname in _SUBFIGURE_MACROS:
+                subfigure = {"caption": "", "label": None, "figure_paths": [], "subfigures": []}
+                # recurse into its arguments (often contains the inner content)
+                for arg in node.nodeargd.argnlist:
+                    extract_figure_info(arg, subfigure)
+                res.setdefault("subfigures", []).append(subfigure)
+                continue
+
+            # implicit grouping via heuristic
+            if (isinstance(node, LatexEnvironmentNode) or isinstance(node, LatexMacroNode)) and is_implicit_subfigure(node):
+                subfigure = {"caption": "", "label": None, "figure_paths": [], "subfigures": []}
+                extract_figure_info(getattr(node, "nodelist", []) or [], subfigure)
+                # also dive into macro args if any
+                if isinstance(node, LatexMacroNode):
+                    for arg in node.nodeargd.argnlist:
+                        extract_figure_info(arg, subfigure)
+                res.setdefault("subfigures", []).append(subfigure)
+                continue
+
+            if isinstance(node, LatexMacroNode):
+                if node.macroname == "caption":
+                    # If multiple captions appear, you can decide to keep first/last or concatenate
+                    # Here we overwrite so last wins; change if needed.
+                    res["caption"] = node.latex_verbatim()
+                elif node.macroname == "label":
+                    res["label"] = node.latex_verbatim()
+                elif node.macroname == "includegraphics":
+                    for argd, arg_node in zip(
+                        node.nodeargd.argspec, node.nodeargd.argnlist
+                    ):
+                        if argd == "{":
+                            path = arg_node.latex_verbatim().strip("{}")
+                            res.setdefault("figure_paths", []).append(path)
+
+            if hasattr(node, "nodelist"):
+                # Recurse into children for everything else
+                extract_figure_info(node.nodelist, res)
+        except Exception as e:
+            # You might want to replace prints with logging.
+            print(f"error processing node {node}: {e}")
+
 
 def parse_figureEnv(node: LatexEnvironmentNode) -> Dict[str, Any]:
     try:
@@ -882,9 +984,12 @@ def parse_figureEnv(node: LatexEnvironmentNode) -> Dict[str, Any]:
             "subfigures": [],
             "figure_paths": [],
         }
+        res2 = res
         print(f"res before parsing: {res}")
         extract_figure_info(node.nodelist, res)
         print(f"parsed figure info: {res}")
+        extract_figure_info_new(node.nodelist, res2)
+        print(f"parsed figure info with consideration of subfigures: {res2}")
         return res
     except Exception as e:
         print(e)
