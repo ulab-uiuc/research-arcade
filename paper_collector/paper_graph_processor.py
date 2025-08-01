@@ -78,7 +78,6 @@ class PaperGraphProcessor:
         os.makedirs(output_dir, exist_ok=True)
         os.makedirs(self.output_figure_dir, exist_ok=True)
 
-
     @staticmethod
     def list_json_files(directory: str) -> List[str]:
         """Get all JSON files in directory."""
