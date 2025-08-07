@@ -17,6 +17,7 @@ from .latex_parser import (
     get_bib_names,
     load_bbl_info,
     load_bib_info,
+    load_bib_key_to_arxiv_id,
 )
 from .utils import download_latex_source, search_arxiv_id
 
@@ -45,8 +46,8 @@ def build_citation_graph_node_info(
         summary = result.summary
         published = str(result.published)
     bib_names, bbl_nodes = get_bib_names(ast)
-    print(f"bib_names: {bib_names}")
-    print(f"bbl_nodes: {bbl_nodes}")
+    # print(f"bib_names: {bib_names}")
+    # print(f"bbl_nodes: {bbl_nodes}")
     structured_data = {
         "title": title,
         "author": author,
@@ -65,6 +66,7 @@ def build_citation_graph_node_info(
     }
     key2title = {}
     key2author = {}
+    key2id = {}
     if doc_node:
         extract_section_info_from_ast(
             structured_data,
@@ -88,9 +90,16 @@ def build_citation_graph_node_info(
                 bib = bib.replace(".bib", "").strip()
                 if os.path.exists(os.path.join(working_path, bib + ".bib")):
                     bib_path = os.path.join(working_path, bib + ".bib")
+                    print(f"bib_path: {bib_path}")
                     load_bib_info(bib_path, key2title, key2author)
+                    load_bib_key_to_arxiv_id(bib_path, key2id=key2id)
+                    # TODO: store the extracted information into database
+                    print(f"key2id: {key2id}")
                 else:
                     print(f"Cannot find the bib file {bib}.bib")
+
+        # print(f"len(key2title): {len(key2title)}")
+        # Unlikely that the bib here is empty
         if len(key2title) == 0:
             bbl_files = [f for f in os.listdir(working_path) if f.endswith(".bbl")]
             for file in bbl_files:
@@ -117,7 +126,7 @@ def build_citation_graph_node_info(
         if len(key2title) == 0:
             print("Cannot find the bib file")
             return structured_data
-        
+
         # It seems that even though we can find the path to bib/bbl file, we still might not extract the citation information?
         # print(f"key2title: {key2title}")
         # print(f"key2author: {key2author}")
@@ -134,7 +143,8 @@ def build_citation_graph_node_info(
     current_subsection_name = None
     current_subsubsection_name = None
     # The problem must lie in here!
-    # TODO
+
+
     if doc_node:
         extract_citations_from_ast(
             structured_data,
@@ -153,6 +163,17 @@ def build_citation_graph_node_info(
             next_ref_context,
             working_path,
         )
+    
+    # Add the extracted arxiv id to the database
+    if key2id:
+        citations = structured_data.get('citations', {})
+        for bib_key, arxiv_id in key2id.items():
+            entry = citations.get(bib_key)
+            if entry and not entry.get('short_id'):
+                entry['short_id'] = arxiv_id
+
+
+
     return structured_data
 
 
@@ -197,7 +218,6 @@ def build_citation_graph(
     if os.path.exists(os.path.join(output_path, "history.json")):
         with open(os.path.join(output_path, "history.json"), "r") as f:
             history = json.load(f)
-        # print(history)
         for item in history:
             for item_ in item["extended"]:
                 BFS_que.put(item_)
@@ -387,7 +407,7 @@ def build_citation_graph_thread(
     num_threads: int = 4,
     clear_source: bool = False,
     max_figure: int = 200000,
-):
+): 
     # Shared BFS queue and visited set
     BFS_que = queue.Queue()
     print(f"seed: {seed}")
@@ -431,7 +451,9 @@ def build_citation_graph_thread(
         nonlocal BFS_que
         nonlocal visited
         nonlocal history
-        print(f"Thread {str(threading.get_ident())} Started processing")
+
+        # TODO: uncomment the print statement below
+        # print(f"Thread {str(threading.get_ident())} Started processing")
 
         while True:
             try:
@@ -457,7 +479,9 @@ def build_citation_graph_thread(
                         continue
                     visited.add(current_paper)
 
-                download_latex_source(current_paper, source_path)
+                # TODO: see what would happen if we comment out this line
+                # Here, we separate the paper downloading and paper processing stages, which is different from what is was like.
+                # download_latex_source(current_paper, source_path)
 
                 # Clear the working directory
                 thread_working_path = os.path.join(
@@ -490,6 +514,7 @@ def build_citation_graph_thread(
                                 file.split("/")[-1].lower()
                             ] = os.path.join(root, file)
                 # Identify the main .tex file
+                # print("Here!")
                 tex_files = [
                     f for f in os.listdir(thread_working_path) if f.endswith(".tex")
                 ]
@@ -506,7 +531,6 @@ def build_citation_graph_thread(
                         f"Thread {str(threading.get_ident())} Failed to process {current_paper}"
                     )
                     continue
-
                 for tex_file in tex_files:
                     try:
                         with open(
@@ -536,14 +560,12 @@ def build_citation_graph_thread(
                             current_paper,
                             get_citation_info=get_citation_info,
                         )
+                        
                         if structured_data.get("sections"):
                             break
                     except Exception as e:
                         print(e)
-                
 
-                ncitations = len(structured_data["citations"])
-                print(f"number of citations collected: {ncitations}")
 
                 if structured_data:
                     if not os.path.exists(
@@ -599,7 +621,6 @@ def build_citation_graph_thread(
                         )
                         continue
 
-                # print(f"number of citations collected: {ncitations}")
                 if structured_data:
                     if get_citation_info:
                         with open(

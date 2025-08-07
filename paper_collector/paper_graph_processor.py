@@ -78,7 +78,6 @@ class PaperGraphProcessor:
         os.makedirs(output_dir, exist_ok=True)
         os.makedirs(self.output_figure_dir, exist_ok=True)
 
-
     @staticmethod
     def list_json_files(directory: str) -> List[str]:
         """Get all JSON files in directory."""
@@ -127,10 +126,14 @@ class PaperGraphProcessor:
         return re.findall(pattern, text)
 
     def find_cites(self, text: str) -> List[str]:
-        """Find all figure references in text."""
-        pattern = r"\\cite\w*\{([^}]+)\}"
+        """
+        Find all citation keys in text, for commands like
+        \citet{}, \citet*{}, \citep{}, \citep*{},
+        \citeauthor{}, \citeyear{}
+        """
+        pattern = r"\\cite(?:t|p|author|year)\*?\{([^}]+)\}"
         return re.findall(pattern, text)
-
+        
     def create_figure_node(self, figure: dict, paper_id: str) -> Dict:
         """Create a figure node for the graph."""
         have_paths = False
@@ -182,18 +185,43 @@ class PaperGraphProcessor:
     def create_text_node(
         self, text: str, key2citation: Dict[str, Any], label2id: Dict[str, int]
     ) -> Dict:
-        """Create a text node for the graph."""
+        """Create a text node for the graph.
+            Return the list of bib keys of cited papers.
+        """
+        # print("Here!")
         cites_ = self.find_cites(text)
         cites = []
         for cite in cites_:
             cites.extend(cite.split(","))
         cites = [cite.strip() for cite in cites]
+        # print("Raw Cite:")
+        # print(cites)
+        # The problem is, it looks for short id/arxiv id when searching up citations in the citation part
+        # In most cases, as is stated before, the arxiv id is missing
+        # We can use bib_key for reference, as it is unique when combinede with arxiv id of the citing paper
         cites = [
-            key2citation[cite]["short_id"] for cite in cites if cite in key2citation
+            key2citation[cite]["bib_key"] for cite in cites if cite in key2citation
         ]
+        # print("Cite after looking up:")
+        # print(cites)
         refs = self.find_references(text)
+        print("raw refs")
+        print(refs)
+        # IMPORTANT
+        # TODO
+        # Here, we pick the label as key, since it (should be) unique
+        raw_refs = refs
         refs = [label2id[ref] for ref in refs if ref in label2id]
+        print("raw refs2")
+        print(raw_refs)
+
         isolation = (len(refs) == 0) and (len(cites) == 0)
+        # print("key2citation")
+        # print(key2citation)
+        # print("cites")
+        # print(cites)
+        print("refs after processing")
+        print(refs)
         return {
             "id": "text_" + str(self.get_node_id()),
             "cites": cites,
@@ -201,6 +229,7 @@ class PaperGraphProcessor:
             "content": text,
             "type": "textNode",
             "isolation": isolation,
+            "ref_labels": raw_refs
         }
 
     def process_paper(self, data: dict, paper_id: str) -> Optional[Dict]:
@@ -234,12 +263,18 @@ class PaperGraphProcessor:
                 temp_table_nodes.append(table_node)
 
         for key, citation in data["citations"].items():
+            # TODO Not quite sure why we need the similarity score. We can drop it.
             if citation["similar_score"] and (
                 citation["similar_score"] > self.threshold
             ):
                 citations[key] = citation
                 neighbors.append(citation["short_id"])
-
+            elif not citation["similar_score"]:
+                citations[key] = citation
+                neighbors.append(citation["short_id"])
+        # print("key to citations:")
+        # print(citations)
+        print(f"Key to References: {label2id}")
         for section, content in data["sections"].items():
             # section_node = self.create_section_node(section)
             # nodes[section_node['id']] = section_node
@@ -249,12 +284,17 @@ class PaperGraphProcessor:
                 if chunk.strip()
             ]
             pre_node = None
+            # print
             for chunk in chunks:
+                # print("Chunk:")
+                # print(chunk)
                 ########################################
                 if ENV_RE.search(chunk):
                     continue
                 ########################################
                 text_node = self.create_text_node(chunk, citations, label2id)
+                # print("text_node")
+                # print(text_node)
                 text_node["paper_id"] = paper_id
                 text_node["section"] = section
                 if True:  # not text_node['isolation']:
@@ -428,7 +468,7 @@ class PaperGraphProcessor:
                 #        paper_node = self.create_paper_node(id, clean_latex_code(abstract), title)
                 #        self.paper_nodes.append(paper_node)
                 #        self.paper_id2node[id] = paper_node['id']
-
+    
         # self.save_processed_data('w')
         for paper_path in tqdm(self.list_json_files(self.data_dir)):
             if "history" in paper_path:
@@ -456,6 +496,61 @@ class PaperGraphProcessor:
                     json.dump(paper_data, f)
                 # if cnt % 100 == 0:
                 #    self.save_processed_data('w')
+        print("Paper count: ", cnt)
+        self.save_processed_data("w")
+        print(discarded)
+
+
+    def process_papers(self, paper_paths):
+        cnt  = 0
+        for paper_path in tqdm(paper_paths):
+            if "history" in paper_path:
+                continue
+            paper_data, paper_id = self.load_paper(paper_path)
+            if paper_data:
+                abstract = paper_data["abstract"]
+                if not abstract:
+                    abstract = ""
+                paper_node = self.create_paper_node(
+                    paper_id, clean_latex_code(abstract), paper_data["title"]
+                )
+                self.paper_nodes.append(paper_node)
+                self.paper_id2node[paper_id] = paper_node["id"]
+                # for key, cite in paper_data['citations'].items():
+                #    if cite['similar_score'] and (cite['similar_score'] > self.threshold):
+                #        id = cite['short_id']
+                #        abstract = cite['abstract']
+                #        title = cite['title']
+                #        paper_node = self.create_paper_node(id, clean_latex_code(abstract), title)
+                #        self.paper_nodes.append(paper_node)
+                #        self.paper_id2node[id] = paper_node['id']
+
+        # self.save_processed_data('w')
+        for paper_path in tqdm(paper_paths):
+            if "history" in paper_path:
+                continue
+            paper_data, paper_id = self.load_paper(paper_path)
+            if paper_data:
+                cnt += 1
+                print(paper_id)
+                self.process_paper(paper_data, paper_id)
+                citations = {}
+                for key, cite in paper_data["citations"].items():
+                    if cite["similar_score"] and (
+                        cite["similar_score"] > self.threshold
+                    ):
+                        citations[key] = cite
+                paper_data["citations"] = citations
+                os.makedirs(os.path.join(self.output_dir, "papers"), exist_ok=True)
+                # shutil.copy(paper_path, os.path.join(self.output_dir, 'papers', os.path.basename(paper_path)))
+                with open(
+                    os.path.join(
+                        self.output_dir, "papers", os.path.basename(paper_path)
+                    ),
+                    "w",
+                ) as f:
+                    json.dump(paper_data, f)
+
         print("Paper count: ", cnt)
         self.save_processed_data("w")
         print(discarded)
