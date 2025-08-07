@@ -1,0 +1,64 @@
+%%%%%%%%%%% Common latex packages. Feel free to comment out when they are not relevant / causing conflicts
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+%\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+\usepackage{xcolor}
+\usepackage{url}
+\usepackage{verbatim} % allows multiline comments
+\usepackage{graphicx}
+% \usepackage{caption} 
+\usepackage{multirow}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{xspace}
+\usepackage{epsfig}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{times}
+\usepackage{xr}
+\usepackage{bbm}
+\usepackage{bm}
+\usepackage{subcaption}
+\usepackage{enumitem}
+\usepackage{hyperref}       % hyperlinks
+\usepackage{multicol}
+\usepackage{tabularx}
+\usepackage{perpage} %the perpage package
+\MakePerPage{footnote} %the perpage package command
+\usepackage{wrapfig}
+\usepackage{makecell}
+
+%%%%%%%%%%% Common new command for paper writing and leaving comments
+\newcommand{\jiaxuan}[1]{{{\textcolor{blue}{[Jiaxuan: #1]}}}}
+\newcommand{\haofei}[1]{{{\textcolor{red}{[Haofei: #1]}}}}
+\newcommand{\xhdr}[1]{{\noindent\bfseries #1}.} % important command for highlighting paragraph title
+\newcommand{\red}[1]{{\textcolor{red}{#1}}}
+\newcommand{\CITE}{{\textcolor{red}{[CITE]}}}
+\newcommand{\hide}[1]{}
+\newcommand{\cut}[1]{}
+% use these rather than write e.g.. This is more professional!
+\newcommand{\eg}{\emph{e.g.}}
+\newcommand{\ie}{\emph{i.e.}\xspace}
+\newcommand{\vs}{\emph{vs.}\xspace}
+% useful when want to type fewer characters
+\newcommand{\mb}{\mathbf}
+\newcommand{\mc}{\mathcal}
+
+%\newtheorem{proposition}{Proposition}
+%\newtheorem{definition}{Definition}
+%\newtheorem{theorem}{Theorem}
+%\newtheorem{corollary}{Corollary}
+%\newtheorem{lemma}{Lemma}
+%\newtheorem{observation}{\textbf{Observation}}
+
+% Example new math operator
+\DeclareMathOperator{\GCN}{GCN}
+\newcommand{\V}{\mathcal{V}}
+\newcommand{\E}{\mathcal{E}}
+\newcommand{\R}{\mathbb{R}}
+%\newcommand{\G}{\mathcal{G}}
+
+% define your temporary model name
+\newcommand{\name}{GraphGym\xspace} 
