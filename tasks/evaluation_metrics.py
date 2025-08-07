@@ -6,6 +6,14 @@ from torchmetrics import BLEUScore
 from torchmetrics.text.rouge import ROUGEScore
 from tasks.cider.cider import Cider
 
+def evaluation_metrics(metrics_name, generated_answers, correct_answers, parameter=None):
+    if metrics_name == "bleu_score":
+        return bleu_score(generated_answers=generated_answers, correct_answers=correct_answers, n_loop=parameter["n_loop"])
+    if metrics_name == "rouge_score":
+        return rouge_score(generated_answers=generated_answers, correct_answers=correct_answers)
+    if metrics_name == "cider_score":
+        return cider_score(generated_answers=generated_answers, correct_answers=correct_answers)
+
 
 def bleu_score(generated_answers, correct_answers, n_loop):
     ans = []
