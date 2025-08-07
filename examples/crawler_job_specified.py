@@ -13,19 +13,19 @@ cj = CrawlerJob(dest_dir="download")
 # print(arxiv_ids)
 # print(len(arxiv_ids))
 
-# arxiv_ids = {'2412.17767v2'}
+arxiv_ids = {'2412.17767v2'}
 
-# cj.initialize_paper_tasks(arxiv_ids=arxiv_ids)
+cj.initialize_paper_tasks(arxiv_ids=arxiv_ids)
 
-# print(f"arxiv ids: {arxiv_ids}")
+print(f"arxiv ids: {arxiv_ids}")
 
-# cj.download_papers(arxiv_ids=arxiv_ids)
+cj.download_papers(arxiv_ids=arxiv_ids)
 
 
-# # arxiv_ids = cj.select_proceeded_task(task_type="paper_graph", max_results=10)
-# arxiv_ids = cj.select_unproceeded_task(task_type="paper_graph", max_results=400)
-# print(f"arxiv ids: {arxiv_ids}")
-# cj.process_paper_graphs(arxiv_ids=arxiv_ids)
+# arxiv_ids = cj.select_proceeded_task(task_type="paper_graph", max_results=10)
+arxiv_ids = cj.select_unproceeded_task(task_type="paper_graph", max_results=400)
+print(f"arxiv ids: {arxiv_ids}")
+cj.process_paper_graphs(arxiv_ids=arxiv_ids)
 
 
 # arxiv_ids = cj.select_proceeded_task(task_type="paper_graph", max_results=10)
@@ -34,5 +34,5 @@ print(f"arxiv ids: {arxiv_ids}")
 cj.process_paper_paragraphs(arxiv_ids=arxiv_ids)
 
 # cj.process_paper_authors(arxiv_ids=arxiv_ids)
-# cj.process_paper_citations(arxiv_ids=arxiv_ids)
+cj.process_paper_citations(arxiv_ids=arxiv_ids)
 

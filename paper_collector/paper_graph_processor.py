@@ -205,23 +205,17 @@ class PaperGraphProcessor:
         # print("Cite after looking up:")
         # print(cites)
         refs = self.find_references(text)
-        print("raw refs")
-        print(refs)
         # IMPORTANT
         # TODO
         # Here, we pick the label as key, since it (should be) unique
         raw_refs = refs
         refs = [label2id[ref] for ref in refs if ref in label2id]
-        print("raw refs2")
-        print(raw_refs)
 
         isolation = (len(refs) == 0) and (len(cites) == 0)
         # print("key2citation")
         # print(key2citation)
         # print("cites")
         # print(cites)
-        print("refs after processing")
-        print(refs)
         return {
             "id": "text_" + str(self.get_node_id()),
             "cites": cites,
