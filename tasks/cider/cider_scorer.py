@@ -3,9 +3,11 @@
 # Ramakrishna Vedantam <vrama91@vt.edu>
 
 import copy
+import pickle
 from collections import defaultdict
 import numpy as np
 import math
+import os
 
 def precook(s, n=4, out=False):
     """
@@ -18,8 +20,8 @@ def precook(s, n=4, out=False):
     """
     words = s.split()
     counts = defaultdict(int)
-    for k in range(1,n+1):
-        for i in range(len(words)-k+1):
+    for k in xrange(1,n+1):
+        for i in xrange(len(words)-k+1):
             ngram = tuple(words[i:i+k])
             counts[ngram] += 1
     return counts
@@ -98,11 +100,11 @@ class CiderScorer(object):
         '''
         for refs in self.crefs:
             # refs, k ref captions of one image
-            for ngram in set([ngram for ref in refs for (ngram,count) in ref.items()]):
+            for ngram in set([ngram for ref in refs for (ngram,count) in ref.iteritems()]):
                 self.document_frequency[ngram] += 1
             # maxcounts[ngram] = max(maxcounts.get(ngram,0), count)
 
-    def compute_cider(self):
+    def compute_cider(self, df_mode="corpus"):
         def counts2vec(cnts):
             """
             Function maps counts of ngram to vector of tfidf weights.
@@ -114,14 +116,15 @@ class CiderScorer(object):
             vec = [defaultdict(float) for _ in range(self.n)]
             length = 0
             norm = [0.0 for _ in range(self.n)]
-            for (ngram,term_freq) in cnts.items():
+            for (ngram,term_freq) in cnts.iteritems():
                 # give word count 1 if it doesn't appear in reference corpus
                 df = np.log(max(1.0, self.document_frequency[ngram]))
                 # ngram index
                 n = len(ngram)-1
                 # tf (term_freq) * idf (precomputed idf) for n-grams
                 vec[n][ngram] = float(term_freq)*(self.ref_len - df)
-                # compute norm for the vector.  the norm will be used for computing similarity
+                # compute norm for the vector.  the norm will be used for
+                # computing similarity
                 norm[n] += pow(vec[n][ngram], 2)
 
                 if n == 1:
@@ -145,20 +148,21 @@ class CiderScorer(object):
             val = np.array([0.0 for _ in range(self.n)])
             for n in range(self.n):
                 # ngram
-                for (ngram,count) in vec_hyp[n].items():
-                    # vrama91 : added clipping
-                    val[n] += min(vec_hyp[n][ngram], vec_ref[n][ngram]) * vec_ref[n][ngram]
+                for (ngram,count) in vec_hyp[n].iteritems():
+                    val[n] += vec_hyp[n][ngram] * vec_ref[n][ngram]
 
                 if (norm_hyp[n] != 0) and (norm_ref[n] != 0):
                     val[n] /= (norm_hyp[n]*norm_ref[n])
 
                 assert(not math.isnan(val[n]))
-                # vrama91: added a length based gaussian penalty
-                val[n] *= np.e**(-(delta**2)/(2*self.sigma**2))
             return val
 
         # compute log reference length
-        self.ref_len = np.log(float(len(self.crefs)))
+        if df_mode == "corpus":
+            self.ref_len = np.log(float(len(self.crefs)))
+        elif df_mode == "coco-val-df":
+            # if coco option selected, use length of coco-val set
+            self.ref_len = np.log(float(40504))
 
         scores = []
         for test, refs in zip(self.ctest, self.crefs):
@@ -179,13 +183,17 @@ class CiderScorer(object):
             scores.append(score_avg)
         return scores
 
-    def compute_score(self, option=None, verbose=0):
+    def compute_score(self, df_mode, option=None, verbose=0):
         # compute idf
-        self.compute_doc_freq()
-        # assert to check document frequency
-        assert(len(self.ctest) >= max(self.document_frequency.values()))
+        if df_mode == "corpus":
+            self.compute_doc_freq()
+            # assert to check document frequency
+            assert(len(self.ctest) >= max(self.document_frequency.values()))
+            # import json for now and write the corresponding files
+        else:
+            self.document_frequency = pickle.load(open(os.path.join('data', df_mode + '.p'),'r'))
         # compute cider score
-        score = self.compute_cider()
+        score = self.compute_cider(df_mode)
         # debug
         # print score
         return np.mean(np.array(score)), np.array(score)
