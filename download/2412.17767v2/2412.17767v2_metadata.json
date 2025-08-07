@@ -1,0 +1,21 @@
+{
+  "id": "2412.17767v2",
+  "title": "ResearchTown: Simulator of Human Research Community",
+  "abstract": "Large Language Models (LLMs) have demonstrated remarkable potential in\nscientific domains, yet a fundamental question remains unanswered: Can we\nsimulate human research communities with LLMs? Addressing this question can\ndeepen our understanding of the processes behind idea brainstorming and inspire\nthe automatic discovery of novel scientific insights. In this work, we propose\nResearchTown, a multi-agent framework for research community simulation. Within\nthis framework, the human research community is simplified as an agent-data\ngraph, where researchers and papers are represented as agent-type and data-type\nnodes, respectively, and connected based on their collaboration relationships.\nWe also introduce TextGNN, a text-based inference framework that models various\nresearch activities (e.g., paper reading, paper writing, and review writing) as\nspecial forms of a unified message-passing process on the agent-data graph. To\nevaluate the quality of the research community simulation, we present\nResearchBench, a benchmark that uses a node-masking prediction task for\nscalable and objective assessment based on similarity. Our experiments reveal\nthree key findings: (1) ResearchTown can provide a realistic simulation of\ncollaborative research activities, including paper writing and review writing;\n(2) ResearchTown can maintain robust simulation with multiple researchers and\ndiverse papers; (3) ResearchTown can generate interdisciplinary research ideas\nthat potentially inspire pioneering research directions.",
+  "authors": [
+    "Haofei Yu",
+    "Zhaochen Hong",
+    "Zirui Cheng",
+    "Kunlun Zhu",
+    "Keyang Xuan",
+    "Jinwei Yao",
+    "Tao Feng",
+    "Jiaxuan You"
+  ],
+  "published": "2024-12-23 18:26:53+00:00",
+  "categories": [
+    "cs.CL",
+    "cs.LG"
+  ],
+  "url": "http://arxiv.org/abs/2412.17767v2"
+}

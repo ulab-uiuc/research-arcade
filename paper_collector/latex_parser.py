@@ -14,8 +14,19 @@ from pylatexenc.latexwalker import (
     get_default_latex_context_db,
 )
 from pylatexenc.macrospec import MacroSpec
-
 from .utils import query_and_match
+
+_SUBFIGURE_ENVS = {
+    "figure",
+    "figure*",
+    "minipage",
+    "subfigure",          # from subcaption / subfigure packages
+    "wrapfigure",
+    "floatrow",
+    "sidewaysfigure",
+}
+
+_SUBFIGURE_MACROS = {"subfloat"}
 
 
 def clean_latex_code(latex_str: str) -> str:
@@ -223,7 +234,6 @@ def extract_section_info_from_ast(
                     try:
                         input = safe_extract_chars(node.nodeargd.argnlist[0])
                         input = input.replace(".tex", "").strip()
-                        print(f"Processing input {input}")
                         with open(
                             os.path.join(working_path, f"{input}.tex"),
                             "r",
@@ -376,7 +386,7 @@ def extract_citations_from_ast(
     next_ref_context: str = "",
     working_path: str = "",
     flag: bool = False,
-):
+):  
     try:
         (
             current_section_name,
@@ -431,7 +441,6 @@ def extract_citations_from_ast(
                     try:
                         input = safe_extract_chars(node.nodeargd.argnlist[0])
                         input = input.replace(".tex", "").strip()
-                        print(f"Processing input {input}")
                         with open(
                             os.path.join(working_path, f"{input}.tex"),
                             "r",
@@ -557,6 +566,10 @@ def extract_citations_from_ast(
                                     if is_complete:
                                         break
 
+
+                                # TODO
+                                # For short id, it corresponds to the arxiv id
+                                # However, arxiv id is often stored in the journal part of paper
                                 if structured_data["citations"].get(key.strip()):
                                     citation_data = structured_data["citations"][
                                         key.strip()
@@ -573,6 +586,7 @@ def extract_citations_from_ast(
                                     citation_data["importance_score"] += cite_importance
                                 else:
                                     paper, score = query_and_match(title_, author_)
+                                    # Since the method query_and_match() returns None only, ignore what's inside of the if statement below.
                                     if paper:
                                         citation_context = {
                                             "section": current_section_name,
@@ -582,6 +596,8 @@ def extract_citations_from_ast(
                                             "_pos": len(next_context),
                                         }
                                         prev_citation_contexts.append(citation_context)
+                                        # Also loook at the journal part and see if arxiv id is available
+
                                         structured_data["citations"][key.strip()] = {
                                             "bib_key": key.strip(),
                                             "bib_title": title_,
@@ -619,6 +635,8 @@ def extract_citations_from_ast(
                                             "context": [citation_context],
                                             "importance_score": cite_importance,
                                         }
+                                        # print("Result of Citation:")
+                                        # print(structured_data["citations"][key.strip()])
 
             # Recursively check child nodes if the node is an environment (e.g., document or section)
             if hasattr(node, "nodelist"):
@@ -712,6 +730,7 @@ def load_bib_info(
 
     # Iterate through all entries
     for entry in bib_database.entries:
+        # print(f"entry: {entry}")
         if entry.get("ID"):
             id = entry.get("ID").strip()
             key2title[id] = entry.get("title")
@@ -721,6 +740,40 @@ def load_bib_info(
             else:
                 key2author[id] = ""
     return key2title, key2author
+
+
+# We can use this to extract arxiv id written in the journal part of citations
+def load_bib_key_to_arxiv_id(
+    path: str, key2id: Dict[str, Any]
+) -> Dict[str, Any]:
+    
+    pattern = re.compile(
+        r'arxiv:(?P<id>(?:\d{4}\.\d{4,5}(?:v\d+)?)|(?:[a-z\-]+/\d{7}(?:v\d+)?))',
+        re.IGNORECASE
+    )
+    # print(f"pattern: {pattern}")
+
+    with open(path, "r") as bib_file:
+        parser = ErrorHandlerBibTexParser()
+        bib_database = bibtexparser.load(bib_file, parser=parser)
+    for entry in bib_database.entries:
+        # print(f"entry: {entry}")
+        if entry.get("ID"):
+            bib_key = entry.get("ID", "").strip()
+            journal_field = entry.get("journal", "")
+            # print(f"journal: {journal}")
+            if not journal_field:
+                continue
+            journal_text = journal_field.strip().lower()
+            match = pattern.search(journal_text)
+            if match:
+                key2id[bib_key] = match.group('id')
+            else:
+                # Optional: try other fields or at least log it
+                # e.g. check entry.get("eprint"), entry.get("archiveprefix")...
+                # print(f"[!] No arXiv ID found in journal for bib key {bib_key!r}: {journal_text!r}")
+                pass
+    return key2id
 
 
 def parse_MathNode(node: LatexMathNode) -> str:
@@ -792,14 +845,23 @@ def extract_figure_info(
     for node in nodes:
         try:
             if isinstance(node, LatexMacroNode):
+                # print(f"node: {node}")
+
                 if node.macroname == "caption":
                     res["caption"] = node.latex_verbatim()
                 if node.macroname == "label":
+                    # It seems that here, there may be multiple labels in nodes, but it only takes the last one.
+
                     res["label"] = node.latex_verbatim()
                 if node.macroname == "includegraphics":
+                    # We can use this part to extract label-path pairs
+                    # print(f"node of figure: {node}")
+                    # print(f"node of figure verbatim: {node.latex_verbatim()}")
                     for argd, arg_node in zip(
                         node.nodeargd.argspec, node.nodeargd.argnlist
                     ):
+                        # print(f"argd: {argd}")
+                        # print(f"arg_node: {arg_node}")
                         if argd == "{":
                             res["figure_paths"].append(
                                 arg_node.latex_verbatim().strip("{}")
@@ -819,6 +881,99 @@ def extract_figure_info(
         if hasattr(node, "nodelist"):
             extract_figure_info(node.nodelist, res)
 
+def is_implicit_subfigure(node):
+    has_graphic = False
+    has_caption_or_label = False
+
+    def walk(n):
+        nonlocal has_graphic, has_caption_or_label
+        if isinstance(n, LatexMacroNode):
+            if n.macroname == "includegraphics":
+                has_graphic = True
+            if n.macroname in ("caption", "label"):
+                has_caption_or_label = True
+        if hasattr(n, "nodelist") and n.nodelist:
+            for child in n.nodelist:
+                walk(child)
+    
+    walk(node)
+    return has_graphic and has_caption_or_label
+
+
+def extract_figure_info_new(
+    nodes: Union[list, LatexCharsNode, LatexMacroNode, LatexEnvironmentNode],
+    res: Dict[str, Any],
+):
+    """
+    Extract subfigures inside of the figure
+    """
+    if not nodes:
+        return
+
+    # Normalize to iterable
+    if not isinstance(nodes, (list, tuple)):
+        nodes = [nodes]
+
+    for node in nodes:
+        try:
+            # If this node itself is a subfigure-like container, create a fresh context
+            if isinstance(node, LatexEnvironmentNode) and node.environmentname in _SUBFIGURE_ENVS:
+                # New subfigure dict
+                subfigure = {
+                    "caption": "",
+                    "label": None,
+                    "figure_paths": [],
+                    "subfigures": [],
+                }
+                # Recurse into its content
+                extract_figure_info(node.nodelist, subfigure)
+                # Append to current result's subfigures
+                res.setdefault("subfigures", []).append(subfigure)
+                # Also continue into its children in case of nested structures
+                continue
+
+            # explicit subfloat-style macro
+            if isinstance(node, LatexMacroNode) and node.macroname in _SUBFIGURE_MACROS:
+                subfigure = {"caption": "", "label": None, "figure_paths": [], "subfigures": []}
+                # recurse into its arguments (often contains the inner content)
+                for arg in node.nodeargd.argnlist:
+                    extract_figure_info(arg, subfigure)
+                res.setdefault("subfigures", []).append(subfigure)
+                continue
+
+            # implicit grouping via heuristic
+            if (isinstance(node, LatexEnvironmentNode) or isinstance(node, LatexMacroNode)) and is_implicit_subfigure(node):
+                subfigure = {"caption": "", "label": None, "figure_paths": [], "subfigures": []}
+                extract_figure_info(getattr(node, "nodelist", []) or [], subfigure)
+                # also dive into macro args if any
+                if isinstance(node, LatexMacroNode):
+                    for arg in node.nodeargd.argnlist:
+                        extract_figure_info(arg, subfigure)
+                res.setdefault("subfigures", []).append(subfigure)
+                continue
+
+            if isinstance(node, LatexMacroNode):
+                if node.macroname == "caption":
+                    # If multiple captions appear, you can decide to keep first/last or concatenate
+                    # Here we overwrite so last wins; change if needed.
+                    res["caption"] = node.latex_verbatim()
+                elif node.macroname == "label":
+                    res["label"] = node.latex_verbatim()
+                elif node.macroname == "includegraphics":
+                    for argd, arg_node in zip(
+                        node.nodeargd.argspec, node.nodeargd.argnlist
+                    ):
+                        if argd == "{":
+                            path = arg_node.latex_verbatim().strip("{}")
+                            res.setdefault("figure_paths", []).append(path)
+
+            if hasattr(node, "nodelist"):
+                # Recurse into children for everything else
+                extract_figure_info(node.nodelist, res)
+        except Exception as e:
+            # You might want to replace prints with logging.
+            print(f"error processing node {node}: {e}")
+
 
 def parse_figureEnv(node: LatexEnvironmentNode) -> Dict[str, Any]:
     try:
@@ -829,8 +984,13 @@ def parse_figureEnv(node: LatexEnvironmentNode) -> Dict[str, Any]:
             "subfigures": [],
             "figure_paths": [],
         }
-        extract_figure_info(node.nodelist, res)
-        return res
+        res2 = res
+        # print(f"res before parsing: {res}")
+        # extract_figure_info(node.nodelist, res)
+        # print(f"parsed figure info: {res}")
+        extract_figure_info_new(node.nodelist, res2)
+        # print(f"parsed figure info with consideration of subfigures: {res2}")
+        return res2
     except Exception as e:
         print(e)
         return None
@@ -940,3 +1100,14 @@ def load_bbl_info(
             title = clean_latex_format(" ".join(title.split("\n")))
             key2title[key] = title
             key2author[key] = authors
+
+def extract_arxiv_id():
+    """
+    Extract arxiv id from latex by recognizing possible patterns
+    Example: journal={arXiv preprint arXiv:(arxiv id)}
+    We need to map the arxiv id to the bib_key
+    Possibly store it somewhere
+    """
+
+
+    pass
