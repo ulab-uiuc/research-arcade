@@ -1,0 +1,223 @@
+\begin{thebibliography}{43}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[AI4Science \& Quantum(2023)AI4Science and Quantum]{AI4Science2023TheIO}
+AI4Science, M.~R. and Quantum, M.~A.
+\newblock The impact of large language models on scientific discovery: a preliminary study using gpt-4.
+\newblock \emph{arXiv preprint arXiv:2311.07361}, 2023.
+
+\bibitem[Ba(2016)]{ba2016layer}
+Ba, J.~L.
+\newblock Layer normalization.
+\newblock \emph{arXiv preprint arXiv:1607.06450}, 2016.
+
+\bibitem[Baek et~al.(2024)Baek, Jauhar, Cucerzan, and Hwang]{baek2024researchagent}
+Baek, J., Jauhar, S.~K., Cucerzan, S., and Hwang, S.~J.
+\newblock Researchagent: Iterative research idea generation over scientific literature with large language models.
+\newblock \emph{arXiv preprint arXiv:2404.07738}, 2024.
+
+\bibitem[Cao et~al.(2024)Cao, Cai, Zhang, Zou, and Lam]{cao2024worst}
+Cao, B., Cai, D., Zhang, Z., Zou, Y., and Lam, W.
+\newblock On the worst prompt performance of large language models.
+\newblock \emph{arXiv preprint arXiv:2406.10248}, 2024.
+
+\bibitem[Chen et~al.(2025)Chen, Li, Sun, Zhou, Zhu, Wang, Pan, Zhang, Chen, Yang, et~al.]{chen2025learning}
+Chen, M., Li, T., Sun, H., Zhou, Y., Zhu, C., Wang, H., Pan, J.~Z., Zhang, W., Chen, H., Yang, F., et~al.
+\newblock Learning to reason with search for llms via reinforcement learning.
+\newblock \emph{arXiv preprint arXiv:2503.19470}, 2025.
+
+\bibitem[Chen et~al.(2024)Chen, Mao, Wen, Han, Jin, Zhang, Liu, and Tang]{Chen2023LabelfreeNC}
+Chen, Z., Mao, H., Wen, H., Han, H., Jin, W., Zhang, H., Liu, H., and Tang, J.
+\newblock Label-free node classification on graphs with large language models (llms).
+\newblock In \emph{The Twelfth International Conference on Learning Representations}, 2024.
+
+\bibitem[Domingo-Enrich et~al.(2023)Domingo-Enrich, Han, Amos, Bruna, and Chen]{domingo2023stochastic}
+Domingo-Enrich, C., Han, J., Amos, B., Bruna, J., and Chen, R.~T.
+\newblock Stochastic optimal control matching.
+\newblock \emph{arXiv preprint arXiv:2312.02027}, 2023.
+
+\bibitem[Elali \& Rachid(2023)Elali and Rachid]{elali2023ai}
+Elali, F.~R. and Rachid, L.~N.
+\newblock Ai-generated research paper fabrication and plagiarism in the scientific community.
+\newblock \emph{Patterns}, 2023.
+
+\bibitem[Gao et~al.(2023)Gao, Lan, Lu, Mao, Piao, Wang, Jin, and Li]{Gao2023S3SS}
+Gao, C., Lan, X., Lu, Z., Mao, J., Piao, J., Wang, H., Jin, D., and Li, Y.
+\newblock S$^{3}$: Social-network simulation system with large language model-empowered agents.
+\newblock \emph{arXiv preprint arXiv:2307.14984}, 2023.
+
+\bibitem[Girotra et~al.(2023)Girotra, Meincke, Terwiesch, and Ulrich]{girotra2023ideas}
+Girotra, K., Meincke, L., Terwiesch, C., and Ulrich, K.~T.
+\newblock Ideas are dimes a dozen: Large language models for idea generation in innovation.
+\newblock \emph{Available at SSRN 4526071}, 2023.
+
+\bibitem[Goodfellow et~al.(2014)Goodfellow, Pouget-Abadie, Mirza, Xu, Warde-Farley, Ozair, Courville, and Bengio]{goodfellow2014generative}
+Goodfellow, I., Pouget-Abadie, J., Mirza, M., Xu, B., Warde-Farley, D., Ozair, S., Courville, A., and Bengio, Y.
+\newblock Generative adversarial nets.
+\newblock \emph{Advances in neural information processing systems}, 2014.
+
+\bibitem[Han et~al.(2024)Han, Zickler, and Nishino]{han2024multistable}
+Han, X.~N., Zickler, T., and Nishino, K.
+\newblock Multistable shape from shading emerges from patch diffusion.
+\newblock \emph{arXiv preprint arXiv:2405.14530}, 2024.
+
+\bibitem[He et~al.(2023)He, Bresson, Laurent, Hooi, et~al.]{he2023explanations}
+He, X., Bresson, X., Laurent, T., Hooi, B., et~al.
+\newblock Explanations as features: Llm-based features for text-attributed graphs.
+\newblock \emph{arXiv preprint arXiv:2305.19523}, 2023.
+
+\bibitem[Holm et~al.(2020)Holm, Plank, Wright, and Augenstein]{holm2020longitudinal}
+Holm, A.~N., Plank, B., Wright, D., and Augenstein, I.
+\newblock Longitudinal citation prediction using temporal graph neural networks.
+\newblock \emph{arXiv preprint arXiv:2012.05742}, 2020.
+
+\bibitem[Hu et~al.(2024{\natexlab{a}})Hu, Shen, Zhang, and Tao]{hu2024learning}
+Hu, S., Shen, L., Zhang, Y., and Tao, D.
+\newblock Learning multi-agent communication from graph modeling perspective.
+\newblock In \emph{The Twelfth International Conference on Learning Representations}, 2024{\natexlab{a}}.
+
+\bibitem[Hu et~al.(2024{\natexlab{b}})Hu, Fu, Wang, Wang, Li, Xu, Lu, Jin, Pan, and Lan]{hu2024nova}
+Hu, X., Fu, H., Wang, J., Wang, Y., Li, Z., Xu, R., Lu, Y., Jin, Y., Pan, L., and Lan, Z.
+\newblock Nova: An iterative planning and search approach to enhance novelty and diversity of llm generated ideas.
+\newblock \emph{arXiv preprint arXiv:2410.14255}, 2024{\natexlab{b}}.
+
+\bibitem[Hua et~al.(2023)Hua, Fan, Li, Mei, Ji, Ge, Hemphill, and Zhang]{hua2023war}
+Hua, W., Fan, L., Li, L., Mei, K., Ji, J., Ge, Y., Hemphill, L., and Zhang, Y.
+\newblock War and peace (waragent): Large language model-based multi-agent simulation of world wars.
+\newblock \emph{arXiv preprint arXiv:2311.17227}, 2023.
+
+\bibitem[Huang et~al.(2024)Huang, Vora, Liang, and Leskovec]{huang2024mlagentbench}
+Huang, Q., Vora, J., Liang, P., and Leskovec, J.
+\newblock Mlagentbench: Evaluating language agents on machine learning experimentation.
+\newblock In \emph{Forty-first International Conference on Machine Learning}, 2024.
+
+\bibitem[Jin et~al.(2025)Jin, Zeng, Yue, Yoon, Arik, Wang, Zamani, and Han]{jin2025search}
+Jin, B., Zeng, H., Yue, Z., Yoon, J., Arik, S., Wang, D., Zamani, H., and Han, J.
+\newblock Search-r1: Training llms to reason and leverage search engines with reinforcement learning.
+\newblock \emph{arXiv preprint arXiv:2503.09516}, 2025.
+
+\bibitem[Jin et~al.(2020)Jin, Jin, Zhou, and Szolovits]{jin2020bert}
+Jin, D., Jin, Z., Zhou, J.~T., and Szolovits, P.
+\newblock Is bert really robust? a strong baseline for natural language attack on text classification and entailment.
+\newblock In \emph{Proceedings of the AAAI conference on artificial intelligence}, 2020.
+
+\bibitem[Kingma(2013)]{kingma2013auto}
+Kingma, D.~P.
+\newblock Auto-encoding variational bayes.
+\newblock \emph{arXiv preprint arXiv:1312.6114}, 2013.
+
+\bibitem[Kingma(2014)]{kingma2014adam}
+Kingma, D.~P.
+\newblock Adam: A method for stochastic optimization.
+\newblock \emph{arXiv preprint arXiv:1412.6980}, 2014.
+
+\bibitem[Langley(2000)]{langley00}
+Langley, P.
+\newblock Crafting papers on machine learning.
+\newblock In Langley, P. (ed.), \emph{Proceedings of the 17th International Conference on Machine Learning (ICML 2000)}, pp.\  1207--1216, Stanford, CA, 2000. Morgan Kaufmann.
+
+\bibitem[Lee et~al.(2024)Lee, Sim, Shin, Kim, and Kim]{lee2024reasoning}
+Lee, S., Sim, W., Shin, D., Kim, S., and Kim, S.
+\newblock Reasoning abilities of large language models through the lens of abstraction and reasoning.
+\newblock In \emph{The First Workshop on System-2 Reasoning at Scale, NeurIPS'24}, 2024.
+
+\bibitem[Lu et~al.(2024)Lu, Lu, Lange, Foerster, Clune, and Ha]{lu2024ai}
+Lu, C., Lu, C., Lange, R.~T., Foerster, J., Clune, J., and Ha, D.
+\newblock The ai scientist: Towards fully automated open-ended scientific discovery.
+\newblock \emph{arXiv preprint arXiv:2408.06292}, 2024.
+
+\bibitem[Martinkus et~al.(2023)Martinkus, Papp, Schesch, and Wattenhofer]{martinkus2022agent}
+Martinkus, K., Papp, P.~A., Schesch, B., and Wattenhofer, R.
+\newblock Agent-based graph neural networks.
+\newblock In \emph{The Eleventh International Conference on Learning Representations}, 2023.
+
+\bibitem[Newman(2001)]{newman2001structure}
+Newman, M.~E.
+\newblock The structure of scientific collaboration networks.
+\newblock \emph{Proceedings of the national academy of sciences}, 2001.
+
+\bibitem[Qi et~al.(2020)Qi, Zhang, Zhang, Bolton, and Manning]{qi2020stanza}
+Qi, P., Zhang, Y., Zhang, Y., Bolton, J., and Manning, C.~D.
+\newblock Stanza: A python natural language processing toolkit for many human languages.
+\newblock In \emph{Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics: System Demonstrations}, 2020.
+
+\bibitem[Si et~al.(2024)Si, Yang, and Hashimoto]{si2024can}
+Si, C., Yang, D., and Hashimoto, T.
+\newblock Can llms generate novel research ideas? a large-scale human study with 100+ nlp researchers.
+\newblock \emph{arXiv preprint arXiv:2409.04109}, 2024.
+
+\bibitem[Strubell et~al.(2019)Strubell, Ganesh, and McCallum]{strubell2019energy}
+Strubell, E., Ganesh, A., and McCallum, A.
+\newblock Energy and policy considerations for deep learning in {NLP}.
+\newblock In Korhonen, A., Traum, D., and M{\`a}rquez, L. (eds.), \emph{Proceedings of the 57th Annual Meeting of the Association for Computational Linguistics}, Florence, Italy, 2019. Association for Computational Linguistics.
+
+\bibitem[Tang et~al.(2008)Tang, Zhang, Yao, Li, Zhang, and Su]{Tang2008ArnetMinerEA}
+Tang, J., Zhang, J., Yao, L., Li, J.-Z., Zhang, L., and Su, Z.
+\newblock Arnetminer: extraction and mining of academic social networks.
+\newblock In \emph{Knowledge Discovery and Data Mining}, 2008.
+
+\bibitem[Tasse et~al.(2024)Tasse, Jarvis, James, and Rosman]{tasseskill}
+Tasse, G.~N., Jarvis, D., James, S., and Rosman, B.
+\newblock Skill machines: Temporal logic skill composition in reinforcement learning.
+\newblock In \emph{The Twelfth International Conference on Learning Representations}, 2024.
+
+\bibitem[Tu et~al.(2024)Tu, Aranguri, and Jacot]{tu2024mixed}
+Tu, Z., Aranguri, S., and Jacot, A.
+\newblock Mixed dynamics in linear networks: Unifying the lazy and active regimes.
+\newblock \emph{arXiv preprint arXiv:2405.17580}, 2024.
+
+\bibitem[Wei et~al.(2023)Wei, Wei, Tay, Tran, Webson, Lu, Chen, Liu, Huang, Zhou, et~al.]{wei2023larger}
+Wei, J., Wei, J., Tay, Y., Tran, D., Webson, A., Lu, Y., Chen, X., Liu, H., Huang, D., Zhou, D., et~al.
+\newblock Larger language models do in-context learning differently.
+\newblock \emph{arXiv preprint arXiv:2303.03846}, 2023.
+
+\bibitem[West et~al.(2016)West, Wesley-Smith, and Bergstrom]{West2016ARS}
+West, J.~D., Wesley-Smith, I., and Bergstrom, C.~T.
+\newblock A recommendation system based on hierarchical clustering of an article-level citation network.
+\newblock \emph{IEEE Transactions on Big Data}, 2016.
+
+\bibitem[Xu et~al.(2023)Xu, Yu, Fang, Wang, and Wu]{xu2023language}
+Xu, Z., Yu, C., Fang, F., Wang, Y., and Wu, Y.
+\newblock Language agents with reinforcement learning for strategic play in the werewolf game.
+\newblock \emph{arXiv preprint arXiv:2310.18940}, 2023.
+
+\bibitem[Yan et~al.(2023)Yan, Li, Long, Yan, Zhao, Zhuang, Yin, Zhang, Han, Sun, Deng, Zhang, Sun, Xie, and Wang]{yan2023comprehensive}
+Yan, H., Li, C., Long, R., Yan, C., Zhao, J., Zhuang, W., Yin, J., Zhang, P., Han, W., Sun, H., Deng, W., Zhang, Q., Sun, L., Xie, X., and Wang, S.
+\newblock A comprehensive study on text-attributed graphs: Benchmarking and rethinking.
+\newblock In \emph{Thirty-seventh Conference on Neural Information Processing Systems Datasets and Benchmarks Track}, 2023.
+
+\bibitem[Yang \& Leskovec(2012)Yang and Leskovec]{Yang2012DefiningAE}
+Yang, J. and Leskovec, J.
+\newblock Defining and evaluating network communities based on ground-truth.
+\newblock \emph{Knowledge and Information Systems}, 2012.
+
+\bibitem[Yang et~al.(2021)Yang, Liu, Xiao, Li, Lian, Agrawal, Singh, Sun, and Xie]{yang2021graphformers}
+Yang, J., Liu, Z., Xiao, S., Li, C., Lian, D., Agrawal, S., Singh, A., Sun, G., and Xie, X.
+\newblock Graphformers: Gnn-nested transformers for representation learning on textual graph.
+\newblock \emph{Advances in Neural Information Processing Systems}, 2021.
+
+\bibitem[Yu et~al.(2024)Yu, Wang, Zhuang, Menapace, Siarohin, Cao, Jeni, Tulyakov, and Lee]{yu20244real}
+Yu, H., Wang, C., Zhuang, P., Menapace, W., Siarohin, A., Cao, J., Jeni, L.~A., Tulyakov, S., and Lee, H.-Y.
+\newblock 4real: Towards photorealistic 4d scene generation via video diffusion models.
+\newblock \emph{arXiv preprint arXiv:2406.07472}, 2024.
+
+\bibitem[Zhao et~al.(2023)Zhao, Qu, Li, Yan, Liu, Li, Xie, and Tang]{Zhao2022LearningOL}
+Zhao, J., Qu, M., Li, C., Yan, H., Liu, Q., Li, R., Xie, X., and Tang, J.
+\newblock Learning on large-scale text-attributed graphs via variational inference.
+\newblock In \emph{The Eleventh International Conference on Learning Representations}, 2023.
+
+\bibitem[Zhou et~al.(2023)Zhou, Zhu, Mathur, Zhang, Yu, Qi, Morency, Bisk, Fried, Neubig, et~al.]{zhou2023sotopia}
+Zhou, X., Zhu, H., Mathur, L., Zhang, R., Yu, H., Qi, Z., Morency, L.-P., Bisk, Y., Fried, D., Neubig, G., et~al.
+\newblock {SOTOPIA}: Interactive evaluation for social intelligence in language agents.
+\newblock In \emph{The Twelfth International Conference on Learning Representations}, 2023.
+
+\bibitem[Zhuge et~al.(2024)Zhuge, Wang, Kirsch, Faccio, Khizbullin, and Schmidhuber]{zhuge2024language}
+Zhuge, M., Wang, W., Kirsch, L., Faccio, F., Khizbullin, D., and Schmidhuber, J.
+\newblock {GPTS}warm: Language agents as optimizable graphs.
+\newblock In \emph{Forty-first International Conference on Machine Learning}, 2024.
+
+\end{thebibliography}

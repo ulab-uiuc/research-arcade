@@ -1,0 +1,9 @@
+\vspace{-3mm}
+\section{Additional Related Work}
+
+\xhdr{Graphs with text attributes} In real-world graph tasks, nodes often have textual attributes to carry richer information, forming text-attributed graphs (TAGs)~\citep{yang2021graphformers, he2023explanations}. 
+Previous work on TAGs mainly treats LLMs as tools for understanding text attributes and aims at achieving co-training LLMs and GNNs~\citep{Zhao2022LearningOL,Chen2023LabelfreeNC}. In contrast, our approach incorporates agent nodes into the graph, enabling text-based message passing between agent nodes and data nodes. Furthermore, while previous TAG research mainly focuses on node prediction and link prediction tasks~\citep{yan2023comprehensive}, \envname extends it to both the reconstruction of existing nodes and the prediction of new, non-existent nodes.
+
+
+\xhdr{Graphs for multi-agent modeling} Recent works model multi-agent communication using graphs and develop learnable methods to optimize the communication process~\citep{zhuge2024language, martinkus2022agent, hu2024learning}. However, these works often neglect the interactive nature of data, where agents can read, write, and update shared data iteratively. Currently, few works include a well-defined framework to represent graphs that integrate both agents and their associated data.
+

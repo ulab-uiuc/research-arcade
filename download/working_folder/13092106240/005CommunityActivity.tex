@@ -1,0 +1,112 @@
+\section{\envname: Applying TextGNN to Community Graph}
+\label{sec:method}
+
+
+%Based on the definition of the TextGNN and the agent-data graph, we can apply them to research community simulation to describe different research activities, where each type of activity can be regarded as a different instantiation of the TextGNN layer. The overall \envname simulation process takes a set of papers as input and takes a generated paper and a generated review corresponding to that paper as outputs. We first describe the concept of a community graph as the instantiation of an agent-data graph in research simulation. Then, we describe the specific TextGNN layers that are used to model each type of research activity.
+\xhdr{Inputs and outputs of \envname} Building on the definitions of TextGNN and the agent-data graph in Section~\S\ref{sec:community-graph-design} and Section~\S\ref{sec:text-gnn}, we simulate different research activities by modeling each as a specific instantiation of a TextGNN layer. \envname processes diverse research materials and produces structured outputs. The input varies by task: only paper abstracts are used for paper reading and writing, while full papers are provided for review writing. The output format is also task-specific: paper reading generates profile descriptions, paper writing generates bullet-point summaries, and review writing produces bullet-point critiques along with a numerical review score. These standardized output formats—described in more detail in Appendix~\S\ref{evaluation-details}—facilitate evaluation over long-context inputs and enable fine-grained, sub-component similarity scoring.
+
+\xhdr{Hidden states of \envname} In \envname, the hidden state of each node represents a condensed version of research materials, such as papers or reviews. Initially, paper nodes are initialized with the full text of papers. Through iterative message passing, these nodes gradually evolve into a standardized bullet-point format, distilling key information for easier downstream evaluation. Similarly, review attributes associated with paper nodes are also represented using bullet points to make it in a compact form. Bullet-point compact form with limited length allows TextGNN to conduct message passing multiple times efficiently.
+
+
+\xhdr{Agent-data graph for research community modeling - community graph} 
+We adopt the agent-data graph $\mathcal{G} = (\mathcal{V}, \mathcal{E})$ to research community simulation, which we named as \textit{community graph}. As is shown in Figure \ref{fig:community-activity}, each agent node $\mathcal{V}_a$ represents one researcher, and each data node $\mathcal{V}_d$ represents a paper. The edge set $ \mathcal{E}_{dd}$ captures paper citations, the edge set $\mathcal{E}_{ad}$ captures authorship (a researcher writes a paper) and reviewing expertise (a researcher is qualified to review a paper). We omit the edge set $ \mathcal{E}_{aa}$ to simplify the framework, as a collaboration between authors can typically be inferred through 2-hop paths via $\mathcal{E}_{ad}$ edges.
+
+
+\xhdr{TextGNN for research activity simulation}
+Based on the constructed community graph, we further identify the key types of research activities where TextGNN can be used for simulation.
+Specifically, as shown in Figure~\ref{fig:community-activity}, we split the research simulation process into three critical stages: (1) paper reading, (2) paper writing, and (3) review writing. We believe these stages are crucial in the research community, and each stage relies on the output of the previous stage as input. 
+We provide a detailed description for each stage and the corresponding TextGNN layer definition below.
+
+\hangindent=0em
+\hangafter=0
+\xhdr{$\triangleright$ Stage 1: Paper reading} Reading papers to collect insights is a necessary process for initializing a research project. In the community graph, the paper reading process can be described as \textit{inserting a new agent node} to the community graph and aggregating its neighborhood information based on Equation \ref{agg_agent}. Here, the new agent profile is non-existent before reading a collection of papers, and the profile is created after the paper reading process, making the TextGNN layer unique. Concretely, by adapting Equation \ref{agg_agent}, the TextGNN layer for paper reading can be written as:
+
+\vspace{-6mm}
+\begingroup
+\small
+\begin{equation}
+\begin{split}
+    \mb{h}_{u} & = \textsc{AGG}\Big(f_u(\cdot), \{\mb{h}_d \mid (u,d) \in \mathcal{E}_{ad}\}\Big) \\
+    & = f_u\Big(\Big[\left\{\mb{h}_d \mid (u,d) \in \mathcal{E}_{ad}\right\}\Big]\Big)
+\end{split}
+\label{paper_reading}
+\end{equation}
+\endgroup
+where $\mb{h}_u, \{f_a(\cdot), \mb{h}_a \mid (u, a) \in \mathcal{E}_{aa}\}$ in Equation \ref{agg_agent} are empty since the agent node is initialized as empty and is not directly connected with any agents, and $\mathcal{E}_{ad}$ specifically refers to the authorship relation between agent and data nodes. Equation \ref{agg_agent} degrades to an aggregation of papers based on the researcher agent without the profile, illustrated in Figure \ref{fig:community-activity} ``Stage 1''.
+
+\hangindent=0em
+\hangafter=0
+\xhdr{$\triangleright$ Stage 2: Paper writing} After paper reading, the next important research stage is paper writing. Different from paper reading, the paper writing process can be understood as inserting \textit{a new data node} into the community graph. Here, the new data node is non-existent before writing the paper, and the data node is created after the paper writing process. Concretely, by adapting Equation \ref{agg_data}, the TextGNN layer for paper writing can be written as:
+
+\vspace{-5mm}
+\begingroup
+\small
+\begin{equation}
+\begin{aligned}
+    \mb{h}_{v} &= \textsc{AGG}\Big( 
+        \big\{f_a(\cdot), \big\{\mb{h}_d \mid (v,d) \in \mathcal{E}_{dd}\big\}, \mb{h}_a \mid (v,a) \in \mathcal{E}_{ad}\big\}
+    \Big) \\
+    &= f_g\Big(
+        \Big[
+            \big\{f_a\big([\mb{h}_a, \mb{h}_d]\big) \mid (v,a) \in \mathcal{E}_{ad}, 
+            (v,d) \in \mathcal{E}_{dd}\big\}
+        \Big]
+    \Big)
+\end{aligned}
+\label{paper_writing}
+\end{equation}
+\endgroup
+where $\mb{h}_v$ in Equation \ref{agg_data} is empty since paper node contents are non-existent before paper writing; $\mathcal{E}_{ad}$ specifically refers to authorship relations between agent and data nodes, and $\mathcal{E}_{dd}$ refers to citation relations within data nodes. A visualization of Equation \ref{paper_writing} is shown in Figure \ref{fig:community-activity} ``Stage 2''.
+
+
+
+\hangindent=0em
+\hangafter=0
+\xhdr{$\triangleright$ Stage 3: Review writing} The review writing task is the final stage of the automatic research simulation, serving as a reflection stage in the multi-agent research simulator. The difference between the previous 2 stages is that, first, the researchers involved during review writing are not the authors but the reviewers of the paper. Additionally, review writing is based on a written paper where $\mb{h}_v$ is no longer empty. Concretely, by adapting Equation \ref{agg_data}, the TextGNN layer for review writing can be written as:
+
+\vspace{-5mm}
+\begingroup
+\small
+\begin{equation}
+\begin{aligned}
+    \mb{r}_{v} &= \textsc{AGG}\Big(\mb{h}_v, 
+    , \big\{\mb{h}_d \mid (v,d) \in \mathcal{E}_{dd}\big\}\big\{f_a(\cdot), \mb{h}_a \mid (v,a) \in \mathcal{E}_{ad}\big\}\Big) \\
+    &= f_g\Big(\Big[\mb{h}_v, 
+    \big\{f_a\big([\mb{h}_a, \mb{h}_v, \mb{h}_d]\big) \mid  (v,a) \in \mathcal{E}_{ad}, (v,d) \in \mathcal{E}_{dd}\big\}\Big]\Big)
+\end{aligned}
+\label{review_writing}
+\end{equation}
+\endgroup
+
+\hangindent=0em
+\hangafter=0
+\xhdr{$\triangleright$ Summary: \envname simulation algorithm} Utilizing the community graph $\mathcal{G}$, we propose a simulation algorithm named as \envname. Overall, the simulation algorithm can be considered as a 2-layer GNN where the paper reading is the first layer of information aggregation. Both paper writing and review writing are the second layer of the GNN to generate the final simulation outputs. We formally summarize the research community simulation in Algorithm \ref{alg:paper_brainstorming}. To achieve better efficiency, the modified version for implementation is in Appendix~\S\ref{simulation-algorithm-implementation}.
+
+\begin{algorithm}
+\small
+\caption{\small \envname simulation algorithm}
+\label{alg:paper_brainstorming}
+\begin{algorithmic}[1]
+\REQUIRE community graph $\mathcal{G}(\mathcal{V}, \mathcal{E})$,\\ 
+         \hspace{2.6em}paper contents $\mb{x}_v$ for all paper nodes,\\ 
+         \hspace{2.6em}target paper node $v$
+\ENSURE paper content $\mb{h}_v$ and review content $\mb{r}_v$ for paper node $v$
+\FOR{each $u \in \mathcal{N}(v)$}
+    \IF{$u \in \mathcal{V}_d$}
+        \STATE $\mb{h}_u \gets \mb{x}_u$
+    \ELSE
+        \STATE $\mb{h}_{u} \gets f_u\left(\left[\left\{\mb{x}_d \mid (u,d) \in \mathcal{E}_{ad}\right\}\right]\right)$ \hfill $\triangleright$ Eq.~\eqref{paper_reading}
+    \ENDIF
+\ENDFOR
+\STATE $\mb{h}_{v} \gets f_g\Big(\Big[\big\{f_a([\mb{h}_a, \mb{h}_d]) \mid$ 
+    \STATE \quad\quad $(v,a) \in \mathcal{E}_{ad}, (v,d) \in \mathcal{E}_{dd}\big\}\Big]\Big)$ \hfill $\triangleright$ Eq.~\eqref{paper_writing}
+\STATE $\mb{r}_{v} \gets f_g\Big(\Big[\mb{h}_v, \{f_a([\mb{h}_a, \mb{h}_v, \mb{h}_d]) \mid$ 
+    \STATE \quad\quad $(v,a) \in \mathcal{E}_{ad}, (v,d) \in \mathcal{E}_{dd}\}\Big]\Big)$ \hfill $\triangleright$ Eq.~\eqref{review_writing}
+\STATE \textbf{return} $\mb{h}_v$, $\mb{r}_v$ 
+\end{algorithmic}
+\end{algorithm}
+\vspace{-3mm}
+
+
+
+

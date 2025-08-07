@@ -1,0 +1,13 @@
+\vspace{-2mm}
+\section{Agent-Data Graph for Multi-agent LLMs}
+\label{sec:community-graph-design}
+
+\xhdr{Definition of agent-data graphs}
+To initiate our discussion, we formally define the proposed agent-data graph. An agent-data graph is a special type of heterogeneous graph $ \mathcal{G} = (\mathcal{V}, \mathcal{E}) $, where $ \mathcal{V} = \mathcal{V}_a \cup \mathcal{V}_d $ is the node set consisting of two types of nodes, agent nodes and data nodes, and $\mathcal{E} = \mathcal{E}_{aa} \cup \mathcal{E}_{ad} \cup \mathcal{E}_{dd}$ is the edge set consisting of three types of relations, agent-agent, data-data, and agent-data interactions.
+Here, each data node $v \in \mathcal{V}_d$ comes with attributes, \eg, a piece of text, $\mathbf{x}_v$; each agent node $u$ is accompanied with an \textit{agent function}, \eg, an LLM $f_u(\cdot)$ with its prompt template and the profile. Each agent function is responsible for two types of tasks: message generation and message aggregation. More details about agent functions are in Appendix~\S\ref{agent-function-implementation}. Without loss of generality, we assume that the data nodes have text attributes, and leave the multi-modal extension of our work, \eg, images, audio, and videos, to future works.
+
+\xhdr{Uniqueness of agent-data graphs}
+Unlike standard heterogeneous graphs, the uniqueness of an agent-data graph is that the agent nodes take functions as their attributes, rather than embeddings. Concretely, each agent node could take a piece of text, \eg, $\mathbf{x}_v$ from one data node, as the input and output new data based on its profile prompt $\mathbf{x}_u$, \eg, $\mathbf{x}_{uv} = f_u([\mathbf{x}_u, \mathbf{x}_v])$ where $[\cdot]$ indicates filling the prompt template with $\mathbf{x}_u$ and $\mathbf{x}_v$. Such definition greatly facilitates the multi-agent scenarios where agents could communicate among themselves, with edge type $\mathcal{E}_{aa}$; interacting with the environment, with edge type $\mathcal{E}_{ad}$; representing the inherent data relationships within an environment $\mathcal{E}_{dd}$.
+
+\xhdr{Example of agent-data graphs} Figure~\ref{fig:community-graph} shows an example of the agent-data graph. Its definition could be extended to more node types (\eg, codebase, blogs) and edge types (\eg, attend, post, commit). Typically, one blog post can be directly connected to multiple researchers, papers, and other blog posts if they are related to each other.
+
