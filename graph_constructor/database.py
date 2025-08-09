@@ -11,8 +11,10 @@ class Database:
     def __init__(self):
         # Store connection and cursor for reuse
         self.conn = psycopg2.connect(
-            host="localhost", dbname="postgres",
-            user="postgres", password=PASSWORD, port="5432"
+            host="localhost",
+            port="5433",
+            dbname="postgres",
+            user="cl195"
         )
         # Enable autocommit
         self.conn.autocommit = True

@@ -8,7 +8,7 @@ from graphserializer.database_serializer import DatabaseSerializer
 ds = DatabaseSerializer()
 
 path = "download/csv"
-table_name = "paragraph_references"
+table_name = "paper_task"
 file_name = f"{table_name}_csv.csv"
 
 output_path = ds.all_to_csv(table_name=table_name, file_name=file_name, dir_path=path, max_results=1000)

@@ -47,7 +47,7 @@ class CrawlerJob:
         self.tdb.drop_paper_task_table()
     
 
-    def crawl_recent_arxiv_paper(self, year, month, day, max_result=100):
+    def crawl_recent_arxiv_paper(self, year, month, day, max_result):
         """
         Crawl arxiv paper ids of papers published after the given date.
         Stops when either:
@@ -67,7 +67,7 @@ class CrawlerJob:
 
         try:
             for result in iterator:
-                # stop early if we’ve gone past the cutoff
+                # stop early if we've gone past the cutoff
                 if result.published < cutoff:
                     break
                 recent_ids.append(result.get_short_id())
