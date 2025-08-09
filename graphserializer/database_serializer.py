@@ -22,10 +22,9 @@ class DatabaseSerializer:
         # Initialize the database connection
         self.conn = psycopg2.connect(
             host="localhost",
+            port="5433",
             dbname="postgres",
-            user="postgres",
-            password=PASSWORD,
-            port="5432"
+            user="cl195"
         )
         self.conn.autocommit = True
         self.cur = self.conn.cursor()
