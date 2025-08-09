@@ -1,0 +1,4 @@
+WARNING:paperscraper.load_dumps: No dump found for biorxiv. Skipping entry.
+WARNING:paperscraper.load_dumps: No dump found for chemrxiv. Skipping entry.
+WARNING:paperscraper.load_dumps: No dump found for medrxiv. Skipping entry.
+WARNING:paperscraper.load_dumps: No dumps found for either biorxiv, medrxiv and chemrxiv. Consider using paperscraper.get_dumps.* to fetch the dumps.
