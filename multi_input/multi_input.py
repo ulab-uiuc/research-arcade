@@ -5,6 +5,8 @@ class MultiInput:
   """
   Download the compresses latex source code given the bib, arxiv id or arxiv link
   """
+
+
     
   def extract_bib_from_string(self, bib_str: str) -> dict:
       """
@@ -186,7 +188,29 @@ class MultiInput:
           if m:
               return m.group('id')
 
+
       raise ValueError(f"Could not extract arXiv ID from URL: {arxiv_url}")
+
+  def doi_to_id(self, arxiv_doi: str) -> str:
+
+    if not isinstance(arxiv_doi, str):
+        raise TypeError("arxiv_doi must be a string")
+
+    s = arxiv_doi.strip()
+
+    s = re.sub(r'^(https?://(?:dx\.)?doi\.org/)', '', s, flags=re.I)
+
+    m = re.match(r'^10\.48550/ARXIV\.(?P<id>[^?#]+)$', s, flags=re.I)
+    if not m:
+        raise ValueError(f"Not an arXiv DOI: {arxiv_doi!r}")
+
+    arxiv_id = m.group('id')
+
+    # remove optional version suffix, e.g., 'v3'
+    arxiv_id = re.sub(r'v\d+$', '', arxiv_id, flags=re.I)
+
+    return arxiv_id
+    
 
 
   def extract_arxiv_id_from_bib(self, bib_entry: dict) -> str:
