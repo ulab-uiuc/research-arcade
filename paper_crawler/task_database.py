@@ -45,6 +45,70 @@ class TaskDatabase:
         )
         """)
     
+    def create_paper_search_intervals_table(self):
+        self.cur.execute("CREATE TYPE IF NOT EXISTS search_status AS ENUM ('pending','success','failed');")
+        self.cur.execute("CREATE EXTENSION IF NOT EXISTS btree_gist;")
+        self.cur.execute("""
+        CREATE TABLE IF NOT EXISTS paper_search_intervals(
+            id          BIGSERIAL PRIMARY KEY,
+            search_key  TEXT NOT NULL,
+            period      DATERANGE NOT NULL,          -- [start, end)
+            status      search_status NOT NULL DEFAULT 'pending',
+            created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
+            CHECK (lower(period) < upper(period))
+        )
+        """)
+        self.cur.execute("""
+        CREATE INDEX IF NOT EXISTS paper_search_intervals_period_gist
+        ON paper_search_intervals USING GIST (period)
+        """)
+        self.cur.execute("""
+        DO $$
+        BEGIN
+        IF NOT EXISTS (
+            SELECT 1 FROM pg_constraint WHERE conname = 'paper_search_intervals_no_overlap'
+        ) THEN
+            ALTER TABLE paper_search_intervals
+            ADD CONSTRAINT paper_search_intervals_no_overlap
+            EXCLUDE USING GIST (search_key WITH =, period WITH &&);
+        END IF;
+        END$$;
+        """)
+
+    def drop_paper_search_intervals_table(self):
+        self.cur.execute("DROP TABLE IF EXISTS paper_search_intervals")
+
+    def insert_paper_search_intervals(self, search_key, start_date, end_date, status='pending'):
+        """
+        Returns the uncovered sub-intervals within [start_date, end_date) that do not
+        intersect existing rows for this search_key. Inserts those intervals (status=...).
+        """
+        # 1) compute uncovered
+        self.cur.execute("""
+            SELECT * FROM get_uncovered_paper_search_periods(%s, %s::date, %s::date)
+        """, (search_key, start_date, end_date))
+        gaps = [row[0] for row in self.cur.fetchall()]  # each row is a DATERANGE
+
+        if not gaps:
+            return []  # fully covered
+
+        # 2) insert each uncovered interval (race-safe with ON CONFLICT on the exclusion constraint)
+        inserted = []
+        for g in gaps:
+            self.cur.execute("""
+                INSERT INTO paper_search_intervals (search_key, period, status)
+                VALUES (%s, %s, %s)
+                ON CONFLICT ON CONSTRAINT paper_search_intervals_no_overlap DO NOTHING
+                RETURNING id
+            """, (search_key, g, status))
+            row = self.cur.fetchone()
+            if row:
+                inserted.append({'id': row[0], 'period': g})
+
+        return inserted
+        
+
+
     def drop_paper_task_table(self):
         self.cur.execute("""
         DROP TABLE IF EXISTS paper_task
