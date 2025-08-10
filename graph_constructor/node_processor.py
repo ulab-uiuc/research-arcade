@@ -441,10 +441,17 @@ class NodeConstructor:
 
     def arxiv_id_processor(self, arxiv_id):
         """
-        Given arxiv id, return base arxiv id and version
-        - arxiv_id: str
+        If the arxiv id is in the format a.bvc, we extract the a.b and c
+        If it is in the format a.b, we only extract the a.b
         """
-        return arxiv_id.split('v')
+        ARXIV_RE = re.compile(r'^(?P<id>(?:[a-z\-]+\/\d{7}|\d{4}\.\d{4,5}))(?:v(?P<v>\d+))?$', re.IGNORECASE)
+
+        m = ARXIV_RE.match(arxiv_id.strip())
+        if not m:
+            raise ValueError(f"Not a valid arXiv id: {arxiv_id!r}")
+        base = m.group('id')
+        v = m.group('v')
+        return base, (int(v) if v is not None else None)
     
 
     def author_processor(self, arxiv_id):

@@ -47,6 +47,80 @@ class TaskDatabase:
         )
         """)
     
+    # def create_paper_search_intervals_table(self):
+    #     # 1) Create enum safely (works on old PG too)
+    #     self.cur.execute("""
+    #     DO $$
+    #     BEGIN
+    #     IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'search_status') THEN
+    #         CREATE TYPE search_status AS ENUM ('pending','success','failed');
+    #     END IF;
+    #     END$$;
+    #     """)
+
+    #     # 2) (Optional) install btree_gist; ignore if missing privilege/already installed
+    #     self.cur.execute("""
+    #     DO $$
+    #     BEGIN
+    #     BEGIN
+    #         CREATE EXTENSION btree_gist;
+    #     EXCEPTION
+    #         WHEN duplicate_object THEN NULL;
+    #         WHEN insufficient_privilege THEN
+    #         RAISE NOTICE 'btree_gist not installed (no privilege); continuing';
+    #     END;
+    #     END$$;
+    #     """)
+
+    #     # 3) Table + index + exclusion constraint (no trailing comma!)
+    #     self.cur.execute("""
+    #     CREATE TABLE IF NOT EXISTS paper_search_intervals(
+    #     id          BIGSERIAL PRIMARY KEY,
+    #     period      DATERANGE NOT NULL,           -- [start, end)
+    #     status      search_status NOT NULL DEFAULT 'pending',
+    #     CHECK (lower(period) < upper(period))
+    #     )
+    #     """)
+
+    #     self.cur.execute("""
+    #     CREATE INDEX IF NOT EXISTS paper_search_intervals_period_gist
+    #     ON paper_search_intervals USING GIST (period)
+    #     """)
+
+    # def drop_paper_search_intervals_table(self):
+    #     self.cur.execute("DROP TABLE IF EXISTS paper_search_intervals")
+
+    # def insert_paper_search_intervals(self, search_key, start_date, end_date, status='pending'):
+    #     """
+    #     Returns the uncovered sub-intervals within [start_date, end_date) that do not
+    #     intersect existing rows for this search_key. Inserts those intervals (status=...).
+    #     """
+    #     # 1) compute uncovered
+    #     self.cur.execute("""
+    #         SELECT * FROM get_uncovered_paper_search_periods(%s, %s::date, %s::date)
+    #     """, (search_key, start_date, end_date))
+    #     gaps = [row[0] for row in self.cur.fetchall()]  # each row is a DATERANGE
+
+    #     if not gaps:
+    #         return []  # fully covered
+
+    #     # 2) insert each uncovered interval (race-safe with ON CONFLICT on the exclusion constraint)
+    #     inserted = []
+    #     for g in gaps:
+    #         self.cur.execute("""
+    #             INSERT INTO paper_search_intervals (search_key, period, status)
+    #             VALUES (%s, %s, %s)
+    #             ON CONFLICT ON CONSTRAINT paper_search_intervals_no_overlap DO NOTHING
+    #             RETURNING id
+    #         """, (search_key, g, status))
+    #         row = self.cur.fetchone()
+    #         if row:
+    #             inserted.append({'id': row[0], 'period': g})
+
+    #     return inserted
+
+
+
     def drop_paper_task_table(self):
         self.cur.execute("""
         DROP TABLE IF EXISTS paper_task
@@ -107,3 +181,5 @@ class TaskDatabase:
 
         params = (paper_arxiv_id, False, False, False, False, False)
         self.cur.execute(sql, params)
+
+        
