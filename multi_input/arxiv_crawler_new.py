@@ -4,8 +4,14 @@ import json
 from typing import List
 
 
-def download_with_time(start_date, end_date=None):
-    save_path = f"download/arxiv_metadata_{start_date}_{end_date}.jsonl"
+def download_with_time(start_date, end_date=None, save_path="./download"):
+
+    save_path = f"{save_path}/arxiv_metadata_{start_date}_{end_date}.jsonl"
+    
+    # Create an empty file of the same path
+
+    
+
     arxiv(start_date=start_date, end_date=end_date, save_path=save_path) # scrapes all metadata from 2024 until today.
     return save_path
 
