@@ -13,17 +13,18 @@ cj = CrawlerJob(dest_dir="download")
 start_date = "2020-08-10"
 end_date = "2020-08-10"
 path = "./download"
-file_path = "./download/arxiv_metadata_2020-08-10_2020-08-10.jsonl"
 
-# arxiv_ids = cj.crawl_recent_arxiv_paper_new(start_date=start_date, end_date=end_date, path=path)
+file_path = f"./download/arxiv_metadata_{start_date}_{end_date}.jsonl"
 
-# arxiv_ids = extract_arxiv_ids(file_path)
+arxiv_ids = cj.crawl_recent_arxiv_paper_new(start_date=start_date, end_date=end_date, path=path)
 
-# print(arxiv_ids)
+arxiv_ids = extract_arxiv_ids(file_path)
 
-# cj.initialize_paper_tasks(arxiv_ids=arxiv_ids)
+print(arxiv_ids)
 
-arxiv_ids = cj.select_unproceeded_task(task_type="downloaded", max_results=10)
+cj.initialize_paper_tasks(arxiv_ids=arxiv_ids)
+
+# arxiv_ids = cj.select_unproceeded_task(task_type="downloaded", max_results=10)
 
 print(arxiv_ids)
 
