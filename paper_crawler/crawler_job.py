@@ -4,7 +4,8 @@ from paper_crawler.task_database import TaskDatabase
 from graph_constructor.database import Database
 from paper_collector.paper_graph_processor import PaperGraphProcessor
 import psycopg2
-from psycopg2 import errorcodes, errors
+from psycopg2 import errorcodes
+from psycopg2 import errors as psy_errors  # alias correctly
 import pytz
 import json
 from arxiv import UnexpectedEmptyPageError
@@ -91,26 +92,63 @@ class CrawlerJob:
         - arxiv_ids: list[str]
         """
 
-        for arxiv_id in arxiv_ids:
-            try:
-                self.tdb.initialize_state(arxiv_id)
-            
-            except psycopg2.IntegrityError as e:
-                # roll back so that the next iteration can run cleanly
-                self.conn.rollback()
+        cleaned_ids = []
 
-                if e.pgcode == errorcodes.UNIQUE_VIOLATION:
-                    print(f"[!]\tTask for {arxiv_id} already exists — skipping.")
-                else:
-                    print(f"[!]\tPaper {arxiv_id} not added into database: {e}")
+        seen = set()
 
-            except Exception as e:
-                # catch any other exception
-                self.conn.rollback()
-                print(f"[!]\tUnexpected error initializing task for {arxiv_id}: {e}")
+        for id in arxiv_ids or []:
+            if not id:
+                continue
 
-            else:
-                print(f"[+] Task for {arxiv_id} initialized.")
+            id = id.strip()
+
+            if not id or id in seen:
+                continue
+
+            seen.add(id)
+            cleaned_ids.append(id)
+        added, skipped, failed = [], [], {}
+
+        with self.tdb.conn.cursor() as cur:
+            for id in cleaned_ids:
+                try:
+                    fetched = self.tdb.initialize_state(id)
+                    if fetched:
+                        added.append(id)
+                        print(f"[+] Task for {id} initialized.")
+                    else:
+                        skipped.append(id)
+                        print(f"[!]\tTask for {id} already exists — skipping.")
+
+                except Exception as e:
+                    failed[id] = repr(e)
+                    print(f"[!]\tPaper {id} not added into database: {e}")
+
+        return {"added": added, "skipped": skipped, "failed": failed}
+
+        # added_arxiv_ids = []
+
+        # for arxiv_id in arxiv_ids:
+        #     try:
+        #         self.tdb.initialize_state(arxiv_id)
+        #         added_arxiv_ids.append(arxiv_id)
+        #     except psycopg2.IntegrityError as e:
+        #         # roll back so that the next iteration can run cleanly
+        #         self.conn.rollback()
+
+        #         if e.pgcode == errorcodes.UNIQUE_VIOLATION:
+        #             print(f"[!]\tTask for {arxiv_id} already exists — skipping.")
+        #         else:
+        #             print(f"[!]\tPaper {arxiv_id} not added into database: {e}")
+
+        #     except Exception as e:
+        #         # catch any other exception
+        #         self.conn.rollback()
+        #         print(f"[!]\tUnexpected error initializing task for {arxiv_id}: {e}")
+
+        #     else:
+        #         print(f"[+] Task for {arxiv_id} initialized.")
+        # return added_arxiv_ids
 
     def download_papers(self, arxiv_ids):
         """
