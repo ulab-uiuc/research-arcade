@@ -13,7 +13,7 @@ cj = CrawlerJob(dest_dir="download")
 start_date = "2020-08-10"
 end_date = "2020-08-10"
 path = "./download"
-file_path = "./download/arxiv_metadata_2020-08-10_2020-08-12.jsonl"
+file_path = "./download/arxiv_metadata_2020-08-10_2020-08-10.jsonl"
 
 # arxiv_ids = cj.crawl_recent_arxiv_paper_new(start_date=start_date, end_date=end_date, path=path)
 
@@ -23,21 +23,19 @@ file_path = "./download/arxiv_metadata_2020-08-10_2020-08-12.jsonl"
 
 # cj.initialize_paper_tasks(arxiv_ids=arxiv_ids)
 
-# arxiv_ids = cj.select_unproceeded_task(task_type="downloaded", max_results=10)
+arxiv_ids = cj.select_unproceeded_task(task_type="downloaded", max_results=10)
 
-# print(arxiv_ids)
-
-# cj.download_papers(arxiv_ids=arxiv_ids)
-
-arxiv_ids = ['2008.03842', '2008.03843', '2008.03844', '2008.03845', '2008.03846', '2008.03847', '2008.03848', '2008.03849', '2008.03850', '2008.03851']
 print(arxiv_ids)
 
-# cj.download_papers(arxiv_ids=arxiv_ids)
+# arxiv_ids = ['2008.03842', '2008.03843', '2008.03844', '2008.03845', '2008.03846', '2008.03847', '2008.03848', '2008.03849', '2008.03850', '2008.03851']
+# print(arxiv_ids)
 
-# cj.process_paper_graphs(arxiv_ids=arxiv_ids)
+cj.download_papers(arxiv_ids=arxiv_ids)
 
-# cj.process_paper_paragraphs(arxiv_ids=arxiv_ids)
+cj.process_paper_graphs(arxiv_ids=arxiv_ids)
+
+cj.process_paper_paragraphs(arxiv_ids=arxiv_ids)
 
 # arxiv_ids = cj.select_unproceeded_task(task_type="citation", max_results=1000)
 
-cj.process_paper_citations(arxiv_ids=arxiv_ids)
+# cj.process_paper_citations(arxiv_ids=arxiv_ids)
