@@ -2,3 +2,1184 @@ WARNING:paperscraper.load_dumps: No dump found for biorxiv. Skipping entry.
 WARNING:paperscraper.load_dumps: No dump found for chemrxiv. Skipping entry.
 WARNING:paperscraper.load_dumps: No dump found for medrxiv. Skipping entry.
 WARNING:paperscraper.load_dumps: No dumps found for either biorxiv, medrxiv and chemrxiv. Consider using paperscraper.get_dumps.* to fetch the dumps.
+SEMANTIC_SCHOLAR_API_KEY not set in .env
+SEMANTIC_SCHOLAR_API_KEY not set in .env
+['2008.03299', '2008.03300', '2008.03302', '2008.03842', '2008.03843', '2008.03844', '2008.03845', '2008.03846', '2008.03847', '2008.03848']
+download/2008.03299/2008.03299.tar.gz
+paper with id 2008.03299 downloaded
+download/2008.03300/2008.03300.tar.gz
+paper with id 2008.03300 downloaded
+download/2008.03302/2008.03302.tar.gz
+paper with id 2008.03302 downloaded
+download/2008.03842/2008.03842.tar.gz
+paper with id 2008.03842 downloaded
+download/2008.03843/2008.03843.tar.gz
+paper with id 2008.03843 downloaded
+download/2008.03844/2008.03844.tar.gz
+paper with id 2008.03844 downloaded
+download/2008.03845/2008.03845.tar.gz
+paper with id 2008.03845 downloaded
+download/2008.03846/2008.03846.tar.gz
+paper with id 2008.03846 downloaded
+download/2008.03847/2008.03847.tar.gz
+paper with id 2008.03847 downloaded
+download/2008.03848/2008.03848.tar.gz
+paper with id 2008.03848 downloaded
+seed: ['2008.03299']
+cnt: 0
+BFS_que.qsize(): 1
+current paper: 2008.03299
+Thread 139799473952320 Processing 2008.03299
+Thread 139799473952320 Processing file forARXIV.tex
+numbmer of citations in node info method: 0
+Thread 139799473952320 Finished processing 2008.03299 (1/1010) Time elapsed: 1.56s
+Thread 139802080040768 Finished processing 1 papers
+seed: ['2008.03299', '2008.03300']
+cnt: 1
+BFS_que.qsize(): 2
+current paper: 2008.03299
+Thread 139799473952320 Processing 2008.03299
+current paper: 2008.03300
+Thread 139799473952320 Processing 2008.03300
+Thread 139799473952320 Processing file Yar6D.tex
+numbmer of citations in node info method: 0
+Cannot find the figure *
+Cannot find the figure *
+Cannot find the figure *
+Cannot find the figure *
+Cannot find the figure *
+Thread 139799473952320 Finished processing 2008.03300 (2/1010) Time elapsed: 1.46s
+Thread 139802080040768 Finished processing 2 papers
+seed: ['2008.03299', '2008.03300', '2008.03302']
+cnt: 2
+BFS_que.qsize(): 3
+current paper: 2008.03299
+Thread 139799473952320 Processing 2008.03299
+current paper: 2008.03300
+Thread 139799473952320 Processing 2008.03300
+current paper: 2008.03302
+Thread 139799473952320 Processing 2008.03302
+Thread 139799473952320 Processing file LakshmihayagrivaR.tex
+numbmer of citations in node info method: 0
+Cannot find the bib file qvanta.bib
+Thread 139799473952320 Finished processing 2008.03302 (3/1010) Time elapsed: 1.03s
+Thread 139802080040768 Finished processing 3 papers
+seed: ['2008.03299', '2008.03300', '2008.03302', '2008.03842']
+cnt: 3
+BFS_que.qsize(): 4
+current paper: 2008.03299
+Thread 139799473952320 Processing 2008.03299
+current paper: 2008.03300
+Thread 139799473952320 Processing 2008.03300
+current paper: 2008.03302
+Thread 139799473952320 Processing 2008.03302
+current paper: 2008.03842
+Thread 139799473952320 Processing 2008.03842
+Thread 139799473952320 Processing file main.tex
+[Errno 2] No such file or directory: 'download/working_folder/139799473952320/Abstract.tex'
+numbmer of citations in node info method: 0
+bib_path: download/working_folder/139799473952320/thesis.bib
+key2id: {}
+[Errno 2] No such file or directory: 'download/working_folder/139799473952320/Abstract.tex'
+Cannot find the figure "Figures/introduction/lorimer_bns_formation".jpg
+Cannot find the figure "Figures/introduction/psr_emission".png
+Cannot find the figure "Figures/introduction/j1400+50_DM".png
+Cannot find the figure "Figures/introduction/scattering".pdf
+Cannot find the figure "Figures/introduction/accel_search_eg".png
+Cannot find the figure "Figures/introduction/binary_ppdot".pdf
+Cannot find the figure "Figures/introduction/B_emission_orbphase".pdf
+Cannot find the figure "Figures/introduction/B_drifting_subpulses".png
+Cannot find the figure "Figures/introduction/gw_spectrum".png
+Cannot find the figure "Figures/dns_merger_rate/dm_sinb_all".pdf
+Cannot find the figure "Figures/dns_merger_rate/z_ht_all".pdf
+Cannot find the figure "Figures/dns_merger_rate/individual_rates".pdf
+Cannot find the figure "Figures/dns_merger_rate/mw_merger_rate".pdf
+Cannot find the figure "Figures/dns_merger_rate/update_sim_var".pdf
+Cannot find the figure "Figures/dns_merger_rate/comp_diff_rates".pdf
+Cannot find the figure "Figures/lisa_bns_systems/spe".pdf
+Cannot find the figure "Figures/lisa_bns_systems/fig9b".jpeg
+Cannot find the figure "Figures/lisa_bns_systems/fig9b_nn".pdf
+Cannot find the figure "Figures/lisa_bns_systems/asymm_preference".pdf
+Cannot find the figure "Figures/lisa_bns_systems/nswd_npop".pdf
+Cannot find the figure "Figures/lisa_bns_systems/dns_npop".pdf
+Cannot find the figure "Figures/lisa_bns_systems/success_nswd".pdf
+Cannot find the figure "Figures/lisa_bns_systems/success_dns".pdf
+Cannot find the figure "Figures/lisa_bns_systems/motivate_opt_tint".pdf
+Cannot find the figure "Figures/lisa_bns_systems/ideal_success_nswd".pdf
+Cannot find the figure "Figures/lisa_bns_systems/ideal_success_dns".pdf
+Cannot find the figure "Figures/sense_of_rotn_A/original_pulse".pdf
+Cannot find the figure "Figures/sense_of_rotn_A/harmonics".pdf
+Cannot find the figure "Figures/sense_of_rotn_A/BP1_1_all".pdf
+Cannot find the figure "Figures/sense_of_rotn_A/BP1_2_all".pdf
+Cannot find the figure "Figures/sense_of_rotn_A/BP2_1_all".pdf
+Cannot find the figure "Figures/sense_of_rotn_A/WP_2_all".pdf
+Cannot find the figure "Figures/sense_of_rotn_A/cumulative_BP1_1".pdf
+Cannot find the figure "Figures/sense_of_rotn_A/cumulative_BP1_2".pdf
+Cannot find the figure "Figures/sense_of_rotn_A/cumulative_BP2_1".pdf
+Cannot find the figure "Figures/sense_of_rotn_A/cumulative_NBP_2".pdf
+Thread 139799473952320 Finished processing 2008.03842 (4/1010) Time elapsed: 4.61s
+Thread 139802080040768 Finished processing 4 papers
+seed: ['2008.03299', '2008.03300', '2008.03302', '2008.03842', '2008.03843']
+cnt: 4
+BFS_que.qsize(): 5
+current paper: 2008.03299
+Thread 139799473952320 Processing 2008.03299
+current paper: 2008.03300
+Thread 139799473952320 Processing 2008.03300
+current paper: 2008.03302
+Thread 139799473952320 Processing 2008.03302
+current paper: 2008.03842
+Thread 139799473952320 Processing 2008.03842
+current paper: 2008.03843
+Thread 139799473952320 Processing 2008.03843
+Thread 139799473952320 Failed to process 2008.03843
+Thread 139802080040768 Finished processing 4 papers
+seed: ['2008.03299', '2008.03300', '2008.03302', '2008.03842', '2008.03843', '2008.03844']
+cnt: 4
+BFS_que.qsize(): 6
+current paper: 2008.03299
+Thread 139799473952320 Processing 2008.03299
+current paper: 2008.03300
+Thread 139799473952320 Processing 2008.03300
+current paper: 2008.03302
+Thread 139799473952320 Processing 2008.03302
+current paper: 2008.03842
+Thread 139799473952320 Processing 2008.03842
+current paper: 2008.03843
+Thread 139799473952320 Processing 2008.03843
+current paper: 2008.03844
+Thread 139801968670272 Processing 2008.03844
+Thread 139799473952320 Failed to process 2008.03843
+'utf-8' codec can't decode byte 0xa1 in position 5234: invalid start byte
+Thread 139801968670272 Finished processing 2008.03844 (5/1010) Time elapsed: 0.09s
+'NoneType' object is not subscriptable
+Thread 139801968670272 Failed to process 2008.03844
+Thread 139802080040768 Finished processing 5 papers
+seed: ['2008.03299', '2008.03300', '2008.03302', '2008.03842', '2008.03843', '2008.03844', '2008.03845']
+cnt: 5
+BFS_que.qsize(): 7
+current paper: 2008.03299
+Thread 139801968670272 Processing 2008.03299
+current paper: 2008.03300
+Thread 139801968670272 Processing 2008.03300
+current paper: 2008.03302
+Thread 139801968670272 Processing 2008.03302
+current paper: 2008.03842
+Thread 139801968670272 Processing 2008.03842
+current paper: 2008.03843
+Thread 139801968670272 Processing 2008.03843
+current paper: 2008.03844
+Thread 139799473952320 Processing 2008.03844
+current paper: 2008.03845
+Thread 139799473952320 Processing 2008.03845
+Thread 139801968670272 Failed to process 2008.03843
+Thread 139799473952320 Processing file DSS-Pandemic-YanShm.tex
+numbmer of citations in node info method: 0
+Thread 139799473952320 Finished processing 2008.03845 (6/1010) Time elapsed: 0.81s
+Thread 139802080040768 Finished processing 6 papers
+seed: ['2008.03299', '2008.03300', '2008.03302', '2008.03842', '2008.03843', '2008.03844', '2008.03845', '2008.03846']
+cnt: 6
+BFS_que.qsize(): 8
+current paper: 2008.03299
+Thread 139799473952320 Processing 2008.03299
+current paper: 2008.03300
+Thread 139799473952320 Processing 2008.03300
+current paper: 2008.03302
+Thread 139799473952320 Processing 2008.03302
+current paper: 2008.03842
+Thread 139799473952320 Processing 2008.03842
+current paper: 2008.03843
+Thread 139799473952320 Processing 2008.03843
+current paper: 2008.03844
+Thread 139801968670272 Processing 2008.03844
+current paper: 2008.03845
+Thread 139801968670272 Processing 2008.03845
+current paper: 2008.03846
+Thread 139801968670272 Processing 2008.03846
+Thread 139799473952320 Failed to process 2008.03843
+Thread 139801968670272 Processing file unnumberedsmallnetwork20210104.tex
+numbmer of citations in node info method: 0
+Thread 139801968670272 Finished processing 2008.03846 (7/1010) Time elapsed: 1.98s
+Thread 139802080040768 Finished processing 7 papers
+seed: ['2008.03299', '2008.03300', '2008.03302', '2008.03842', '2008.03843', '2008.03844', '2008.03845', '2008.03846', '2008.03847']
+cnt: 7
+BFS_que.qsize(): 9
+current paper: 2008.03299
+Thread 139801968670272 Processing 2008.03299
+current paper: 2008.03300
+Thread 139801968670272 Processing 2008.03300
+current paper: 2008.03302
+Thread 139801968670272 Processing 2008.03302
+current paper: 2008.03842
+Thread 139801968670272 Processing 2008.03842
+current paper: 2008.03843
+Thread 139801968670272 Processing 2008.03843
+current paper: 2008.03844
+Thread 139799473952320 Processing 2008.03844
+current paper: 2008.03845
+Thread 139799473952320 Processing 2008.03845
+current paper: 2008.03846
+Thread 139799473952320 Processing 2008.03846
+current paper: 2008.03847
+Thread 139799473952320 Processing 2008.03847
+Thread 139801968670272 Failed to process 2008.03843
+INFO:pylatexenc.latexwalker:Ignoring parse error (tolerant parsing mode): Unexpected mismatching closing brace: '}' @(21,34)
+INFO:pylatexenc.latexwalker:Ignoring parse error (tolerant parsing mode): Unexpected closing environment: 'equation' @(22,18)
+Thread 139799473952320 Processing file main.tex
+INFO:pylatexenc.latexwalker:Ignoring parse error (tolerant parsing mode): Unexpected mismatching closing brace: '}' @(21,34)
+INFO:pylatexenc.latexwalker:Ignoring parse error (tolerant parsing mode): Unexpected closing environment: 'equation' @(22,18)
+numbmer of citations in node info method: 0
+Thread 139799473952320 Finished processing 2008.03847 (8/1010) Time elapsed: 1.11s
+Thread 139802080040768 Finished processing 8 papers
+seed: ['2008.03299', '2008.03300', '2008.03302', '2008.03842', '2008.03843', '2008.03844', '2008.03845', '2008.03846', '2008.03847', '2008.03848']
+cnt: 8
+BFS_que.qsize(): 10
+current paper: 2008.03299
+Thread 139799473952320 Processing 2008.03299
+current paper: 2008.03300
+Thread 139799473952320 Processing 2008.03300
+current paper: 2008.03302
+Thread 139799473952320 Processing 2008.03302
+current paper: 2008.03842
+Thread 139799473952320 Processing 2008.03842
+current paper: 2008.03843
+Thread 139799473952320 Processing 2008.03843
+current paper: 2008.03844
+Thread 139801968670272 Processing 2008.03844
+current paper: 2008.03845
+Thread 139801968670272 Processing 2008.03845
+current paper: 2008.03846
+Thread 139801968670272 Processing 2008.03846
+current paper: 2008.03847
+Thread 139801968670272 Processing 2008.03847
+current paper: 2008.03848
+Thread 139801968670272 Processing 2008.03848
+Thread 139799473952320 Failed to process 2008.03843
+'utf-8' codec can't decode byte 0xcb in position 27998: invalid continuation byte
+Thread 139801968670272 Finished processing 2008.03848 (9/1010) Time elapsed: 0.04s
+'NoneType' object is not subscriptable
+Thread 139801968670272 Failed to process 2008.03848
+Thread 139802080040768 Finished processing 9 papers
+File path: download/output/2008.03299.json
+Time of loading metadata: 0.0001348749501630664
+Time of constructing paper json file: 0.003918464062735438
+Time of finding authors and adding authors to database: 1.3780081644654274e-06
+Time of adding figures, tables, and sections to database: 0.03251512302085757
+Now processing citations
+Time of searching arxiv id of cited paper (if not provided) and adding citation information to database: 0.02684654900804162
+File path: download/output/2008.03300.json
+Time of loading metadata: 0.00017520005349069834
+Time of constructing paper json file: 0.001424620975740254
+Time of finding authors and adding authors to database: 1.1440133675932884e-06
+Time of adding figures, tables, and sections to database: 0.014055480947718024
+Now processing citations
+Time of searching arxiv id of cited paper (if not provided) and adding citation information to database: 0.010638098930940032
+File path: download/output/2008.03302.json
+Time of loading metadata: 0.0001328570069745183
+Time of constructing paper json file: 0.0006318860687315464
+Time of finding authors and adding authors to database: 1.0560033842921257e-06
+Time of adding figures, tables, and sections to database: 0.005413990002125502
+Now processing citations
+Time of searching arxiv id of cited paper (if not provided) and adding citation information to database: 0.006066736066713929
+File path: download/output/2008.03842.json
+Time of loading metadata: 0.00017034600023180246
+Time of constructing paper json file: 0.0008543790318071842
+Time of finding authors and adding authors to database: 1.2320233508944511e-06
+Time of adding figures, tables, and sections to database: 0.06159973796457052
+Now processing citations
+Time of searching arxiv id of cited paper (if not provided) and adding citation information to database: 0.049202296999283135
+File path: download/output/2008.03843.json
+[Warning] Failed to add paper with arxiv id 2008.03843 to database: local variable 'file_json' referenced before assignment
+File path: download/output/2008.03844.json
+[Warning] Failed to add paper with arxiv id 2008.03844 to database: local variable 'file_json' referenced before assignment
+File path: download/output/2008.03845.json
+Time of loading metadata: 0.0001473689917474985
+Time of constructing paper json file: 0.0006768560269847512
+Time of finding authors and adding authors to database: 9.719515219330788e-07
+Time of adding figures, tables, and sections to database: 0.014140106039121747
+Now processing citations
+Time of searching arxiv id of cited paper (if not provided) and adding citation information to database: 0.004308845964260399
+File path: download/output/2008.03846.json
+Time of loading metadata: 0.00011459505185484886
+Time of constructing paper json file: 0.0009373569628223777
+Time of finding authors and adding authors to database: 7.699709385633469e-07
+Time of adding figures, tables, and sections to database: 0.01856815500650555
+Now processing citations
+Time of searching arxiv id of cited paper (if not provided) and adding citation information to database: 0.00924529496114701
+File path: download/output/2008.03847.json
+Time of loading metadata: 0.00016774190589785576
+Time of constructing paper json file: 0.0009282160317525268
+Time of finding authors and adding authors to database: 9.699724614620209e-07
+Time of adding figures, tables, and sections to database: 0.022670009057037532
+Now processing citations
+Time of searching arxiv id of cited paper (if not provided) and adding citation information to database: 0.005027979030273855
+File path: download/output/2008.03848.json
+[Warning] Failed to add paper with arxiv id 2008.03848 to database: local variable 'file_json' referenced before assignment
+['download/output/2008.03299.json', 'download/output/2008.03300.json', 'download/output/2008.03302.json', 'download/output/2008.03842.json', 'download/output/2008.03843.json', 'download/output/2008.03844.json', 'download/output/2008.03845.json', 'download/output/2008.03846.json', 'download/output/2008.03847.json', 'download/output/2008.03848.json']
+Error loading download/output/2008.03843.json: [Errno 2] No such file or directory: 'download/output/2008.03843.json'
+Error loading download/output/2008.03844.json: [Errno 2] No such file or directory: 'download/output/2008.03844.json'
+Error loading download/output/2008.03848.json: [Errno 2] No such file or directory: 'download/output/2008.03848.json'
+2008.03299
+Key to References: {'fig:Konigsberg': 'figures_8', 'fig:simpleASC': 'figures_9', 'fig:ASC': 'figures_10', 'fig:toy1': 'figures_11', 'fig:toy2': 'figures_12', 'fig:sorting4': 'figures_13', 'fig:sorting56': 'figures_14', 'fig:mm': 'figures_15', 'fig:MatrixMultiplyAlgorithms': 'figures_16', 'fig:naiveThree2': 'figures_17', 'fig:Laderman': 'figures_18', 'fig:Makarov': 'figures_19', 'fig:REIL': 'figures_20', 'fig:phDigraphs': 'figures_21', 'fig:intel_cfg': 'figures_22', 'fig:TDA': 'figures_23', 'fig:TME': 'figures_24', 'table:ExampleComplex': 'table_25'}
+table:ExampleComplex
+table:ExampleComplex
+2008.03300
+Key to References: {'V_K': 'figures_427', 'z0-001': 'figures_428', 'Lambda-b': 'figures_429', 'Cardano-Dm': 'figures_430', 'QS-plane': 'figures_431'}
+2008.03302
+Key to References: {}
+2008.03842
+Key to References: {'full_bns_evn': 'figures_868', 'psr_emission': 'figures_869', 'DM_example': 'figures_870', 'scattering': 'figures_871', 'radio_telescopes': 'figures_872', 'accel_search_eg': 'figures_873', 'binary_ppdot': 'figures_874', 'B_emission_orbphase': 'figures_875', 'B_drifting_subpulses': 'figures_876', 'gw_spectrum': 'figures_877', 'dm_sinb': 'figures_878', 'z_ht': 'figures_879', 'individual_rates': 'figures_880', 'total_mw_rate': 'figures_881', 'var_sim': 'figures_882', 'compare_rates': 'figures_883', 'accuracy': 'figures_884', 'fig_9b_comp': 'figures_885', 'asymm_pref': 'figures_886', 'pops': 'figures_887', 'success_survey': 'figures_888', 'motivate_opt_tint': 'figures_889', 'ideal_success_survey': 'figures_890', 'original_signal': 'figures_891', 'harmonics_s0': 'figures_892', 'BP1_1_52997': 'figures_893', 'BP1_2_52997': 'figures_894', 'BP2_1_52997': 'figures_895', 'WP_2_52997': 'figures_896', 'cum_bp1_1': 'figures_897', 'cum_bp1_2': 'figures_898', 'cum_bp2_1': 'figures_899', 'cum_nbp_2': 'figures_900', 'psr_table': 'table_901', 'result_table': 'table_902', 'param_range': 'table_903', 'survey_table': 'table_904'}
+No paper found for  Liang2014
+No paper found for  0737A_disc
+No paper found for  Lyne_Bdiscovery_2004
+No paper found for  Kramer_GRtest_2006
+No paper found for  Breton_eclipse_I
+No paper found for  emission_height
+No paper found for  Lyutikov_eclipses
+No paper found for  Lyne_Bdiscovery_2004
+No paper found for  B_pulse_ev_perera
+No paper found for  Maura_mod_2004
+No paper found for  david_lyutikov_modelling
+No paper found for  Freire_model_2009
+No paper found for  Liang2014
+No paper found for  Bagchi_odf
+No paper found for  Alpar_recycle_1982
+No paper found for  Willems_0737formation_2006
+No paper found for  Stairs_0737formation_2006
+No paper found for  Ferdman_snevidence_2013
+No paper found for  Tauris_DNS_formation
+No paper found for  Kramer_testofgravity_2009
+No paper found for  Lattimer_EOS_2005
+No paper found for  Freire_model_2009
+No paper found for  Freire_model_2009
+Error loading download/output/2008.03843.json: [Errno 2] No such file or directory: 'download/output/2008.03843.json'
+Error loading download/output/2008.03844.json: [Errno 2] No such file or directory: 'download/output/2008.03844.json'
+2008.03845
+Key to References: {'fig:Gap': 'figures_922', 'fig:Group-DSS': 'figures_923', 'fig:AdmiraltyCode': 'figures_924', 'fig:Admiralty-Code': 'figures_925', 'fig:Flow': 'figures_926', 'fig:BN-prepar': 'figures_927'}
+2008.03846
+Key to References: {'tab:a': 'table_1141', 'tab:net': 'table_1142', 'tab:sigma': 'table_1143', 'tab:net2': 'table_1144', 'tab:sup': 'table_1145'}
+tab:net2
+tab:net2
+tab:net2
+tab:net
+tab:net
+tab:net
+tab:a
+tab:a
+tab:a
+tab:a
+tab:a
+tab:a
+tab:a
+tab:a
+tab:net
+tab:sup
+tab:net
+tab:net
+tab:net
+tab:net
+tab:net
+tab:net
+tab:net
+tab:net
+tab:net
+tab:net2
+tab:net2
+tab:net2
+tab:net2
+tab:net2
+tab:net2
+tab:net2
+tab:sigma
+tab:net2
+tab:net2
+tab:net2
+tab:net2
+tab:net2
+tab:sup
+tab:net2
+tab:net2
+tab:net2
+tab:net2
+tab:net2
+tab:net2
+tab:net2
+tab:net
+tab:net2
+tab:net
+tab:net2
+tab:net
+tab:net2
+tab:sup
+2008.03847
+Key to References: {}
+Error loading download/output/2008.03848.json: [Errno 2] No such file or directory: 'download/output/2008.03848.json'
+Paper count:  7
+Total nodes:  1797
+Total edges:  3529
+Paper nodes:  7
+Figure nodes:  0
+Table nodes:  6
+Text nodes:  1784
+9
+\label{fig:simpleASC}
+\label{fig:ChainComplex}
+\label{fig:ChainComplex}
+\label{fig:ChainComplex}
+\label{fig:Konigsberg}
+\label{Path}
+\label{fig:simpleASC}
+\label{table:ExampleComplex}
+\label{fig:ASC}
+\label{table:ExampleComplex}
+\label{fig:toy1}
+\label{fig:toy2}
+\label{fig:sorting4}
+\label{fig:sorting56}
+\label{fig:mm}
+\label{fig:MatrixMultiplyAlgorithms}
+\label{fig:naiveThree2}
+\label{fig:Makarov}
+\label{fig:REIL}
+\label{fig:phDigraphs}
+\label{fig:TDA}
+\label{fig:TME}
+\label{fig:TME}
+\label{fig:network_complexes}
+\label{fig:network_complexes}
+\label{fig:linesec}
+\label{lem:activeinvariant}
+\label{lem:act}
+\label{lem:act}
+\label{lem:act}
+\label{fig:active_regions}
+\label{fig:active_regions}
+\label{lem:act}
+\label{fig:active_regions}
+\label{lem:stactive}
+\label{lem:activeinvariant}
+\label{fig:active_regions}
+\label{fig:network}
+\label{fig:fwdhist}
+\label{fig:networklh}
+\label{fig:fwdlh}
+\label{cor:unaffected}
+\label{cor:unaffected}
+\label{cor:unaffected}
+\label{fig:intel_cfg}
+\label{Spart}
+\label{FreeRigid}
+\label{Field-6D}
+\label{Algebr_6D}
+\label{Compact6-4}
+\label{Concl}
+\label{Spart}
+\label{Spart}
+\label{Ltilde}
+\label{Ltilde}
+\label{HamEqs3}
+\label{pi-mu}
+\label{HamEqs4}
+\label{pi-mu}
+\label{k2}
+\label{P}
+\label{MShell}
+\label{V_K}
+\label{K-mshell}
+\label{K-12}
+\label{V_K}
+\label{w-4-62less}
+\label{alph-4-62less}
+\label{P}
+\label{K-12}
+\label{P_u}
+\label{P}
+\label{V_K}
+\label{K-12}
+\label{P-u_own}
+\label{P}
+\label{u0-17.4.61own}
+\label{V_K}
+\label{K-12}
+\label{u_iown}
+\label{u_iown}
+\label{P-HamEqs4}
+\label{Lf-6D}
+\label{Lf_6D}
+\label{F-ar}
+\label{F-ar}
+\label{lbd_eig}
+\label{EvVct}
+\label{F-ar}
+\label{1st_pair}
+\label{2nd_pair}
+\label{3rd_pair}
+\label{FL-b}
+\label{FL-a}
+\label{Lambda_b}
+\label{Omega_ac}
+\label{Ab-psib}
+\label{FL-b}
+\label{FL-a}
+\label{Lf-6D}
+\label{Ab-psib}
+\label{Far}
+\label{F-ar}
+\label{Far}
+\label{eig_v}
+\label{P-inv}
+\label{SQ-M4}
+\label{eig_v}
+\label{S-inv}
+\label{P-inv}
+\label{Far}
+\label{pol-cubic}
+\label{SQP-M6}
+\label{Cardano}
+\label{pol-cubic}
+\label{Vieta_S}
+\label{Vieta_p2}
+\label{pol-cubic}
+\label{Cardano}
+\label{pol-cubic}
+\label{Cardano-Dm}
+\label{Cardxy}
+\label{P-2}
+\label{Cardano}
+\label{pol-cubic}
+\label{QS-plane}
+\label{eig_v}
+\label{Cardano}
+\label{Cardano-Dm}
+\label{pol-cubic}
+\label{CharEq}
+\label{PrivRF}
+\label{lbd_eig}
+\label{FL}
+\label{FL}
+\label{PrivRF}
+\label{Cardano-Dm}
+\label{QS-plane}
+\label{Cardano}
+\label{pol-cubic}
+\label{FLP0Qpl}
+\label{FLP0Qmn}
+\label{PrivRF}
+\label{eig_v}
+\label{F-ar}
+\label{F-ar}
+\label{Gar}
+\label{Cardano}
+\label{eig_v}
+\label{pol-cubic}
+\label{eig_v}
+\label{eig_L}
+\label{Far-M4}
+\label{Gar-M4}
+\label{F-ar}
+\label{Gar}
+\label{F-ar}
+\label{FL-b}
+\label{FL-a}
+\label{PrivRF}
+\label{deS-H5}
+\label{deS-H5}
+\label{metric6-4}
+\label{Far}
+\label{Spart}
+\label{Trans6-4}
+\label{k2}
+\label{RestFrame}
+\label{lbd_eig}
+\label{Vect_eig}
+\label{EACC0sc}
+\label{eta-Lbd}
+\label{ClassF}
+\label{eig_v}
+\label{Vect_eig}
+\label{ClassF}
+\label{Lbd0ib}
+\label{Lbd0ia}
+\label{Lbd00b}
+\label{Lbd00a}
+\label{u00}
+\label{FLP0Qpl}
+\label{U-5}
+\label{Lbd0ia}
+\label{Lbd0ic}
+\label{Lbd00a}
+\label{Lbd00c}
+\label{FLP0Qmn}
+\label{ClassF}
+\label{Gar}
+\label{Vect_eigP0Qpl}
+\label{ClassF}
+\label{u000}
+\label{FL-b}
+\label{Lbd_E}
+\label{Lbd_A}
+\label{FL-a}
+\label{sec:single}
+\label{sec:multi}
+\label{sec:bell}
+\label{sec:conclu}
+\label{eq:mezdis}
+\label{eq:mezdis}
+\label{eq:mezdis}
+\label{eq:mezdis}
+\label{def:proximal}
+\label{eq:saa}
+\label{def:proximal}
+\label{def:proximal}
+\label{sec:a1}
+\label{def:proximal}
+\label{eq:mezdis}
+\label{eq:mezdis}
+\label{eq:mezdis}
+\label{eq:saab}
+\label{def:proxijoint}
+\label{eq:mezdis}
+\label{def:proximal}
+\label{eq:saab}
+\label{def:proxijoint}
+\label{eq:op1}
+\label{ftr:consistent}
+\label{eq:op2}
+\label{ftr:consistent}
+\label{eq:remmezdis}
+\label{def:proxijoint}
+\label{def:proxijoint}
+\label{def:proxijoint}
+\label{def:distal}
+\label{def:distal}
+\label{eq:op2}
+\label{eq:postmeasure}
+\label{ftr:consistent}
+\label{eq:op2}
+\label{eq:postmeasure}
+\label{ftr:consistent}
+\label{eq:op2}
+\label{eq:postmeasure}
+\label{ftr:consistent}
+\label{def:distal}
+\label{def:distal}
+\label{eq:postmeasure}
+\label{def:distal}
+\label{def:distal}
+\label{def:distal}
+\label{eq:unc0}
+\label{eq:eta}
+\label{eq:eta}
+\label{eq:op2}
+\label{eq:op1}
+\label{eq:op2}
+\label{eq:eta}
+\label{eq:eta}
+\label{eq:eta}
+\label{eq:eta}
+\label{eq:postmeasure}
+\label{eq:unc0}
+\label{eq:eta}
+\label{eq:eta}
+\label{def:distal}
+\label{eq:postmeasure}
+\label{eq:unc0}
+\label{eq:eta}
+\label{eq:eta}
+\label{def:distal}
+\label{eq:postmeasure}
+\label{eq:unc0}
+\label{eq:eta}
+\label{eq:eta}
+\label{def:distal}
+\label{thm:main}
+\label{eq:eta}
+\label{eq:postmeasure}
+\label{eq:eta}
+\label{eq:postmeasure}
+\label{sec:bell}
+\label{eq:eta}
+\label{eq:eta}
+\label{eq:eta}
+\label{eq:eta}
+\label{eq:bell}
+\label{def:distal}
+\label{eq:bell}
+\label{eq:bell}
+\label{ftr:consistent}
+\label{thm:main}
+\label{eq:bell}
+\label{eq:postmeasure}
+\label{eq:remmezdis}
+\label{thm:main}
+\label{eq:eta}
+\label{eq:unc0}
+\label{eq:eta}
+\label{eq:postmeasure}
+\label{Procedure}
+\label{Results}
+\label{Discussion}
+\label{Eq.3}
+\label{zb}
+\label{zb}
+\label{Eq.3}
+\label{zb}
+\label{zb}
+\label{Eq.3}
+\label{zb}
+\label{zb}
+\label{fig:Gap}
+\label{fig:Group-DSS}
+\label{fig:Gap}
+\label{fig:Gap}
+\label{fig:Gap}
+\label{fig:Gap}
+\label{fig:AdmiraltyCode}
+\label{fig:AdmiraltyCode}
+\label{tab:Admiralty-Code}
+\label{tab:Admiralty-Code}
+\label{fig:Admiralty-Code}
+\label{fig:AdmiraltyCode}
+\label{fig:Flow}
+\label{fig:BN-prepar}
+\label{fig:Gap}
+\label{def:km}
+\label{def:km}
+\label{def:km}
+\label{question}
+\label{question}
+\label{thm:4-reactant}
+\label{thm:g1}
+\label{lm:stable}
+\label{thm:multistable}
+\label{thm:nondegmultistable}
+\label{thm:3-reactant}
+\label{thm:sign}
+\label{cry:sign}
+\label{thm:nomss}
+\label{thm:4-reactant}
+\label{thm:g1}
+\label{thm:4-reactant}
+\label{rmk:p3101}
+\label{sec:back}
+\label{sec:ps}
+\label{sec:dim1}
+\label{thm:sign}
+\label{thm:multistable}
+\label{thm:nondegmultistable}
+\label{sec:g0}
+\label{thm:nomss}
+\label{thm:3-reactant}
+\label{thm:4-reactant}
+\label{sec:ext}
+\label{thm:g1}
+\label{thm:g2}
+\label{sec:nig2}
+\label{thm:nondegmultistable}
+\label{sec:dis}
+\label{def:form}
+\label{def:form}
+\label{question}
+\label{thm:4-reactant}
+\label{thm:g1}
+\label{thm:g2}
+\label{thm:4-reactant}
+\label{thm:4-reactant}
+\label{thm:4-reactant}
+\label{thm:4-reactant}
+\label{question}
+\label{thm:4-reactant}
+\label{thm:g1}
+\label{thm:g2}
+\label{question}
+\label{tab:net2}
+\label{tab:net2}
+\label{tab:net2}
+\label{thm:g2}
+\label{thm:multistable}
+\label{sec:relation}
+\label{sec:nig2}
+\label{thm:4-reactant}
+\label{thm:g1}
+\label{sec:stable}
+\label{sec:ext}
+\label{lm:stable}
+\label{thm:sign}
+\label{thm:sign}
+\label{lm:uni}
+\label{lm:jac}
+\label{lm:root}
+\label{lm:nonde}
+\label{lm:jh}
+\label{lm:jh}
+\label{lm:jh}
+\label{lm:interval}
+\label{lm:interval}
+\label{lm:interval}
+\label{assumption}
+\label{lm:jh}
+\label{lm:jh}
+\label{eq:scalar}
+\label{assumption}
+\label{lm:jh}
+\label{lm:jh}
+\label{eq:scalar}
+\label{assumption}
+\label{lm:jh}
+\label{lm:nonde}
+\label{lm:nonde}
+\label{lm:nonde}
+\label{cry:dim1}
+\label{thm:sign}
+\label{thm:nonde}
+\label{cry:dim1}
+\label{thm:sign}
+\label{thm:nonde}
+\label{cry:dim1}
+\label{thm:sign}
+\label{thm:nonde}
+\label{cry:dim1}
+\label{lm:stable}
+\label{lm:jh}
+\label{thm:nonde}
+\label{cry:dim1}
+\label{lm:stable}
+\label{lm:jh}
+\label{thm:sign}
+\label{thm:nonde}
+\label{cry:dim1}
+\label{lm:stable}
+\label{lm:jh}
+\label{thm:nonde}
+\label{cry:dim1}
+\label{lm:stable}
+\label{lm:jh}
+\label{thm:sign}
+\label{thm:nonde}
+\label{cry:dim1}
+\label{lm:stable}
+\label{lm:jh}
+\label{thm:nonde}
+\label{thm:nonde}
+\label{thm:multistable}
+\label{cry:dim1}
+\label{lm:stable}
+\label{lm:jh}
+\label{thm:sign}
+\label{thm:nonde}
+\label{thm:nonde}
+\label{thm:multistable}
+\label{cry:dim1}
+\label{lm:stable}
+\label{lm:jh}
+\label{thm:sign}
+\label{thm:nonde}
+\label{thm:nonde}
+\label{thm:multistable}
+\label{thm:nomss}
+\label{thm:4-reactant}
+\label{sec:stable}
+\label{thm:nomss}
+\label{lm:jh}
+\label{lm:jh}
+\label{lm:jh}
+\label{lm:nonde}
+\label{lm:jachss}
+\label{lm:nonde}
+\label{lm:jachss}
+\label{lm:nonde}
+\label{lm:jachss}
+\label{thm:nonde}
+\label{lm:nonzero}
+\label{lm:jachss}
+\label{cry:sign}
+\label{thm:nonde}
+\label{lm:nonzero}
+\label{lm:jachss}
+\label{cry:sign}
+\label{thm:nonde}
+\label{lm:nonzero}
+\label{lm:jachss}
+\label{cry:sign}
+\label{lm:bss}
+\label{lm:bss}
+\label{lm:bss}
+\label{cry:dim1}
+\label{lm:dim1}
+\label{lm:nomss}
+\label{cry:dim1}
+\label{lm:dim1}
+\label{lm:nomss}
+\label{cry:dim1}
+\label{lm:dim1}
+\label{lm:nomss}
+\label{lm:bss}
+\label{lm:nocom}
+\label{lm:bss}
+\label{lm:nocom}
+\label{lm:bss}
+\label{lm:nocom}
+\label{thm:nomss}
+\label{thm:nomss}
+\label{thm:nomss}
+\label{thm:4-reactant}
+\label{thm:4-reactant}
+\label{thm:3-reactant}
+\label{lm:nobss4rec}
+\label{lm:3ss}
+\label{lm:4-reactant}
+\label{lm:4-reactant}
+\label{lm:nocom}
+\label{thm:multistable}
+\label{lm:nocom}
+\label{thm:multistable}
+\label{lm:nocom}
+\label{thm:multistable}
+\label{cry:dim1}
+\label{lm:nomss}
+\label{thm:multistable}
+\label{lm:dim1}
+\label{cry:dim1}
+\label{lm:nomss}
+\label{thm:multistable}
+\label{lm:dim1}
+\label{cry:dim1}
+\label{lm:nomss}
+\label{thm:multistable}
+\label{lm:dim1}
+\label{lm:jac}
+\label{lm:jachss}
+\label{lm:stable}
+\label{lm:jh}
+\label{lm:jachss}
+\label{lm:jac}
+\label{lm:jachss}
+\label{lm:stable}
+\label{lm:jh}
+\label{lm:jachss}
+\label{lm:jac}
+\label{lm:jachss}
+\label{lm:stable}
+\label{lm:jh}
+\label{lm:jachss}
+\label{cry:jh}
+\label{lm:jac}
+\label{lm:jactildeg}
+\label{lm:uni}
+\label{cry:jh}
+\label{lm:jac}
+\label{lm:jactildeg}
+\label{lm:uni}
+\label{lm:jactildeg}
+\label{lm:uni}
+\label{tab:net}
+\label{tab:net}
+\label{tab:net}
+\label{thm:3-reactant}
+\label{lm:nocom}
+\label{thm:multistable}
+\label{lm:nobss4rec}
+\label{lm:nomss}
+\label{lm:nobss4rec}
+\label{lm:nomss}
+\label{lm:nobss4rec}
+\label{tab:a}
+\label{def:equivalent0}
+\label{def:form}
+\label{lm:equivalence}
+\label{tab:a}
+\label{def:equivalent0}
+\label{def:form}
+\label{lm:equivalence}
+\label{tab:a}
+\label{lm:nocom}
+\label{thm:multistable}
+\label{lm:nomss}
+\label{lm:nobss4rec}
+\label{lm:nomss}
+\label{lm:nobss4rec}
+\label{tab:a}
+\label{def:equivalent0}
+\label{def:form}
+\label{tab:a}
+\label{tab:a}
+\label{tab:a}
+\label{tab:a}
+\label{tab:net}
+\label{thm:4-reactant}
+\label{thm:4-reactant}
+\label{lm:stable}
+\label{lm:stable}
+\label{lm:stable}
+\label{tab:sup}
+\label{thm:nondegmultistable}
+\label{row:2r2.2}
+\label{row:2r3.3}
+\label{tab:net}
+\label{lm:4-reactant}
+\label{tab:net}
+\label{tab:net}
+\label{row:2r1}
+\label{lm:3ss}
+\label{row:2r1}
+\label{tab:net}
+\label{row:2r2.1}
+\label{row:2r2.1}
+\label{lm:3ss}
+\label{row:2r2.1}
+\label{lm:jactildeg}
+\label{lm:3ss}
+\label{row:2r2.1}
+\label{row:2r3.1}
+\label{row:2r4.1}
+\label{row:2r5.2}
+\label{tab:net}
+\label{row:2r2.3}
+\label{row:2r2.3}
+\label{lm:3ss}
+\label{row:2r2.3}
+\label{lm:jactildeg}
+\label{lm:3ss}
+\label{row:2r2.3}
+\label{row:2r4.3}
+\label{tab:net}
+\label{row:2r3.2}
+\label{row:2r2.3}
+\label{lm:3ss}
+\label{row:2r2.1}
+\label{lm:jactildeg}
+\label{lm:3ss}
+\label{row:2r3.2}
+\label{row:2r4.2}
+\label{tab:net}
+\label{thm:4-reactant}
+\label{tab:net}
+\label{thm:4-reactant}
+\label{tab:net}
+\label{thm:4-reactant}
+\label{assumption}
+\label{thm:des}
+\label{thm:multistable}
+\label{lm:dim1}
+\label{assumption}
+\label{thm:des}
+\label{thm:multistable}
+\label{lm:dim1}
+\label{assumption}
+\label{thm:des}
+\label{thm:multistable}
+\label{lm:dim1}
+\label{tab:net2}
+\label{tab:net2}
+\label{tab:net2}
+\label{def:equivalent1}
+\label{def:form}
+\label{tab:net2}
+\label{lm:equivalence}
+\label{tab:net2}
+\label{def:equivalent1}
+\label{def:form}
+\label{tab:net2}
+\label{lm:equivalence}
+\label{tab:net2}
+\label{tab:sigma}
+\label{tab:net2}
+\label{def:equivalent1}
+\label{def:form}
+\label{tab:net2}
+\label{tab:net2}
+\label{tab:net2}
+\label{thm:g1}
+\label{thm:g1}
+\label{tab:net2}
+\label{lm:stable}
+\label{tab:sup}
+\label{thm:nondegmultistable}
+\label{lm:g1}
+\label{tab:net2}
+\label{row:1r1i4}
+\label{row:1r1i9}
+\label{tab:net2}
+\label{row:1r1i4}
+\label{thm:des}
+\label{thm:multistable}
+\label{tab:net2}
+\label{row:1r1i5}
+\label{thm:des}
+\label{thm:multistable}
+\label{tab:net2}
+\label{row:1r1i6}
+\label{tab:net2}
+\label{row:1r1i7}
+\label{thm:des}
+\label{thm:multistable}
+\label{tab:net2}
+\label{row:1r1i8}
+\label{thm:des}
+\label{thm:multistable}
+\label{tab:net2}
+\label{row:1r1i9}
+\label{thm:4-reactant}
+\label{thm:g1}
+\label{thm:4-reactant}
+\label{thm:g1}
+\label{thm:4-reactant}
+\label{thm:g1}
+\label{thm:g2}
+\label{thm:g2}
+\label{thm:nonde}
+\label{thm:multistable}
+\label{tab:net}
+\label{tab:net2}
+\label{tab:net}
+\label{tab:net2}
+\label{tab:net}
+\label{tab:net2}
+\label{tab:sup}
+\label{eqn:CImodel}
+\label{eqn:RLapp}
+\label{eqn:gap-QCD}
+\label{eqn:gap-QCD}
+\label{eqn:CImodel}
+\label{eqn:RLapp}
+\label{eqn:gapCI}
+\label{eqn:gap-QCD}
+\label{eqn:PTRa}
+\label{eqn:CImodel}
+\label{fc}
+\label{fc}
+\label{fc}
+\label{eqn:const_mass_reg}
+\label{Fig1}
+\label{eqn:gapf}
+\label{Fig1}
+\label{Fig2}
+\label{Fig6}
+\label{Fig7}
+\label{Fig8}
+\label{eqn:mave}
+\label{eqn:mave}
+\label{Fig9}
+\label{Fig9}
+\label{Fig9}
+\label{Fig9}
+\label{Fig10}
+\label{Fig11}
+\label{Fig8}
+\label{fceB}
+\label{eqn:mave}
+\label{Fig13}
+\label{Fig13}
+\label{Fig14}
+\label{fc}
+\label{Fig15}
+\label{Fig16}
+\label{Fig17}
+\label{Fig13}
+\label{fceB}
+\label{fceB}
+\label{fceB}
+\label{Fig18}
+\label{Fig19}
+\label{fceBT}
+\label{fceBT}
