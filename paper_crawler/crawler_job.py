@@ -109,20 +109,19 @@ class CrawlerJob:
             cleaned_ids.append(id)
         added, skipped, failed = [], [], {}
 
-        with self.tdb.conn.cursor() as cur:
-            for id in cleaned_ids:
-                try:
-                    fetched = self.tdb.initialize_state(id)
-                    if fetched:
-                        added.append(id)
-                        print(f"[+] Task for {id} initialized.")
-                    else:
-                        skipped.append(id)
-                        print(f"[!]\tTask for {id} already exists — skipping.")
+        for id in cleaned_ids:
+            try:
+                fetched = self.tdb.initialize_state(id)
+                if fetched:
+                    added.append(id)
+                    print(f"[+] Task for {id} initialized.")
+                else:
+                    skipped.append(id)
+                    print(f"[!]\tTask for {id} already exists — skipping.")
 
-                except Exception as e:
-                    failed[id] = repr(e)
-                    print(f"[!]\tPaper {id} not added into database: {e}")
+            except Exception as e:
+                failed[id] = repr(e)
+                print(f"[!]\tPaper {id} not added into database: {e}")
 
         return {"added": added, "skipped": skipped, "failed": failed}
 

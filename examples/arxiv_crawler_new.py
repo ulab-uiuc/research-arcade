@@ -18,11 +18,13 @@ file_path = f"./download/arxiv_metadata_{start_date}_{end_date}.jsonl"
 
 arxiv_ids = cj.crawl_recent_arxiv_paper_new(start_date=start_date, end_date=end_date, path=path)
 
-arxiv_ids = extract_arxiv_ids(file_path)
+# arxiv_ids = extract_arxiv_ids(file_path)
 
 print(arxiv_ids)
 
-cj.initialize_paper_tasks(arxiv_ids=arxiv_ids)
+task_results = cj.initialize_paper_tasks(arxiv_ids=arxiv_ids)
+
+arxiv_ids = task_results['added']
 
 # arxiv_ids = cj.select_unproceeded_task(task_type="downloaded", max_results=10)
 
