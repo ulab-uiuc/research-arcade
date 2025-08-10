@@ -179,3 +179,5 @@ class TaskDatabase:
 
         params = (paper_arxiv_id, False, False, False, False, False)
         self.cur.execute(sql, params)
+
+        

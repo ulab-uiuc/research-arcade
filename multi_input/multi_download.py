@@ -38,7 +38,7 @@ class MultiDownload:
 
         mi = MultiInput()
         arxiv_id = mi.extract_arxiv_id(input, input_type)
-
+        
         dest_dir = f"{dest_dir}/{arxiv_id}"
         try:
             search = arxiv.Search(id_list=[arxiv_id])
@@ -65,14 +65,16 @@ class MultiDownload:
                 json.dump(metadata, f, ensure_ascii=False, indent=2)
 
         if output_type == "pdf":
-            paper.download_pdf(filename = filename_pdf, dirpath = dest_dir)
+            pdf_path = paper.download_pdf(filename = filename_pdf, dirpath = dest_dir)
 
         if output_type == "latex":
-            paper.download_source(filename = filename_latex, dirpath = dest_dir)
+            latex_path = paper.download_source(filename = filename_latex, dirpath = dest_dir)
+            # Extract the real (with or without the version number) arxiv id
+            print(latex_path)
 
         if output_type == "both":
-            paper.download_source(filename = filename_latex, dirpath = dest_dir)
-            paper.download_pdf(filename = filename_pdf, dirpath = dest_dir)
+            latex_path = paper.download_source(filename = filename_latex, dirpath = dest_dir)
+            pdf_path = paper.download_pdf(filename = filename_pdf, dirpath = dest_dir)
 
 
     def download_papers_by_field_and_date(
