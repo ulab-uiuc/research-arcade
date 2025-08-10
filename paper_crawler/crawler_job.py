@@ -8,9 +8,9 @@ from psycopg2 import errorcodes, errors
 import pytz
 import json
 from arxiv import UnexpectedEmptyPageError
-
 import datetime
 import arxiv
+from multi_input.arxiv_crawler_new import download_with_time, extract_arxiv_ids
 
 nc = NodeConstructor()
 md = MultiDownload()
@@ -46,7 +46,11 @@ class CrawlerJob:
     def drop_task_database(self):
         self.tdb.drop_paper_task_table()
     
-
+    def crawl_recent_arxiv_paper_new(self, start_date, end_date=None, path=None):
+        save_path = download_with_time(start_date=start_date, end_date=end_date, save_path=path)
+        arxiv_ids = extract_arxiv_ids(file_path=save_path)
+        return arxiv_ids
+    
     def crawl_recent_arxiv_paper(self, year, month, day, max_result):
         """
         Crawl arxiv paper ids of papers published after the given date.
@@ -90,7 +94,7 @@ class CrawlerJob:
         for arxiv_id in arxiv_ids:
             try:
                 self.tdb.initialize_state(arxiv_id)
-
+            
             except psycopg2.IntegrityError as e:
                 # roll back so that the next iteration can run cleanly
                 self.conn.rollback()
@@ -107,7 +111,7 @@ class CrawlerJob:
 
             else:
                 print(f"[+] Task for {arxiv_id} initialized.")
-    
+
     def download_papers(self, arxiv_ids):
         """
         Download the paper with specified arxiv id from arxiv and save metadata to JSON
@@ -115,7 +119,7 @@ class CrawlerJob:
         downloaded_paper_ids = []
         for arxiv_id in arxiv_ids:
             try:
-                self.md.download_arxiv(input=arxiv_id, input_type = "id", output_type="both", dest_dir=self.dest_dir)
+                self.md.download_arxiv(input=arxiv_id, input_type = "id", output_type="latex", dest_dir=self.dest_dir)
                 print(f"paper with id {arxiv_id} downloaded")
                 self.tdb.set_states(downloaded=True, paper_arxiv_id=arxiv_id)
                 downloaded_paper_ids.append(arxiv_id)
@@ -155,7 +159,7 @@ class CrawlerJob:
                 if is_processed:
                     processed_paper_ids.append(arxiv_id)
                     self.tdb.set_states(paper_arxiv_id=arxiv_id, paper_graph=True)
-
+            
             except Exception as e:
                 print(f"[Warning] Failed to add paper with arxiv id {arxiv_id} to database: {e}")
                 continue
@@ -221,12 +225,18 @@ class CrawlerJob:
         }
         if task_type not in valid_types:
             raise ValueError(f"Invalid task_type: {task_type!r}")
+        
+        more_constraint = ""
+        if task_type == "paragraph":
+            more_constraint = "AND paper_graph = TRUE "
+        
+
 
         
         sql = f"""
-        SELECT paper_arxiv_id FROM paper_task WHERE {task_type} = FALSE ORDER BY id ASC LIMIT %s
+        SELECT paper_arxiv_id FROM paper_task WHERE {task_type} = FALSE {more_constraint}ORDER BY id ASC LIMIT %s
         """
-
+        
         self.tdb.cur.execute(sql, (max_results,))
         rows = self.tdb.cur.fetchall()
         return [row[0] for row in rows]
