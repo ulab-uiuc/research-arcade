@@ -10,8 +10,8 @@ from paper_crawler.crawler_job import CrawlerJob
 
 cj = CrawlerJob(dest_dir="download")
 
-start_date = "2020-08-10"
-end_date = "2020-08-10"
+start_date = "2025-08-01"
+end_date = "2025-08-01"
 path = "./download"
 
 file_path = f"./download/arxiv_metadata_{start_date}_{end_date}.jsonl"
