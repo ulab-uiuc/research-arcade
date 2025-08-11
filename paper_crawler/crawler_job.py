@@ -51,14 +51,16 @@ class CrawlerJob:
         save_path = download_with_time(start_date=start_date, end_date=end_date, save_path=path)
         arxiv_ids = extract_arxiv_ids(file_path=save_path)
         return arxiv_ids
-    
+
     def crawl_recent_arxiv_paper(self, year, month, day, max_result):
         """
         Crawl arxiv paper ids of papers published after the given date.
         Stops when either:
           •  the paper's published date is older than cutoff, or
           •  arXiv returns an empty page (no more results).
+        category: only crawl papers in certain categories listed below
         """
+
         cutoff = datetime.datetime(year, month, day, tzinfo=pytz.UTC)
         search = arxiv.Search(
             query       = "cat:cs.AI",
@@ -85,18 +87,45 @@ class CrawlerJob:
             pass
 
         return recent_ids
+    
+    def ids_with_major_category(self, arxiv_ids, category):
+        client = arxiv.Client(page_size=1, num_retries=2)
+        hits = []
+        for arxiv_id in arxiv_ids:
+            try:
+                search = arxiv.Search(id_list=[arxiv_id])
+                paper = next(client.results(search))
+            except StopIteration:
+                continue
+            except Exception as e:
+                print(f"Failed to fetch arXiv entry for {arxiv_id}: {e}")
+                continue
 
-    def initialize_paper_tasks(self, arxiv_ids):
+            for cat in (paper.categories or []):
+                major = cat.split('.', 1)[0]  # works even if there's no dot, e.g., "math-ph"
+                if major == category:
+                    hits.append(arxiv_id)
+                    break
+        return hits
+
+
+    def initialize_paper_tasks(self, arxiv_ids, category = None):
         """
         Initialize a list of paper tasks given their arxiv ids
         - arxiv_ids: list[str]
         """
 
+        # First select the paper of the category specified (if so)
+        if category:
+            id_category = self.ids_with_major_category(arxiv_ids=arxiv_ids, category=category)
+        else:
+            id_category = arxiv_ids
+        
         cleaned_ids = []
 
         seen = set()
 
-        for id in arxiv_ids or []:
+        for id in id_category or []:
             if not id:
                 continue
 
@@ -152,10 +181,13 @@ class CrawlerJob:
     def download_papers(self, arxiv_ids):
         """
         Download the paper with specified arxiv id from arxiv and save metadata to JSON
+        If papers are not of the category specified (as is above)
+
+        If the paper is not of the category specified, skip it.
         """
         downloaded_paper_ids = []
         for arxiv_id in arxiv_ids:
-            try:
+            try:              
                 self.md.download_arxiv(input=arxiv_id, input_type = "id", output_type="latex", dest_dir=self.dest_dir)
                 print(f"paper with id {arxiv_id} downloaded")
                 self.tdb.set_states(downloaded=True, paper_arxiv_id=arxiv_id)
