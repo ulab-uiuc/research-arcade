@@ -211,13 +211,16 @@ class CrawlerJob:
         # First find all the json files inside of the corresponding path
         # If the file name is not history.json, then we treat it as paper graph fils
         # Then extract the id before .json
+        data_dir_path = f"{self.dest_dir}/output"
 
         arxiv_ids = []
-        for p in Path(self.data_dir_path).iterdir():
+        for p in Path(data_dir_path).iterdir():
             if p.is_file() and p.suffix == ".json":
                 arxiv_id = p.stem            # e.g., "2508.00223v2"
                 if arxiv_id != "history":
                     arxiv_ids.append(arxiv_id)
+        
+        processed_paper_ids = []
 
         for arxiv_id in arxiv_ids:
             try:
@@ -249,7 +252,7 @@ class CrawlerJob:
         except Exception as e:
                 print(f"[Warning] Failed to process papers: {e}")
 
-        
+
 
 
     def process_paper_graphs(self, arxiv_ids):
@@ -346,9 +349,9 @@ class CrawlerJob:
         
         more_constraint = ""
         if task_type == "paragraph":
-            more_constraint = "AND paper_graph = TRUE "
+            more_constraint = "AND paper_graph = true "
         
-
+        
 
         
         sql = f"""
