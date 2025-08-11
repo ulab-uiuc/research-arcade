@@ -12,6 +12,7 @@ from arxiv import UnexpectedEmptyPageError
 import datetime
 import arxiv
 from multi_input.arxiv_crawler_new import download_with_time, extract_arxiv_ids
+from pathlib import Path
 
 nc = NodeConstructor()
 md = MultiDownload()
@@ -120,7 +121,7 @@ class CrawlerJob:
             id_category = self.ids_with_major_category(arxiv_ids=arxiv_ids, category=category)
         else:
             id_category = arxiv_ids
-        
+
         cleaned_ids = []
 
         seen = set()
@@ -201,6 +202,37 @@ class CrawlerJob:
                 )
                 print(f"[ERROR] Failed to download {arxiv_id}: {e}")
                 continue
+
+    def add_existing_paper_graphs(self):
+        """
+        Given current paper graph json files, add them into the database.
+        """
+
+        # First find all the json files inside of the corresponding path
+        # If the file name is not history.json, then we treat it as paper graph fils
+        # Then extract the id before .json
+
+        arxiv_ids = []
+        for p in Path(self.data_dir_path).iterdir():
+            if p.is_file() and p.suffix == ".json":
+                arxiv_id = p.stem            # e.g., "2508.00223v2"
+                if arxiv_id != "history":
+                    arxiv_ids.append(arxiv_id)
+
+        for arxiv_id in arxiv_ids:
+            try:
+                # Store the processed data into database afterward
+                is_processed = nc.process_paper(arxiv_id=arxiv_id, dir_path=f"{self.dest_dir}")
+
+                if is_processed:
+                    processed_paper_ids.append(arxiv_id)
+                    self.tdb.set_states(paper_arxiv_id=arxiv_id, paper_graph=True)
+            
+            except Exception as e:
+                print(f"[Warning] Failed to add paper with arxiv id {arxiv_id} to database: {e}")
+                continue
+
+        return processed_paper_ids
 
 
     def process_paper_graphs(self, arxiv_ids):
