@@ -233,6 +233,23 @@ class CrawlerJob:
                 continue
 
         return processed_paper_ids
+    
+    def process_not_add(self, arxiv_ids):
+        """
+        Similarly, we can create but not add arxiv_ids
+        """
+        processed_paper_ids = []
+
+        try:
+            self.md.build_paper_graphs(
+                input=arxiv_ids,
+                input_type="id",
+                dest_dir=self.dest_dir
+            )
+        except Exception as e:
+                print(f"[Warning] Failed to process papers: {e}")
+
+        
 
 
     def process_paper_graphs(self, arxiv_ids):
