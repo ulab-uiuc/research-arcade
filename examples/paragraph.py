@@ -13,7 +13,7 @@ path = "./download"
 cj = CrawlerJob(dest_dir=path)
 
 
-arxiv_ids = cj.select_unproceeded_task(task_type="downloaded", max_results=1000)
+arxiv_ids = cj.select_unproceeded_task(task_type="paragraph", max_results=1000)
 print(arxiv_ids)
 cj.process_paper_paragraphs(arxiv_ids=arxiv_ids)
 

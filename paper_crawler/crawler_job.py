@@ -14,6 +14,7 @@ import arxiv
 from multi_input.arxiv_crawler_new import download_with_time, extract_arxiv_ids
 from pathlib import Path
 
+
 nc = NodeConstructor()
 md = MultiDownload()
 
@@ -41,6 +42,8 @@ class CrawlerJob:
         self.md = MultiDownload()
         self.pgp = PaperGraphProcessor(data_dir=data_dir_path, figures_dir=figures_dir_path, output_dir=output_dir_path)
         self.dest_dir = dest_dir
+
+        print(self.dest_dir)
     
     def create_task_database(self):
         self.tdb.create_paper_task_table()
@@ -52,7 +55,7 @@ class CrawlerJob:
         save_path = download_with_time(start_date=start_date, end_date=end_date, save_path=path)
         arxiv_ids = extract_arxiv_ids(file_path=save_path)
         return arxiv_ids
-
+    
     def crawl_recent_arxiv_paper(self, year, month, day, max_result):
         """
         Crawl arxiv paper ids of papers published after the given date.
@@ -253,8 +256,6 @@ class CrawlerJob:
                 print(f"[Warning] Failed to process papers: {e}")
 
 
-
-
     def process_paper_graphs(self, arxiv_ids):
         """
         Build paper graph using the knowledge debugger
@@ -262,14 +263,27 @@ class CrawlerJob:
 
         processed_paper_ids = []
 
-        try:
-            self.md.build_paper_graphs(
-                input=arxiv_ids,
-                input_type="id",
-                dest_dir=self.dest_dir
-            )
-        except Exception as e:
-                print(f"[Warning] Failed to process papers: {e}")
+        # Instead of processing all papers at one, we process each paper separately
+        # This avoids different papers using the same dir with some arxiv id (possible the id of the very first paper)
+
+        for arxiv_id in arxiv_ids:
+            try:
+                self.md.build_paper_graph(
+                    input=arxiv_id,
+                    input_type="id",
+                    dest_dir=self.dest_dir
+                )
+            except Exception as e:
+                    print(f"[Warning] Failed to process papers: {e}")
+
+        # try:
+        #     self.md.build_paper_graphs(
+        #         input=arxiv_ids,
+        #         input_type="id",
+        #         dest_dir=self.dest_dir
+        #     )
+        # except Exception as e:
+        #         print(f"[Warning] Failed to process papers: {e}")
 
 
         for arxiv_id in arxiv_ids:
@@ -314,7 +328,7 @@ class CrawlerJob:
             self.tdb.set_states(paper_arxiv_id=arxiv_id, paragraph=True)
 
 
-    def select_proceeded_task(self, task_type, max_results=100):
+    def select_proceeded_task(self, task_type, max_results=100000):
 
         valid_types = {
             'downloaded',
@@ -335,7 +349,7 @@ class CrawlerJob:
         rows = self.tdb.cur.fetchall()
         return [row[0] for row in rows]
     
-    def select_unproceeded_task(self, task_type, max_results=100):
+    def select_unproceeded_task(self, task_type, max_results=100000):
 
         valid_types = {
             'downloaded',
