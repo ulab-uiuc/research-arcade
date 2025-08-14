@@ -222,7 +222,7 @@ class CrawlerJob:
                 arxiv_id = p.stem            # e.g., "2508.00223v2"
                 if arxiv_id != "history":
                     arxiv_ids.append(arxiv_id)
-        
+
         processed_paper_ids = []
 
         for arxiv_id in arxiv_ids:
@@ -233,13 +233,13 @@ class CrawlerJob:
                 if is_processed:
                     processed_paper_ids.append(arxiv_id)
                     self.tdb.set_states(paper_arxiv_id=arxiv_id, paper_graph=True)
-            
+
             except Exception as e:
                 print(f"[Warning] Failed to add paper with arxiv id {arxiv_id} to database: {e}")
                 continue
 
         return processed_paper_ids
-    
+
     def process_not_add(self, arxiv_ids):
         """
         Similarly, we can create but not add arxiv_ids
