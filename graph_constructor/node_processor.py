@@ -16,7 +16,7 @@ class NodeConstructor:
     """
     This class serves for converting entities such as authors, papers into nodes and insert them into the paper graph database
     """
-
+    
     def __init__(self):
         self.db = Database()
         self.sch = None
@@ -104,7 +104,7 @@ class NodeConstructor:
     Here, not that in the future when we process papers, we can authomatically add figures and tables into database and construct the papers into it
     '''
 
-
+    
     '''
     Also, we need to build methods that can automatically store figures into
     '''
@@ -124,8 +124,9 @@ class NodeConstructor:
 
         paper_exists = self.db.check_exist(arxiv_id)
 
-        # TODO: remove it
         if paper_exists:
+            print(f"The paper {arxiv_id} already exists in the database.")
+            print("Skipped")
             return
 
         times = {}

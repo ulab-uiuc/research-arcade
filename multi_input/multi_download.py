@@ -239,9 +239,7 @@ class MultiDownload:
             debug_path=None,
             constraint=None_constraint,
             num_threads=len(arxiv_list),
-            scale=1,
-            clear_source=False,
-            max_figure = sys.maxsize
+            clear_source=False
         )
     
     @api_calling_error_exponential_backoff(retries=5, base_wait_time=1)
@@ -267,7 +265,6 @@ class MultiDownload:
                 debug_path=None,
                 constraint=None_constraint,
                 num_threads=len(arxiv_list),
-                scale=len(input)+1000,
                 clear_source=True,
                 max_figure = sys.maxsize
             )

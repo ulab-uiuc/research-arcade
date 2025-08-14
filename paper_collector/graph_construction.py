@@ -163,7 +163,7 @@ def build_citation_graph_node_info(
             next_ref_context,
             working_path,
         )
-    
+
     # Add the extracted arxiv id to the database
     if key2id:
         citations = structured_data.get('citations', {})
@@ -172,10 +172,7 @@ def build_citation_graph_node_info(
             if entry and not entry.get('short_id'):
                 entry['short_id'] = arxiv_id
 
-
-
     return structured_data
-
 
 def build_citation_graph(
     seed: List[str],
@@ -184,9 +181,9 @@ def build_citation_graph(
     output_path: str,
     debug_path: Optional[str],
     constraint: Callable[[str], bool],
-    scale: int = 100,
+    scale: int = 999999999,
     clear_source: bool = False,
-    max_figure: int = 200000,
+    max_figure: int = 99999999999,
 ):
     # seed consists of a list of arxiv short_id
     # using BFS search to build the citation graph
@@ -403,10 +400,10 @@ def build_citation_graph_thread(
     output_path: str,
     debug_path: Optional[str],
     constraint: Callable[[str], bool],
-    scale: int = 100,
+    scale: int = 999999999,
     num_threads: int = 4,
     clear_source: bool = False,
-    max_figure: int = 200000,
+    max_figure: int = 99999999999,
 ): 
     # Shared BFS queue and visited set
     BFS_que = queue.Queue()
