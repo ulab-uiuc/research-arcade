@@ -19,7 +19,7 @@ class Database:
         # Enable autocommit
         self.conn.autocommit = True
         self.cur = self.conn.cursor()
-
+    
     def create_papers_table(self):
         self.cur.execute("""
         CREATE TABLE IF NOT EXISTS papers (
