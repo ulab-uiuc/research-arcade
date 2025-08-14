@@ -125,7 +125,8 @@ class NodeConstructor:
         paper_exists = self.db.check_exist(arxiv_id)
 
         # TODO: remove it
-        paper_exists = False
+        if paper_exists:
+            return
 
         times = {}
 

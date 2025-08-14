@@ -240,7 +240,8 @@ class MultiDownload:
             constraint=None_constraint,
             num_threads=len(arxiv_list),
             scale=1,
-            clear_source=True
+            clear_source=False,
+            max_figure = sys.maxsize
         )
     
     @api_calling_error_exponential_backoff(retries=5, base_wait_time=1)
@@ -256,10 +257,11 @@ class MultiDownload:
         for id in input:
             arxiv_id = mi.extract_arxiv_id(id, input_type)
             arxiv_list.append(arxiv_id)
-
+            source_path = f"{dest_dir}/{arxiv_id}"
+            print(f"Source path: {source_path}")
             build_citation_graph_thread(
                 seed=arxiv_list,
-                source_path=f"{dest_dir}/{arxiv_id}",
+                source_path=source_path,
                 working_path=f"{dest_dir}/working_folder",
                 output_path=f"{dest_dir}/output",
                 debug_path=None,
