@@ -30,13 +30,13 @@ file_path = "./download/arxiv_metadata_2020-08-10_2020-08-12.jsonl"
 # cj.download_papers(arxiv_ids=arxiv_ids)
 
 arxiv_ids = ['2008.03842', '2008.03843', '2008.03844', '2008.03845', '2008.03846', '2008.03847', '2008.03848', '2008.03849', '2008.03850', '2008.03851']
-print(arxiv_ids)
+# print(arxiv_ids)
 
 # cj.download_papers(arxiv_ids=arxiv_ids)
 
 # cj.process_paper_graphs(arxiv_ids=arxiv_ids)
 
-# cj.process_paper_paragraphs(arxiv_ids=arxiv_ids)
+cj.process_paper_paragraphs(arxiv_ids=arxiv_ids)
 
 # arxiv_ids = cj.select_unproceeded_task(task_type="citation", max_results=1000)
 
