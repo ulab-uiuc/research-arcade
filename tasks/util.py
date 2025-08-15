@@ -8,10 +8,9 @@ def select_papers_with_criteria(
     Assumes child tables link to papers via columns named *_arxiv_id.
     Adjust column/table names if yours differ.
     """
-
     conn = psycopg2.connect(
-        host="localhost", dbname="postgres", user="postgres",
-        password="Lcs20031121!", port="5432"
+            host="localhost", dbname="postgres",
+            user="postgres", password=PASSWORD, port="5432"
     )
     try:
         conditions = []
