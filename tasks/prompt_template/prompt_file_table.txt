@@ -1,0 +1,12 @@
+You are given a citation extracted from a research paper. 
+Your task is to determine which paragraph(s) the citation belongs to. 
+You will be provided with the abstract of cited paragraph followed by a list of numbered paragraphs. 
+
+Instructions:
+- Carefully read the abstract of cited paragraph and compare it with each paragraph.  
+- Identify all paragraphs that are most directly relevant or where the citation would be inserted.  
+- There may be multiple relevant paragraphs.  
+- Output ONLY the paragraph indexes, separated by commas (e.g., "2,4,7").  
+- Do not include explanations, words, or extra symbols. The output must be clean and numeric only.
+
+
