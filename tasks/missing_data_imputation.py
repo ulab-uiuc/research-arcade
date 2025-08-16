@@ -1,5 +1,8 @@
-from load_model import load_model
-
+from util import load_client, answer_evaluation, load_prompt
+from dotenv import load_dotenv
+load_dotenv()
+API_KEY = os.getenv("API_KEY")
+BASE_URL = "https://integrate.api.nvidia.com/v1"
 
 def missing_data_imputation(args):
 
@@ -16,22 +19,16 @@ def missing_data_imputation(args):
             user="postgres", password=PASSWORD, port="5432"
     )
     cur = conn.cursor()
-
-    model_name = args.model_name
-
-    model = load_model(model_name)
-
+    
+    client = OpenAI(
+        base_url=BASE_URL,
+        api_key=API_KEY
+    )
+    
     data_type = args.data_type
 
     table_name = None
     id_name = "id" # The primary key
-
-    # if data_type == "figure":
-    #     table_name = "figures"
-    # elif data_type == "table":
-    #     table_name = "tables"
-    # elif data_type == "citations":
-    #     table_name = "citations"
 
     data_id_path = args.data_id_path
 
@@ -40,30 +37,151 @@ def missing_data_imputation(args):
     data_ids = load_ids(data_id_path)
 
 
+    idx_to_paragraph = {}
+
+    evals = []
+
+
     if data_type == "figure":
         for data_id in data_ids:
+            prompt = load_prompt(data_type)
+
             # Figure path
-            figure_path, arxiv_id = cur.execute("""
+            cur.execute("""
             SELECT file_path, paper_arxiv_id FROM figures WHERE id = %s
             """, (data_id,))
 
-            # Two ways: if the model is a visual-language model, give the photo to the model directly; if the model is a language only model, another visual model should be provided for caption generation
+            row = cur.fetchone()
+            figure_path, arxiv_id = None, None
+            if row:
+                figure_path, arxiv_id = row
+            
+
+            # Assume that the model is a visual LLM
+            image = Image.open(figure_path).convert("RGB")
+
+            prompt = prompt + "Figure:\n"
+            prompt = prompt + f"{{{image}}}\n"
+
+            cur.execute("""
+            SELECT id, context FROM paragraphs WHERE paper_arxiv_id = %s
+            """, (arxiv_id))
+            pairs = cur.fetchall()
+            
+            idx = 1
+            prompt = prompt + "Paragraphs:\n"
+
+            for paragraph_id, paragraph_context in pairs:
+                # Give the context to model and see if it agrees on insertion (missing data imputation)
+                
+                idx_to_paragraph[idx] = paragraph_id
+                # Append to a string?
+                prompt = prompt + f"{idx}. {{{paragraph_context}}}\n"
+
+                idx += 1
+            
+            prompt = prompt + """"
+            ---
+
+            Final Answer (only indexes, comma-separated):
+            """
+
+            completion = client.chat.completions.create(
+            model="meta/llama-3.1-405b-instruct",
+            messages=[{"role":"user","content":prompt}],
+            temperature=0.2,
+            top_p=0.7,
+            max_tokens=1024,
+            stream=True
+            )
+
+            answer = ""
+            for chunk in completion:
+            if chunk.choices[0].delta.content is not None:
+                answer = answer + chunk.choices[0].delta.content.strip()
+                # print(chunk.choices[0].delta.content, end="")
+
+            answer_evaluation = answer_evaluation(model_answer, ground_truth)
+            evals.append(answer_evaluation)
 
 
     elif data_type == "table":
         for data_id in data_ids:
+            prompt = load_prompt(data_type)
             # select the context
-            table_context = cur.execute("""
+            cur.execute("""
             SELECT table_text, paper_arxiv_id FROM tables WHERE id = %s
             """, (data_id,))
 
+            row = cur.fetchone()
+
+            table_content, arxiv_id = None, None
+            if row:
+                table_content, arxiv_id = row
+            
+            prompt = prompt + "Table:\n"
+            prompt = prompt + f"{{{table_content}}}\n"
+            
+
             # First give the model the table context, then provide the model with each paragraphs.
+            
+            # Go through each paragraph and tell if the table should be inserted here
+            
+            # Return a list of paragraph_id, paragraph_text pairs
+            cur.execute("""
+            SELECT id, context FROM paragraphs WHERE paper_arxiv_id = %s
+            """, (arxiv_id))
+            pairs = cur.fetchall()
+            
+            idx = 1
+            prompt = prompt + "Paragraphs:\n"
+
+            for paragraph_id, paragraph_context in pairs:
+                # Give the context to model and see if it agrees on insertion (missing data imputation)
+                
+                idx_to_paragraph[idx] = paragraph_id
+                # Append to a string?
+                prompt = prompt + f"{idx}. {{{paragraph_context}}}\n"
+
+                idx += 1
+            
+            prompt = prompt + """"
+            ---
+
+            Final Answer (only indexes, comma-separated):
+            """
+            
+            completion = client.chat.completions.create(
+            model="meta/llama-3.1-405b-instruct",
+            messages=[{"role":"user","content":prompt}],
+            temperature=0.2,
+            top_p=0.7,
+            max_tokens=1024,
+            stream=True
+            )
+
+            answer = ""
+            for chunk in completion:
+            if chunk.choices[0].delta.content is not None:
+                answer = answer + chunk.choices[0].delta.content.strip()
+                # print(chunk.choices[0].delta.content, end="")
+
+            answer_evaluation = answer_evaluation(model_answer, ground_truth)
+            evals.append(answer_evaluation)
+
     
     elif data_type == "citations":
         for data_id in data_ids:
-            cited_arxiv_id = cur.execute("""
+            prompt = load_prompt(data_type)
+            cur.execute("""
             SELECT cited_arxiv_id, paper_arxiv_id FROM tables WHERE id = %s
             """, (data_id,))
+
+            row = cur.fetchone()
+            cited_arxiv_id, arxiv_id = None
+
+            if row:
+                cited_arxiv_id, arxiv_id = row
 
             # Remove the curl braces and signs from the bib_title
             # Assume that the paper with specified arxiv id exists in the database, fetch it
@@ -74,9 +192,54 @@ def missing_data_imputation(args):
 
 
             # First give the model the abstract of cited paper, then provide the model with each paragraphs.
+            prompt = prompt + "Abstract of cited paper:\n"
+            prompt = prompt + f"{{{cited_paper_abstract}}}\n"
+
+            cur.execute("""
+            SELECT id, context FROM paragraphs WHERE paper_arxiv_id = %s
+            """, (arxiv_id))
+            pairs = cur.fetchall()
+            
+            idx = 1
+            prompt = prompt + "Paragraphs:\n"
+
+            for paragraph_id, paragraph_context in pairs:
+                # Give the context to model and see if it agrees on insertion (missing data imputation)
+                
+                idx_to_paragraph[idx] = paragraph_id
+                # Append to a string?
+                prompt = prompt + f"{idx}. {{{paragraph_context}}}\n"
+
+                idx += 1
+            
+            
+            prompt = prompt + """"
+            ---
+
+            Final Answer (only indexes, comma-separated):
+            """
+            
+
+            completion = client.chat.completions.create(
+            model="meta/llama-3.1-405b-instruct",
+            messages=[{"role":"user","content":prompt}],
+            temperature=0.2,
+            top_p=0.7,
+            max_tokens=1024,
+            stream=True
+            )
+
+            answer = ""
+            for chunk in completion:
+            if chunk.choices[0].delta.content is not None:
+                answer = answer + chunk.choices[0].delta.content.strip()
+                # print(chunk.choices[0].delta.content, end="")
+
+            answer_evaluation = answer_evaluation(model_answer, ground_truth)
+            evals.append(answer_evaluation)
     
-
-
+    
+    return evals
 
     # Query the related information
 
