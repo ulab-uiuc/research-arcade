@@ -37,13 +37,14 @@ def missing_data_imputation(args):
     data_ids = load_ids(data_id_path)
 
 
-    idx_to_paragraph = {}
 
     evals = []
 
 
     if data_type == "figure":
-        for data_id in data_ids:
+        for data_id in data_ids:    
+            paragraph_to_idx = {}
+
             prompt = load_prompt(data_type)
 
             # Figure path
@@ -74,7 +75,7 @@ def missing_data_imputation(args):
             for paragraph_id, paragraph_context in pairs:
                 # Give the context to model and see if it agrees on insertion (missing data imputation)
                 
-                idx_to_paragraph[idx] = paragraph_id
+                paragraph_to_idx[paragraph_id] = idx
                 # Append to a string?
                 prompt = prompt + f"{idx}. {{{paragraph_context}}}\n"
 
@@ -100,6 +101,15 @@ def missing_data_imputation(args):
             if chunk.choices[0].delta.content is not None:
                 answer = answer + chunk.choices[0].delta.content.strip()
                 # print(chunk.choices[0].delta.content, end="")
+            
+            # Finally find the ground truth
+
+            cur.execute("""
+            SELECT id FROM PARAGRAPHS WHERE 
+            (
+                SELECT id FROM 
+            )
+            """)
 
             answer_evaluation = answer_evaluation(model_answer, ground_truth)
             evals.append(answer_evaluation)
@@ -139,7 +149,7 @@ def missing_data_imputation(args):
             for paragraph_id, paragraph_context in pairs:
                 # Give the context to model and see if it agrees on insertion (missing data imputation)
                 
-                idx_to_paragraph[idx] = paragraph_id
+                paragraph_to_idx[paragraph_id] = idx
                 # Append to a string?
                 prompt = prompt + f"{idx}. {{{paragraph_context}}}\n"
 
@@ -206,13 +216,13 @@ def missing_data_imputation(args):
             for paragraph_id, paragraph_context in pairs:
                 # Give the context to model and see if it agrees on insertion (missing data imputation)
                 
-                idx_to_paragraph[idx] = paragraph_id
+                paragraph_to_idx[paragraph_id] = idx
                 # Append to a string?
                 prompt = prompt + f"{idx}. {{{paragraph_context}}}\n"
 
                 idx += 1
             
-            
+
             prompt = prompt + """"
             ---
 
