@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-START="2025-01-24"
-END="2025-07-31"      # inclusive
+START="2025-05-02"
+END="2025-06-01"      # inclusive
 FIELD="cs"
 DEST="./download"
 SCRIPT="examples/daily_cs_crawling.py"
