@@ -115,9 +115,4 @@ def answer_evaluation(answer, ground_truth, data_type=None):
     
 
 def load_prompt(data_type):
-    if data_type == "figure":
-        prompt = "You are now inser"
-    elif data_type == "table":
-
-    elif data_type == "citation":
-
+    

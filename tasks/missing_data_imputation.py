@@ -110,7 +110,7 @@ def missing_data_imputation(args):
                 SELECT id FROM 
             )
             """)
-
+            
             answer_evaluation = answer_evaluation(model_answer, ground_truth)
             evals.append(answer_evaluation)
 
