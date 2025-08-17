@@ -4,14 +4,14 @@ load_dotenv()
 API_KEY = os.getenv("API_KEY")
 BASE_URL = "https://integrate.api.nvidia.com/v1"
 
-def missing_data_imputation(args):
+def ref_insertion(args):
 
     """
+    ref = figure+table+citation
     1. Model name
     2. Data type: figure, table, citation
     3. Data id (fig/tb/cit/ect.) which cit information are we trying to predict. What are we going to remove
     4. Link: which link (another kind of link) are we going to remove
-    5. 
     """
 
     conn = psycopg2.connect(
@@ -30,13 +30,24 @@ def missing_data_imputation(args):
     table_name = None
     id_name = "id" # The primary key
 
-    data_id_path = args.data_id_path
-
-    # Load data_ids
-
-    data_ids = load_ids(data_id_path)
+    data_ids = args.data_ids
 
 
+    # Then retrieve the contents of ref
+
+    ref_id_mapping = {}
+
+    for data_id in data_ids
+        # First retrieve the id
+        ref_id_global = paragraph_ref_id_to_global_ref(data_id)
+        # Then find the content
+        ref_id_mapping[data_id] = ref_id_global
+
+
+    ground_truth = []
+
+    # Retrieve the ground truth
+    
 
     evals = []
 
@@ -46,11 +57,11 @@ def missing_data_imputation(args):
             paragraph_to_idx = {}
 
             prompt = load_prompt(data_type)
-
+            ref_id_global = ref_id_mapping[data_id]
             # Figure path
             cur.execute("""
             SELECT file_path, paper_arxiv_id FROM figures WHERE id = %s
-            """, (data_id,))
+            """, (ref_id_global,))
 
             row = cur.fetchone()
             figure_path, arxiv_id = None, None
@@ -119,9 +130,10 @@ def missing_data_imputation(args):
         for data_id in data_ids:
             prompt = load_prompt(data_type)
             # select the context
+            ref_id_global = ref_id_mapping[data_id]
             cur.execute("""
             SELECT table_text, paper_arxiv_id FROM tables WHERE id = %s
-            """, (data_id,))
+            """, (ref_id_global,))
 
             row = cur.fetchone()
 
@@ -179,7 +191,7 @@ def missing_data_imputation(args):
             answer_evaluation = answer_evaluation(model_answer, ground_truth)
             evals.append(answer_evaluation)
 
-    
+
     elif data_type == "citations":
         for data_id in data_ids:
             prompt = load_prompt(data_type)
@@ -259,8 +271,12 @@ def missing_data_imputation(args):
 
 
 
+def paragraph_generation(args):
     
+    """
     
-
+    """
+    
+    pass
 
     
