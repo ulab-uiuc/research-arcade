@@ -1,0 +1,13 @@
+id,paper_arxiv_id,path,caption,label,name
+43288,2501.18944,mujoco_returns.pdf,\caption{Evaluation curves (in win rates) of our O-MAPL for SMACv2 with rule-based preference data.},\label{fig:smacv2:winrates},
+43289,2501.18944,mujoco_returns.pdf,\caption{Evaluation curves (in returns) on MaMujoco tasks},\label{fig:mujoco-smac},
+43290,2501.18944,simple-plot.png,\caption{Plot of the function \( f(t) = e^{1 - e^{t}} + e^{t} - 1 \).},\label{fig:example},
+43291,2501.18944,mujoco_returns.pdf,\caption{Evaluation curves (returns) for MAMujoco tasks with Rule-based preference data.},\label{fig:MaMujoco Returns - Rule-based -evaluation curves},
+43292,2501.18944,mujoco_returns.pdf,\caption{Evaluation curves (returns) for SMACv1 tasks with Rule-based preference data.},\label{fig:Smacv1 Returns - Rule-based -evaluation curves},
+43293,2501.18944,mujoco_returns.pdf,\caption{Evaluation curves (returns) for SMACv2 tasks with Rule-based preference data.},\label{fig:Smacv2 Returns - Rule-based -evaluation curves},
+43294,2501.18944,mujoco_returns.pdf,\caption{Evaluation curves (in winrates) for SMACv1 tasks with Rule-based preference data.},\label{fig:curves-winrate-smacv1-rule-based},
+43295,2501.18944,mujoco_returns.pdf,\caption{Evaluation curves (in winrates) for SMACv2 tasks with Rule-based preference data.},\label{fig:curves-winrate-smacv2-rule-based},
+43296,2501.18944,mujoco_returns.pdf,\caption{Evaluation curves (in returns) for SMACv1 tasks with LLM-based preference data.},\label{fig:curves-smacv1-LLM-based},
+43297,2501.18944,mujoco_returns.pdf,\caption{Evaluation curves (in returns) for SMACv2 tasks with LLM-based preference data.},\label{fig:curves-smacv2-LLM-based},
+43298,2501.18944,mujoco_returns.pdf,\caption{Evaluation curves (in winrates) for SMACv1 tasks with LLM-based preference data.},\label{fig:curves-smacv1-winrate-LLM-based},
+43299,2501.18944,mujoco_returns.pdf,\caption{Evaluation curves (in winrates) for SMACv2 tasks with LLM-based preference data.},\label{fig:curves-smacv2-winrate-LLM-based},

@@ -1,0 +1,1136 @@
+id,paragraph_id,content,paper_arxiv_id,paper_section
+3102369,0,\subsection{Offline Preference Multi-Agent Datasets},2501.18944,Additional Details
+3102210,0,"\paragraph{Multi-agent Reinforcement Learning.}Multi-agent Reinforcement Learning.
+We focus on cooperative MARL, modeled as a multi-agent Partially Observable Markov Decision Process (POMDP) defined by $\mathcal{M} = \langle \mathcal{S}, \mathcal{A}, P, r, \mathcal{Z}, \mathcal{O}, n, \mathcal{N}, \gamma \rangle$\mathcal{M} = \langle \mathcal{S}, \mathcal{A}, P, r, \mathcal{Z}, \mathcal{O}, n, \mathcal{N}, \gamma \rangle where $n$n is the number of agents, and $\mathcal{N} = \{1, \ldots, n\}$\mathcal{N} = \{1, \ldots, n\} is the set of agents. The true state of the environment is denoted by $\mathbf{s} \in \mathcal{S}$\mathbf{s} \in \mathcal{S}, and the joint action space is given by $\mathcal{A} = \prod_{i \in \mathcal{N}} \mathcal{A}_i$\mathcal{A} = \prod_{i \in \mathcal{N}}i \in \mathcal{N} \mathcal{A}_i, where $\mathcal{A}_i$\mathcal{A}_i is the set of actions for agent $i \in \mathcal{N}$i \in \mathcal{N}. At each time step, every agent $i \in \mathcal{N}$i \in \mathcal{N} selects an action $a_i \in \mathcal{A}_i$a_i \in \mathcal{A}_i, resulting in a joint action $\mathbf{a} = (a_1, a_2, \dots, a_n) \in \mathcal{A}$\mathbf{a} = (a_1, a_2, \dots, a_n) \in \mathcal{A}. The transition dynamics are described by $P(\mathbf{s}'|\mathbf{s}, \mathbf{a}) : \mathcal{S} \times \mathcal{A} \times \mathcal{S} \to [0, 1]$P(\mathbf{s}'|\mathbf{s}, \mathbf{a}) : \mathcal{S} \times \mathcal{A} \times \mathcal{S} \to [0, 1], which is the probability of moving to the next state $\mathbf{s}'$\mathbf{s}' given the current state $\mathbf{s}$\mathbf{s} and joint action $\mathbf{a}$\mathbf{a}. The discount factor $\gamma \in [0, 1)$\gamma \in [0, 1) determines the relative importance of future rewards.",2501.18944,Background
+3102271,0,"\paragraph{Summary.}Summary. We explored preference-based learning in multi-agent environments, proposing a novel end-to-end method based on the MaxEnt RL framework that eliminates the need for explicit reward modeling. To facilitate efficient training, we developed a new value factorization approach that learns the global preference-based loss function by updating local value functions. Key properties, including global-local consistency and convexity, were thoroughly examined. Extensive experiments on both rule-based and LLM-based datasets show that our algorithm outperforms existing methods across multiple benchmark tasks in the MAMuJoCo and SMAC environments.
+\paragraph{Limitations and Future Work.}Limitations and Future Work. The strong performance of LLM-based preference data suggests that leveraging LLMs, coupled with a systematic value factorization approach, can be highly effective for training policies in complex multi-agent environments. This opens promising avenues for using LLMs to enhance both environment understanding and policy learning. However, our work has some limitations that need further exploration. For example, we primarily focus on cooperative learning, while more challenging mixed cooperative-competitive environments would require different methodologies. Additionally, our method still depends on a large number of preference-based demonstrations for optimal policy learning. Although LLMs can quickly generate extensive demonstrations, improving sample efficiency remains a key challenge, particularly when data must be collected from real human feedback.",2501.18944,Conclusion
+3102260,0,"We evaluate the performance of our O-MAPL in different complex MARL environments, including: multi-agent StarCraft II (i.e., SMACv1~\citep{samvelyan2019starcraft}, SMACv2~\citep{ellis2022smacv2}) and multi-agent Mujoco~\citep{de2020deep} benchmarks. Detailed descriptions of these benchmarks are in the appendix.",2501.18944,Experiments
+3102273,0,"{This paper presents work whose goal is to advance the field of 
+Machine Learning, in particular multi-agent  reinforcement learning. There are many potential societal consequences 
+of our work, none which we feel must be specifically highlighted here.}This paper presents work whose goal is to advance the field of 
+Machine Learning, in particular multi-agent  reinforcement learning. There are many potential societal consequences 
+of our work, none which we feel must be specifically highlighted here.",2501.18944,Impact Statement
+3102197,0,"Reinforcement learning (RL) has been instrumental in a wide range of decision making tasks, where agents gradually learn to operate effectively through interactions with their environment~\citep{levine2016end,silver2017mastering,kalashnikov2018scalable,haydari2020deep}. Typically, when an agent takes an action, it receives feedback in the form of reward signals, enabling it to adjust or revise its action plan (i.e., policy). However, designing an appropriate reward function is a significant challenge in many real-world domains. While essential for training successful RL agents, reward design often requires extensive instrumentation or engineering~\cite{yahya2017collective,schenck2017visual,peng2020learning,yu2020meta,zhu2020ingredients}. Moreover, such reward functions can be exploited by RL algorithms, which might find ways to achieve high expected returns by inducing unexpected or undesirable behaviors~\cite{hadfield2017inverse,turner2020avoiding}.",2501.18944,Introduction
+3102277,0,"\raggedbottom
+We provide proofs that are omitted in the main paper.",2501.18944,Missing Proofs
+3102217,0,\subsection{Preference-based Inverse Q-learning },2501.18944,Multi-agent Preference-based RL (PbRL)
+3102252,0,"In the context of POMDPs, we do not have direct access to the global states. 
+To better reflect the practical aspects, we change the notation of global states used previously to global observations. For example, the local value function is now defined as a function of local observations, \( v_i(o_i) \) v_i(o_i) .",2501.18944,Practical Algorithm
+3102205,0,"\paragraph{Offline multi-agent reinforcement learning (MARL).}Offline multi-agent reinforcement learning (MARL).Our work is related to offline MARL, relying solely on offline data to learn policies without direct interaction with the environment. Unlike standard offline MARL, we consider data only showing pairwise trajectory preferences (without rewards). Like offline MARL, it faces challenges such as distributional shift and complex interactions in large joint state and action spaces. Many existing MARL methods use the CTDE framework~\cite{oliehoek2008optimal,kraemer2016multi}, enabling efficient learning while allowing independent operation of agents. Regularization techniques are also applied to mitigate distributional shift~\citep{yang2021believe,pan2022plan,shao2024counterfactual,wang2024offline_OMIGA}.",2501.18944,Related Work
+3102370,1,"In this section, we provide a detailed description of how we constructed the dataset for preference learning tasks. Our datasets span both discrete and continuous domains, covering the environments SMACv1, SMACv2, and MaMujoco. The datasets are designed to include varying qualities of data, sampled trajectory pairs, and their preference labels to facilitate preference learning.
+To create datasets suitable for preference learning, we sampled trajectory pairs from varying quality offline datasets and generated preference labels. The labeling process was performed using two approaches:
+\begin{itemize}
+    \item \textbf{Rule-based Methods:} Following IPL~\cite{hejna2024inverse}, we sampled trajectory pairs and assigned binary preference labels based on dataset quality (e.g., poor, medium, expert).
+    \item \textbf{LLM-based Methods:} Following DPM~\cite{kang2024dpm}, we sampled trajectory pairs and annotated them using preference policies from large language models (e.g., Llama 3, GPT-4o).
+\end{itemize}\begin{itemize}
+    \item \textbf{Rule-based Methods:} Following IPL~\cite{hejna2024inverse}, we sampled trajectory pairs and assigned binary preference labels based on dataset quality (e.g., poor, medium, expert).
+    \item \textbf{LLM-based Methods:} Following DPM~\cite{kang2024dpm}, we sampled trajectory pairs and annotated them using preference policies from large language models (e.g., Llama 3, GPT-4o).
+\end{itemize}
+    \item \textbf{Rule-based Methods:} Following IPL~\cite{hejna2024inverse}, we sampled trajectory pairs and assigned binary preference labels based on dataset quality (e.g., poor, medium, expert).
+    \item \textbf{LLM-based Methods:} Following DPM~\cite{kang2024dpm}, we sampled trajectory pairs and annotated them using preference policies from large language models (e.g., Llama 3, GPT-4o).",2501.18944,Additional Details
+3102211,1,"In partial observability settings, each agent receives a local observation $o_i \in \mathcal{O}_i$o_i \in \mathcal{O}_i based on the function $\mathcal{Z}_i(\mathbf{s}) : \mathcal{S} \to \mathcal{O}_i$\mathcal{Z}_i(\mathbf{s}) : \mathcal{S} \to \mathcal{O}_i, and the joint observation is denoted by $\mathbf{o} = (o_1, o_2, \dots, o_n)$\mathbf{o} = (o_1, o_2, \dots, o_n). In cooperative MARL, agents share a global reward function $r(\mathbf{s}, \mathbf{a}) : \mathcal{S} \times \mathcal{A} \to \mathbb{R}$r(\mathbf{s}, \mathbf{a}) : \mathcal{S} \times \mathcal{A} \to \mathbb{R}. The objective is to learn a joint policy $\mathbf{\pi}_{\text{tot}} = \{\pi_1, \dots, \pi_n\}$\mathbf{\pi}_{\text{tot}}\text{tot} = \{\pi_1, \dots, \pi_n\} that maximizes the expected discounted cumulative rewards $\mathbb{E}_{(\mathbf{o}, \mathbf{a}) \sim \mathbf{\pi}_{\text{tot}}} \left[\sum_{t=0}^{\infty} \gamma^t r(\mathbf{s}_t, \mathbf{a}_t)\right]$\mathbb{E}_{(\mathbf{o}, \mathbf{a}) \sim \mathbf{\pi}_{\text{tot}}}(\mathbf{o}, \mathbf{a}) \sim \mathbf{\pi}_{\text{tot}}\text{tot} \left[\sum_{t=0}t=0^{\infty}\infty \gamma^t r(\mathbf{s}_t, \mathbf{a}_t)\right].  In offline settings, a dataset $\mathcal{D}$\mathcal{D} is pre-collected by sampling from a behavior policy $\mu_{\text{tot}} = \{\mu_1, \dots, \mu_n\}$\mu_{\text{tot}}\text{tot} = \{\mu_1, \dots, \mu_n\}. Policy learning is then carried out using this dataset $\mathcal{D}$\mathcal{D} only.",2501.18944,Background
+3102272,1,\clearpage,2501.18944,Conclusion
+3102261,1,"\caption{Win rate comparison (in percentage) for SMACv1 (first 4 tasks) \& SMACv2.}
+\label{tab:SMAC:winrates}",2501.18944,Experiments
+3102274,1,\nocite{langley00}langley00,2501.18944,Impact Statement
+3102198,1,"To address these challenges, many RL studies have relaxed the reward structure by using sparse rewards, where agents receive feedback periodically~\cite{arjona2019rudder,ren2021learning,zhang2024interpretable}. While this reduces the need for dense reward signals, it is often insufficient to train effective agents in complex domains. Alternatively, imitation learning (IL) has been explored, where agents learn to mimic an expert’s policy from demonstrations, without explicit reward signals~\cite{ho2016generative,fu2017learning,garg2021iq,maiinverse}. However, achieving expert-level performance with IL requires a large amount of expert data, which can be costly and difficult to obtain.",2501.18944,Introduction
+3102278,1,"\subsection{Proof of Proposition \ref{prop:convex}}
+\textbf{Proposition \ref{prop:convex}: }
+ \textit{   The preference-based loss function \( \mathcal{L}(\mathbf{q}, \mathbf{v}, w) \) is concave in \( \mathbf{q} \) and \( w \) (the parameters of the mixing networks), while the extreme-V loss function \( \mathcal{J}(\mathbf{v}) \) is convex in \( \mathbf{v} \).
+}
+\begin{proof}
+ We first recall that the preference-based loss function has the following form:
+\begin{align}
+    \mathcal{L}(\bq, \bv, w) = \sum_{(\sigma_1, \sigma_2) \in \mathcal{P}} \sum_{(\bs, \ba) \in \sigma_1} R_w[\bq, \bv](\bs, \ba) 
+    - \log\left(e^{\sum_{\sigma_1} R_w[\bq, \bv](\bs, \ba)} + e^{\sum_{\sigma_2} R_w[\bq, \bv](\bs, \ba)}\right) 
+    + \phi(R_w[\bq, \bv](\bs, \ba)). \nonumber
+\end{align}",2501.18944,Missing Proofs
+3102218,1,"Following prior works \citep{christiano2017deep,lee2021pebble,kang2024dpm}, we assume access to pairwise preference data. The data, collected from humans (or experts), consists of pairs of trajectories \((\sigma_1, \sigma_2)\)(\sigma_1, \sigma_2), where \(\sigma_1\)\sigma_1 is preferred over \(\sigma_2\)\sigma_2. Each trajectory \(\sigma\)\sigma is a sequence of joint (state, action) pairs: \(\sigma = \{(\mathbf{s}_1, \mathbf{a}_1), \ldots, (\mathbf{s}_K, \mathbf{a}_K)\}\)\sigma = \{(\mathbf{s}_1, \mathbf{a}_1), \ldots, (\mathbf{s}_K, \mathbf{a}_K)\}. 
+Let \(\mathcal{P}\)\mathcal{P} denote the preference dataset, comprising several pairwise comparisons \((\sigma_1, \sigma_2)\)(\sigma_1, \sigma_2). The goal of PbRL is to recover the underlying reward function and expert policies from \(\mathcal{P}\)\mathcal{P}.",2501.18944,Multi-agent Preference-based RL (PbRL)
+3102253,1,"We construct a local Q-value network \( q_i(o_i, a_i | \psi_q) \) q_i(o_i, a_i | \psi_q)  and a local value network \( v_i(o_i | \psi_v) \) v_i(o_i | \psi_v) , where \( \psi_q \) \psi_q  and \( \psi_v \) \psi_v  are learnable parameters. The global Q and V functions are then aggregated using two mixing networks with a shared set of learnable parameters \( \theta \) \theta , formulated as follows:
+\[
+V_{\text{tot}}(\bo) = \mathcal{M}_\theta [\mathbf{v}(\bo | \psi_v)]; \quad Q_{\text{tot}}(\bo, \ba) = \mathcal{M}_\theta [\mathbf{q}(\bo, \ba | \psi_q)],
+\]
+V_{\text{tot}}\text{tot}(\bo) = \mathcal{M}_\theta [\mathbf{v}(\bo | \psi_v)]; \quad Q_{\text{tot}}\text{tot}(\bo, \ba) = \mathcal{M}_\theta [\mathbf{q}(\bo, \ba | \psi_q)],",2501.18944,Practical Algorithm
+3102206,1,"For example, some works extend CQL~\citep{kumar2020conservative}, a well-known single-agent offline RL algorithm, to multi-agent settings~\cite{pan2022plan,shao2024counterfactual}. Others adopt the popular DICE framework, which regulates policies in the occupancy space to address out-of-distribution (OOD) issues in both competitive and cooperative settings~\cite{matsunaga2023alberdice,bui2025comadice}. Additionally, \citep{wang2024offline_OMIGA} explore a policy constraint framework to tackle OOD problems. Some studies apply sequence modeling techniques to solve offline MARL using supervised learning approaches~\citep{meng2023offline,tseng2022offline}.",2501.18944,Related Work
+3102371,2,"For MaMujoco tasks, 1k trajectory pairs were sampled, while for SMAC tasks, 2k trajectory pairs were sampled. Table~\ref{tab:data} summarizes the dataset details, including state dimensions, action dimensions, sample sizes, and average returns.",2501.18944,Additional Details
+3102212,2,"\paragraph{MaxEnt Reinforcement Learning.}MaxEnt Reinforcement Learning.
+Standard RL optimizes a policy that maximizes the expected discounted cumulative rewards $\mathbb{E}_{\pi_{tot}} \left[ \sum_{t=0}^{\infty} \gamma^t r(\bs_t, \ba_t) \right]$\mathbb{E}_{\pi_{tot}}\pi_{tot}tot \left[ \sum_{t=0}t=0^{\infty}\infty \gamma^t r(\bs_t, \ba_t) \right]\footnote{We adapt the formulas from single-agent MaxEnt RL to the multi-agent setting, ensuring consistency in notation.}, where $(\bs_t, \ba_t)$(\bs_t, \ba_t) are sampled at each time step $t$t from the trajectory distribution induced by the joint policy $\pi_{tot}$\pi_{tot}tot.  In a generalized MaxEnt RL,  the standard reward objective is augmented with a KL-divergence term between the joint policy and a behavior $\mu_{tot}$\mu_{tot}tot that generates the offline dataset, as follows: 
+\[
+\mathbb{E}_{\pi_{tot}} \bigg[ \sum\nolimits_{t=0}^{\infty} \gamma^t \Big( r(\bs_t, \ba_t) - \beta \log \frac{\pi_{tot}(\ba_t | \bs_t)}{\mu_{tot}(\ba_t | \bs_t)} \Big) \bigg],
+\]
+\mathbb{E}_{\pi_{tot}}\pi_{tot}tot \bigg[ \sum\nolimits_{t=0}t=0^{\infty}\infty \gamma^t \Big( r(\bs_t, \ba_t) - \beta \log \frac{\pi_{tot}(\ba_t | \bs_t)}{\mu_{tot}(\ba_t | \bs_t)} \Big) \bigg],",2501.18944,Background
+3102262,2,"\caption{Return comparisons on MaMujoco tasks}
+\label{tab:mujoco:return}",2501.18944,Experiments
+3102275,2,"\bibliography{refs}
+\bibliographystyle{icml2025}icml2025",2501.18944,Impact Statement
+3102199,2,"A recent promising approach is to train agents using human preference data, a more resource-efficient form of feedback called Reinforcement Learning from Human Feedback (RLHF). This allows agents to learn behaviors aligned with human intentions. RLHF has proven effective in both single-agent control~\cite{christiano2017deep,mukherjee2024optimal,lee2021pebble,shin2023benchmarks,hejna2024inverse} and natural language tasks~\cite{stiennon2020learning,ouyang2022training,rafailov2024direct}. However, RLHF in multi-agent environments is still underexplored, as simply extending single-agent methods is insufficient due to the complex interdependencies between agents’ policies.",2501.18944,Introduction
+3102279,2,"We observe that under the assumption that the mixing networks are linear in their inputs, the function \( R_w[\bq, \bv](\bs, \ba) \) is linear in \( \bq(\bs, \ba) \) and \( \theta \). This implies that for any \( \alpha \in [0,1] \) and for any two vectors of local Q values \( \bq^1, \bq^2 \), we have:
+\[
+\alpha R_w[\bq^1, \bv](\bs, \ba) + (1-\alpha) R_w[\bq^2, \bv](\bs, \ba) = R_w[\alpha\bq^1 + (1-\alpha)\bq^2, \bv](\bs, \ba).
+\]",2501.18944,Missing Proofs
+3102219,2,"A common approach in PbRL is to model the expert's preferences using the simple and intuitive Bradley-Terry model \citep{bradley1952rank}, which computes the probability of the expert preferring \(\sigma_1\)\sigma_1 over \(\sigma_2\)\sigma_2 (denoted as \(\sigma_1 \succ \sigma_2\)\sigma_1 \succ \sigma_2) as:
+\[
+P(\sigma_1 \succ \sigma_2) = \frac{e^{\sum_{(\bs,\ba)\in \sigma_1} r_E(\bs,\ba)}}{e^{\sum_{(\bs,\ba)\in \sigma_1} r_E(\bs,\ba)}+ e^{\sum_{(\bs,\ba)\in \sigma_2} r_E(\bs,\ba)}}
+\]
+P(\sigma_1 \succ \sigma_2) = \frac{e^{\sum_{(\bs,\ba)\in \sigma_1} r_E(\bs,\ba)}}{e^{\sum_{(\bs,\ba)\in \sigma_1} r_E(\bs,\ba)}+ e^{\sum_{(\bs,\ba)\in \sigma_2} r_E(\bs,\ba)}}",2501.18944,Multi-agent Preference-based RL (PbRL)
+3102254,2,"where \( \mathcal{M}_\theta[\cdot] \) \mathcal{M}_\theta[\cdot]  is a linear combination (or a one-layer mixing network) of its inputs with non-negative weights: 
+\begin{align}
+\mathcal{M}_\theta[\mathbf{v}(\bo | \psi_v)] &= \mathbf{v}(\bo | \psi_v)^\top W^\bo_\theta + b^\bo_\theta\\
+\mathcal{M}_\theta[\mathbf{q}(\bo,\ba | \psi_q)] &= \mathbf{q}(\bo,\ba | \psi_q)^\top W^{\bo,\ba}_\theta + b^{\bo,\ba}_\theta,
+\end{align}\begin{align}
+\mathcal{M}_\theta[\mathbf{v}(\bo | \psi_v)] &= \mathbf{v}(\bo | \psi_v)^\top W^\bo_\theta + b^\bo_\theta\\
+\mathcal{M}_\theta[\mathbf{q}(\bo,\ba | \psi_q)] &= \mathbf{q}(\bo,\ba | \psi_q)^\top W^{\bo,\ba}_\theta + b^{\bo,\ba}_\theta,
+\end{align}
+\mathcal{M}_\theta[\mathbf{v}(\bo | \psi_v)] &= \mathbf{v}(\bo | \psi_v)^\top W^\bo_\theta + b^\bo_\theta\\
+\mathcal{M}_\theta[\mathbf{q}(\bo,\ba | \psi_q)] &= \mathbf{q}(\bo,\ba | \psi_q)^\top W^{\bo,\ba}\bo,\ba_\theta + b^{\bo,\ba}\bo,\ba_\theta,",2501.18944,Practical Algorithm
+3102207,2,"\paragraph{Preference-based reinforcement learning (PbRL).}Preference-based reinforcement learning (PbRL). Early works developed general frameworks using linear approximations or Bayesian models to incorporate human feedback on policies, trajectories, and state/action pairwise comparisons into policy learning~\cite{furnkranz2012preference,akrour2012april,akrour2011preference,wilson2012bayesian}. Recent studies have shown the effectiveness of training deep neural networks in complex domains with thousands of preference queries, typically following a two-phase approach: first, supervised learning to train a reward model, then RL to optimize the policy. For example, \cite{christiano2017deep} uses the Bradley-Terry model for pairwise preferences and methods like A2C \cite{mnih2016asynchronous} to refine the policy. Subsequent studies have expanded this framework to scenarios like preference elicitation~\cite{mukherjee2024optimal,lee2021pebble}, few-shot learning~\cite{hejna2023few}, data and preference augmentation~\cite{ibarz2018reward,zhang2023flow}, list-wise learning~\cite{choi2024listwise}, hindsight preference learning~\cite{gao2024hindsight}, and Transformer-based learning~\cite{kim2023preference}.",2501.18944,Related Work
+3102372,3,"The datasets constructed for this study span a diverse range of environments and tasks, ensuring comprehensive evaluation of preference learning algorithms. The inclusion of varying quality levels and both rule-based and LLM-based labeling methods provides a robust foundation for preference-based multi-agent reinforcement learning research.",2501.18944,Additional Details
+3102213,3,"where $\beta$\beta is the regularization parameter. Setting $\mu_{tot}$\mu_{tot}tot to the uniform distribution reduces this to the standard MaxEnt RL objective. The regularization term enforces a conservative KL constraint, keeping the learned policy close to the behavior policy and addressing offline RL's out-of-distribution challenges \citep{haarnoja2018soft,neu2017unified}.",2501.18944,Background
+3102263,3,"\paragraph{Dataset.}Dataset. There are no human-labeled preference datasets for MARL, so we create datasets for each task using two methods: (i) Rule-based method – followed by IPL \citep{hejna2024inverse}, we sample trajectory pairs from offline datasets of varying quality (e.g., poor, medium, expert) and assign binary preference labels based on dataset quality; and (ii) LLM-based method – followed by DPM \citep{kang2024dpm}, we sample pairs from offline datasets and use GPT-4o to annotate labels with prompts constructed from the global state of each trajectory (details in the appendix).",2501.18944,Experiments
+3102276,3,"\newpage
+\onecolumn",2501.18944,Impact Statement
+3102200,3,"Only a few recent studies have developed preference-based RL algorithms for multi-agent settings~\cite{kang2024dpm,zhang2024multi}, typically using a two-phase learning framework: first, preference data trains a reward model, and then the policy is optimized. However, this approach has two main drawbacks: (i) it requires large preference datasets to cover the state and action spaces, and (ii) misalignment between the two phases can degrade policy quality.",2501.18944,Introduction
+3102280,3,"Now consider the term \( \phi(R_w[\bq, \bv](\bs, \ba)) \). Since \( \phi \) is concave, we have the following inequality for any \( \alpha \in (0,1) \) and two vectors \( \bq^1, \bq^2 \):
+\begin{align}
+    \alpha \phi(R_w[\bq^1, \bv](\bs, \ba)) + (1-\alpha)\phi(R_w[\bq^2, \bv](\bs, \ba)) &\leq \phi\big(\alpha R_w[\bq^1, \bv](\bs, \ba) + (1-\alpha)R_w[\bq^2, \bv](\bs, \ba)\big) \nonumber \\
+    &\leq \phi\big(R_w[\alpha\bq^1 + (1-\alpha)\bq^2, \bv](\bs, \ba)\big),
+\end{align}
+which implies the concavity of \( \phi(R_w[\bq, \bv](\bs, \ba)) \) in \( \bq \).",2501.18944,Missing Proofs
+3102220,3,"where $r_E(\bs, \ba)$r_E(\bs, \ba) is the reward function of the expert. Using this model, a direct approach to recovering the expert reward function \( r_E \) r_E  involves maximizing the likelihood of the preference data \( \mathcal{P} \) \mathcal{P} , which can be formulated as follows:
+\[
+\max\nolimits_{r_E} \cL(r_E|\cP) = \max\nolimits_{r_E} \sum\nolimits_{(\sigma_1,\sigma_2)\in \cP} \ln P(\sigma_1 \succ \sigma_2)
+\]
+\max\nolimits_{r_E}r_E \cL(r_E|\cP) = \max\nolimits_{r_E}r_E \sum\nolimits_{(\sigma_1,\sigma_2)\in \cP}(\sigma_1,\sigma_2)\in \cP \ln P(\sigma_1 \succ \sigma_2)",2501.18944,Multi-agent Preference-based RL (PbRL)
+3102255,3,"Here, \( W^\bo_\theta,  b^\bo_\theta , W^{\bo,\ba}_\theta,  b^{\bo,\ba}_\theta \) W^\bo_\theta,  b^\bo_\theta , W^{\bo,\ba}\bo,\ba_\theta,  b^{\bo,\ba}\bo,\ba_\theta  are the weights of the mixing networks, modeled as  hyper-networks that take the global observation \( \bo \) \bo , joint action $\ba$\ba, and the learnable parameters \( \theta \) \theta  as inputs.
+In this setup, we employ the same mixing network \( \mathcal{M}_\theta \) \mathcal{M}_\theta  to combine both the local \(V\)V and  \( Q \) Q  functions, ensuring consistency and scalability in the aggregation process.",2501.18944,Practical Algorithm
+3102208,3,"Training reward models aligned with human preferences can be costly, requiring large volumes of preference data, especially in complex domains. This has led to a shift towards end-to-end frameworks that directly learn optimal policies from preference data, bypassing explicit reward models. For example, ~\cite{hejna2023contrastive} and ~\cite{an2023direct} use contrastive learning to eliminate reward modeling, while ~\cite{kang2023beyond} employs information matching to learn optimal policies in one step. In ~\cite{hejna2024inverse}, the IPL algorithm learns a Q-function directly from expert preferences, instead of modeling the reward function.",2501.18944,Related Work
+3102373,4,"\caption{Datasets}
+\label{tab:data}",2501.18944,Additional Details
+3102214,4,"In the above MaxEnt framework, the soft-Bellman operator \( \cB^* : \mathbb{R}^{\mathcal{S} \times \mathcal{A}} \to \mathbb{R}^{\mathcal{S} \times \mathcal{A}} \) \cB^* : \mathbb{R}^{\mathcal{S} \times \mathcal{A}}\mathcal{S} \times \mathcal{A} \to \mathbb{R}^{\mathcal{S} \times \mathcal{A}}\mathcal{S} \times \mathcal{A}  is defined as $(\cB^*_r Q_{tot})(\bs, \ba) = r(\bs, \ba) + \gamma \mathbb{E}_{\bs' \sim P(\cdot | \bs, \ba)} V_{tot}(\bs'),$(\cB^*_r Q_{tot}tot)(\bs, \ba) = r(\bs, \ba) + \gamma \mathbb{E}_{\bs' \sim P(\cdot | \bs, \ba)}\bs' \sim P(\cdot | \bs, \ba) V_{tot}tot(\bs'), where \( Q_{tot}\) Q_{tot}tot is the soft-global-Q function and \( V_{tot} \) V_{tot}tot  is the optimal soft-global-value function computed as a log-sum-exp of $Q_{tot}$Q_{tot}tot, as follows:
+$$V_{tot}(\bs) = \beta \log \Big[\sum\nolimits_{\ba \sim \mu_{tot}(\cdot | \bs)} \mu_{tot}(\ba|\bs)\exp\Big(\frac{Q_{tot}(\bs, \ba)}{\beta}\Big)\Big]$$V_{tot}tot(\bs) = \beta \log \Big[\sum\nolimits_{\ba \sim \mu_{tot}(\cdot | \bs)}\ba \sim \mu_{tot}tot(\cdot | \bs) \mu_{tot}tot(\ba|\bs)\exp\Big(\frac{Q_{tot}(\bs, \ba)}{\beta}\Big)\Big]
+ The Bellman equation $(\cB^*_r Q_{tot}) = Q_{tot}$(\cB^*_r Q_{tot}tot) = Q_{tot}tot will yield a unique optimal global Q-function $Q^*_{tot}$Q^*_{tot}tot and the corresponding optimal policy is given by \citep{haarnoja2018soft}:
+\begin{equation}\label{eq:maxent-soft-policy}
+\pi^*_{tot}(\ba|\bs) = \mu_{tot}(\ba|\bs) \exp\Big(\frac{Q^*_{tot}(\bs, \ba) - V^*_{tot}(\bs)}{\beta}\Big).    
+\end{equation}\begin{equation}\label{eq:maxent-soft-policy}
+\pi^*_{tot}(\ba|\bs) = \mu_{tot}(\ba|\bs) \exp\Big(\frac{Q^*_{tot}(\bs, \ba) - V^*_{tot}(\bs)}{\beta}\Big).    
+\end{equation}\label{eq:maxent-soft-policy}
+\pi^*_{tot}tot(\ba|\bs) = \mu_{tot}tot(\ba|\bs) \exp\Big(\frac{Q^*_{tot}(\bs, \ba) - V^*_{tot}(\bs)}{\beta}\Big).",2501.18944,Background
+3102264,4,"Specifically, we used offline datasets of varying quality from OMIGA \citep{wang2024offline_OMIGA} and ComaDICE \citep{bui2025comadice}, sampling one thousand pairs for MaMujoco tasks and two thousand pairs for SMAC tasks. For MaMujoco, we selected ``medium-replay'', ``medium'', and ``expert'' instances, while for SMACv1, we chose ``poor'', ``medium'', and ``good'' instances. Note that ComaDICE only provides a ``medium'' dataset for SMACv2, therefore, we generated new ``poor'' and ``expert'' datasets for SMACv2. Additionally, LLM-based prompts require detailed information from trajectory states (e.g., SMAC: remaining health points, shields, relative positions, cooldown time, agent types, action meanings), which we cannot extract from MaMujoco states. Therefore, we have no LLM-based dataset for MaMujoco tasks.",2501.18944,Experiments
+3102201,4,"In this work, we investigate multi-agent preference-based RL (PbRL), focusing on the offline learning setting where agents do not interact with the environment but instead have access to an offline dataset of pairwise trajectory preferences. Unlike previous studies in multi-agent PbRL, we propose an end-to-end learning approach that directly trains agents’ policies from preference data, without relying on an explicit reward model. Our main contributions are as follows:",2501.18944,Introduction
+3102281,4,"For the term \( \log\left(e^{\sum_{\sigma_1} R_w[\bq, \bv](\bs, \ba)} + e^{\sum_{\sigma_2} R_w[\bq, \bv](\bs, \ba)}\right) \), we note the following. First:
+\[
+ \alpha \sum_{\sigma} R_w[\bq^1, \bv](\bs, \ba) + (1-\alpha)\sum_{\sigma} R_w[\bq^2, \bv](\bs, \ba) = \sum_{\sigma} R_w[\alpha\bq^1 + (1-\alpha)\bq^2, \bv](\bs, \ba),
+ \]
+for any trajectory \( \sigma \). Moreover, since the log-sum-exp function \( \log(e^{t_1} + e^{t_2}) \) is convex in \( (t_1, t_2) \), we also have the following inequalities for any \( \alpha \in (0,1) \) and two vectors \( \bq^1, \bq^2 \):
+\begin{align}
+    &\alpha \log\left(e^{\sum_{\sigma_1} R_w[\bq^1, \bv](\bs, \ba)} + e^{\sum_{\sigma_2} R_w[\bq^1, \bv](\bs, \ba)}\right) 
+    + (1-\alpha)\log\left(e^{\sum_{\sigma_1} R_w[\bq^2, \bv](\bs, \ba)} + e^{\sum_{\sigma_2} R_w[\bq^2, \bv](\bs, \ba)}\right) \nonumber \\
+    &\leq \log\left(e^{\alpha\sum_{\sigma_1} R_w[\bq^1, \bv](\bs, \ba) + (1-\alpha)\sum_{\sigma_1} R_w[\bq^2, \bv](\bs, \ba)} 
+    + e^{\alpha\sum_{\sigma_2} R_w[\bq^1, \bv](\bs, \ba) + (1-\alpha)\sum_{\sigma_2} R_w[\bq^2, \bv](\bs, \ba)}\right) \nonumber \\
+    &= \log\left(e^{R_w[\alpha\bq^1 + (1-\alpha)\bq^2, \bv](\bs, \ba)} + e^{R_w[\alpha\bq^1 + (1-\alpha)\bq^2, \bv](\bs, \ba)}\right), \nonumber
+\end{align}
+which implies that \( \log\left(e^{\sum_{\sigma_1} R_w[\bq, \bv](\bs, \ba)} + e^{\sum_{\sigma_2} R_w[\bq, \bv](\bs, \ba)}\right) \) is convex in \( \bq \).",2501.18944,Missing Proofs
+3102221,4,"Once the expert rewards \( r_E \) r_E  are recovered, a policy can be learned by training a MARL algorithm. This method is referred to as a two-phase approach, where the reward learning and policy optimization are performed separately.",2501.18944,Multi-agent Preference-based RL (PbRL)
+3102256,4,"The practical training objective function for the local Q functions can be calculated as:
+\begin{align}
+    &\mathcal{L}(\psi_q, \psi_v, \theta) = \sum\nolimits_{(\sigma_1, \sigma_2) \in \mathcal{P}} \sum\nolimits_{(\bo, \ba, \bo') \in \sigma_1} R(\bo, \ba, \bo') \nonumber \\
+    & - \log\big(e^{\sum_{\sigma_1}\!\! R(\bo, \ba, \bo')} \!+ e^{\sum_{\sigma_2}\!\! R(\bo, \ba, \bo')}\big)\! +\! \sum\nolimits_{\mathcal{P}} \!\phi(R(\bo, \ba, \bo')) \nonumber
+\end{align}\begin{align}
+    &\mathcal{L}(\psi_q, \psi_v, \theta) = \sum\nolimits_{(\sigma_1, \sigma_2) \in \mathcal{P}} \sum\nolimits_{(\bo, \ba, \bo') \in \sigma_1} R(\bo, \ba, \bo') \nonumber \\
+    & - \log\big(e^{\sum_{\sigma_1}\!\! R(\bo, \ba, \bo')} \!+ e^{\sum_{\sigma_2}\!\! R(\bo, \ba, \bo')}\big)\! +\! \sum\nolimits_{\mathcal{P}} \!\phi(R(\bo, \ba, \bo')) \nonumber
+\end{align}
+    &\mathcal{L}(\psi_q, \psi_v, \theta) = \sum\nolimits_{(\sigma_1, \sigma_2) \in \mathcal{P}}(\sigma_1, \sigma_2) \in \mathcal{P} \sum\nolimits_{(\bo, \ba, \bo') \in \sigma_1}(\bo, \ba, \bo') \in \sigma_1 R(\bo, \ba, \bo') \nonumber \\
+    & - \log\big(e^{\sum_{\sigma_1}\!\! R(\bo, \ba, \bo')}\sum_{\sigma_1}\sigma_1\!\! R(\bo, \ba, \bo') \!+ e^{\sum_{\sigma_2}\!\! R(\bo, \ba, \bo')}\sum_{\sigma_2}\sigma_2\!\! R(\bo, \ba, \bo')\big)\! +\! \sum\nolimits_{\mathcal{P}}\mathcal{P} \!\phi(R(\bo, \ba, \bo')) \nonumber",2501.18944,Practical Algorithm
+3102209,4,"While preference-based RL is well-explored in single-agent settings, research in multi-agent settings remains limited due to the complexity of agent interactions and large joint state-action spaces. Only a few studies have extended the two-phase preference-based framework to multi-agent settings~\cite{kang2024dpm, zhang2024multi}. Building on IPL’s success in single-agent settings~\cite{hejna2024inverse}, we leverage the reward-Q-function relationship to avoid explicit reward modeling. Adapting this to multi-agent environments is challenging, requiring careful design of mixing networks within the CTDE framework and a thorough theoretical analysis of the preference-based learning objective's convexity and global-local policy consistency.",2501.18944,Related Work
+3102374,5,"\subsubsection{SMAC Dataset}
+SMACv1 \citep{samvelyan2019starcraft} is a benchmark environment for cooperative multi-agent reinforcement learning (MARL), built on Blizzard's StarCraft II RTS game. It leverages the StarCraft II Machine Learning API and DeepMind's PySC2 to enable autonomous agent interaction with StarCraft II. Unlike PySC2, SMACv1 focuses on decentralized micromanagement scenarios, where each unit is controlled by an individual RL agent.",2501.18944,Additional Details
+3102215,5,"where $V^*_{tot}$V^*_{tot}tot  is the log-sum-exp of $Q^*_{tot}$Q^*_{tot}tot.  Moreover, by rearranging the Bellman equation, we get the so-called inverse soft Bellman-operator, formulated as follows: 
+$$(\cT^*Q_{tot})(\bs,\ba) =   Q_{tot}(\bs,\ba) -  \gamma \mathbb{E}_{\bs' \sim P(\cdot | \bs, \ba)} V_{tot}(\bs')$$(\cT^*Q_{tot}tot)(\bs,\ba) =   Q_{tot}tot(\bs,\ba) -  \gamma \mathbb{E}_{\bs' \sim P(\cdot | \bs, \ba)}\bs' \sim P(\cdot | \bs, \ba) V_{tot}tot(\bs')
+An important observation here is the one-to-one mapping between any $Q_{tot}$Q_{tot}tot  and $r(\bs,\ba)$r(\bs,\ba), i.e., $r(\bs,\ba) = (\cT^*Q_{tot})(\bs,\ba)$r(\bs,\ba) = (\cT^*Q_{tot}tot)(\bs,\ba). This property has been extensively utilized in inverse RL~\citep{garg2021iq,hejna2024inverse,bui2023inverse}. The key idea is that, rather than explicitly recovering a reward function, the unique mapping enables the reformulation of reward learning as a Q-learning problem. This approach improves stability and can directly recover the optimal policy from the learned Q-function using \eqref{eq:maxent-soft-policy}.",2501.18944,Background
+3102265,5,"\paragraph{Baselines.}Baselines.   We consider the following baselines for our evaluations: (i) \textbf{Behavioral Cloning (BC)} trains a policy by directly imitating all prefered trajectories in the dataset $\mathcal{P}$\mathcal{P}; (ii) \textbf{Independent IPL (IIPL)} is a straightforward extension of the IPL approach \citep{hejna2024inverse} to multi-agent learning, where the single-agent IPL algorithm is applied independently to each agent; (iii) \textbf{Supervised Learning MARL (SL-MARL)} is a two-phase approach where we first learn the reward function and then use it to train a policy with OMIGA \citep{wang2024offline_OMIGA}, a state-of-the-art MARL algorithm, serving as the offline counterpart of the two-phase approach in \cite{kang2024dpm}; and (iv) \textbf{IPL-VDN}, which is similar to our algorithm but without the mixing networks, instead employing the standard VDN approach \citep{sunehag2017value} to aggregate local Q and V functions via a simple linear combination with unit weights.
+\paragraph{Results.}Results.",2501.18944,Experiments
+3102202,5,"First, we introduce a new algorithm, O-MAPL (Offline Multi-Agent Preference Learning) for multi-agent PbRL. O-MAPL exploits the inherent relationship between the reward and the soft-Q functions in MaxEnt RL~\cite{garg2021iq,garg2023extreme} to directly learn the soft Q-function from preference data, rather than recovering the reward function explicitly. Once the Q-function is learned, the optimal policy can be derived. This one-phase learning process is carried out under the centralized training with decentralized execution (CTDE) paradigm~\citep{oliehoek2008optimal,kraemer2016multi}, allowing effective training of local policies.",2501.18944,Introduction
+3102282,5,"Putting all the above together, we see that \( \mathcal{L}(\bq, \bv, w) \) is concave in \( \bq \).",2501.18944,Missing Proofs
+3102222,5,"The MaxEnt RL framework discussed above provides an alternative approach to integrate reward and policy recovery into a single learning process. This is achieved by leveraging the unique mapping between a reward function and a Q-function. Multi-agent PbRL is thereby transformed into the Q-space, where the preference probability over a trajectory pair $(\sigma_1,\sigma_2)$(\sigma_1,\sigma_2) can be computed as follows:
+\begin{equation*}
+    P(\sigma_1 \succ \sigma_2|Q_{tot}) = \frac{e^{\sum_{\sigma_1} (\cT^*Q_{tot})(\bs,\ba)}}{e^{\sum_{ \sigma_1} (\cT^*Q_{tot})(\bs,\ba)}+ e^{\sum_{ \sigma_2} (\cT^*Q_{tot})(\bs,\ba)}}
+    % \label{eq.preference}
+\end{equation*}\begin{equation*}
+    P(\sigma_1 \succ \sigma_2|Q_{tot}) = \frac{e^{\sum_{\sigma_1} (\cT^*Q_{tot})(\bs,\ba)}}{e^{\sum_{ \sigma_1} (\cT^*Q_{tot})(\bs,\ba)}+ e^{\sum_{ \sigma_2} (\cT^*Q_{tot})(\bs,\ba)}}
+    % \label{eq.preference}
+\end{equation*}
+    P(\sigma_1 \succ \sigma_2|Q_{tot}tot) = \frac{e^{\sum_{\sigma_1} (\cT^*Q_{tot})(\bs,\ba)}}{e^{\sum_{ \sigma_1} (\cT^*Q_{tot})(\bs,\ba)}+ e^{\sum_{ \sigma_2} (\cT^*Q_{tot})(\bs,\ba)}}
+    
+After solving the maximum likelihood problem, the derived \( Q_{\text{tot}} \) Q_{\text{tot}}\text{tot}  and \( V_{\text{tot}} \) V_{\text{tot}}\text{tot}  can be used directly to recover a policy via the soft policy formula \eqref{eq:maxent-soft-policy}, eliminating the need for an additional MARL algorithm. This unified, single-phase approach integrates reward and policy learning, streamlining the process. It enhances training stability and consistency by reducing discrepancies that arise from separate reward and policy learning. This approach also mitigates issues like error propagation and misalignment between the reward function and policy optimization. Training in the Q-space has been shown to outperform training in the reward space.",2501.18944,Multi-agent Preference-based RL (PbRL)
+3102257,5,"where \( R(\bo, \ba) = \mathcal{M}_\theta[\bq(\bo, \ba | \psi_q)] - \gamma \mathcal{M}_\theta[\bv(\bo' | \psi_v)] \) R(\bo, \ba) = \mathcal{M}_\theta[\bq(\bo, \ba | \psi_q)] - \gamma \mathcal{M}_\theta[\bv(\bo' | \psi_v)] . Moreover, the extreme-V can be practically estimated as:
+\begin{align}
+    \mathcal{J}(\psi_v) &= \mathbb{E}_{(\mathbf{o}, \mathbf{a}) \sim \mathcal{P}} \Big[ e^{\frac{\mathcal{M}_\theta[\bq(\bo, \ba | \psi_q)] - \mathcal{M}_\theta[\bv(\bo | \psi_v)]}{\beta}} \Big] \nonumber \\
+    &- \mathbb{E}_{(\mathbf{o}, \mathbf{a}) \sim \mathcal{P}} \Big[\frac{\mathcal{M}_\theta[\bq(\bo, \ba | \psi_q)] - \mathcal{M}_\theta[\bv(\bo | \psi_v)]}{\beta} \Big] - 1\nonumber
+\end{align}\begin{align}
+    \mathcal{J}(\psi_v) &= \mathbb{E}_{(\mathbf{o}, \mathbf{a}) \sim \mathcal{P}} \Big[ e^{\frac{\mathcal{M}_\theta[\bq(\bo, \ba | \psi_q)] - \mathcal{M}_\theta[\bv(\bo | \psi_v)]}{\beta}} \Big] \nonumber \\
+    &- \mathbb{E}_{(\mathbf{o}, \mathbf{a}) \sim \mathcal{P}} \Big[\frac{\mathcal{M}_\theta[\bq(\bo, \ba | \psi_q)] - \mathcal{M}_\theta[\bv(\bo | \psi_v)]}{\beta} \Big] - 1\nonumber
+\end{align}
+    \mathcal{J}(\psi_v) &= \mathbb{E}_{(\mathbf{o}, \mathbf{a}) \sim \mathcal{P}}(\mathbf{o}, \mathbf{a}) \sim \mathcal{P} \Big[ e^{\frac{\mathcal{M}_\theta[\bq(\bo, \ba | \psi_q)] - \mathcal{M}_\theta[\bv(\bo | \psi_v)]}{\beta}}\frac{\mathcal{M}_\theta[\bq(\bo, \ba | \psi_q)] - \mathcal{M}_\theta[\bv(\bo | \psi_v)]}{\beta} \Big] \nonumber \\
+    &- \mathbb{E}_{(\mathbf{o}, \mathbf{a}) \sim \mathcal{P}}(\mathbf{o}, \mathbf{a}) \sim \mathcal{P} \Big[\frac{\mathcal{M}_\theta[\bq(\bo, \ba | \psi_q)] - \mathcal{M}_\theta[\bv(\bo | \psi_v)]}{\beta} \Big] - 1\nonumber",2501.18944,Practical Algorithm
+3102375,6,"We evaluate on the following tasks: \texttt{2c\_vs\_64zg}, \texttt{5m\_vs\_6m}, \texttt{6h\_vs\_8z}, and \texttt{corridor}. Among these, \texttt{2c\_vs\_64zg} and \texttt{5m\_vs\_6m} are categorized as hard tasks, while \texttt{6h\_vs\_8z} and \texttt{corridor} are considered super hard. The offline dataset for SMACv1 was sourced from the work of Meng et al., where MAPPO was used to train agents. These agents were then used to generate offline datasets for the community. The dataset quality varies across poor, medium, and good levels, ensuring comprehensive coverage of different learning stages.",2501.18944,Additional Details
+3102216,6,"Note that, in POMDP scenarios, the global state \(\bs\)\bs is not directly accessible during training and is instead represented by the joint observations \(\bo\)\bo from the agents. For notational convenience, we use the global state \(\bs\)\bs in our formulation; however, in practice, it corresponds to the joint observation \(\cZ(\bs)\)\cZ(\bs). Specifically, terms like \(\pi_{tot}(\bs, \ba)\)\pi_{tot}tot(\bs, \ba) and \(Q_{tot}(\bs,\ba)\)Q_{tot}tot(\bs,\ba) actually refer to \(\mu_{tot}(\bo, \ba)\)\mu_{tot}tot(\bo, \ba) and \(Q_{tot}(\bo,\ba)\)Q_{tot}tot(\bo,\ba), where \(\bo = \cZ(\bs)\)\bo = \cZ(\bs).",2501.18944,Background
+3102266,6,"Overall, our experimental results demonstrate the effectiveness of O-MAPL in both continuous and discrete multi-agent reinforcement learning environments. In the following, we highlight some of our main results. Due to limited space, all remaining results are in our appendix.",2501.18944,Experiments
+3102203,6,"Implementing this end-to-end process within the CTDE framework is far from being trivial. It requires appropriate mixing networks for value factorization to preserve the convexity of the preference-based learning objective and ensure local-global consistency in policy optimality. As a second contribution, we introduce a simple yet effective value factorization method and provide a comprehensive theoretical analysis of the convexity and local-global consistency requirements. This approach enables stable and efficient policy training.",2501.18944,Introduction
+3102283,6,"Finally, since the mixing networks are linear in \( \bq \) and \( w \), a similar argument shows that \( \mathcal{L}(\bq, \bv, w) \) is also concave in \( w \).",2501.18944,Missing Proofs
+3102223,6,"\subsection{Value  Factorization}
+The training objective in the Q-space can be formulated as:
+\[
+\max_{Q_{\text{tot}}} \mathcal{L}(Q_{\text{tot}} | \mathcal{P}) = \max_{Q_{\text{tot}}} \sum\nolimits_{(\sigma_1, \sigma_2) \in \mathcal{P}} \ln P(\sigma_1 \succ \sigma_2 | Q_{\text{tot}})
+\]
+\max_{Q_{\text{tot}}}Q_{\text{tot}}\text{tot} \mathcal{L}(Q_{\text{tot}}\text{tot} | \mathcal{P}) = \max_{Q_{\text{tot}}}Q_{\text{tot}}\text{tot} \sum\nolimits_{(\sigma_1, \sigma_2) \in \mathcal{P}}(\sigma_1, \sigma_2) \in \mathcal{P} \ln P(\sigma_1 \succ \sigma_2 | Q_{\text{tot}}\text{tot})",2501.18944,Multi-agent Preference-based RL (PbRL)
+3102258,6,"For the policy extraction,  let \( \pi_i(a_i | o_i; \omega_i) \) \pi_i(a_i | o_i; \omega_i)  be a local policy network for each agent \( i \) i , where \( \omega \) \omega  are learnable parameters. We update the local policies using the following local WBC:
+\begin{align*}\small
+    \Psi(\omega_i) \!=\!\! \sum\nolimits_{\mathbf{o}, \mathbf{a} \sim \mathcal{P}} \!\Big[ 
+    e^{\frac{\mathcal{M}_\theta[\bq(\bo, \ba | \psi_q)] 
+    - \mathcal{M}_\theta[\bv(\bo | \psi_v)]}{\beta}} \!\log \pi_i(o_i | s_i; \omega_i) \Big] 
+\end{align*}\begin{align*}\small
+    \Psi(\omega_i) \!=\!\! \sum\nolimits_{\mathbf{o}, \mathbf{a} \sim \mathcal{P}} \!\Big[ 
+    e^{\frac{\mathcal{M}_\theta[\bq(\bo, \ba | \psi_q)] 
+    - \mathcal{M}_\theta[\bv(\bo | \psi_v)]}{\beta}} \!\log \pi_i(o_i | s_i; \omega_i) \Big] 
+\end{align*}\small
+    \Psi(\omega_i) \!=\!\! \sum\nolimits_{\mathbf{o}, \mathbf{a} \sim \mathcal{P}}\mathbf{o}, \mathbf{a} \sim \mathcal{P} \!\Big[ 
+    e^{\frac{\mathcal{M}_\theta[\bq(\bo, \ba | \psi_q)] 
+    - \mathcal{M}_\theta[\bv(\bo | \psi_v)]}{\beta}}\frac{\mathcal{M}_\theta[\bq(\bo, \ba | \psi_q)] 
+    - \mathcal{M}_\theta[\bv(\bo | \psi_v)]}{\beta} \!\log \pi_i(o_i | s_i; \omega_i) \Big]",2501.18944,Practical Algorithm
+3102376,7,"SMACv2 \cite{ellis2022smacv2} builds upon SMACv1, introducing enhancements to challenge contemporary MARL algorithms. It incorporates randomized start positions, randomized unit types, and adjustments to unit sight and attack ranges. These changes increase the diversity of agent interactions and align the sight range with the true values in StarCraft II. Tasks in SMACv2 are grouped by factions (\texttt{protoss}, \texttt{terran}, \texttt{zerg}) and instances (\texttt{5\_vs\_5}, \texttt{10\_vs\_10}, \texttt{10\_vs\_11}, \texttt{20\_vs\_20}, \texttt{20\_vs\_23}). The difficulty increases progressively from \texttt{5\_vs\_5} to \texttt{20\_vs\_23}.",2501.18944,Additional Details
+3102267,7,"Table~\ref{tab:SMAC:winrates} and~\ref{tab:mujoco:return} provide a detailed comparison of win rates for SMACv1 and SMACv2 tasks and of returns for MaMujoco. O-MAPL achieves the highest win rates/returns across most tasks, outperforming all baseline methods. For example, in the \textit{2c\_vs\_64zg} task, O-MAPL achieves a win rate of 74.4\%, significantly surpassing other methods. In \textit{corridor}, O-MAPL achieves a win rate of 93.2\%, showcasing its ability to handle structured navigation tasks effectively.",2501.18944,Experiments
+3102204,7,"Finally, we conduct extensive experiments on two benchmarks, SMAC and MAMuJoCo, using preference data generated by both rule-based and large language model approaches. The results show that our O-MAPL consistently outperforms existing methods across various tasks.",2501.18944,Introduction
+3102284,7,"For the convexity of the extreme-V function \( \mathcal{J}(\mathbf{v}) \), we rewrite the function as:
+\begin{align}
+    \mathcal{J}(\mathbf{v}) = \mathbb{E}_{(\mathbf{s}, \mathbf{a}) \sim \mu_{\text{tot}}} \left[ e^{\frac{\mathcal{M}_w[\mathbf{q}(\mathbf{s}, \mathbf{a})] - \mathcal{M}_w[\mathbf{v}(\mathbf{s})]}{\beta}} \right]
+    - \mathbb{E}_{(\mathbf{s}, \mathbf{a}) \sim \mu_{\text{tot}}} \left[\frac{\mathcal{M}_w[\mathbf{q}(\mathbf{s}, \mathbf{a})] - \mathcal{M}_w[\mathbf{v}(\mathbf{s})]}{\beta} \right] - 1. \nonumber
+\end{align}",2501.18944,Missing Proofs
+3102224,7,"While this objective works in single-agent settings, applying it to multi-agent scenarios is challenging due to the large state and action spaces. To address this, we apply value factorization in the CTDE framework. However, solving PbRL under CTDE is complex, as the objective involves several components tied to \( Q_{\text{tot}} \) Q_{\text{tot}}\text{tot}  and \( V_{\text{tot}} \) V_{\text{tot}}\text{tot} . Thus, a carefully designed value factorization method is needed to ensure consistency between global and local policies.",2501.18944,Multi-agent Preference-based RL (PbRL)
+3102259,7,"The outline of our O-MAPL is shown in Algorithm~\ref{algo:O-MAPL}.
+\begin{algorithm}[t!]
+\caption{\textbf{ O-MAPL}}
+\label{algo:O-MAPL}
+    \centering
+ \begin{algorithmic}[1]
+ \STATE \textbf{Input:} Parameters $\theta, \psi_q,\psi_v, \omega_i$. Offline data $\cP$.
+ \STATE \textbf{Output:} Local optimized polices $\pi_i$.
+\FOR{\textit{a certain number of training steps}}
+     % \STATE  
+       \STATE { Update  $\psi_q$ and $\theta$  to maximize $\cL(\psi_q,\psi_v,\theta)$} 
+        % \STATE  
+        \STATE { Update $\psi_v$ to minimize the Extreme-V  $J(\psi_v)$}
+        \STATE  { Update $\omega_i$ to maximize the local WBC loss $\Psi(\omega_i)$}
+   \ENDFOR
+ \STATE Return $\pi_i(a_i|o_i;\omega_i)$, $i=1,...,n$
+ \end{algorithmic}
+\end{algorithm}\begin{algorithm}[t!]
+\caption{\textbf{ O-MAPL}}
+\label{algo:O-MAPL}
+    \centering
+ \begin{algorithmic}[1]
+ \STATE \textbf{Input:} Parameters $\theta, \psi_q,\psi_v, \omega_i$. Offline data $\cP$.
+ \STATE \textbf{Output:} Local optimized polices $\pi_i$.
+\FOR{\textit{a certain number of training steps}}
+     % \STATE  
+       \STATE { Update  $\psi_q$ and $\theta$  to maximize $\cL(\psi_q,\psi_v,\theta)$} 
+        % \STATE  
+        \STATE { Update $\psi_v$ to minimize the Extreme-V  $J(\psi_v)$}
+        \STATE  { Update $\omega_i$ to maximize the local WBC loss $\Psi(\omega_i)$}
+   \ENDFOR
+ \STATE Return $\pi_i(a_i|o_i;\omega_i)$, $i=1,...,n$
+ \end{algorithmic}
+\end{algorithm}[t!]
+\caption{\textbf{ O-MAPL}}
+\label{algo:O-MAPL}
+    \centering
+ [1]
+ \STATE \textbf{Input:} Parameters $\theta, \psi_q,\psi_v, \omega_i$\theta, \psi_q,\psi_v, \omega_i. Offline data $\cP$\cP.
+ \STATE \textbf{Output:} Local optimized polices $\pi_i$\pi_i.
+\FOR{\textit{a certain number of training steps}}\textit{a certain number of training steps}
+     \STATE { Update  $\psi_q$ and $\theta$  to maximize $\cL(\psi_q,\psi_v,\theta)$} Update  $\psi_q$\psi_q and $\theta$\theta  to maximize $\cL(\psi_q,\psi_v,\theta)$\cL(\psi_q,\psi_v,\theta) 
+        \STATE { Update $\psi_v$ to minimize the Extreme-V  $J(\psi_v)$} Update $\psi_v$\psi_v to minimize the Extreme-V  $J(\psi_v)$J(\psi_v)
+        \STATE  { Update $\omega_i$ to maximize the local WBC loss $\Psi(\omega_i)$} Update $\omega_i$\omega_i to maximize the local WBC loss $\Psi(\omega_i)$\Psi(\omega_i)
+   \ENDFOR
+ \STATE Return $\pi_i(a_i|o_i;\omega_i)$\pi_i(a_i|o_i;\omega_i), $i=1,...,n$i=1,...,n",2501.18944,Practical Algorithm
+3102377,8,"The offline dataset for SMACv2 was derived from the ComaDICE paper \citep{bui2025comadice}, where MAPPO \citep{yu2022surprising} was used to train agents over 10e6 steps, followed by random sampling of 1k trajectories. This dataset primarily represents medium-quality data. To ensure varying quality levels, we created additional datasets for poor and expert levels.",2501.18944,Additional Details
+3102268,8,"Furthermore, Table~\ref{tab:SMAC:winrates} demonstrates that our algorithm, O-MAPL, achieves higher win rates in most SMAC tasks when using LLM-generated data than when using the ruled-based generated data. This finding highlights the potential of leveraging LLMs for rich and cost-effective data generation, substantially improving environment understanding and policy learning in complex multi-agent tasks.",2501.18944,Experiments
+3102285,8,"Since the mixing network \( \mathcal{M}_{w}[\mathbf{v}] \) is linear in \( \mathbf{v} \), we can see that the term 
+\[
+\mathbb{E}_{(\mathbf{s}, \mathbf{a}) \sim \mu_{\text{tot}}} \left[\frac{\mathcal{M}_w[\mathbf{q}(\mathbf{s}, \mathbf{a})] - \mathcal{M}_w[\mathbf{v}(\mathbf{s})]}{\beta} \right]
+\]
+is also linear in \( \mathbf{v} \).",2501.18944,Missing Proofs
+3102225,8,"To address these challenges, we propose a value factorization method, specifically designed to ensure scalability in multi-agent environments while preserving the alignment between global and local objectives, thereby enabling stable and effective learning.
+Our approach involves factorizing the global value functions \( Q_{\text{tot}} \) Q_{\text{tot}}\text{tot}  and \( V_{\text{tot}} \) V_{\text{tot}}\text{tot}  into local functions using a mixing network architecture. Specifically, let \( \mathbf{q}(\mathbf{s}, \mathbf{a}) = \{q_1(s_1, a_1), \ldots, q_n(s_n, a_n)\} \) \mathbf{q}(\mathbf{s}, \mathbf{a}) = \{q_1(s_1, a_1), \ldots, q_n(s_n, a_n)\}  be a set of local Q-functions, and \( \mathbf{v}(\mathbf{s}) = \{v_1(s_1), \ldots, v_n(s_n)\} \) \mathbf{v}(\mathbf{s}) = \{v_1(s_1), \ldots, v_n(s_n)\}  represent a set of local V-functions. To enable centralized learning, we introduce a mixing network \( \mathcal{M}_w \) \mathcal{M}_w , parameterized by learnable weights \( w \) w , which combines the local functions \( \mathbf{q} \) \mathbf{q}  and \( \mathbf{v} \) \mathbf{v}  to construct the global value functions \( Q_{\text{tot}} \) Q_{\text{tot}}\text{tot}  and \( V_{\text{tot}} \) V_{\text{tot}}\text{tot}  as follows:
+\[
+Q_{\text{tot}}(\mathbf{s}, \mathbf{a}) = \mathcal{M}_w[\mathbf{q}(\mathbf{s}, \mathbf{a})]; \quad V_{\text{tot}}(\mathbf{s}) = \mathcal{M}_w[\mathbf{v}(\mathbf{s})].
+\]
+Q_{\text{tot}}\text{tot}(\mathbf{s}, \mathbf{a}) = \mathcal{M}_w[\mathbf{q}(\mathbf{s}, \mathbf{a})]; \quad V_{\text{tot}}\text{tot}(\mathbf{s}) = \mathcal{M}_w[\mathbf{v}(\mathbf{s})].",2501.18944,Multi-agent Preference-based RL (PbRL)
+3102378,9,"\subsubsection{MaMujoco Dataset}
+MaMujoco \citep{deWitt2020DeepMARL} is a benchmark for continuous cooperative multi-agent robotic control. Derived from OpenAI Gym's MuJoCo suite, MaMujoco introduces scenarios where multiple agents within a single robot must solve tasks cooperatively. We evaluate on the tasks \texttt{Hopper-v2}, \texttt{Ant-v2}, and \texttt{HalfCheetah-v2}. The offline dataset for MaMujoco was sourced from the work of Xiangsen et al., who used the HAPPO method to train agents. Each task includes datasets with varying quality levels: medium-replay, medium, and expert.",2501.18944,Additional Details
+3102269,9,"Finally, we present evaluation curves for both SMACv2 (Figure~\ref{fig:smacv2:winrates}) and MaMujoco tasks (Figure~\ref{fig:mujoco-smac}). The results show that O-MAPL consistently and significantly outperforms other baselines throughout the training process. Our algorithm converges faster, achieving high win rates and returns at earlier training stages across most tasks. This demonstrates the effectiveness of our multi-agent end-to-end preference learning approach, supported by a systematic and carefully designed value decomposition.",2501.18944,Experiments
+3102286,9,"Moreover, the exponential function \( e^x \) is always convex in \( x \). Thus, in a similar way as shown above, we can prove that",2501.18944,Missing Proofs
+3102226,9,"For notational simplicity, let us  define:
+\begin{align}
+    R_w[\bq,\bv](\bs,\ba) &=  Q_{tot}(\bs,\ba) -  \gamma \mathbb{E}_{\bs' \sim P(\cdot | \bs, \ba)} V_{tot}(\bs') \nonumber\\
+    &= \cM_w[\bq(\bs,\ba)] - \gamma \mathbb{E}_{\bs' \sim P(\cdot | \bs, \ba)} \cM_w[\bv(\bs')]\nonumber
+\end{align}\begin{align}
+    R_w[\bq,\bv](\bs,\ba) &=  Q_{tot}(\bs,\ba) -  \gamma \mathbb{E}_{\bs' \sim P(\cdot | \bs, \ba)} V_{tot}(\bs') \nonumber\\
+    &= \cM_w[\bq(\bs,\ba)] - \gamma \mathbb{E}_{\bs' \sim P(\cdot | \bs, \ba)} \cM_w[\bv(\bs')]\nonumber
+\end{align}
+    R_w[\bq,\bv](\bs,\ba) &=  Q_{tot}tot(\bs,\ba) -  \gamma \mathbb{E}_{\bs' \sim P(\cdot | \bs, \ba)}\bs' \sim P(\cdot | \bs, \ba) V_{tot}tot(\bs') \nonumber\\
+    &= \cM_w[\bq(\bs,\ba)] - \gamma \mathbb{E}_{\bs' \sim P(\cdot | \bs, \ba)}\bs' \sim P(\cdot | \bs, \ba) \cM_w[\bv(\bs')]\nonumber",2501.18944,Multi-agent Preference-based RL (PbRL)
+3102379,10,\subsection{LLM-based Preference Annotations},2501.18944,Additional Details
+3102270,10,"Additional  details on dataset generation, hype-parameters, and detailed returns and win rates for all tasks  can be found in the appendix.",2501.18944,Experiments
+3102287,10,"$e^{\frac{\mathcal{M}_w[\mathbf{q}(\mathbf{s}, \mathbf{a})] - \mathcal{M}_w[\mathbf{v}(\mathbf{s})]}{\beta}}
+$
+is convex in \( \mathbf{v} \). All these observations imply that \( \mathcal{J}(\mathbf{v}) \) is convex in \( \mathbf{v} \), as desired.
+\end{proof}\begin{proof}
+ We first recall that the preference-based loss function has the following form:
+\begin{align}
+    \mathcal{L}(\bq, \bv, w) = \sum_{(\sigma_1, \sigma_2) \in \mathcal{P}} \sum_{(\bs, \ba) \in \sigma_1} R_w[\bq, \bv](\bs, \ba) 
+    - \log\left(e^{\sum_{\sigma_1} R_w[\bq, \bv](\bs, \ba)} + e^{\sum_{\sigma_2} R_w[\bq, \bv](\bs, \ba)}\right) 
+    + \phi(R_w[\bq, \bv](\bs, \ba)). \nonumber
+\end{align}",2501.18944,Missing Proofs
+3102227,10,"The mixing function  \( \mathcal{M}_w \) \mathcal{M}_w 
+  can be either a linear combination (single-layer) or a nonlinear combination (e.g., a two-layer network with ReLU activation). Our work uses the simple linear structure, which has two key advantages over the nonlinear approach. \textbf{First}, a two-layer structure often causes over-fitting and poor performance, especially in offline settings with limited data \citep{bui2025comadice}. \textbf{Second}, the linear structure ensures convexity in the learning objectives within the Q-space, leading to stable optimization and consistent training—benefits not present under a two-layer mixing network structure.",2501.18944,Multi-agent Preference-based RL (PbRL)
+3102380,11,"To generate preference annotations for trajectory pairs, we utilized GPT-4o \citep{openai2024gpt4o}. This model was prompted with detailed trajectory state information, including key metrics such as health points, shields, relative positions, cooldown times, agent types, and action meanings. The inclusion of such detailed state information significantly improves the ability of the LLM to evaluate trajectory pairs effectively. Following the methodology of DPM \citep{kang2024dpm}, we extracted critical state details such as the health points of allied and enemy agents, the number of agent deaths (both allied and enemy), and the total remaining health at the final state of each trajectory. These extracted metrics were then used to construct prompts for the LLM, as shown in Table \ref{tab:sample_prompt}.",2501.18944,Additional Details
+3102288,11,"We observe that under the assumption that the mixing networks are linear in their inputs, the function \( R_w[\bq, \bv](\bs, \ba) \) is linear in \( \bq(\bs, \ba) \) and \( \theta \). This implies that for any \( \alpha \in [0,1] \) and for any two vectors of local Q values \( \bq^1, \bq^2 \), we have:
+\[
+\alpha R_w[\bq^1, \bv](\bs, \ba) + (1-\alpha) R_w[\bq^2, \bv](\bs, \ba) = R_w[\alpha\bq^1 + (1-\alpha)\bq^2, \bv](\bs, \ba).
+\]",2501.18944,Missing Proofs
+3102228,11,"Overall, the training objective function, under the described mixing architecture, can be now expressed as follows:
+ \begin{align}
+     \cL(\bq,\bv,w) =&  \sum\nolimits_{(\sigma_1,\sigma_2)\in \cP} \sum\nolimits_{(\bs,\ba) \in\sigma_1}    R_w[\bq,\bv](\bs,\ba) \nonumber \\
+   & - \log\big(e^{\sum\nolimits_{ \sigma_1}   R_w[\bq,\bv](\bs,\ba)}+ e^{\sum\nolimits_{ \sigma_2}   R_w[\bq,\bv](\bs,\ba)}\big) \nonumber \\
+   &+ \phi(R_w[\bq,\bv](\bs,\ba))\nonumber
+ \end{align}\begin{align}
+     \cL(\bq,\bv,w) =&  \sum\nolimits_{(\sigma_1,\sigma_2)\in \cP} \sum\nolimits_{(\bs,\ba) \in\sigma_1}    R_w[\bq,\bv](\bs,\ba) \nonumber \\
+   & - \log\big(e^{\sum\nolimits_{ \sigma_1}   R_w[\bq,\bv](\bs,\ba)}+ e^{\sum\nolimits_{ \sigma_2}   R_w[\bq,\bv](\bs,\ba)}\big) \nonumber \\
+   &+ \phi(R_w[\bq,\bv](\bs,\ba))\nonumber
+ \end{align}
+     \cL(\bq,\bv,w) =&  \sum\nolimits_{(\sigma_1,\sigma_2)\in \cP}(\sigma_1,\sigma_2)\in \cP \sum\nolimits_{(\bs,\ba) \in\sigma_1}(\bs,\ba) \in\sigma_1    R_w[\bq,\bv](\bs,\ba) \nonumber \\
+   & - \log\big(e^{\sum\nolimits_{ \sigma_1}   R_w[\bq,\bv](\bs,\ba)}\sum\nolimits_{ \sigma_1} \sigma_1   R_w[\bq,\bv](\bs,\ba)+ e^{\sum\nolimits_{ \sigma_2}   R_w[\bq,\bv](\bs,\ba)}\sum\nolimits_{ \sigma_2} \sigma_2   R_w[\bq,\bv](\bs,\ba)\big) \nonumber \\
+   &+ \phi(R_w[\bq,\bv](\bs,\ba))\nonumber
+ 
+where $\phi(\cdot)$\phi(\cdot) is a concave regularization function  used  to prevent unbounded reward functions. In our experiments we choose a $\chi^2$\chi^2regularizer  of the form $\phi(x) = -\frac{1}{2}x^2+x$\phi(x) = -\frac{1}{2}x^2+x, which is also a commonly used  regularizer in prior works.",2501.18944,Multi-agent Preference-based RL (PbRL)
+3102381,12,"The OpenAI Batch API \cite{openai_api_pricing} was employed to submit these prompts to GPT-4o, and the associated token usage and costs are summarized in Table \ref{tab:api_cost}. The total cost for generating LLM-based annotations across all tasks was approximately \$42, with each dataset containing 2,000 trajectory pairs. While this approach is effective, it becomes costly when scaling to larger datasets or additional tasks.",2501.18944,Additional Details
+3102289,12,"Now consider the term \( \phi(R_w[\bq, \bv](\bs, \ba)) \). Since \( \phi \) is concave, we have the following inequality for any \( \alpha \in (0,1) \) and two vectors \( \bq^1, \bq^2 \):
+\begin{align}
+    \alpha \phi(R_w[\bq^1, \bv](\bs, \ba)) + (1-\alpha)\phi(R_w[\bq^2, \bv](\bs, \ba)) &\leq \phi\big(\alpha R_w[\bq^1, \bv](\bs, \ba) + (1-\alpha)R_w[\bq^2, \bv](\bs, \ba)\big) \nonumber \\
+    &\leq \phi\big(R_w[\alpha\bq^1 + (1-\alpha)\bq^2, \bv](\bs, \ba)\big),
+\end{align}
+which implies the concavity of \( \phi(R_w[\bq, \bv](\bs, \ba)) \) in \( \bq \).",2501.18944,Missing Proofs
+3102229,12,"It is important to note that \( Q_{\text{tot}} \) Q_{\text{tot}}\text{tot}  and \( V_{\text{tot}} \) V_{\text{tot}}\text{tot}  must satisfy the Bellman operator, meaning that \( V_{\text{tot}} \) V_{\text{tot}}\text{tot}  needs to be the log-sum-exp of \( Q_{\text{tot}} \) Q_{\text{tot}}\text{tot} . To achieve this, we train \( \mathcal{M}_w[\mathbf{v}(\mathbf{s})] \) \mathcal{M}_w[\mathbf{v}(\mathbf{s})]   (or $V_{tot}$V_{tot}tot) to approximate the log-sum-exp formulation:
+\[
+V_{tot} (\bs) = \beta\log\Big(\sum\nolimits_{\mathbf{a} \in \cA} \mu_{\text{tot}}(\mathbf{a} | \mathbf{s}) e^{Q_{tot}(\bs,\ba) / \beta}\Big),
+\]
+V_{tot}tot (\bs) = \beta\log\Big(\sum\nolimits_{\mathbf{a} \in \cA}\mathbf{a} \in \cA \mu_{\text{tot}}\text{tot}(\mathbf{a} | \mathbf{s}) e^{Q_{tot}(\bs,\ba) / \beta}Q_{tot}tot(\bs,\ba) / \beta\Big),",2501.18944,Multi-agent Preference-based RL (PbRL)
+3102382,13,"It is important to note that this method is particularly suited for environments like SMACv1 and SMACv2, where trajectory states provide meaningful and interpretable information. However, the approach has limitations in environments such as MaMujoco, which lack detailed trajectory state information. In MaMujoco tasks, the trajectory states do not include interpretable metrics like health points or agent-specific details, making it infeasible to construct meaningful prompts for LLMs. As a result, only rule-based methods were used to generate preference labels for MaMujoco datasets.",2501.18944,Additional Details
+3102290,13,"For the term \( \log\left(e^{\sum_{\sigma_1} R_w[\bq, \bv](\bs, \ba)} + e^{\sum_{\sigma_2} R_w[\bq, \bv](\bs, \ba)}\right) \), we note the following. First:
+\[
+ \alpha \sum_{\sigma} R_w[\bq^1, \bv](\bs, \ba) + (1-\alpha)\sum_{\sigma} R_w[\bq^2, \bv](\bs, \ba) = \sum_{\sigma} R_w[\alpha\bq^1 + (1-\alpha)\bq^2, \bv](\bs, \ba),
+ \]
+for any trajectory \( \sigma \). Moreover, since the log-sum-exp function \( \log(e^{t_1} + e^{t_2}) \) is convex in \( (t_1, t_2) \), we also have the following inequalities for any \( \alpha \in (0,1) \) and two vectors \( \bq^1, \bq^2 \):
+\begin{align}
+    &\alpha \log\left(e^{\sum_{\sigma_1} R_w[\bq^1, \bv](\bs, \ba)} + e^{\sum_{\sigma_2} R_w[\bq^1, \bv](\bs, \ba)}\right) 
+    + (1-\alpha)\log\left(e^{\sum_{\sigma_1} R_w[\bq^2, \bv](\bs, \ba)} + e^{\sum_{\sigma_2} R_w[\bq^2, \bv](\bs, \ba)}\right) \nonumber \\
+    &\leq \log\left(e^{\alpha\sum_{\sigma_1} R_w[\bq^1, \bv](\bs, \ba) + (1-\alpha)\sum_{\sigma_1} R_w[\bq^2, \bv](\bs, \ba)} 
+    + e^{\alpha\sum_{\sigma_2} R_w[\bq^1, \bv](\bs, \ba) + (1-\alpha)\sum_{\sigma_2} R_w[\bq^2, \bv](\bs, \ba)}\right) \nonumber \\
+    &= \log\left(e^{R_w[\alpha\bq^1 + (1-\alpha)\bq^2, \bv](\bs, \ba)} + e^{R_w[\alpha\bq^1 + (1-\alpha)\bq^2, \bv](\bs, \ba)}\right), \nonumber
+\end{align}
+which implies that \( \log\left(e^{\sum_{\sigma_1} R_w[\bq, \bv](\bs, \ba)} + e^{\sum_{\sigma_2} R_w[\bq, \bv](\bs, \ba)}\right) \) is convex in \( \bq \).",2501.18944,Missing Proofs
+3102230,13,"However, this can become computationally impractical in certain scenarios, such as environments with continuous action spaces. To address this, Extreme Q-Learning (XQL) \citep{garg2023extreme} provides an efficient method to update the \( V \) V -function. Specifically, we define the \textit{extreme-V loss objective} under our mixing framework as follows:
+\begin{align}
+    \mathcal{J}(\mathbf{v}) &= \mathbb{E}_{(\mathbf{s}, \mathbf{a}) \sim \mu_{\text{tot}}} \left[ e^{\frac{\mathcal{M}_w[\mathbf{q}(\mathbf{s}, \mathbf{a})] - \mathcal{M}_w[\mathbf{v}(\mathbf{s})]}{\beta}} \right] \nonumber\\
+&- \mathbb{E}_{(\mathbf{s}, \mathbf{a}) \sim \mu_{\text{tot}}} \Big[\frac{\mathcal{M}_w[\mathbf{q}(\mathbf{s}, \mathbf{a})] - \mathcal{M}_w[\mathbf{v}(\mathbf{s})]}{\beta} \Big] - 1.\nonumber
+\end{align}\begin{align}
+    \mathcal{J}(\mathbf{v}) &= \mathbb{E}_{(\mathbf{s}, \mathbf{a}) \sim \mu_{\text{tot}}} \left[ e^{\frac{\mathcal{M}_w[\mathbf{q}(\mathbf{s}, \mathbf{a})] - \mathcal{M}_w[\mathbf{v}(\mathbf{s})]}{\beta}} \right] \nonumber\\
+&- \mathbb{E}_{(\mathbf{s}, \mathbf{a}) \sim \mu_{\text{tot}}} \Big[\frac{\mathcal{M}_w[\mathbf{q}(\mathbf{s}, \mathbf{a})] - \mathcal{M}_w[\mathbf{v}(\mathbf{s})]}{\beta} \Big] - 1.\nonumber
+\end{align}
+    \mathcal{J}(\mathbf{v}) &= \mathbb{E}_{(\mathbf{s}, \mathbf{a}) \sim \mu_{\text{tot}}}(\mathbf{s}, \mathbf{a}) \sim \mu_{\text{tot}}\text{tot} \left[ e^{\frac{\mathcal{M}_w[\mathbf{q}(\mathbf{s}, \mathbf{a})] - \mathcal{M}_w[\mathbf{v}(\mathbf{s})]}{\beta}}\frac{\mathcal{M}_w[\mathbf{q}(\mathbf{s}, \mathbf{a})] - \mathcal{M}_w[\mathbf{v}(\mathbf{s})]}{\beta} \right] \nonumber\\
+&- \mathbb{E}_{(\mathbf{s}, \mathbf{a}) \sim \mu_{\text{tot}}}(\mathbf{s}, \mathbf{a}) \sim \mu_{\text{tot}}\text{tot} \Big[\frac{\mathcal{M}_w[\mathbf{q}(\mathbf{s}, \mathbf{a})] - \mathcal{M}_w[\mathbf{v}(\mathbf{s})]}{\beta} \Big] - 1.\nonumber",2501.18944,Multi-agent Preference-based RL (PbRL)
+3102383,14,"This limitation highlights a broader challenge of the DPM approach \citep{kang2024dpm}: it relies on the availability of meaningful final state information, which restricts its applicability to specific environments. It is less suitable for long-horizon transitions or environments with image-based observations, where extracting detailed and interpretable state information is either infeasible or computationally expensive.",2501.18944,Additional Details
+3102291,14,"Putting all the above together, we see that \( \mathcal{L}(\bq, \bv, w) \) is concave in \( \bq \).",2501.18944,Missing Proofs
+3102231,14,"Minimizing \( \mathcal{J}(\mathbf{v}) \) \mathcal{J}(\mathbf{v})  over \( \mathbf{v} \) \mathbf{v}  ensures that \( \mathcal{M}_w[\mathbf{v}(\mathbf{s})] \) \mathcal{M}_w[\mathbf{v}(\mathbf{s})]  converges to the log-sum-exp value \citep{garg2023extreme}:
+\[
+\mathcal{M}_w[\mathbf{v}(\mathbf{s})] = \beta\log\Big(\sum\nolimits_{\mathbf{a} \in \cA} \mu_{\text{tot}}(\mathbf{a} | \mathbf{s}) e^{\mathcal{M}_w[\mathbf{q}(\mathbf{s}, \mathbf{a})] / \beta}\Big).
+\]
+\mathcal{M}_w[\mathbf{v}(\mathbf{s})] = \beta\log\Big(\sum\nolimits_{\mathbf{a} \in \cA}\mathbf{a} \in \cA \mu_{\text{tot}}\text{tot}(\mathbf{a} | \mathbf{s}) e^{\mathcal{M}_w[\mathbf{q}(\mathbf{s}, \mathbf{a})] / \beta}\mathcal{M}_w[\mathbf{q}(\mathbf{s}, \mathbf{a})] / \beta\Big).",2501.18944,Multi-agent Preference-based RL (PbRL)
+3102384,15,"\caption{GPT-4o API costs}
+\label{tab:api_cost}",2501.18944,Additional Details
+3102292,15,"Finally, since the mixing networks are linear in \( \bq \) and \( w \), a similar argument shows that \( \mathcal{L}(\bq, \bv, w) \) is also concave in \( w \).",2501.18944,Missing Proofs
+3102232,15,"Following this approach,  training the local functions \( \mathbf{q} \) \mathbf{q}  and \( \mathbf{v} \) \mathbf{v}  can proceed through the following alternating updates:
+\begin{itemize}
+    \item \textbf{Update \( \mathbf{q} \)}, $w$: Maximize \( \mathcal{L}(\mathbf{q}, \mathbf{v}, w) \), the likelihood objective for preference learning.
+    \item \textbf{Update \( \mathbf{v} \)}: Minimize the extreme-V loss \( \mathcal{J}(\mathbf{v}) \) to enforce consistency with the log-sum-exp equation.
+\end{itemize}\begin{itemize}
+    \item \textbf{Update \( \mathbf{q} \)}, $w$: Maximize \( \mathcal{L}(\mathbf{q}, \mathbf{v}, w) \), the likelihood objective for preference learning.
+    \item \textbf{Update \( \mathbf{v} \)}: Minimize the extreme-V loss \( \mathcal{J}(\mathbf{v}) \) to enforce consistency with the log-sum-exp equation.
+\end{itemize}
+    \item \textbf{Update \( \mathbf{q} \)}, $w$w: Maximize \( \mathcal{L}(\mathbf{q}, \mathbf{v}, w) \) \mathcal{L}(\mathbf{q}, \mathbf{v}, w) , the likelihood objective for preference learning.
+    \item \textbf{Update \( \mathbf{v} \)}: Minimize the extreme-V loss \( \mathcal{J}(\mathbf{v}) \) \mathcal{J}(\mathbf{v})  to enforce consistency with the log-sum-exp equation.",2501.18944,Multi-agent Preference-based RL (PbRL)
+3102385,16,The basic information for the evaluation is as follows.,2501.18944,Additional Details
+3102293,16,"For the convexity of the extreme-V function \( \mathcal{J}(\mathbf{v}) \), we rewrite the function as:
+\begin{align}
+    \mathcal{J}(\mathbf{v}) = \mathbb{E}_{(\mathbf{s}, \mathbf{a}) \sim \mu_{\text{tot}}} \left[ e^{\frac{\mathcal{M}_w[\mathbf{q}(\mathbf{s}, \mathbf{a})] - \mathcal{M}_w[\mathbf{v}(\mathbf{s})]}{\beta}} \right]
+    - \mathbb{E}_{(\mathbf{s}, \mathbf{a}) \sim \mu_{\text{tot}}} \left[\frac{\mathcal{M}_w[\mathbf{q}(\mathbf{s}, \mathbf{a})] - \mathcal{M}_w[\mathbf{v}(\mathbf{s})]}{\beta} \right] - 1. \nonumber
+\end{align}",2501.18944,Missing Proofs
+3102233,16,"The following proposition shows that the learning objective functions under our mixing architectures possess appealing properties, which contribute to stable and robust training.",2501.18944,Multi-agent Preference-based RL (PbRL)
+3102386,17,"- Scenario : 5m_vs_6m
+- Allied Team Agent Configuration : five Marines(Marines are ranged units in StarCraft 2).
+- Enemy Team Agent Configuration : six Marines(Marines are ranged units in StarCraft 2).
+- Situation Description : The situation involves the allied team and the enemy team engaging in combat, where victory is achieved by defeating all the enemies.
+- Objective : Defeat all enemy agents while ensuring as many allied agents as possible survive.
+* Important Notice : You should prefer the trajectory where our allies' health is preserved while significantly reducing the enemy's health. In similar situations, you should prefer shorter trajectory lengths.",2501.18944,Additional Details
+3102294,17,"Since the mixing network \( \mathcal{M}_{w}[\mathbf{v}] \) is linear in \( \mathbf{v} \), we can see that the term 
+\[
+\mathbb{E}_{(\mathbf{s}, \mathbf{a}) \sim \mu_{\text{tot}}} \left[\frac{\mathcal{M}_w[\mathbf{q}(\mathbf{s}, \mathbf{a})] - \mathcal{M}_w[\mathbf{v}(\mathbf{s})]}{\beta} \right]
+\]
+is also linear in \( \mathbf{v} \).",2501.18944,Missing Proofs
+3102234,17,"\begin{proposition}[Convexity]\label{prop:convex}
+    The loss \( \mathcal{L}(\mathbf{q}, \mathbf{v}, w) \) is concave in \( \mathbf{q} \) and \( w \) (the parameters of the mixing networks), while the extreme-V loss function \( \mathcal{J}(\mathbf{v}) \) is convex in \( \mathbf{v} \).
+\end{proposition}\begin{proposition}[Convexity]\label{prop:convex}
+    The loss \( \mathcal{L}(\mathbf{q}, \mathbf{v}, w) \) is concave in \( \mathbf{q} \) and \( w \) (the parameters of the mixing networks), while the extreme-V loss function \( \mathcal{J}(\mathbf{v}) \) is convex in \( \mathbf{v} \).
+\end{proposition}\label{prop:convex}
+    The loss \( \mathcal{L}(\mathbf{q}, \mathbf{v}, w) \) \mathcal{L}(\mathbf{q}, \mathbf{v}, w)  is concave in \( \mathbf{q} \) \mathbf{q}  and \( w \) w  (the parameters of the mixing networks), while the extreme-V loss function \( \mathcal{J}(\mathbf{v}) \) \mathcal{J}(\mathbf{v})  is convex in \( \mathbf{v} \) \mathbf{v} .",2501.18944,Multi-agent Preference-based RL (PbRL)
+3102387,18,"I will provide you with two trajectories, and you should select the better trajectory based on the outcomes of these trajectories. Regarding the trajectory, it will inform you about the final states, and you should select the better case based on these two trajectories.",2501.18944,Additional Details
+3102295,18,"Moreover, the exponential function \( e^x \) is always convex in \( x \). Thus, in a similar way as shown above, we can prove that",2501.18944,Missing Proofs
+3102235,18,"Given that the objective is to maximize the likelihood function \( \mathcal{L}(\mathbf{q}, \mathbf{v}, w) \) \mathcal{L}(\mathbf{q}, \mathbf{v}, w)  and minimize the extreme-V function \( \mathcal{J}(\mathbf{v}) \) \mathcal{J}(\mathbf{v}) , the concavity of \( \mathcal{L} \) \mathcal{L}  in \( \mathbf{q} \) \mathbf{q}  and \( w \) w , and the convexity of \( \mathcal{J} \) \mathcal{J}  in \( \mathbf{v} \) \mathbf{v} , guarantees unique convergence (theoretically) within the $\bq$\bq and $\bv$\bv spaces,  ensures a stable training process in practice.",2501.18944,Multi-agent Preference-based RL (PbRL)
+3102388,19,"[Trajectory 1]
+1. Final State Information
+    1) Allied Agents Health : 0.000, 0.000, 0.067, 0.067, 0.000
+    2) Enemy Agents Health : 0.000, 0.000, 0.000, 0.000, 0.000, 0.040
+    3) Number of Allied Deaths : 3
+    4) Number of Enemy Deaths : 5
+    5) Total Remaining Health of Allies : 0.133
+    6) Total Remaining Health of Enemies : 0.040
+2. Total Number of Steps : 28",2501.18944,Additional Details
+3102296,19,"$e^{\frac{\mathcal{M}_w[\mathbf{q}(\mathbf{s}, \mathbf{a})] - \mathcal{M}_w[\mathbf{v}(\mathbf{s})]}{\beta}}
+$
+is convex in \( \mathbf{v} \). All these observations imply that \( \mathcal{J}(\mathbf{v}) \) is convex in \( \mathbf{v} \), as desired.
+\end{proof}
+ We first recall that the preference-based loss function has the following form:",2501.18944,Missing Proofs
+3102236,19,"It is important to note that convexity is guaranteed only under single-layer mixing structures, where \( \mathcal{M}_w[\cdot] \) \mathcal{M}_w[\cdot]  is linear in its inputs. This result is formalized below:",2501.18944,Multi-agent Preference-based RL (PbRL)
+3102389,20,"[Trajectory 2]
+1. Final State Information
+    1) Allied Agents Health : 0.000, 0.000, 0.000, 0.000, 0.000
+    2) Enemy Agents Health : 0.120, 0.000, 0.000, 0.000, 0.000, 0.200
+    3) Number of Allied Deaths : 5
+    4) Number of Enemy Deaths : 4
+    5) Total Remaining Health of Allies : 0.000
+    6) Total Remaining Health of Enemies : 0.320
+2. Total Number of Steps : 23",2501.18944,Additional Details
+3102297,20,"\mathcal{L}(\bq, \bv, w) = \sum_{(\sigma_1, \sigma_2) \in \mathcal{P}}(\sigma_1, \sigma_2) \in \mathcal{P} \sum_{(\bs, \ba) \in \sigma_1}(\bs, \ba) \in \sigma_1 R_w[\bq, \bv](\bs, \ba) 
+    - \log\left(e^{\sum_{\sigma_1} R_w[\bq, \bv](\bs, \ba)}\sum_{\sigma_1}\sigma_1 R_w[\bq, \bv](\bs, \ba) + e^{\sum_{\sigma_2} R_w[\bq, \bv](\bs, \ba)}\sum_{\sigma_2}\sigma_2 R_w[\bq, \bv](\bs, \ba)\right) 
+    + \phi(R_w[\bq, \bv](\bs, \ba)). \nonumber",2501.18944,Missing Proofs
+3102237,20,"\begin{proposition}[Non-convexity under two-layer mixing networks]
+\label{prop:non-convex}
+    If the mixing networks \( \mathcal{M}_w[\mathbf{q}] \) and \( \mathcal{M}_w[\mathbf{v}] \) are two-layer (or multi-layer) feed-forward networks, the preference-based loss function \( \mathcal{L}(\mathbf{q}, \mathbf{v}, w) \) is no longer concave in  \( \mathbf{q} \) or \( w \), and the extreme-V loss function \( \mathcal{J}(\mathbf{v}) \) is \textbf{not} convex in \( \mathbf{v} \).
+\end{proposition}\begin{proposition}[Non-convexity under two-layer mixing networks]
+\label{prop:non-convex}
+    If the mixing networks \( \mathcal{M}_w[\mathbf{q}] \) and \( \mathcal{M}_w[\mathbf{v}] \) are two-layer (or multi-layer) feed-forward networks, the preference-based loss function \( \mathcal{L}(\mathbf{q}, \mathbf{v}, w) \) is no longer concave in  \( \mathbf{q} \) or \( w \), and the extreme-V loss function \( \mathcal{J}(\mathbf{v}) \) is \textbf{not} convex in \( \mathbf{v} \).
+\end{proposition}
+\label{prop:non-convex}
+    If the mixing networks \( \mathcal{M}_w[\mathbf{q}] \) \mathcal{M}_w[\mathbf{q}]  and \( \mathcal{M}_w[\mathbf{v}] \) \mathcal{M}_w[\mathbf{v}]  are two-layer (or multi-layer) feed-forward networks, the preference-based loss function \( \mathcal{L}(\mathbf{q}, \mathbf{v}, w) \) \mathcal{L}(\mathbf{q}, \mathbf{v}, w)  is no longer concave in  \( \mathbf{q} \) \mathbf{q}  or \( w \) w , and the extreme-V loss function \( \mathcal{J}(\mathbf{v}) \) \mathcal{J}(\mathbf{v})  is \textbf{not} convex in \( \mathbf{v} \) \mathbf{v} .",2501.18944,Multi-agent Preference-based RL (PbRL)
+3102390,21,"Your task is to inform which one is better between [Trajectory1] and [Trajectory2] based on the information mentioned above. For example, if [Trajectory 1] seems better, output #1, and if [Trajectory 2] seems better, output #2. If it's difficult to judge or they seem similar, please output #0.
+* Important : Generally, it is considered better when fewer allied agents are killed or injured while inflicting more damage on the enemy.",2501.18944,Additional Details
+3102298,21,"We observe that under the assumption that the mixing networks are linear in their inputs, the function \( R_w[\bq, \bv](\bs, \ba) \) R_w[\bq, \bv](\bs, \ba)  is linear in \( \bq(\bs, \ba) \) \bq(\bs, \ba)  and \( \theta \) \theta . This implies that for any \( \alpha \in [0,1] \) \alpha \in [0,1]  and for any two vectors of local Q values \( \bq^1, \bq^2 \) \bq^1, \bq^2 , we have:
+\[
+\alpha R_w[\bq^1, \bv](\bs, \ba) + (1-\alpha) R_w[\bq^2, \bv](\bs, \ba) = R_w[\alpha\bq^1 + (1-\alpha)\bq^2, \bv](\bs, \ba).
+\]
+\alpha R_w[\bq^1, \bv](\bs, \ba) + (1-\alpha) R_w[\bq^2, \bv](\bs, \ba) = R_w[\alpha\bq^1 + (1-\alpha)\bq^2, \bv](\bs, \ba).",2501.18944,Missing Proofs
+3102238,21,"While two-layer feed-forward mixing networks have been employed in several prior online MARL works, single-layer mixing networks (i.e., linear combinations) have been favored in recent offline MARL works \citep{wang2024offline_OMIGA,bui2025comadice}. It was demonstrated that using a two-layer network can lead to over-fitting issues, resulting in worse performance compared to their single-layer counterparts~\citep{bui2025comadice}. The results in Prop.~\ref{prop:non-convex}  further suggest that, in offline preference-based learning, a single-layer setup is more efficient and better suited to achieve robust and stable performance.",2501.18944,Multi-agent Preference-based RL (PbRL)
+3102391,22,"Omit detailed explanations and just provide the answer.
+\end{lstlisting}
+\end{tcolorbox}
+\caption{Sample prompt to generate preference data in SMAC environments.}
+\label{tab:sample_prompt}
+\end{table}
+\centering
+[colback=gray!4, colframe=black, sharp corners, title=Prompt]",2501.18944,Additional Details
+3102299,22,"Now consider the term \( \phi(R_w[\bq, \bv](\bs, \ba)) \) \phi(R_w[\bq, \bv](\bs, \ba)) . Since \( \phi \) \phi  is concave, we have the following inequality for any \( \alpha \in (0,1) \) \alpha \in (0,1)  and two vectors \( \bq^1, \bq^2 \) \bq^1, \bq^2 :",2501.18944,Missing Proofs
+3102239,22,\subsection{Local Policy Extraction},2501.18944,Multi-agent Preference-based RL (PbRL)
+3102392,23,"You are a helpful and honest judge of good game playing and progress in the StarCraft Multi-Agent Challenge game. Always answer as helpfully as possible, while being truthful.
+If you don't know the answer to a question, please don't share false information.
+I'm looking to have you evaluate a scenario in the StarCraft Multi-Agent Challenge. Your role will be to assess how much the actions taken by multiple agents in a given situation have contributed to achieving victory.",2501.18944,Additional Details
+3102300,23,"\alpha \phi(R_w[\bq^1, \bv](\bs, \ba)) + (1-\alpha)\phi(R_w[\bq^2, \bv](\bs, \ba)) &\leq \phi\big(\alpha R_w[\bq^1, \bv](\bs, \ba) + (1-\alpha)R_w[\bq^2, \bv](\bs, \ba)\big) \nonumber \\
+    &\leq \phi\big(R_w[\alpha\bq^1 + (1-\alpha)\bq^2, \bv](\bs, \ba)\big),",2501.18944,Missing Proofs
+3102240,23,"\paragraph{Simple local-value-based extraction approach.}Simple local-value-based extraction approach.
+Globally optimal policies can be extracted from \( Q_{\text{tot}} \) Q_{\text{tot}}\text{tot}  and \( V_{\text{tot}} \) V_{\text{tot}}\text{tot}  based on \eqref{eq:maxent-soft-policy}. For decentralized execution, local policies can be derived from local values similarly \citep{wang2024offline_OMIGA}:
+\begin{equation}\label{eq:local-policy-q-v}\small
+     \pi^*_i(a_i|s_i) = \mu_i(a_i|s_i) \exp\Big(\frac{w^q_i q_i(s_i, a_i) - w^v_i v_i(s_i)}{\beta}\Big),
+\end{equation}\begin{equation}\label{eq:local-policy-q-v}\small
+     \pi^*_i(a_i|s_i) = \mu_i(a_i|s_i) \exp\Big(\frac{w^q_i q_i(s_i, a_i) - w^v_i v_i(s_i)}{\beta}\Big),
+\end{equation}\label{eq:local-policy-q-v}\small
+     \pi^*_i(a_i|s_i) = \mu_i(a_i|s_i) \exp\Big(\frac{w^q_i q_i(s_i, a_i) - w^v_i v_i(s_i)}{\beta}\Big),",2501.18944,Multi-agent Preference-based RL (PbRL)
+3102393,24,The basic information for the evaluation is as follows.,2501.18944,Additional Details
+3102301,24,"which implies the concavity of \( \phi(R_w[\bq, \bv](\bs, \ba)) \) \phi(R_w[\bq, \bv](\bs, \ba))  in \( \bq \) \bq .",2501.18944,Missing Proofs
+3102241,24,"where \( w^q_i \) w^q_i  and \( w^v_i \) w^v_i  are the weights of the mixing function \( \mathcal{M}_w [\bq]\) \mathcal{M}_w [\bq]  and $\cM_w[\bv]$\cM_w[\bv], and \( \mu_i(\cdot) \) \mu_i(\cdot)  are the local behavior policies. Assuming the behavior policy is decomposable into local components, i.e., \( \mu_{\text{tot}}(\mathbf{a}|\mathbf{s}) = \prod_i \mu_i(a_i|s_i) \) \mu_{\text{tot}}\text{tot}(\mathbf{a}|\mathbf{s}) = \prod_i \mu_i(a_i|s_i) , this policy extraction method guarantees \textit{global-local consistency (GLC)} — ensuring alignment between the optimal global and local policies — such that \( \pi^*_{\text{tot}}(\mathbf{a}|\mathbf{s}) = \prod_i \pi^*_i(a_i|s_i) \) \pi^*_{\text{tot}}\text{tot}(\mathbf{a}|\mathbf{s}) = \prod_i \pi^*_i(a_i|s_i) .",2501.18944,Multi-agent Preference-based RL (PbRL)
+3102394,25,"- Scenario : 5m_vs_6m
+- Allied Team Agent Configuration : five Marines(Marines are ranged units in StarCraft 2).
+- Enemy Team Agent Configuration : six Marines(Marines are ranged units in StarCraft 2).
+- Situation Description : The situation involves the allied team and the enemy team engaging in combat, where victory is achieved by defeating all the enemies.
+- Objective : Defeat all enemy agents while ensuring as many allied agents as possible survive.
+* Important Notice : You should prefer the trajectory where our allies' health is preserved while significantly reducing the enemy's health. In similar situations, you should prefer shorter trajectory lengths.",2501.18944,Additional Details
+3102302,25,"For the term \( \log\left(e^{\sum_{\sigma_1} R_w[\bq, \bv](\bs, \ba)} + e^{\sum_{\sigma_2} R_w[\bq, \bv](\bs, \ba)}\right) \) \log\left(e^{\sum_{\sigma_1} R_w[\bq, \bv](\bs, \ba)}\sum_{\sigma_1}\sigma_1 R_w[\bq, \bv](\bs, \ba) + e^{\sum_{\sigma_2} R_w[\bq, \bv](\bs, \ba)}\sum_{\sigma_2}\sigma_2 R_w[\bq, \bv](\bs, \ba)\right) , we note the following. First:
+\[
+ \alpha \sum_{\sigma} R_w[\bq^1, \bv](\bs, \ba) + (1-\alpha)\sum_{\sigma} R_w[\bq^2, \bv](\bs, \ba) = \sum_{\sigma} R_w[\alpha\bq^1 + (1-\alpha)\bq^2, \bv](\bs, \ba),
+ \]
+ \alpha \sum_{\sigma}\sigma R_w[\bq^1, \bv](\bs, \ba) + (1-\alpha)\sum_{\sigma}\sigma R_w[\bq^2, \bv](\bs, \ba) = \sum_{\sigma}\sigma R_w[\alpha\bq^1 + (1-\alpha)\bq^2, \bv](\bs, \ba),
+ 
+for any trajectory \( \sigma \) \sigma . Moreover, since the log-sum-exp function \( \log(e^{t_1} + e^{t_2}) \) \log(e^{t_1}t_1 + e^{t_2}t_2)  is convex in \( (t_1, t_2) \) (t_1, t_2) , we also have the following inequalities for any \( \alpha \in (0,1) \) \alpha \in (0,1)  and two vectors \( \bq^1, \bq^2 \) \bq^1, \bq^2 :",2501.18944,Missing Proofs
+3102242,25,"This approach has been used in prior work but has notable limitations. First, GLC holds only with a linear mixing structure; a two-layer feed-forward network breaks this property. Second, policies recovered from \eqref{eq:local-policy-q-v} may not be feasible, as the sum of \( \pi^*_i(a_i|s_i) \) \pi^*_i(a_i|s_i)  over all \( a_i \) a_i  might not equal one. To ensure feasibility, normalization is required, but it disrupts the GLC principle, breaking consistency between global and local policies. Also, the local functions \( v_i \) v_i  and \( q_i \) q_i  may not satisfy the local Bellman equality (i.e., \( v_i \) v_i  is not guaranteed to be the log-sum-exp of \( q_i \) q_i ), causing the soft policy formula to misalign with MaxEnt RL principles at the local level.",2501.18944,Multi-agent Preference-based RL (PbRL)
+3102395,26,"I will provide you with two trajectories, and you should select the better trajectory based on the outcomes of these trajectories. Regarding the trajectory, it will inform you about the final states, and you should select the better case based on these two trajectories.",2501.18944,Additional Details
+3102303,26,"&\alpha \log\left(e^{\sum_{\sigma_1} R_w[\bq^1, \bv](\bs, \ba)}\sum_{\sigma_1}\sigma_1 R_w[\bq^1, \bv](\bs, \ba) + e^{\sum_{\sigma_2} R_w[\bq^1, \bv](\bs, \ba)}\sum_{\sigma_2}\sigma_2 R_w[\bq^1, \bv](\bs, \ba)\right) 
+    + (1-\alpha)\log\left(e^{\sum_{\sigma_1} R_w[\bq^2, \bv](\bs, \ba)}\sum_{\sigma_1}\sigma_1 R_w[\bq^2, \bv](\bs, \ba) + e^{\sum_{\sigma_2} R_w[\bq^2, \bv](\bs, \ba)}\sum_{\sigma_2}\sigma_2 R_w[\bq^2, \bv](\bs, \ba)\right) \nonumber \\
+    &\leq \log\left(e^{\alpha\sum_{\sigma_1} R_w[\bq^1, \bv](\bs, \ba) + (1-\alpha)\sum_{\sigma_1} R_w[\bq^2, \bv](\bs, \ba)}\alpha\sum_{\sigma_1}\sigma_1 R_w[\bq^1, \bv](\bs, \ba) + (1-\alpha)\sum_{\sigma_1}\sigma_1 R_w[\bq^2, \bv](\bs, \ba) 
+    + e^{\alpha\sum_{\sigma_2} R_w[\bq^1, \bv](\bs, \ba) + (1-\alpha)\sum_{\sigma_2} R_w[\bq^2, \bv](\bs, \ba)}\alpha\sum_{\sigma_2}\sigma_2 R_w[\bq^1, \bv](\bs, \ba) + (1-\alpha)\sum_{\sigma_2}\sigma_2 R_w[\bq^2, \bv](\bs, \ba)\right) \nonumber \\
+    &= \log\left(e^{R_w[\alpha\bq^1 + (1-\alpha)\bq^2, \bv](\bs, \ba)}R_w[\alpha\bq^1 + (1-\alpha)\bq^2, \bv](\bs, \ba) + e^{R_w[\alpha\bq^1 + (1-\alpha)\bq^2, \bv](\bs, \ba)}R_w[\alpha\bq^1 + (1-\alpha)\bq^2, \bv](\bs, \ba)\right), \nonumber",2501.18944,Missing Proofs
+3102243,26,"\paragraph{Our weighted behavior cloning approach.}Our weighted behavior cloning approach.We propose an alternative approach that offers several advantages over the previous method. Our policy extraction is based on BC, a technique commonly used in offline RL algorithms \citep{garg2023extreme,bui2025comadice}. This approach preserves the GLC property and ensures that the extracted local policies are valid, even with nonlinear mixing structures.",2501.18944,Multi-agent Preference-based RL (PbRL)
+3102396,27,"[Trajectory 1]
+1. Final State Information
+    1) Allied Agents Health : 0.000, 0.000, 0.067, 0.067, 0.000
+    2) Enemy Agents Health : 0.000, 0.000, 0.000, 0.000, 0.000, 0.040
+    3) Number of Allied Deaths : 3
+    4) Number of Enemy Deaths : 5
+    5) Total Remaining Health of Allies : 0.133
+    6) Total Remaining Health of Enemies : 0.040
+2. Total Number of Steps : 28",2501.18944,Additional Details
+3102304,27,"which implies that \( \log\left(e^{\sum_{\sigma_1} R_w[\bq, \bv](\bs, \ba)} + e^{\sum_{\sigma_2} R_w[\bq, \bv](\bs, \ba)}\right) \) \log\left(e^{\sum_{\sigma_1} R_w[\bq, \bv](\bs, \ba)}\sum_{\sigma_1}\sigma_1 R_w[\bq, \bv](\bs, \ba) + e^{\sum_{\sigma_2} R_w[\bq, \bv](\bs, \ba)}\sum_{\sigma_2}\sigma_2 R_w[\bq, \bv](\bs, \ba)\right)  is convex in \( \bq \) \bq .",2501.18944,Missing Proofs
+3102244,27,"In general, the global policy can be extracted by solving the following weighted behavior cloning (WBC) problem:
+\begin{align}\small
+    \max_{\pi_{\text{tot}} \in \Pi_{\text{tot}}} \bigg\{ \mathbb{E}_{\mathbf{s}, \mathbf{a} \sim \mu_{\text{tot}}} \left[e^{\frac{Q_{\text{tot}}(\mathbf{s}, \mathbf{a}) - V_{\text{tot}}(\mathbf{s})}{\beta}} \log \pi_{\text{tot}}(\mathbf{a} | \mathbf{s})\right] \bigg\}, \label{eq:global-policy-extraction}
+\end{align}\begin{align}\small
+    \max_{\pi_{\text{tot}} \in \Pi_{\text{tot}}} \bigg\{ \mathbb{E}_{\mathbf{s}, \mathbf{a} \sim \mu_{\text{tot}}} \left[e^{\frac{Q_{\text{tot}}(\mathbf{s}, \mathbf{a}) - V_{\text{tot}}(\mathbf{s})}{\beta}} \log \pi_{\text{tot}}(\mathbf{a} | \mathbf{s})\right] \bigg\}, \label{eq:global-policy-extraction}
+\end{align}\small
+    \max_{\pi_{\text{tot}} \in \Pi_{\text{tot}}}\pi_{\text{tot}}\text{tot} \in \Pi_{\text{tot}}\text{tot} \bigg\{ \mathbb{E}_{\mathbf{s}, \mathbf{a} \sim \mu_{\text{tot}}}\mathbf{s}, \mathbf{a} \sim \mu_{\text{tot}}\text{tot} \left[e^{\frac{Q_{\text{tot}}(\mathbf{s}, \mathbf{a}) - V_{\text{tot}}(\mathbf{s})}{\beta}}\frac{Q_{\text{tot}}(\mathbf{s}, \mathbf{a}) - V_{\text{tot}}(\mathbf{s})}{\beta} \log \pi_{\text{tot}}\text{tot}(\mathbf{a} | \mathbf{s})\right] \bigg\}, \label{eq:global-policy-extraction}",2501.18944,Multi-agent Preference-based RL (PbRL)
+3102397,28,"[Trajectory 2]
+1. Final State Information
+    1) Allied Agents Health : 0.000, 0.000, 0.000, 0.000, 0.000
+    2) Enemy Agents Health : 0.120, 0.000, 0.000, 0.000, 0.000, 0.200
+    3) Number of Allied Deaths : 5
+    4) Number of Enemy Deaths : 4
+    5) Total Remaining Health of Allies : 0.000
+    6) Total Remaining Health of Enemies : 0.320
+2. Total Number of Steps : 23",2501.18944,Additional Details
+3102305,28,"Putting all the above together, we see that \( \mathcal{L}(\bq, \bv, w) \) \mathcal{L}(\bq, \bv, w)  is concave in \( \bq \) \bq .",2501.18944,Missing Proofs
+3102245,28,"where \( \Pi_{\text{tot}} \) \Pi_{\text{tot}}\text{tot}  represents the feasible set of global policies. Here, we assume that \( \Pi_{\text{tot}} \) \Pi_{\text{tot}}\text{tot}  contains decomposable global policies, i.e., \( \Pi_{\text{tot}} = \{\pi_{\text{tot}} \mid \exists \pi_i, \forall i \in \mathcal{N}, \text{ such that } \pi_{\text{tot}}(\mathbf{a}|\mathbf{s}) = \prod_{i \in \mathcal{N}} \pi_i(a_i|s_i)\} \) \Pi_{\text{tot}}\text{tot} = \{\pi_{\text{tot}}\text{tot} \mid \exists \pi_i, \forall i \in \mathcal{N}, \text{ such that } \pi_{\text{tot}}\text{tot}(\mathbf{a}|\mathbf{s}) = \prod_{i \in \mathcal{N}}i \in \mathcal{N} \pi_i(a_i|s_i)\} . In other words, \( \Pi_{\text{tot}} \) \Pi_{\text{tot}}\text{tot}  consists of global policies that can be expressed as a product of local policies. This decomposability is highly useful for decentralized learning and has been widely adopted in multi-agent reinforcement learning (MARL) \citep{wang2024offline_OMIGA, bui2023inverse, zhang2021fop}.",2501.18944,Multi-agent Preference-based RL (PbRL)
+3102398,29,"Your task is to inform which one is better between [Trajectory1] and [Trajectory2] based on the information mentioned above. For example, if [Trajectory 1] seems better, output #1, and if [Trajectory 2] seems better, output #2. If it's difficult to judge or they seem similar, please output #0.
+* Important : Generally, it is considered better when fewer allied agents are killed or injured while inflicting more damage on the enemy.",2501.18944,Additional Details
+3102306,29,"Finally, since the mixing networks are linear in \( \bq \) \bq  and \( w \) w , a similar argument shows that \( \mathcal{L}(\bq, \bv, w) \) \mathcal{L}(\bq, \bv, w)  is also concave in \( w \) w .",2501.18944,Missing Proofs
+3102246,29,"While solving \eqref{eq:global-policy-extraction} can explicitly recover an optimal global policy and is practical via sampling \((\mathbf{s}, \mathbf{a})\)(\mathbf{s}, \mathbf{a}) from the data, it does not support the learning of local policies, which is essential under the CTDE principle. To address this, we propose solving the following local WBC problem:
+\begin{align}\small
+    \max\limits_{\pi_i} \Big\{ \mathbb{E}_{\mathbf{s}, \mathbf{a} \sim \mu_{\text{tot}}} \Big[e^{\frac{Q_{\text{tot}}(\mathbf{s}, \mathbf{a}) - V_{\text{tot}}(\mathbf{s})}{\beta}} \log \pi_i(a_i | s_i)\Big] \Big\} \label{eq:local-policy-extraction}
+\end{align}\begin{align}\small
+    \max\limits_{\pi_i} \Big\{ \mathbb{E}_{\mathbf{s}, \mathbf{a} \sim \mu_{\text{tot}}} \Big[e^{\frac{Q_{\text{tot}}(\mathbf{s}, \mathbf{a}) - V_{\text{tot}}(\mathbf{s})}{\beta}} \log \pi_i(a_i | s_i)\Big] \Big\} \label{eq:local-policy-extraction}
+\end{align}\small
+    \max\limits_{\pi_i}\pi_i \Big\{ \mathbb{E}_{\mathbf{s}, \mathbf{a} \sim \mu_{\text{tot}}}\mathbf{s}, \mathbf{a} \sim \mu_{\text{tot}}\text{tot} \Big[e^{\frac{Q_{\text{tot}}(\mathbf{s}, \mathbf{a}) - V_{\text{tot}}(\mathbf{s})}{\beta}}\frac{Q_{\text{tot}}(\mathbf{s}, \mathbf{a}) - V_{\text{tot}}(\mathbf{s})}{\beta} \log \pi_i(a_i | s_i)\Big] \Big\} \label{eq:local-policy-extraction}",2501.18944,Multi-agent Preference-based RL (PbRL)
+3102399,30,Omit detailed explanations and just provide the answer.,2501.18944,Additional Details
+3102307,30,"For the convexity of the extreme-V function \( \mathcal{J}(\mathbf{v}) \) \mathcal{J}(\mathbf{v}) , we rewrite the function as:",2501.18944,Missing Proofs
+3102247,30,"The local WBC approach has several key advantages. First, the weighting term \( e^{\frac{Q_{\text{tot}}(\mathbf{s}, \mathbf{a}) - V_{\text{tot}}(\mathbf{s})}{\beta}} \) e^{\frac{Q_{\text{tot}}(\mathbf{s}, \mathbf{a}) - V_{\text{tot}}(\mathbf{s})}{\beta}}\frac{Q_{\text{tot}}(\mathbf{s}, \mathbf{a}) - V_{\text{tot}}(\mathbf{s})}{\beta} 
+ directly influences local policy optimization and is computed from global observations and actions. 
+ This ensures local policies are optimized with global information, maintaining consistency in cooperative multi-agent systems. 
+ Furthermore, as shown in Theorem \ref{thr:GLC}, optimizing local policies via WBC always results in valid policies that align with the global WBC objective, preserving global-local consistency (GLC). Importantly, these benefits hold regardless of the mixing structure (e.g., 1-layer or 2-layer networks), offering significant advantages over the local-value-extraction method.
+\begin{theorem}[Global-Local Consistency (GLC)]\label{thr:GLC}
+Let \( \pi^*_i \) be the optimal solution to the local WBC problem in \eqref{eq:local-policy-extraction}. Then, the global policy \( \pi^*_{\text{tot}} \), defined as \( \pi^*_{\text{tot}}(\mathbf{s}, \mathbf{a}) = \prod_{i} \pi^*_i(a_i | s_i) \), is also optimal for the global WBC problem in \eqref{eq:global-policy-extraction}. 
+% In other words, the local WBC approach yields local policies that are consistent with the desired globally optimal policy.  
+\end{theorem}\begin{theorem}[Global-Local Consistency (GLC)]\label{thr:GLC}
+Let \( \pi^*_i \) be the optimal solution to the local WBC problem in \eqref{eq:local-policy-extraction}. Then, the global policy \( \pi^*_{\text{tot}} \), defined as \( \pi^*_{\text{tot}}(\mathbf{s}, \mathbf{a}) = \prod_{i} \pi^*_i(a_i | s_i) \), is also optimal for the global WBC problem in \eqref{eq:global-policy-extraction}. 
+% In other words, the local WBC approach yields local policies that are consistent with the desired globally optimal policy.  
+\end{theorem}\label{thr:GLC}
+Let \( \pi^*_i \) \pi^*_i  be the optimal solution to the local WBC problem in \eqref{eq:local-policy-extraction}. Then, the global policy \( \pi^*_{\text{tot}} \) \pi^*_{\text{tot}}\text{tot} , defined as \( \pi^*_{\text{tot}}(\mathbf{s}, \mathbf{a}) = \prod_{i} \pi^*_i(a_i | s_i) \) \pi^*_{\text{tot}}\text{tot}(\mathbf{s}, \mathbf{a}) = \prod_{i}i \pi^*_i(a_i | s_i) , is also optimal for the global WBC problem in \eqref{eq:global-policy-extraction}.",2501.18944,Multi-agent Preference-based RL (PbRL)
+3102400,31,"\caption{Sample prompt to generate preference data in SMAC environments.}
+\label{tab:sample_prompt}",2501.18944,Additional Details
+3102308,31,"\mathcal{J}(\mathbf{v}) = \mathbb{E}_{(\mathbf{s}, \mathbf{a}) \sim \mu_{\text{tot}}}(\mathbf{s}, \mathbf{a}) \sim \mu_{\text{tot}}\text{tot} \left[ e^{\frac{\mathcal{M}_w[\mathbf{q}(\mathbf{s}, \mathbf{a})] - \mathcal{M}_w[\mathbf{v}(\mathbf{s})]}{\beta}}\frac{\mathcal{M}_w[\mathbf{q}(\mathbf{s}, \mathbf{a})] - \mathcal{M}_w[\mathbf{v}(\mathbf{s})]}{\beta} \right]
+    - \mathbb{E}_{(\mathbf{s}, \mathbf{a}) \sim \mu_{\text{tot}}}(\mathbf{s}, \mathbf{a}) \sim \mu_{\text{tot}}\text{tot} \left[\frac{\mathcal{M}_w[\mathbf{q}(\mathbf{s}, \mathbf{a})] - \mathcal{M}_w[\mathbf{v}(\mathbf{s})]}{\beta} \right] - 1. \nonumber",2501.18944,Missing Proofs
+3102248,31,"We next formally express the relationship between recovered local policies and value functions. We assume that the behavior policy is decomposable, i.e., $\mu_{\tot}(\ba|\ba) = \prod_i \mu_i(a_i|s_i)$\mu_{\tot}\tot(\ba|\ba) = \prod_i \mu_i(a_i|s_i), and  the mixing structures are defined as \( \mathcal{M}_{w}[\bq(\bs, \ba)] = \sum_{i} w^q_i q_i(s_i, a_i) + b_q \) \mathcal{M}_{w}w[\bq(\bs, \ba)] = \sum_{i}i w^q_i q_i(s_i, a_i) + b_q  and \( \mathcal{M}_{w}[\bv(\bs)] = \sum_{i} w^v_i v_i(s_i) + b_v \) \mathcal{M}_{w}w[\bv(\bs)] = \sum_{i}i w^v_i v_i(s_i) + b_v . This relationship is formalized in the following theorem:
+ \begin{theorem}\label{thr:local-pi-local-qv}
+     Let $\pi^*_i$ be optimal to the local WBC, then the following equality holds for all  $s_i\in \cS_i, a_i\in \cA_i$:
+    \begin{align}\small
+         \pi^*_i(a_i|s_i) =  \frac{\eta(s_i)}{\Delta(s_i)} \mu_i(a_i|s_i) e^{\frac{w^q_i q_i(s_i, a_i) - w^v_i v_i(s_i)}{\beta}}\label{eq:local-policy-q-v-eta}
+     \end{align}
+      where
+      $\eta(s_i)/\Delta(s_i)$ are correction terms.\footnote{Detailed formulations of these terms are in Appendix \ref{apd:proof-th-4.4}.}
+%       defined  as follows:
+% \begin{align}
+%     \eta(s_i) &=   \sum_{\substack{\mathbf{s}', \mathbf{a}'\\ s'_i = s_i}} e^{\frac{b_q - b_v}{\beta}} \prod_{j \in \mathcal{N}, j \neq i} \mu(a'_j|s'_j) e^{\frac{w^q_j q_j(s'_j, a'_j) - w^v_j v_j(s'_j)}{\beta}}\nonumber\\
+%     \Delta(s_i) &= \sum_{a_i \in \mathcal{A}_i} \eta(s_i) \mu_i(a_i|s_i) e^{\frac{w^q_i q_i(s_i, a_i) - w^v_i v_i(s_i)}{\beta}}.\nonumber
+% \end{align}
+     \end{theorem}\begin{theorem}\label{thr:local-pi-local-qv}
+     Let $\pi^*_i$ be optimal to the local WBC, then the following equality holds for all  $s_i\in \cS_i, a_i\in \cA_i$:
+    \begin{align}\small
+         \pi^*_i(a_i|s_i) =  \frac{\eta(s_i)}{\Delta(s_i)} \mu_i(a_i|s_i) e^{\frac{w^q_i q_i(s_i, a_i) - w^v_i v_i(s_i)}{\beta}}\label{eq:local-policy-q-v-eta}
+     \end{align}
+      where
+      $\eta(s_i)/\Delta(s_i)$ are correction terms.\footnote{Detailed formulations of these terms are in Appendix \ref{apd:proof-th-4.4}.}
+%       defined  as follows:
+% \begin{align}
+%     \eta(s_i) &=   \sum_{\substack{\mathbf{s}', \mathbf{a}'\\ s'_i = s_i}} e^{\frac{b_q - b_v}{\beta}} \prod_{j \in \mathcal{N}, j \neq i} \mu(a'_j|s'_j) e^{\frac{w^q_j q_j(s'_j, a'_j) - w^v_j v_j(s'_j)}{\beta}}\nonumber\\
+%     \Delta(s_i) &= \sum_{a_i \in \mathcal{A}_i} \eta(s_i) \mu_i(a_i|s_i) e^{\frac{w^q_i q_i(s_i, a_i) - w^v_i v_i(s_i)}{\beta}}.\nonumber
+% \end{align}
+     \end{theorem}\label{thr:local-pi-local-qv}
+     Let $\pi^*_i$\pi^*_i be optimal to the local WBC, then the following equality holds for all  $s_i\in \cS_i, a_i\in \cA_i$s_i\in \cS_i, a_i\in \cA_i:
+    \small
+         \pi^*_i(a_i|s_i) =  \frac{\eta(s_i)}{\Delta(s_i)} \mu_i(a_i|s_i) e^{\frac{w^q_i q_i(s_i, a_i) - w^v_i v_i(s_i)}{\beta}}\frac{w^q_i q_i(s_i, a_i) - w^v_i v_i(s_i)}{\beta}\label{eq:local-policy-q-v-eta}
+     
+      where
+      $\eta(s_i)/\Delta(s_i)$\eta(s_i)/\Delta(s_i) are correction terms.\footnote{Detailed formulations of these terms are in Appendix \ref{apd:proof-th-4.4}.}",2501.18944,Multi-agent Preference-based RL (PbRL)
+3102401,32,\subsection{Implementation Details},2501.18944,Additional Details
+3102309,32,"Since the mixing network \( \mathcal{M}_{w}[\mathbf{v}] \) \mathcal{M}_{w}w[\mathbf{v}]  is linear in \( \mathbf{v} \) \mathbf{v} , we can see that the term 
+\[
+\mathbb{E}_{(\mathbf{s}, \mathbf{a}) \sim \mu_{\text{tot}}} \left[\frac{\mathcal{M}_w[\mathbf{q}(\mathbf{s}, \mathbf{a})] - \mathcal{M}_w[\mathbf{v}(\mathbf{s})]}{\beta} \right]
+\]
+\mathbb{E}_{(\mathbf{s}, \mathbf{a}) \sim \mu_{\text{tot}}}(\mathbf{s}, \mathbf{a}) \sim \mu_{\text{tot}}\text{tot} \left[\frac{\mathcal{M}_w[\mathbf{q}(\mathbf{s}, \mathbf{a})] - \mathcal{M}_w[\mathbf{v}(\mathbf{s})]}{\beta} \right]",2501.18944,Missing Proofs
+3102249,32,"Theorem \ref{thr:local-pi-local-qv} highlights key aspects of our approach. First, as seen in \eqref{eq:local-policy-q-v}, directly computing local policies from the local value functions 
+\( q_i \) q_i  and \( v_i \) v_i  alone may yield invalid policies that don't form proper probability distributions. The term
+\( \eta(s_i)/\Delta(s_i) \) \eta(s_i)/\Delta(s_i)  in \eqref{eq:local-policy-q-v-eta} acts as a correction factor, normalizing the policies to ensure 
+$\sum_{a_i}\pi^*_i(a_i|s_i) = 1$\sum_{a_i}a_i\pi^*_i(a_i|s_i) = 1. Furthermore, the proof of Theorem \ref{thr:local-pi-local-qv} shows that both
+\( \eta(s_i)/\Delta(s_i) \) \eta(s_i)/\Delta(s_i)  and the local policy \( \pi^*_i(a_i|s_i) \) \pi^*_i(a_i|s_i)  depend on the value functions of other agents. This dependency supports the principle of credit assignment in cooperative MARL, ensuring each agent's policy accounts for the actions and rewards of others.",2501.18944,Multi-agent Preference-based RL (PbRL)
+3102402,33,"All experiments were implemented using \textbf{PyTorch} and executed in parallel on a single \textbf{NVIDIA® H100 NVL Tensor Core GPU} to ensure computational efficiency. We developed two versions of our proposed method, \textbf{O-MAPL}, tailored to the specific characteristics of continuous and discrete action domains:",2501.18944,Additional Details
+3102310,33,is also linear in \( \mathbf{v} \) \mathbf{v} .,2501.18944,Missing Proofs
+3102250,33,"Additionally, while \( V_{\text{tot}} \) V_{\text{tot}}\text{tot}  is the log-sum-exp of \( Q_{\text{tot}} \) Q_{\text{tot}}\text{tot} , this might  not be  the case for the local \( v_i \) v_i  and \( q_i \) q_i  functions. The following proposition demonstrates that \( v_i \) v_i  can indeed be expressed as a log-sum-exp of \( q_i \) q_i , along with \textit{an additional term }that depends on the local functions of other agents.
+\begin{proposition}\label{prop:log-sum-exp-v-q}
+    Each local value \( v_i \) can be expressed as a (modified) log-sum-exp of the local Q-function \( q_i \):
+    \[\small
+        v_i(s_i) = \frac{\beta}{w^v_i} \log \sum_{a_i\sim\mu_i(\cdot|s_i)} e^{\frac{w^q_i}{\beta} q_i(s_i,a_i)} + \frac{\beta}{w^v_i} \log\Big(\frac{\eta(s_i)}{\Delta(s_i)}\Big)
+    \]
+\end{proposition}\begin{proposition}\label{prop:log-sum-exp-v-q}
+    Each local value \( v_i \) can be expressed as a (modified) log-sum-exp of the local Q-function \( q_i \):
+    \[\small
+        v_i(s_i) = \frac{\beta}{w^v_i} \log \sum_{a_i\sim\mu_i(\cdot|s_i)} e^{\frac{w^q_i}{\beta} q_i(s_i,a_i)} + \frac{\beta}{w^v_i} \log\Big(\frac{\eta(s_i)}{\Delta(s_i)}\Big)
+    \]
+\end{proposition}\label{prop:log-sum-exp-v-q}
+    Each local value \( v_i \) v_i  can be expressed as a (modified) log-sum-exp of the local Q-function \( q_i \) q_i :
+    \[\small
+        v_i(s_i) = \frac{\beta}{w^v_i} \log \sum_{a_i\sim\mu_i(\cdot|s_i)} e^{\frac{w^q_i}{\beta} q_i(s_i,a_i)} + \frac{\beta}{w^v_i} \log\Big(\frac{\eta(s_i)}{\Delta(s_i)}\Big)
+    \]\small
+        v_i(s_i) = \frac{\beta}{w^v_i} \log \sum_{a_i\sim\mu_i(\cdot|s_i)}a_i\sim\mu_i(\cdot|s_i) e^{\frac{w^q_i}{\beta} q_i(s_i,a_i)}\frac{w^q_i}{\beta} q_i(s_i,a_i) + \frac{\beta}{w^v_i} \log\Big(\frac{\eta(s_i)}{\Delta(s_i)}\Big)",2501.18944,Multi-agent Preference-based RL (PbRL)
+3102403,34,"\paragraph{Continuous Domain (MaMujoco):}Continuous Domain (MaMujoco):  
+For continuous environments, we utilized a \textit{Gaussian distribution} (\texttt{torch.distributions.Normal}) to model the policy. Each agent's action is sampled from this distribution, which is parameterized by the mean and standard deviation outputted by the policy network.",2501.18944,Additional Details
+3102311,34,"Moreover, the exponential function \( e^x \) e^x  is always convex in \( x \) x . Thus, in a similar way as shown above, we can prove that",2501.18944,Missing Proofs
+3102251,34,"Prop. \ref{prop:log-sum-exp-v-q} indicates that \( v_i(s_i) \) v_i(s_i)  is also determined by a log-sum-exp of \( q_i(s_i, a_i) \) q_i(s_i, a_i)  with an additional term $\log\big(\frac{\eta(s_i)}{\Delta(s_i)}\big)$\log\big(\frac{\eta(s_i)}{\Delta(s_i)}\big).",2501.18944,Multi-agent Preference-based RL (PbRL)
+3102404,35,"\paragraph{Discrete Domains (SMACv1 \& SMACv2):}Discrete Domains (SMACv1 \& SMACv2):  
+For discrete environments, we employed a \textit{Categorical distribution} (\texttt{torch.distributions.Categorical}) to model the policy. The probability of each action for an agent is computed using the softmax operation over only the \textit{available actions} for that agent. Actions that are not available are assigned a probability of zero. This ensures that the log-likelihood calculation is accurate and avoids penalizing the agent for infeasible actions.",2501.18944,Additional Details
+3102312,35,"$e^{\frac{\mathcal{M}_w[\mathbf{q}(\mathbf{s}, \mathbf{a})] - \mathcal{M}_w[\mathbf{v}(\mathbf{s})]}{\beta}}
+$e^{\frac{\mathcal{M}_w[\mathbf{q}(\mathbf{s}, \mathbf{a})] - \mathcal{M}_w[\mathbf{v}(\mathbf{s})]}{\beta}}\frac{\mathcal{M}_w[\mathbf{q}(\mathbf{s}, \mathbf{a})] - \mathcal{M}_w[\mathbf{v}(\mathbf{s})]}{\beta}",2501.18944,Missing Proofs
+3102405,36,"\subsection{Hyperparameters}
+Table \ref{tab:hyperparameters} reports  hyperparameters used consistently across all experiments:",2501.18944,Additional Details
+3102313,36,"is convex in \( \mathbf{v} \) \mathbf{v} . All these observations imply that \( \mathcal{J}(\mathbf{v}) \) \mathcal{J}(\mathbf{v})  is convex in \( \mathbf{v} \) \mathbf{v} , as desired.",2501.18944,Missing Proofs
+3102406,37,"\subsection{Baseline Comparisons}
+We compared O-MAPL against four baseline methods to evaluate its performance:",2501.18944,Additional Details
+3102314,37,"\subsection{Proof of Proposition \ref{prop:non-convex}}
+\textbf{Proposition \ref{prop:convex}: }
+\textit{    If the mixing networks \( \mathcal{M}_w[\mathbf{q}] \) and \( \mathcal{M}_w[\mathbf{v}] \) are two-layer (or multi-layer) feed-forward networks, the preference-based loss function \( \mathcal{L}(\mathbf{q}, \mathbf{v}, w) \) is no longer concave in  \( \mathbf{q} \) or \( w \), and the extreme-V loss function \( \mathcal{J}(\mathbf{v}) \) is \textbf{not} convex in \( \mathbf{v} \).}",2501.18944,Missing Proofs
+3102407,38,"\begin{itemize}
+    \item \textbf{BC (Behavior Cloning):} A simple BC supervised learning approach based on preferred trajectories in the dataset.
+    \item \textbf{IIPL (Independent Inverse Preference Learning):} Implements IPL \citep{hejna2024inverse} independently for each agent without considering inter-agent coordination.
+    \item \textbf{IPL-VDN (Inverse Preference Learning with VDN):} Similar to  our O-MAPL algorithm, except that the global Q and V functions are aggregated by  summing the local Q-values of individual agents, instead of using a mixing network \citep{sunehag2017value}.
+    \item \textbf{SL-MARL (Supervised Learning for MARL):} A two-step approach where the reward function is first learned via supervised learning, followed by policy training through a MARL algorithm (i.e. OMIGA \citep{wang2024offline_OMIGA}), using the learned reward function.
+\end{itemize}\begin{itemize}
+    \item \textbf{BC (Behavior Cloning):} A simple BC supervised learning approach based on preferred trajectories in the dataset.
+    \item \textbf{IIPL (Independent Inverse Preference Learning):} Implements IPL \citep{hejna2024inverse} independently for each agent without considering inter-agent coordination.
+    \item \textbf{IPL-VDN (Inverse Preference Learning with VDN):} Similar to  our O-MAPL algorithm, except that the global Q and V functions are aggregated by  summing the local Q-values of individual agents, instead of using a mixing network \citep{sunehag2017value}.
+    \item \textbf{SL-MARL (Supervised Learning for MARL):} A two-step approach where the reward function is first learned via supervised learning, followed by policy training through a MARL algorithm (i.e. OMIGA \citep{wang2024offline_OMIGA}), using the learned reward function.
+\end{itemize}
+    \item \textbf{BC (Behavior Cloning):} A simple BC supervised learning approach based on preferred trajectories in the dataset.
+    \item \textbf{IIPL (Independent Inverse Preference Learning):} Implements IPL \citep{hejna2024inverse} independently for each agent without considering inter-agent coordination.
+    \item \textbf{IPL-VDN (Inverse Preference Learning with VDN):} Similar to  our O-MAPL algorithm, except that the global Q and V functions are aggregated by  summing the local Q-values of individual agents, instead of using a mixing network \citep{sunehag2017value}.
+    \item \textbf{SL-MARL (Supervised Learning for MARL):} A two-step approach where the reward function is first learned via supervised learning, followed by policy training through a MARL algorithm (i.e. OMIGA \citep{wang2024offline_OMIGA}), using the learned reward function.",2501.18944,Additional Details
+3102315,38,"\begin{proof}
+  Following standard settings in value factorization, a 2-layer mixing network is typically constructed with non-negative weights and convex activations (e.g., ReLU). Under this setting, according to \citep{bui2023inverse}, \( \mathcal{M}_{w}[\mathbf{q}] \) and \( \mathcal{M}_{w}[\mathbf{v}] \) are convex in \( \mathbf{q} \) and \( \mathbf{v} \), respectively.",2501.18944,Missing Proofs
+3102408,39,"\subsection{Evaluation Metrics}
+We report two key metrics to assess agent performance:",2501.18944,Additional Details
+3102316,39,"From this observation, we first recall the preference-based loss function:
+\begin{align}
+    \mathcal{L}(\mathbf{q}, \mathbf{v}, w) = \sum_{(\sigma_1, \sigma_2) \in \mathcal{P}} \sum_{(\mathbf{s}, \mathbf{a}) \in \sigma_1} R_w[\mathbf{q}, \mathbf{v}](\mathbf{s}, \mathbf{a}) 
+    - \log\left(e^{\sum_{\sigma_1} R_w[\mathbf{q}, \mathbf{v}](\mathbf{s}, \mathbf{a})} + e^{\sum_{\sigma_2} R_w[\mathbf{q}, \mathbf{v}](\mathbf{s}, \mathbf{a})}\right) 
+    + \phi(R_w[\mathbf{q}, \mathbf{v}](\mathbf{s}, \mathbf{a})). \nonumber
+\end{align}
+It can be seen that the first term of \( \mathcal{L}(\mathbf{q}, \mathbf{v}, w) \) involves \( R_w[\mathbf{q}, \mathbf{v}](\mathbf{s}, \mathbf{a}) \), which can be written as:
+\[
+R_w[\mathbf{q}, \mathbf{v}](\mathbf{s}, \mathbf{a}) = \mathcal{M}_w[\mathbf{q}(\mathbf{s}, \mathbf{a})] - \gamma \mathbb{E}_{\mathbf{s}'} \left[\mathcal{M}_w[\mathbf{v}(\mathbf{s}')]\right].
+\]
+Since \( \mathcal{M}_w[\mathbf{q}(\mathbf{s}, \mathbf{a})] \) is convex in \( \mathbf{q} \), the first term of \( \mathcal{L}(\mathbf{q}, \mathbf{v}, w) \) is convex in \( \mathbf{q} \), which generally implies that this function is not concave in \( \mathbf{q} \).",2501.18944,Missing Proofs
+3102409,40,"\begin{itemize}
+    \item \textbf{Mean/Standard Deviation of Returns:} Measures the average cumulative rewards achieved by the agents across episodes (applicable to all the environments).
+    \item \textbf{Mean/Standard Deviation of Win Rates:} Applicable only to competitive environments (only applicable to SMACv1 and SMACv2). This metric evaluates the percentage of episodes where agents achieve victory.
+\end{itemize}\begin{itemize}
+    \item \textbf{Mean/Standard Deviation of Returns:} Measures the average cumulative rewards achieved by the agents across episodes (applicable to all the environments).
+    \item \textbf{Mean/Standard Deviation of Win Rates:} Applicable only to competitive environments (only applicable to SMACv1 and SMACv2). This metric evaluates the percentage of episodes where agents achieve victory.
+\end{itemize}
+    \item \textbf{Mean/Standard Deviation of Returns:} Measures the average cumulative rewards achieved by the agents across episodes (applicable to all the environments).
+    \item \textbf{Mean/Standard Deviation of Win Rates:} Applicable only to competitive environments (only applicable to SMACv1 and SMACv2). This metric evaluates the percentage of episodes where agents achieve victory.",2501.18944,Additional Details
+3102317,40,"In a similar way, since  the the mixing function  \( \mathcal{M}_w[\mathbf{q}(\mathbf{s}, \mathbf{a})] \) is also convex in $w$, implying that \( \mathcal{L}(\mathbf{q}, \mathbf{v}, w) \) is also not concave in $w$.",2501.18944,Missing Proofs
+3102410,41,"Each metric is computed as the average and standard deviation of the final results across all four random seeds. Additionally, we present evaluation curves for each method, depicting performance trends during the agent training process using offline datasets.",2501.18944,Additional Details
+3102318,41,"To prove the non-convexity of the Extreme-V function \( J(\mathbf{v}) \), we recall that:
+\[
+\mathcal{J}(\mathbf{v}) = \mathbb{E}_{(\mathbf{s}, \mathbf{a}) \sim \mu_{\text{tot}}} \left[ e^{\frac{\mathcal{M}_w[\mathbf{q}(\mathbf{s}, \mathbf{a})] - \mathcal{M}_w[\mathbf{v}(\mathbf{s})]}{\beta}} \right]
+- \mathbb{E}_{(\mathbf{s}, \mathbf{a}) \sim \mu_{\text{tot}}} \left[\frac{\mathcal{M}_w[\mathbf{q}(\mathbf{s}, \mathbf{a})] - \mathcal{M}_w[\mathbf{v}(\mathbf{s})]}{\beta} \right] - 1.
+\]
+We will find a counterexample to show that \( J(\mathbf{v}) \) is not convex under a 2-layer mixing network. For simplicity, since \( \mathcal{M}_w[\mathbf{q}] \) is fixed in \( J(\mathbf{v}) \), we select \( \mathcal{M}_w[\mathbf{q}](\mathbf{s}, \mathbf{a}) = 0 \). We then create a simple example where there is only one agent (i.e., \( \mathbf{v}(\mathbf{s}) = \{v_1(s_1)\} \)), and the mixing network \( \mathcal{M}_w[\mathbf{v}] \) takes a one-dimensional input with a ReLU activation (a commonly used activation function in the context). Specifically, we can write \( \mathcal{M}_w[\mathbf{v}] \) as:
+\[
+\mathcal{M}_w[\mathbf{v}(\mathbf{s})] = 
+\begin{cases}
+    v_1(s_1) & \text{if } v_1(s_1) > 0, \\
+    e^{v_1(s_1)} - 1 & \text{if } v_1(s_1) \leq 0.
+\end{cases}
+\]
+Then, for a given pair \( (\mathbf{s}, \mathbf{a}) \), the corresponding term in \( J(\mathbf{v}) \) associated with \( (\mathbf{s}, \mathbf{a}) \) can be written as:
+\[
+e^{1 - e^{v_1}} + (e^{v_1} - 1).
+\]
+Here, for simplicity, we select \( \beta = 1 \), omit the notation \( s_1 \) in the function \( v_1(s_1) \), and only consider the case where \( v_1 \leq 0 \). We see that the function \( f(t) = e^{1 - e^{t}} + (e^{t} - 1) \) is not convex for \( t \leq 0 \) (see the plot of this function in Figure \ref{fig:example}).",2501.18944,Missing Proofs
+3102411,42,"\paragraph{Notes on Evaluation:}Notes on Evaluation:  
+For \textbf{MaMujoco}, win rates are not applicable as it is not a competitive environment. Evaluation scores are averaged over the results of all four seeds to ensure statistical robustness. The performance trends and comparisons are visualized in detailed figures to provide insights into the training dynamics of each method.",2501.18944,Additional Details
+3102319,42,"From this observation, we first recall the preference-based loss function:
+\begin{align}
+    \mathcal{L}(\mathbf{q}, \mathbf{v}, w) = \sum_{(\sigma_1, \sigma_2) \in \mathcal{P}} \sum_{(\mathbf{s}, \mathbf{a}) \in \sigma_1} R_w[\mathbf{q}, \mathbf{v}](\mathbf{s}, \mathbf{a}) 
+    - \log\left(e^{\sum_{\sigma_1} R_w[\mathbf{q}, \mathbf{v}](\mathbf{s}, \mathbf{a})} + e^{\sum_{\sigma_2} R_w[\mathbf{q}, \mathbf{v}](\mathbf{s}, \mathbf{a})}\right) 
+    + \phi(R_w[\mathbf{q}, \mathbf{v}](\mathbf{s}, \mathbf{a})). \nonumber
+\end{align}
+It can be seen that the first term of \( \mathcal{L}(\mathbf{q}, \mathbf{v}, w) \) involves \( R_w[\mathbf{q}, \mathbf{v}](\mathbf{s}, \mathbf{a}) \), which can be written as:
+\[
+R_w[\mathbf{q}, \mathbf{v}](\mathbf{s}, \mathbf{a}) = \mathcal{M}_w[\mathbf{q}(\mathbf{s}, \mathbf{a})] - \gamma \mathbb{E}_{\mathbf{s}'} \left[\mathcal{M}_w[\mathbf{v}(\mathbf{s}')]\right].
+\]
+Since \( \mathcal{M}_w[\mathbf{q}(\mathbf{s}, \mathbf{a})] \) is convex in \( \mathbf{q} \), the first term of \( \mathcal{L}(\mathbf{q}, \mathbf{v}, w) \) is convex in \( \mathbf{q} \), which generally implies that this function is not concave in \( \mathbf{q} \).",2501.18944,Missing Proofs
+3102412,43,This setup ensures a fair and comprehensive comparison between O-MAPL and the baseline methods in both continuous and discrete multi-agent reinforcement learning tasks.,2501.18944,Additional Details
+3102320,43,"In a similar way, since  the the mixing function  \( \mathcal{M}_w[\mathbf{q}(\mathbf{s}, \mathbf{a})] \) is also convex in $w$, implying that \( \mathcal{L}(\mathbf{q}, \mathbf{v}, w) \) is also not concave in $w$.",2501.18944,Missing Proofs
+3102413,44,"\caption{Mean/std recovered rewards of the higher and lower preferred trajectories}
+\label{tab:rewards}",2501.18944,Additional Details
+3102321,44,"To prove the non-convexity of the Extreme-V function \( J(\mathbf{v}) \), we recall that:
+\[
+\mathcal{J}(\mathbf{v}) = \mathbb{E}_{(\mathbf{s}, \mathbf{a}) \sim \mu_{\text{tot}}} \left[ e^{\frac{\mathcal{M}_w[\mathbf{q}(\mathbf{s}, \mathbf{a})] - \mathcal{M}_w[\mathbf{v}(\mathbf{s})]}{\beta}} \right]
+- \mathbb{E}_{(\mathbf{s}, \mathbf{a}) \sim \mu_{\text{tot}}} \left[\frac{\mathcal{M}_w[\mathbf{q}(\mathbf{s}, \mathbf{a})] - \mathcal{M}_w[\mathbf{v}(\mathbf{s})]}{\beta} \right] - 1.
+\]
+We will find a counterexample to show that \( J(\mathbf{v}) \) is not convex under a 2-layer mixing network. For simplicity, since \( \mathcal{M}_w[\mathbf{q}] \) is fixed in \( J(\mathbf{v}) \), we select \( \mathcal{M}_w[\mathbf{q}](\mathbf{s}, \mathbf{a}) = 0 \). We then create a simple example where there is only one agent (i.e., \( \mathbf{v}(\mathbf{s}) = \{v_1(s_1)\} \)), and the mixing network \( \mathcal{M}_w[\mathbf{v}] \) takes a one-dimensional input with a ReLU activation (a commonly used activation function in the context). Specifically, we can write \( \mathcal{M}_w[\mathbf{v}] \) as:
+\[
+\mathcal{M}_w[\mathbf{v}(\mathbf{s})] = 
+\begin{cases}
+    v_1(s_1) & \text{if } v_1(s_1) > 0, \\
+    e^{v_1(s_1)} - 1 & \text{if } v_1(s_1) \leq 0.
+\end{cases}
+\]
+Then, for a given pair \( (\mathbf{s}, \mathbf{a}) \), the corresponding term in \( J(\mathbf{v}) \) associated with \( (\mathbf{s}, \mathbf{a}) \) can be written as:
+\[
+e^{1 - e^{v_1}} + (e^{v_1} - 1).
+\]
+Here, for simplicity, we select \( \beta = 1 \), omit the notation \( s_1 \) in the function \( v_1(s_1) \), and only consider the case where \( v_1 \leq 0 \). We see that the function \( f(t) = e^{1 - e^{t}} + (e^{t} - 1) \) is not convex for \( t \leq 0 \) (see the plot of this function in Figure \ref{fig:example}).",2501.18944,Missing Proofs
+3102414,45,"Using recovered reward function $R(\bo, \ba,\bo') = \mathcal{M}_\theta[\bq(\bo, \ba )] - \gamma \mathcal{M}_\theta[\bv(\bo')]$R(\bo, \ba,\bo') = \mathcal{M}_\theta[\bq(\bo, \ba )] - \gamma \mathcal{M}_\theta[\bv(\bo')], we report the mean/std returns of the higher and lower preferred trajectories in Table \ref{tab:rewards}. 
+Across all tasks, the \textbf{higher preferred trajectories} consistently achieve \textbf{positive rewards}, while the \textbf{lower preferred trajectories} exhibit \textbf{negative rewards}. This indicates that the preference-based learning framework effectively captures and differentiates between  preferred and less-preferred trajectories. The consistent separation in rewards suggests that the model successfully aligns policy learning with preference signals, reinforcing high-reward behaviors while penalizing undesirable ones. Moreover, the absolute values of both higher and lower preferred rewards tend to be more extreme in the LLM-based approach, compared to the Rule-based approach. This suggests that LLM-based learning amplifies both positive and negative behaviors, potentially leading to more decisive policy updates, which can  be beneficial for clear preference-driven learning.",2501.18944,Additional Details
+3102322,45,"From this observation, we first recall the preference-based loss function:",2501.18944,Missing Proofs
+3102415,46,"There are noticeable variations in how different task domains respond to preference-based learning. The \textbf{Protoss and Terran} tasks exhibit \textbf{larger reward variations}, suggesting that these environments benefit more from preference learning. In contrast, \textbf{Zerg tasks} show more moderate reward differences, indicating that either the task dynamics are inherently more balanced or that preference signals have a weaker impact in these settings. Additionally, the \textbf{corridor task}, a structured navigation environment, shows similar performance across rule-based and LLM-based approaches.",2501.18944,Additional Details
+3102323,46,"\mathcal{L}(\mathbf{q}, \mathbf{v}, w) = \sum_{(\sigma_1, \sigma_2) \in \mathcal{P}}(\sigma_1, \sigma_2) \in \mathcal{P} \sum_{(\mathbf{s}, \mathbf{a}) \in \sigma_1}(\mathbf{s}, \mathbf{a}) \in \sigma_1 R_w[\mathbf{q}, \mathbf{v}](\mathbf{s}, \mathbf{a}) 
+    - \log\left(e^{\sum_{\sigma_1} R_w[\mathbf{q}, \mathbf{v}](\mathbf{s}, \mathbf{a})}\sum_{\sigma_1}\sigma_1 R_w[\mathbf{q}, \mathbf{v}](\mathbf{s}, \mathbf{a}) + e^{\sum_{\sigma_2} R_w[\mathbf{q}, \mathbf{v}](\mathbf{s}, \mathbf{a})}\sum_{\sigma_2}\sigma_2 R_w[\mathbf{q}, \mathbf{v}](\mathbf{s}, \mathbf{a})\right) 
+    + \phi(R_w[\mathbf{q}, \mathbf{v}](\mathbf{s}, \mathbf{a})). \nonumber",2501.18944,Missing Proofs
+3102416,47,\subsection{Additional Experimental Details},2501.18944,Additional Details
+3102324,47,"It can be seen that the first term of \( \mathcal{L}(\mathbf{q}, \mathbf{v}, w) \) \mathcal{L}(\mathbf{q}, \mathbf{v}, w)  involves \( R_w[\mathbf{q}, \mathbf{v}](\mathbf{s}, \mathbf{a}) \) R_w[\mathbf{q}, \mathbf{v}](\mathbf{s}, \mathbf{a}) , which can be written as:
+\[
+R_w[\mathbf{q}, \mathbf{v}](\mathbf{s}, \mathbf{a}) = \mathcal{M}_w[\mathbf{q}(\mathbf{s}, \mathbf{a})] - \gamma \mathbb{E}_{\mathbf{s}'} \left[\mathcal{M}_w[\mathbf{v}(\mathbf{s}')]\right].
+\]
+R_w[\mathbf{q}, \mathbf{v}](\mathbf{s}, \mathbf{a}) = \mathcal{M}_w[\mathbf{q}(\mathbf{s}, \mathbf{a})] - \gamma \mathbb{E}_{\mathbf{s}'}\mathbf{s}' \left[\mathcal{M}_w[\mathbf{v}(\mathbf{s}')]\right].",2501.18944,Missing Proofs
+3102417,48,"\subsubsection{Rule-based - Returns}
+We present experimental details, in terms of returns, for all tasks (MAMuJoCo, SMACv1, and SMACv2) using rule-based preference datasets.",2501.18944,Additional Details
+3102325,48,"Since \( \mathcal{M}_w[\mathbf{q}(\mathbf{s}, \mathbf{a})] \) \mathcal{M}_w[\mathbf{q}(\mathbf{s}, \mathbf{a})]  is convex in \( \mathbf{q} \) \mathbf{q} , the first term of \( \mathcal{L}(\mathbf{q}, \mathbf{v}, w) \) \mathcal{L}(\mathbf{q}, \mathbf{v}, w)  is convex in \( \mathbf{q} \) \mathbf{q} , which generally implies that this function is not concave in \( \mathbf{q} \) \mathbf{q} .",2501.18944,Missing Proofs
+3102418,49,"Table \ref{tab:MaMujoco Returns - Rule-based} reports the returns and Figure \ref{fig:MaMujoco Returns - Rule-based -evaluation curves} plots the evaluation curves for MaMujoco tasks with Rule-based preference data and Figure 
+The results demonstrate that \textbf{O-MAPL} consistently outperforms all baselines across \textit{Hopper-v2}, \textit{Ant-v2}, and \textit{HalfCheetah-v2}, highlighting its effectiveness in rule-based preference learning. Notably, in \textit{Hopper-v2}, O-MAPL achieves a \textbf{25.2\% higher return} than the next-best method, \textbf{SL-MARL}, suggesting superior preference alignment. While SL-MARL performs well in simpler environments, its advantage diminishes in \textit{Ant-v2} and \textit{HalfCheetah-v2}, where \textbf{IPL-VDN} shows stronger results. \textbf{BC} significantly underperforms, reinforcing the need for {preference-based learning}preference-based learning over naive imitation.",2501.18944,Additional Details
+3102326,49,"In a similar way, since  the the mixing function  \( \mathcal{M}_w[\mathbf{q}(\mathbf{s}, \mathbf{a})] \) \mathcal{M}_w[\mathbf{q}(\mathbf{s}, \mathbf{a})]  is also convex in $w$w, implying that \( \mathcal{L}(\mathbf{q}, \mathbf{v}, w) \) \mathcal{L}(\mathbf{q}, \mathbf{v}, w)  is also not concave in $w$w.",2501.18944,Missing Proofs
+3102419,50,"\caption{Returns for MAMujoco tasks with Rule-based preference data.}
+\label{tab:MaMujoco Returns - Rule-based}",2501.18944,Additional Details
+3102327,50,"To prove the non-convexity of the Extreme-V function \( J(\mathbf{v}) \) J(\mathbf{v}) , we recall that:
+\[
+\mathcal{J}(\mathbf{v}) = \mathbb{E}_{(\mathbf{s}, \mathbf{a}) \sim \mu_{\text{tot}}} \left[ e^{\frac{\mathcal{M}_w[\mathbf{q}(\mathbf{s}, \mathbf{a})] - \mathcal{M}_w[\mathbf{v}(\mathbf{s})]}{\beta}} \right]
+- \mathbb{E}_{(\mathbf{s}, \mathbf{a}) \sim \mu_{\text{tot}}} \left[\frac{\mathcal{M}_w[\mathbf{q}(\mathbf{s}, \mathbf{a})] - \mathcal{M}_w[\mathbf{v}(\mathbf{s})]}{\beta} \right] - 1.
+\]
+\mathcal{J}(\mathbf{v}) = \mathbb{E}_{(\mathbf{s}, \mathbf{a}) \sim \mu_{\text{tot}}}(\mathbf{s}, \mathbf{a}) \sim \mu_{\text{tot}}\text{tot} \left[ e^{\frac{\mathcal{M}_w[\mathbf{q}(\mathbf{s}, \mathbf{a})] - \mathcal{M}_w[\mathbf{v}(\mathbf{s})]}{\beta}}\frac{\mathcal{M}_w[\mathbf{q}(\mathbf{s}, \mathbf{a})] - \mathcal{M}_w[\mathbf{v}(\mathbf{s})]}{\beta} \right]
+- \mathbb{E}_{(\mathbf{s}, \mathbf{a}) \sim \mu_{\text{tot}}}(\mathbf{s}, \mathbf{a}) \sim \mu_{\text{tot}}\text{tot} \left[\frac{\mathcal{M}_w[\mathbf{q}(\mathbf{s}, \mathbf{a})] - \mathcal{M}_w[\mathbf{v}(\mathbf{s})]}{\beta} \right] - 1.",2501.18944,Missing Proofs
+3102420,51,"Table \ref{tab:return-smacv1-rule-based} report the returns and Figure \ref{fig:Smacv1 Returns - Rule-based -evaluation curves} plots the evaluation curves for SMACv1 tasks. The results show that O-MAPL consistently achieves the highest returns across most SMACv1 tasks. While the performance differences are relatively small in simpler tasks like \textit{2c\_vs\_64zg} and \textit{5m\_vs\_6m}, O-MAPL outperforms all baselines in more complex scenarios such as \textit{6h\_vs\_8z}, where it achieves 12.1, compared to the next-best method (SL-MARL, 11.8). Notably, SL-MARL struggles in the \textit{corridor} task, achieving a significantly lower return (14.3) than other methods, suggesting that its reliance on a separate reward modeling phase may be less effective in environments requiring strong coordinated behaviors.",2501.18944,Additional Details
+3102328,51,"We will find a counterexample to show that \( J(\mathbf{v}) \) J(\mathbf{v})  is not convex under a 2-layer mixing network. For simplicity, since \( \mathcal{M}_w[\mathbf{q}] \) \mathcal{M}_w[\mathbf{q}]  is fixed in \( J(\mathbf{v}) \) J(\mathbf{v}) , we select \( \mathcal{M}_w[\mathbf{q}](\mathbf{s}, \mathbf{a}) = 0 \) \mathcal{M}_w[\mathbf{q}](\mathbf{s}, \mathbf{a}) = 0 . We then create a simple example where there is only one agent (i.e., \( \mathbf{v}(\mathbf{s}) = \{v_1(s_1)\} \) \mathbf{v}(\mathbf{s}) = \{v_1(s_1)\} ), and the mixing network \( \mathcal{M}_w[\mathbf{v}] \) \mathcal{M}_w[\mathbf{v}]  takes a one-dimensional input with a ReLU activation (a commonly used activation function in the context). Specifically, we can write \( \mathcal{M}_w[\mathbf{v}] \) \mathcal{M}_w[\mathbf{v}]  as:
+\[
+\mathcal{M}_w[\mathbf{v}(\mathbf{s})] = 
+\begin{cases}
+    v_1(s_1) & \text{if } v_1(s_1) > 0, \\
+    e^{v_1(s_1)} - 1 & \text{if } v_1(s_1) \leq 0.
+\end{cases}
+\]
+\mathcal{M}_w[\mathbf{v}(\mathbf{s})] =",2501.18944,Missing Proofs
+3102421,52,"\caption{Returns for SMACv1 tasks with Rule-based preference data.}
+\label{tab:return-smacv1-rule-based}",2501.18944,Additional Details
+3102329,52,"v_1(s_1) & \text{if } v_1(s_1) > 0, \\
+    e^{v_1(s_1)}v_1(s_1) - 1 & \text{if } v_1(s_1) \leq 0.",2501.18944,Missing Proofs
+3102422,53,"Table \ref{tab:return-smacv2-rule-based} shows the returns and Figure \ref{fig:Smacv2 Returns - Rule-based -evaluation curves} plots the evaluation curves for SMACv2 tasks (the most complicated ones). The results show that O-MAPL consistently achieves competitive performance across all SMACv2 tasks, often outperforming other baselines. In \textit{Protoss} tasks, O-MAPL achieves the highest returns in most cases, particularly in \textit{protoss\_10\_vs\_10} and \textit{protoss\_10\_vs\_11}, suggesting its effectiveness in complex team-based coordination. Similarly, in \textit{Terran} tasks, O-MAPL consistently outperforms SL-MARL and IPL-VDN, with a noticeable advantage in \textit{terran\_20\_vs\_20} and \textit{terran\_20\_vs\_23}. In \textit{Zerg} environments, O-MAPL continues to show strong results, outperforming all baselines in \textit{zerg\_5\_vs\_5}, \textit{zerg\_10\_vs\_11}, and \textit{zerg\_20\_vs\_20}.",2501.18944,Additional Details
+3102330,53,"Then, for a given pair \( (\mathbf{s}, \mathbf{a}) \) (\mathbf{s}, \mathbf{a}) , the corresponding term in \( J(\mathbf{v}) \) J(\mathbf{v})  associated with \( (\mathbf{s}, \mathbf{a}) \) (\mathbf{s}, \mathbf{a})  can be written as:
+\[
+e^{1 - e^{v_1}} + (e^{v_1} - 1).
+\]
+e^{1 - e^{v_1}}1 - e^{v_1}v_1 + (e^{v_1}v_1 - 1).",2501.18944,Missing Proofs
+3102423,54,"\caption{Returns for SMACv2 tasks with Rule-based preference data.}
+\label{tab:return-smacv2-rule-based}",2501.18944,Additional Details
+3102331,54,"Here, for simplicity, we select \( \beta = 1 \) \beta = 1 , omit the notation \( s_1 \) s_1  in the function \( v_1(s_1) \) v_1(s_1) , and only consider the case where \( v_1 \leq 0 \) v_1 \leq 0 . We see that the function \( f(t) = e^{1 - e^{t}} + (e^{t} - 1) \) f(t) = e^{1 - e^{t}}1 - e^{t}t + (e^{t}t - 1)  is not convex for \( t \leq 0 \) t \leq 0  (see the plot of this function in Figure \ref{fig:example}).",2501.18944,Missing Proofs
+3102424,55,"\subsubsection{Rule-based - Winrates}
+For SMACv1 and SMACv2, win rates provide a more meaningful comparison of algorithm performance. The following tables and figures present win rates for SMAC tasks using \textit{rule-based preference data.}",2501.18944,Additional Details
+3102332,55,"\centering
+    \includegraphics[width=0.5\textwidth]{simple-plot.png} \caption{Plot of the function \( f(t) = e^{1 - e^{t}} + e^{t} - 1 \).} \label{fig:example}",2501.18944,Missing Proofs
+3102425,56,"Table \ref{tab:winrate-smacv1-rule-based} shows the winrates and Figure \ref{fig:curves-winrate-smacv1-rule-based} plots the evaluation curves (in terms of winrates) for SMACv1 tasks. The results  indicate that O-MAPL consistently achieves the highest winrates across most tasks. In \textit{2c\_vs\_64zg}, O-MAPL outperforms all baselines, achieving a win rate of 74.4, surpassing IPL-VDN and SL-MARL. Similarly, in \textit{5m\_vs\_6m} and \textit{6h\_vs\_8z}, O-MAPL achieves the highest winrates, though the performance gap is less pronounced. Notably, in the \textit{corridor} task, IPL-VDN slightly outperforms O-MAPL, while SL-MARL struggles significantly, indicating that its two-phase approach may be less effective in highly structured navigation tasks. These results suggest that O-MAPL is well-suited for complex coordination tasks, offering robust winrates across diverse SMACv1 environments.",2501.18944,Additional Details
+3102333,56,\subsection{Proof of Theorem  \ref{thr:GLC}},2501.18944,Missing Proofs
+3102426,57,"\caption{Winrates for SMACv1 tasks with Rule-based preference data.}
+\label{tab:winrate-smacv1-rule-based}",2501.18944,Additional Details
+3102334,57,"\textbf{Theorem \ref{thr:GLC}: }
+\textit{Let \( \pi^*_i \) be the optimal solution to the local WBC problem in \eqref{eq:local-policy-extraction}. Then, the global policy \( \pi^*_{\text{tot}} \), defined as \( \pi^*_{\text{tot}}(\mathbf{s}, \mathbf{a}) = \prod_{i} \pi^*_i(a_i | s_i) \), is also optimal for the global WBC problem in \eqref{eq:global-policy-extraction}. In other words, the local WBC approach yields local policies that are consistent with the desired globally optimal policy.  }",2501.18944,Missing Proofs
+3102427,58,"Table \ref{tab:winrate-smacv2-rule-based} shows the winrates and Figure \ref{fig:curves-winrate-smacv2-rule-based} plots the evaluation curves (in terms of winrates) for SMACv2 tasks. The results, again,  show that O-MAPL consistently achieves the highest winrates across most SMACv2 tasks. In the \textit{Protoss} tasks, O-MAPL outperforms all baselines, particularly in \textit{protoss\_10\_vs\_11} and \textit{protoss\_20\_vs\_20}, where it shows a significant improvement over the other methods. In \textit{Terran} tasks, O-MAPL also achieves the best performance, with notable advantages in \textit{terran\_20\_vs\_20} and \textit{terran\_20\_vs\_23}, where other methods struggle to achieve high winrates. Similarly, in \textit{Zerg} tasks, O-MAPL consistently achieves the best results, particularly in \textit{zerg\_20\_vs\_20} and \textit{zerg\_20\_vs\_23}.",2501.18944,Additional Details
+3102335,58,"\begin{proof}
+For notational simplicity, let \( G(\pi_{\text{tot}}) \) be the objective function of the global WBC problem:
+\[
+G(\pi_{\text{tot}}) = \mathbb{E}_{\mathbf{s}, \mathbf{a} \sim \mu_{\text{tot}}} \left[ e^{\frac{Q_{\text{tot}}(\mathbf{s}, \mathbf{a}) - V_{\text{tot}}(\mathbf{s})}{\beta}} \log \pi_{\text{tot}}(\mathbf{a} | \mathbf{s}) \right].
+\]
+Since we are seeking a decomposable policy \( \pi_{\text{tot}}(\mathbf{a}|\mathbf{s}) = \prod_{i \in \mathcal{N}} \pi_i(a_i|s_i) \), we have, for any \( \pi_{\text{tot}} \in \Pi_{\text{tot}} \) such that \( \pi_{\text{tot}} = \prod_i \pi_i \):
+\[
+\begin{aligned}
+G(\pi_{\text{tot}}) &= \mathbb{E}_{\mathbf{s}, \mathbf{a} \sim \mu_{\text{tot}}} \left[ e^{\frac{Q_{\text{tot}}(\mathbf{s}, \mathbf{a}) - V_{\text{tot}}(\mathbf{s})}{\beta}} \log \prod_{i} \pi_i(a_i | s_i) \right] \\
+&= \sum_{i \in \mathcal{N}} \left\{ \mathbb{E}_{\mathbf{s}, \mathbf{a} \sim \mu_{\text{tot}}} \left[ e^{\frac{Q_{\text{tot}}(\mathbf{s}, \mathbf{a}) - V_{\text{tot}}(\mathbf{s})}{\beta}} \log \pi_i(a_i | s_i) \right] \right\} \\
+&\stackrel{(a)}{\leq} \sum_{i \in \mathcal{N}} \left\{ \mathbb{E}_{\mathbf{s}, \mathbf{a} \sim \mu_{\text{tot}}} \left[ e^{\frac{Q_{\text{tot}}(\mathbf{s}, \mathbf{a}) - V_{\text{tot}}(\mathbf{s})}{\beta}} \log \pi^*_i(a_i | s_i) \right] \right\} \\
+&= \mathbb{E}_{\mathbf{s}, \mathbf{a} \sim \mu_{\text{tot}}} \left[ e^{\frac{Q_{\text{tot}}(\mathbf{s}, \mathbf{a}) - V_{\text{tot}}(\mathbf{s})}{\beta}} \log \pi^*_{\text{tot}}(\mathbf{a} | \mathbf{s}) \right],
+\end{aligned}
+\]
+where \((a)\) holds because each \( \pi^*_i \) is optimal for the corresponding local WBC problem. Thus, we have \( G(\pi_{\text{tot}}) \leq G(\pi^*_{\text{tot}}) \) for any \( \pi_{\text{tot}} \in \Pi_{\text{tot}} \), implying that \( \pi^*_{\text{tot}} \) is also optimal for the global WBC. This establishes the GLC, as desired.
+\end{proof}\begin{proof}
+For notational simplicity, let \( G(\pi_{\text{tot}}) \) be the objective function of the global WBC problem:
+\[
+G(\pi_{\text{tot}}) = \mathbb{E}_{\mathbf{s}, \mathbf{a} \sim \mu_{\text{tot}}} \left[ e^{\frac{Q_{\text{tot}}(\mathbf{s}, \mathbf{a}) - V_{\text{tot}}(\mathbf{s})}{\beta}} \log \pi_{\text{tot}}(\mathbf{a} | \mathbf{s}) \right].
+\]
+Since we are seeking a decomposable policy \( \pi_{\text{tot}}(\mathbf{a}|\mathbf{s}) = \prod_{i \in \mathcal{N}} \pi_i(a_i|s_i) \), we have, for any \( \pi_{\text{tot}} \in \Pi_{\text{tot}} \) such that \( \pi_{\text{tot}} = \prod_i \pi_i \):
+\[
+\begin{aligned}
+G(\pi_{\text{tot}}) &= \mathbb{E}_{\mathbf{s}, \mathbf{a} \sim \mu_{\text{tot}}} \left[ e^{\frac{Q_{\text{tot}}(\mathbf{s}, \mathbf{a}) - V_{\text{tot}}(\mathbf{s})}{\beta}} \log \prod_{i} \pi_i(a_i | s_i) \right] \\
+&= \sum_{i \in \mathcal{N}} \left\{ \mathbb{E}_{\mathbf{s}, \mathbf{a} \sim \mu_{\text{tot}}} \left[ e^{\frac{Q_{\text{tot}}(\mathbf{s}, \mathbf{a}) - V_{\text{tot}}(\mathbf{s})}{\beta}} \log \pi_i(a_i | s_i) \right] \right\} \\
+&\stackrel{(a)}{\leq} \sum_{i \in \mathcal{N}} \left\{ \mathbb{E}_{\mathbf{s}, \mathbf{a} \sim \mu_{\text{tot}}} \left[ e^{\frac{Q_{\text{tot}}(\mathbf{s}, \mathbf{a}) - V_{\text{tot}}(\mathbf{s})}{\beta}} \log \pi^*_i(a_i | s_i) \right] \right\} \\
+&= \mathbb{E}_{\mathbf{s}, \mathbf{a} \sim \mu_{\text{tot}}} \left[ e^{\frac{Q_{\text{tot}}(\mathbf{s}, \mathbf{a}) - V_{\text{tot}}(\mathbf{s})}{\beta}} \log \pi^*_{\text{tot}}(\mathbf{a} | \mathbf{s}) \right],
+\end{aligned}
+\]
+where \((a)\) holds because each \( \pi^*_i \) is optimal for the corresponding local WBC problem. Thus, we have \( G(\pi_{\text{tot}}) \leq G(\pi^*_{\text{tot}}) \) for any \( \pi_{\text{tot}} \in \Pi_{\text{tot}} \), implying that \( \pi^*_{\text{tot}} \) is also optimal for the global WBC. This establishes the GLC, as desired.
+\end{proof}
+For notational simplicity, let \( G(\pi_{\text{tot}}) \) G(\pi_{\text{tot}}\text{tot})  be the objective function of the global WBC problem:
+\[
+G(\pi_{\text{tot}}) = \mathbb{E}_{\mathbf{s}, \mathbf{a} \sim \mu_{\text{tot}}} \left[ e^{\frac{Q_{\text{tot}}(\mathbf{s}, \mathbf{a}) - V_{\text{tot}}(\mathbf{s})}{\beta}} \log \pi_{\text{tot}}(\mathbf{a} | \mathbf{s}) \right].
+\]
+G(\pi_{\text{tot}}\text{tot}) = \mathbb{E}_{\mathbf{s}, \mathbf{a} \sim \mu_{\text{tot}}}\mathbf{s}, \mathbf{a} \sim \mu_{\text{tot}}\text{tot} \left[ e^{\frac{Q_{\text{tot}}(\mathbf{s}, \mathbf{a}) - V_{\text{tot}}(\mathbf{s})}{\beta}}\frac{Q_{\text{tot}}(\mathbf{s}, \mathbf{a}) - V_{\text{tot}}(\mathbf{s})}{\beta} \log \pi_{\text{tot}}\text{tot}(\mathbf{a} | \mathbf{s}) \right].",2501.18944,Missing Proofs
+3102428,59,"\caption{Winrates for SMACv2 tasks with Rule-based preference data.}
+\label{tab:winrate-smacv2-rule-based}",2501.18944,Additional Details
+3102336,59,"Since we are seeking a decomposable policy \( \pi_{\text{tot}}(\mathbf{a}|\mathbf{s}) = \prod_{i \in \mathcal{N}} \pi_i(a_i|s_i) \) \pi_{\text{tot}}\text{tot}(\mathbf{a}|\mathbf{s}) = \prod_{i \in \mathcal{N}}i \in \mathcal{N} \pi_i(a_i|s_i) , we have, for any \( \pi_{\text{tot}} \in \Pi_{\text{tot}} \) \pi_{\text{tot}}\text{tot} \in \Pi_{\text{tot}}\text{tot}  such that \( \pi_{\text{tot}} = \prod_i \pi_i \) \pi_{\text{tot}}\text{tot} = \prod_i \pi_i :
+\[
+\begin{aligned}
+G(\pi_{\text{tot}}) &= \mathbb{E}_{\mathbf{s}, \mathbf{a} \sim \mu_{\text{tot}}} \left[ e^{\frac{Q_{\text{tot}}(\mathbf{s}, \mathbf{a}) - V_{\text{tot}}(\mathbf{s})}{\beta}} \log \prod_{i} \pi_i(a_i | s_i) \right] \\
+&= \sum_{i \in \mathcal{N}} \left\{ \mathbb{E}_{\mathbf{s}, \mathbf{a} \sim \mu_{\text{tot}}} \left[ e^{\frac{Q_{\text{tot}}(\mathbf{s}, \mathbf{a}) - V_{\text{tot}}(\mathbf{s})}{\beta}} \log \pi_i(a_i | s_i) \right] \right\} \\
+&\stackrel{(a)}{\leq} \sum_{i \in \mathcal{N}} \left\{ \mathbb{E}_{\mathbf{s}, \mathbf{a} \sim \mu_{\text{tot}}} \left[ e^{\frac{Q_{\text{tot}}(\mathbf{s}, \mathbf{a}) - V_{\text{tot}}(\mathbf{s})}{\beta}} \log \pi^*_i(a_i | s_i) \right] \right\} \\
+&= \mathbb{E}_{\mathbf{s}, \mathbf{a} \sim \mu_{\text{tot}}} \left[ e^{\frac{Q_{\text{tot}}(\mathbf{s}, \mathbf{a}) - V_{\text{tot}}(\mathbf{s})}{\beta}} \log \pi^*_{\text{tot}}(\mathbf{a} | \mathbf{s}) \right],
+\end{aligned}
+\]",2501.18944,Missing Proofs
+3102429,60,"\subsubsection{LLM-based - Returns}
+We present comparisons in terms of returns using LLM-based preference datasets. As noted earlier, only SMACv1 and SMACv2 are suitable for obtaining meaningful preference-based data from LLMs. Therefore, we report comparisons exclusively for SMAC tasks.",2501.18944,Additional Details
+3102337,60,"G(\pi_{\text{tot}}\text{tot}) &= \mathbb{E}_{\mathbf{s}, \mathbf{a} \sim \mu_{\text{tot}}}\mathbf{s}, \mathbf{a} \sim \mu_{\text{tot}}\text{tot} \left[ e^{\frac{Q_{\text{tot}}(\mathbf{s}, \mathbf{a}) - V_{\text{tot}}(\mathbf{s})}{\beta}}\frac{Q_{\text{tot}}(\mathbf{s}, \mathbf{a}) - V_{\text{tot}}(\mathbf{s})}{\beta} \log \prod_{i}i \pi_i(a_i | s_i) \right] \\
+&= \sum_{i \in \mathcal{N}}i \in \mathcal{N} \left\{ \mathbb{E}_{\mathbf{s}, \mathbf{a} \sim \mu_{\text{tot}}}\mathbf{s}, \mathbf{a} \sim \mu_{\text{tot}}\text{tot} \left[ e^{\frac{Q_{\text{tot}}(\mathbf{s}, \mathbf{a}) - V_{\text{tot}}(\mathbf{s})}{\beta}}\frac{Q_{\text{tot}}(\mathbf{s}, \mathbf{a}) - V_{\text{tot}}(\mathbf{s})}{\beta} \log \pi_i(a_i | s_i) \right] \right\} \\
+&\stackrel{(a)}(a){\leq}\leq \sum_{i \in \mathcal{N}}i \in \mathcal{N} \left\{ \mathbb{E}_{\mathbf{s}, \mathbf{a} \sim \mu_{\text{tot}}}\mathbf{s}, \mathbf{a} \sim \mu_{\text{tot}}\text{tot} \left[ e^{\frac{Q_{\text{tot}}(\mathbf{s}, \mathbf{a}) - V_{\text{tot}}(\mathbf{s})}{\beta}}\frac{Q_{\text{tot}}(\mathbf{s}, \mathbf{a}) - V_{\text{tot}}(\mathbf{s})}{\beta} \log \pi^*_i(a_i | s_i) \right] \right\} \\
+&= \mathbb{E}_{\mathbf{s}, \mathbf{a} \sim \mu_{\text{tot}}}\mathbf{s}, \mathbf{a} \sim \mu_{\text{tot}}\text{tot} \left[ e^{\frac{Q_{\text{tot}}(\mathbf{s}, \mathbf{a}) - V_{\text{tot}}(\mathbf{s})}{\beta}}\frac{Q_{\text{tot}}(\mathbf{s}, \mathbf{a}) - V_{\text{tot}}(\mathbf{s})}{\beta} \log \pi^*_{\text{tot}}\text{tot}(\mathbf{a} | \mathbf{s}) \right],",2501.18944,Missing Proofs
+3102430,61,"Table \ref{tab:return-smacv1-LLM-based} shows the returns and Figure \ref{fig:curves-smacv1-LLM-based} plots the evaluation curves (in terms of returns) for SMACv1 tasks.
+The results in Table \ref{tab:return-smacv1-LLM-based} indicate that O-MAPL consistently achieves the highest or near-highest returns across all SMACv1 tasks using LLM-based preference data. In \textit{6h\_vs\_8z}, O-MAPL shows a clear advantage, reaching 12.2, outperforming all baselines. Similarly, in \textit{corridor}, it achieves the highest return (19.7), alongside IPL-VDN, while SL-MARL struggles significantly in this task. Across \textit{2c\_vs\_64zg} and \textit{5m\_vs\_6m}, performance differences are minimal, but O-MAPL remains competitive. These results highlight the effectiveness of O-MAPL in leveraging LLM-based preferences, particularly in more complex multi-agent coordination scenarios.",2501.18944,Additional Details
+3102338,61,"where \((a)\)(a) holds because each \( \pi^*_i \) \pi^*_i  is optimal for the corresponding local WBC problem. Thus, we have \( G(\pi_{\text{tot}}) \leq G(\pi^*_{\text{tot}}) \) G(\pi_{\text{tot}}\text{tot}) \leq G(\pi^*_{\text{tot}}\text{tot})  for any \( \pi_{\text{tot}} \in \Pi_{\text{tot}} \) \pi_{\text{tot}}\text{tot} \in \Pi_{\text{tot}}\text{tot} , implying that \( \pi^*_{\text{tot}} \) \pi^*_{\text{tot}}\text{tot}  is also optimal for the global WBC. This establishes the GLC, as desired.",2501.18944,Missing Proofs
+3102431,62,"\caption{Return comparison for SMACv1 tasks with LLM-based preference data.}
+\label{tab:return-smacv1-LLM-based}",2501.18944,Additional Details
+3102339,62,"\subsection{Proof of Theorem \ref{thr:local-pi-local-qv}}\label{apd:proof-th-4.4}
+\textbf{Theorem  \ref{thr:local-pi-local-qv}:}
+ \textit{     Let $\pi^*_i$ be optimal to the local WBC, then the following equality holds for all  $s_i\in \cS_i, a_i\in \cA_i$:
+    \begin{align}\small
+         \pi^*_i(a_i|s_i) =  \frac{\eta(s_i)}{\Delta(s_i)} \mu_i(a_i|s_i) e^{\frac{w^q_i q_i(s_i, a_i) - w^v_i v_i(s_i)}{\beta}}\label{eq:local-policy-q-v-eta}
+     \end{align}
+      where $w^q_i$  and $w^v_i$  are  parameters of  the mixing networks $\cM_w[\bq]$, $\cM_w[\bv]$, respectively. In addition, 
+      $\eta(s_i)/\Delta(s_i)$ is a correction term defined  as follows:
+\begin{align}
+    \eta(s_i) &=   \sum_{\mathbf{s}', \mathbf{a}' | s'_i = s_i} e^{\frac{b_q - b_v}{\beta}} \prod_{j \in \mathcal{N}, j \neq i} \mu(a'_j|s'_j) e^{\frac{w^q_j q_j(s'_j, a'_j) - w^v_j v_j(s'_j)}{\beta}}\nonumber\\
+    \Delta(s_i) &= \sum_{a_i \in \mathcal{A}_i} \eta(s_i) \mu_i(a_i|s_i) e^{\frac{w^q_i q_i(s_i, a_i) - w^v_i v_i(s_i)}{\beta}}.
+\end{align}}
+\begin{proof}
+We first note that each mixing network \( \mathcal{M}_w[\mathbf{q}] \) or \( \mathcal{M}_w[\mathbf{v}] \) can be expressed as a linear function of its inputs:
+\[
+\begin{aligned}
+Q_{\text{tot}}(\mathbf{s}, \mathbf{a}) &= \mathcal{M}_w[\mathbf{q}](\mathbf{s}, \mathbf{a}) = \sum_{i \in \mathcal{N}} w^q_i q_i(s_i, a_i) + b_q, \\
+V_{\text{tot}}(\mathbf{s}) &= \mathcal{M}_w[\mathbf{v}](\mathbf{s}) = \sum_{i \in \mathcal{N}} w^v_i v_i(s_i) + b_v.
+\end{aligned}
+\]
+Thus,
+\[
+e^{\frac{Q_{\text{tot}}(\mathbf{s}, \mathbf{a}) - V_{\text{tot}}(\mathbf{s})}{\beta}} = e^{\frac{b_q - b_v}{\beta}} \prod_{i \in \mathcal{N}} e^{\frac{w^q_i q_i(s_i, a_i) - w^v_i v_i(s_i)}{\beta}}.
+\]",2501.18944,Missing Proofs
+3102432,63,"Table \ref{tab:return-smacv2-LLM-based} shows the returns and Figure \ref{fig:curves-smacv2-LLM-based} plots the evaluation curves (in terms of returns) for SMACv1 tasks. The results demonstrate that O-MAPL consistently achieves the highest returns across most SMACv2 tasks. In \textit{Protoss} tasks, O-MAPL outperforms other methods, particularly in \textit{protoss\_10\_vs\_11} and \textit{protoss\_20\_vs\_20}, indicating its effectiveness in learning structured team-based strategies. In \textit{Terran} tasks, O-MAPL generally achieves the best performance, with notable improvements in \textit{terran\_20\_vs\_20}, suggesting its strength in complex coordination settings. In \textit{Zerg} tasks, O-MAPL maintains strong performance, particularly in \textit{zerg\_20\_vs\_20}, where it achieves the highest return.",2501.18944,Additional Details
+3102340,63,"Now, let us consider the objective function of the local WBC and write:
+\[
+\begin{aligned}
+g(\pi_i) &= \sum_{\mathbf{s} \in \mathcal{S}, \mathbf{a} \in \mathcal{A}} \mu_{\text{tot}}(\mathbf{a}|\mathbf{s}) e^{\frac{Q_{\text{tot}}(\mathbf{s}, \mathbf{a}) - V_{\text{tot}}(\mathbf{s})}{\beta}} \log \pi_i(a_i | s_i) \\
+&= \sum_{\mathbf{s} \in \mathcal{S}, \mathbf{a} \in \mathcal{A}} e^{\frac{b_q - b_v}{\beta}} \prod_{i \in \mathcal{N}} \mu(a_i|s_i) e^{\frac{w^q_i q_i(s_i, a_i) - w^v_i v_i(s_i)}{\beta}} \log \pi_i(a_i | s_i).
+\end{aligned}
+\]",2501.18944,Missing Proofs
+3102433,64,"\caption{Return comparison for SMACv2 tasks with LLM-based preference data.}
+\label{tab:return-smacv2-LLM-based}",2501.18944,Additional Details
+3102341,64,"Thus, for each agent \( i \in \mathcal{N} \) and local state \( s_i \in \mathcal{S}_i \), we extract all the components of \( g(\pi_i) \) that involve \( \pi_i(a_i|s_i) \) as:
+\[
+\begin{aligned}
+g^{s_i}(\pi_i) &= \sum_{\mathbf{s}', \mathbf{a}' | s'_i = s_i} e^{\frac{b_q - b_v}{\beta}} \prod_{j \in \mathcal{N}, j \neq i} \mu(a'_j|s'_j) e^{\frac{w^q_j q_j(s'_j, a'_j) - w^v_j v_j(s'_j)}{\beta}} \\
+&\quad \times \left( \mu_i(a'_i|s_i) e^{\frac{w^q_i q_i(s_i, a'_i) - w^v_i v_i(s_i)}{\beta}} \log \pi_i(a'_i | s_i) \right) \\
+&= \sum_{a'_i \in \mathcal{A}_i} \eta(s_i) \left( \mu_i(a'_i|s_i) e^{\frac{w^q_i q_i(s_i, a'_i) - w^v_i v_i(s_i)}{\beta}} \log \pi_i(a'_i | s_i) \right),
+\end{aligned}
+\]
+where
+\[
+\eta(s_i) = \sum_{\mathbf{s}', \mathbf{a}' | s'_i = s_i} e^{\frac{b_q - b_v}{\beta}} \prod_{j \in \mathcal{N}, j \neq i} \mu(a'_j|s'_j) e^{\frac{w^q_j q_j(s'_j, a'_j) - w^v_j v_j(s'_j)}{\beta}},
+\]
+which is independent of any local actions \( a'_i \).",2501.18944,Missing Proofs
+3102434,65,\subsubsection{LLM-based - Winrates},2501.18944,Additional Details
+3102342,65,"The local WBC problem thus becomes the problem of finding local policies \( \pi_i(\cdot|s_i) \) that maximize \( g^{s_i}(\pi_i) \) for any local state \( s_i \). For notational simplicity, let
+\[
+\delta(a'_i, s_i) = \eta(s_i) \mu_i(a'_i|s_i) e^{\frac{w^q_i q_i(s_i, a'_i) - w^v_i v_i(s_i)}{\beta}}.
+\]
+We then write the local objective function \( g^{s_i}(\pi_i) \) as:
+\[
+g^{s_i}(\pi_i) = \sum_{a_i \in \mathcal{A}_i} \delta(a_i, s_i) \log \pi_i(a_i|s_i).
+\]",2501.18944,Missing Proofs
+3102435,66,We present a comparison of winrates for SMAC tasks using LLM-based preference datasets.,2501.18944,Additional Details
+3102343,66,"To solve the problem \( \max_{\pi_i} g^{s_i}(\pi_i) \), let us consider a general version (with simplified notation):
+\[
+\max_{\mathbf{t}} \left\{ g(\mathbf{t}) = \sum_{i \in \mathcal{N}} \alpha_i \log t_i \;\Big|\; \mathbf{t} \in [0, 1]^n, \sum_i t_i = 1 \right\},
+\]
+where \( \alpha_i \geq 0 \) and \( g(\mathbf{t}): [0, 1]^n \rightarrow \mathbb{R} \). By considering the Lagrangian dual of this problem, we can see that an optimal solution \( \mathbf{t}^* \) must satisfy the following KKT conditions:
+\[
+\begin{cases}
+\mathbf{t}^* \in (0, 1)^n, \\
+\sum_i t^*_i = 1, \\
+\frac{\alpha_i}{t^*_i} = \frac{\alpha_j}{t^*_j}, \quad \forall i, j \in \mathcal{N}.
+\end{cases}
+\]
+These conditions directly imply that:
+\[
+t^*_i = \frac{\alpha_i}{\sum_{j \in \mathcal{N}} \alpha_j}.
+\]
+We return to the maximization of \( g^{s_i}(\pi_i) \), which yields an optimal solution:
+\[
+\pi^*_i(a_i|s_i) = \frac{\delta(a_i, s_i)}{\sum_{a'_i \in \mathcal{A}_i} \delta(a'_i, s_i)}, \quad \forall a_i \in \mathcal{A}_i.
+\]
+Putting everything together, we see that the following solution \( \pi^*_i \) is optimal for the local WBC:
+\[
+\pi_i(a_i|s_i) = \frac{\eta(s_i) \mu_i(a_i|s_i) e^{\frac{w^q_i q_i(s_i, a_i) - w^v_i v_i(s_i)}{\beta}}}{\Delta(s_i)},
+\]
+where
+\[
+\Delta(s_i) = \sum_{a_i \in \mathcal{A}_i} \eta(s_i) \mu_i(a_i|s_i) e^{\frac{w^q_i q_i(s_i, a_i) - w^v_i v_i(s_i)}{\beta}}.
+\]
+\end{proof}\begin{proof}
+We first note that each mixing network \( \mathcal{M}_w[\mathbf{q}] \) or \( \mathcal{M}_w[\mathbf{v}] \) can be expressed as a linear function of its inputs:
+\[
+\begin{aligned}
+Q_{\text{tot}}(\mathbf{s}, \mathbf{a}) &= \mathcal{M}_w[\mathbf{q}](\mathbf{s}, \mathbf{a}) = \sum_{i \in \mathcal{N}} w^q_i q_i(s_i, a_i) + b_q, \\
+V_{\text{tot}}(\mathbf{s}) &= \mathcal{M}_w[\mathbf{v}](\mathbf{s}) = \sum_{i \in \mathcal{N}} w^v_i v_i(s_i) + b_v.
+\end{aligned}
+\]
+Thus,
+\[
+e^{\frac{Q_{\text{tot}}(\mathbf{s}, \mathbf{a}) - V_{\text{tot}}(\mathbf{s})}{\beta}} = e^{\frac{b_q - b_v}{\beta}} \prod_{i \in \mathcal{N}} e^{\frac{w^q_i q_i(s_i, a_i) - w^v_i v_i(s_i)}{\beta}}.
+\]",2501.18944,Missing Proofs
+3102436,67,"\caption{Winrate comparison for SMACv1 tasks with LLM-based preference data.}
+\label{tab:winrate-smacv1-LLM-based}",2501.18944,Additional Details
+3102344,67,"Now, let us consider the objective function of the local WBC and write:
+\[
+\begin{aligned}
+g(\pi_i) &= \sum_{\mathbf{s} \in \mathcal{S}, \mathbf{a} \in \mathcal{A}} \mu_{\text{tot}}(\mathbf{a}|\mathbf{s}) e^{\frac{Q_{\text{tot}}(\mathbf{s}, \mathbf{a}) - V_{\text{tot}}(\mathbf{s})}{\beta}} \log \pi_i(a_i | s_i) \\
+&= \sum_{\mathbf{s} \in \mathcal{S}, \mathbf{a} \in \mathcal{A}} e^{\frac{b_q - b_v}{\beta}} \prod_{i \in \mathcal{N}} \mu(a_i|s_i) e^{\frac{w^q_i q_i(s_i, a_i) - w^v_i v_i(s_i)}{\beta}} \log \pi_i(a_i | s_i).
+\end{aligned}
+\]",2501.18944,Missing Proofs
+3102437,68,"The results reported in Table \ref{tab:winrate-smacv2-LLM-based}  and Figure \ref{fig:curves-smacv2-winrate-LLM-based} demonstrate that O-MAPL consistently achieves the highest win rates across most SMACv2 tasks using LLM-based preference data. In the \textit{Protoss} tasks, O-MAPL outperforms all baselines, particularly in \textit{protoss\_10\_vs\_11} and \textit{protoss\_20\_vs\_20}, where it achieves substantial improvements over other methods. In \textit{Terran} tasks, O-MAPL also shows strong performance, especially in \textit{terran\_20\_vs\_20} and \textit{terran\_20\_vs\_23}, where other baselines struggle to achieve competitive win rates. In \textit{Zerg} tasks, O-MAPL maintains an advantage, particularly in \textit{zerg\_5\_vs\_5} and \textit{zerg\_20\_vs\_20}, suggesting that its approach generalizes well across different strategic settings. Overall, these results indicate that O-MAPL effectively integrates LLM-based preference data to improve decision-making and coordination in complex multi-agent environments.",2501.18944,Additional Details
+3102345,68,"Thus, for each agent \( i \in \mathcal{N} \) and local state \( s_i \in \mathcal{S}_i \), we extract all the components of \( g(\pi_i) \) that involve \( \pi_i(a_i|s_i) \) as:
+\[
+\begin{aligned}
+g^{s_i}(\pi_i) &= \sum_{\mathbf{s}', \mathbf{a}' | s'_i = s_i} e^{\frac{b_q - b_v}{\beta}} \prod_{j \in \mathcal{N}, j \neq i} \mu(a'_j|s'_j) e^{\frac{w^q_j q_j(s'_j, a'_j) - w^v_j v_j(s'_j)}{\beta}} \\
+&\quad \times \left( \mu_i(a'_i|s_i) e^{\frac{w^q_i q_i(s_i, a'_i) - w^v_i v_i(s_i)}{\beta}} \log \pi_i(a'_i | s_i) \right) \\
+&= \sum_{a'_i \in \mathcal{A}_i} \eta(s_i) \left( \mu_i(a'_i|s_i) e^{\frac{w^q_i q_i(s_i, a'_i) - w^v_i v_i(s_i)}{\beta}} \log \pi_i(a'_i | s_i) \right),
+\end{aligned}
+\]
+where
+\[
+\eta(s_i) = \sum_{\mathbf{s}', \mathbf{a}' | s'_i = s_i} e^{\frac{b_q - b_v}{\beta}} \prod_{j \in \mathcal{N}, j \neq i} \mu(a'_j|s'_j) e^{\frac{w^q_j q_j(s'_j, a'_j) - w^v_j v_j(s'_j)}{\beta}},
+\]
+which is independent of any local actions \( a'_i \).",2501.18944,Missing Proofs
+3102438,69,"\caption{Winrate comparison for SMACv2 tasks with LLM-based preference data.}
+\label{tab:winrate-smacv2-LLM-based}",2501.18944,Additional Details
+3102346,69,"The local WBC problem thus becomes the problem of finding local policies \( \pi_i(\cdot|s_i) \) that maximize \( g^{s_i}(\pi_i) \) for any local state \( s_i \). For notational simplicity, let
+\[
+\delta(a'_i, s_i) = \eta(s_i) \mu_i(a'_i|s_i) e^{\frac{w^q_i q_i(s_i, a'_i) - w^v_i v_i(s_i)}{\beta}}.
+\]
+We then write the local objective function \( g^{s_i}(\pi_i) \) as:
+\[
+g^{s_i}(\pi_i) = \sum_{a_i \in \mathcal{A}_i} \delta(a_i, s_i) \log \pi_i(a_i|s_i).
+\]",2501.18944,Missing Proofs
+3102347,70,"To solve the problem \( \max_{\pi_i} g^{s_i}(\pi_i) \), let us consider a general version (with simplified notation):
+\[
+\max_{\mathbf{t}} \left\{ g(\mathbf{t}) = \sum_{i \in \mathcal{N}} \alpha_i \log t_i \;\Big|\; \mathbf{t} \in [0, 1]^n, \sum_i t_i = 1 \right\},
+\]
+where \( \alpha_i \geq 0 \) and \( g(\mathbf{t}): [0, 1]^n \rightarrow \mathbb{R} \). By considering the Lagrangian dual of this problem, we can see that an optimal solution \( \mathbf{t}^* \) must satisfy the following KKT conditions:
+\[
+\begin{cases}
+\mathbf{t}^* \in (0, 1)^n, \\
+\sum_i t^*_i = 1, \\
+\frac{\alpha_i}{t^*_i} = \frac{\alpha_j}{t^*_j}, \quad \forall i, j \in \mathcal{N}.
+\end{cases}
+\]
+These conditions directly imply that:
+\[
+t^*_i = \frac{\alpha_i}{\sum_{j \in \mathcal{N}} \alpha_j}.
+\]
+We return to the maximization of \( g^{s_i}(\pi_i) \), which yields an optimal solution:
+\[
+\pi^*_i(a_i|s_i) = \frac{\delta(a_i, s_i)}{\sum_{a'_i \in \mathcal{A}_i} \delta(a'_i, s_i)}, \quad \forall a_i \in \mathcal{A}_i.
+\]
+Putting everything together, we see that the following solution \( \pi^*_i \) is optimal for the local WBC:
+\[
+\pi_i(a_i|s_i) = \frac{\eta(s_i) \mu_i(a_i|s_i) e^{\frac{w^q_i q_i(s_i, a_i) - w^v_i v_i(s_i)}{\beta}}}{\Delta(s_i)},
+\]
+where
+\[
+\Delta(s_i) = \sum_{a_i \in \mathcal{A}_i} \eta(s_i) \mu_i(a_i|s_i) e^{\frac{w^q_i q_i(s_i, a_i) - w^v_i v_i(s_i)}{\beta}}.
+\]
+\end{proof}
+We first note that each mixing network \( \mathcal{M}_w[\mathbf{q}] \) \mathcal{M}_w[\mathbf{q}]  or \( \mathcal{M}_w[\mathbf{v}] \) \mathcal{M}_w[\mathbf{v}]  can be expressed as a linear function of its inputs:
+\[
+\begin{aligned}
+Q_{\text{tot}}(\mathbf{s}, \mathbf{a}) &= \mathcal{M}_w[\mathbf{q}](\mathbf{s}, \mathbf{a}) = \sum_{i \in \mathcal{N}} w^q_i q_i(s_i, a_i) + b_q, \\
+V_{\text{tot}}(\mathbf{s}) &= \mathcal{M}_w[\mathbf{v}](\mathbf{s}) = \sum_{i \in \mathcal{N}} w^v_i v_i(s_i) + b_v.
+\end{aligned}
+\]",2501.18944,Missing Proofs
+3102348,71,"Q_{\text{tot}}\text{tot}(\mathbf{s}, \mathbf{a}) &= \mathcal{M}_w[\mathbf{q}](\mathbf{s}, \mathbf{a}) = \sum_{i \in \mathcal{N}}i \in \mathcal{N} w^q_i q_i(s_i, a_i) + b_q, \\
+V_{\text{tot}}\text{tot}(\mathbf{s}) &= \mathcal{M}_w[\mathbf{v}](\mathbf{s}) = \sum_{i \in \mathcal{N}}i \in \mathcal{N} w^v_i v_i(s_i) + b_v.",2501.18944,Missing Proofs
+3102349,72,"Thus,
+\[
+e^{\frac{Q_{\text{tot}}(\mathbf{s}, \mathbf{a}) - V_{\text{tot}}(\mathbf{s})}{\beta}} = e^{\frac{b_q - b_v}{\beta}} \prod_{i \in \mathcal{N}} e^{\frac{w^q_i q_i(s_i, a_i) - w^v_i v_i(s_i)}{\beta}}.
+\]
+e^{\frac{Q_{\text{tot}}(\mathbf{s}, \mathbf{a}) - V_{\text{tot}}(\mathbf{s})}{\beta}}\frac{Q_{\text{tot}}(\mathbf{s}, \mathbf{a}) - V_{\text{tot}}(\mathbf{s})}{\beta} = e^{\frac{b_q - b_v}{\beta}}\frac{b_q - b_v}{\beta} \prod_{i \in \mathcal{N}}i \in \mathcal{N} e^{\frac{w^q_i q_i(s_i, a_i) - w^v_i v_i(s_i)}{\beta}}\frac{w^q_i q_i(s_i, a_i) - w^v_i v_i(s_i)}{\beta}.",2501.18944,Missing Proofs
+3102350,73,"Now, let us consider the objective function of the local WBC and write:
+\[
+\begin{aligned}
+g(\pi_i) &= \sum_{\mathbf{s} \in \mathcal{S}, \mathbf{a} \in \mathcal{A}} \mu_{\text{tot}}(\mathbf{a}|\mathbf{s}) e^{\frac{Q_{\text{tot}}(\mathbf{s}, \mathbf{a}) - V_{\text{tot}}(\mathbf{s})}{\beta}} \log \pi_i(a_i | s_i) \\
+&= \sum_{\mathbf{s} \in \mathcal{S}, \mathbf{a} \in \mathcal{A}} e^{\frac{b_q - b_v}{\beta}} \prod_{i \in \mathcal{N}} \mu(a_i|s_i) e^{\frac{w^q_i q_i(s_i, a_i) - w^v_i v_i(s_i)}{\beta}} \log \pi_i(a_i | s_i).
+\end{aligned}
+\]",2501.18944,Missing Proofs
+3102351,74,"g(\pi_i) &= \sum_{\mathbf{s} \in \mathcal{S}, \mathbf{a} \in \mathcal{A}}\mathbf{s} \in \mathcal{S}, \mathbf{a} \in \mathcal{A} \mu_{\text{tot}}\text{tot}(\mathbf{a}|\mathbf{s}) e^{\frac{Q_{\text{tot}}(\mathbf{s}, \mathbf{a}) - V_{\text{tot}}(\mathbf{s})}{\beta}}\frac{Q_{\text{tot}}(\mathbf{s}, \mathbf{a}) - V_{\text{tot}}(\mathbf{s})}{\beta} \log \pi_i(a_i | s_i) \\
+&= \sum_{\mathbf{s} \in \mathcal{S}, \mathbf{a} \in \mathcal{A}}\mathbf{s} \in \mathcal{S}, \mathbf{a} \in \mathcal{A} e^{\frac{b_q - b_v}{\beta}}\frac{b_q - b_v}{\beta} \prod_{i \in \mathcal{N}}i \in \mathcal{N} \mu(a_i|s_i) e^{\frac{w^q_i q_i(s_i, a_i) - w^v_i v_i(s_i)}{\beta}}\frac{w^q_i q_i(s_i, a_i) - w^v_i v_i(s_i)}{\beta} \log \pi_i(a_i | s_i).",2501.18944,Missing Proofs
+3102352,75,"Thus, for each agent \( i \in \mathcal{N} \) i \in \mathcal{N}  and local state \( s_i \in \mathcal{S}_i \) s_i \in \mathcal{S}_i , we extract all the components of \( g(\pi_i) \) g(\pi_i)  that involve \( \pi_i(a_i|s_i) \) \pi_i(a_i|s_i)  as:
+\[
+\begin{aligned}
+g^{s_i}(\pi_i) &= \sum_{\mathbf{s}', \mathbf{a}' | s'_i = s_i} e^{\frac{b_q - b_v}{\beta}} \prod_{j \in \mathcal{N}, j \neq i} \mu(a'_j|s'_j) e^{\frac{w^q_j q_j(s'_j, a'_j) - w^v_j v_j(s'_j)}{\beta}} \\
+&\quad \times \left( \mu_i(a'_i|s_i) e^{\frac{w^q_i q_i(s_i, a'_i) - w^v_i v_i(s_i)}{\beta}} \log \pi_i(a'_i | s_i) \right) \\
+&= \sum_{a'_i \in \mathcal{A}_i} \eta(s_i) \left( \mu_i(a'_i|s_i) e^{\frac{w^q_i q_i(s_i, a'_i) - w^v_i v_i(s_i)}{\beta}} \log \pi_i(a'_i | s_i) \right),
+\end{aligned}
+\]",2501.18944,Missing Proofs
+3102353,76,"g^{s_i}s_i(\pi_i) &= \sum_{\mathbf{s}', \mathbf{a}' | s'_i = s_i}\mathbf{s}', \mathbf{a}' | s'_i = s_i e^{\frac{b_q - b_v}{\beta}}\frac{b_q - b_v}{\beta} \prod_{j \in \mathcal{N}, j \neq i}j \in \mathcal{N}, j \neq i \mu(a'_j|s'_j) e^{\frac{w^q_j q_j(s'_j, a'_j) - w^v_j v_j(s'_j)}{\beta}}\frac{w^q_j q_j(s'_j, a'_j) - w^v_j v_j(s'_j)}{\beta} \\
+&\quad \times \left( \mu_i(a'_i|s_i) e^{\frac{w^q_i q_i(s_i, a'_i) - w^v_i v_i(s_i)}{\beta}}\frac{w^q_i q_i(s_i, a'_i) - w^v_i v_i(s_i)}{\beta} \log \pi_i(a'_i | s_i) \right) \\
+&= \sum_{a'_i \in \mathcal{A}_i}a'_i \in \mathcal{A}_i \eta(s_i) \left( \mu_i(a'_i|s_i) e^{\frac{w^q_i q_i(s_i, a'_i) - w^v_i v_i(s_i)}{\beta}}\frac{w^q_i q_i(s_i, a'_i) - w^v_i v_i(s_i)}{\beta} \log \pi_i(a'_i | s_i) \right),",2501.18944,Missing Proofs
+3102354,77,"where
+\[
+\eta(s_i) = \sum_{\mathbf{s}', \mathbf{a}' | s'_i = s_i} e^{\frac{b_q - b_v}{\beta}} \prod_{j \in \mathcal{N}, j \neq i} \mu(a'_j|s'_j) e^{\frac{w^q_j q_j(s'_j, a'_j) - w^v_j v_j(s'_j)}{\beta}},
+\]
+\eta(s_i) = \sum_{\mathbf{s}', \mathbf{a}' | s'_i = s_i}\mathbf{s}', \mathbf{a}' | s'_i = s_i e^{\frac{b_q - b_v}{\beta}}\frac{b_q - b_v}{\beta} \prod_{j \in \mathcal{N}, j \neq i}j \in \mathcal{N}, j \neq i \mu(a'_j|s'_j) e^{\frac{w^q_j q_j(s'_j, a'_j) - w^v_j v_j(s'_j)}{\beta}}\frac{w^q_j q_j(s'_j, a'_j) - w^v_j v_j(s'_j)}{\beta},",2501.18944,Missing Proofs
+3102355,78,which is independent of any local actions \( a'_i \) a'_i .,2501.18944,Missing Proofs
+3102356,79,"The local WBC problem thus becomes the problem of finding local policies \( \pi_i(\cdot|s_i) \) \pi_i(\cdot|s_i)  that maximize \( g^{s_i}(\pi_i) \) g^{s_i}s_i(\pi_i)  for any local state \( s_i \) s_i . For notational simplicity, let
+\[
+\delta(a'_i, s_i) = \eta(s_i) \mu_i(a'_i|s_i) e^{\frac{w^q_i q_i(s_i, a'_i) - w^v_i v_i(s_i)}{\beta}}.
+\]
+\delta(a'_i, s_i) = \eta(s_i) \mu_i(a'_i|s_i) e^{\frac{w^q_i q_i(s_i, a'_i) - w^v_i v_i(s_i)}{\beta}}\frac{w^q_i q_i(s_i, a'_i) - w^v_i v_i(s_i)}{\beta}.",2501.18944,Missing Proofs
+3102357,80,"We then write the local objective function \( g^{s_i}(\pi_i) \) g^{s_i}s_i(\pi_i)  as:
+\[
+g^{s_i}(\pi_i) = \sum_{a_i \in \mathcal{A}_i} \delta(a_i, s_i) \log \pi_i(a_i|s_i).
+\]
+g^{s_i}s_i(\pi_i) = \sum_{a_i \in \mathcal{A}_i}a_i \in \mathcal{A}_i \delta(a_i, s_i) \log \pi_i(a_i|s_i).",2501.18944,Missing Proofs
+3102358,81,"To solve the problem \( \max_{\pi_i} g^{s_i}(\pi_i) \) \max_{\pi_i}\pi_i g^{s_i}s_i(\pi_i) , let us consider a general version (with simplified notation):
+\[
+\max_{\mathbf{t}} \left\{ g(\mathbf{t}) = \sum_{i \in \mathcal{N}} \alpha_i \log t_i \;\Big|\; \mathbf{t} \in [0, 1]^n, \sum_i t_i = 1 \right\},
+\]
+\max_{\mathbf{t}}\mathbf{t} \left\{ g(\mathbf{t}) = \sum_{i \in \mathcal{N}}i \in \mathcal{N} \alpha_i \log t_i \;\Big|\; \mathbf{t} \in [0, 1]^n, \sum_i t_i = 1 \right\},",2501.18944,Missing Proofs
+3102359,82,"where \( \alpha_i \geq 0 \) \alpha_i \geq 0  and \( g(\mathbf{t}): [0, 1]^n \rightarrow \mathbb{R} \) g(\mathbf{t}): [0, 1]^n \rightarrow \mathbb{R} . By considering the Lagrangian dual of this problem, we can see that an optimal solution \( \mathbf{t}^* \) \mathbf{t}^*  must satisfy the following KKT conditions:
+\[
+\begin{cases}
+\mathbf{t}^* \in (0, 1)^n, \\
+\sum_i t^*_i = 1, \\
+\frac{\alpha_i}{t^*_i} = \frac{\alpha_j}{t^*_j}, \quad \forall i, j \in \mathcal{N}.
+\end{cases}
+\]",2501.18944,Missing Proofs
+3102360,83,"\mathbf{t}^* \in (0, 1)^n, \\
+\sum_i t^*_i = 1, \\
+\frac{\alpha_i}{t^*_i} = \frac{\alpha_j}{t^*_j}, \quad \forall i, j \in \mathcal{N}.",2501.18944,Missing Proofs
+3102361,84,"These conditions directly imply that:
+\[
+t^*_i = \frac{\alpha_i}{\sum_{j \in \mathcal{N}} \alpha_j}.
+\]
+t^*_i = \frac{\alpha_i}{\sum_{j \in \mathcal{N}} \alpha_j}.",2501.18944,Missing Proofs
+3102362,85,"We return to the maximization of \( g^{s_i}(\pi_i) \) g^{s_i}s_i(\pi_i) , which yields an optimal solution:
+\[
+\pi^*_i(a_i|s_i) = \frac{\delta(a_i, s_i)}{\sum_{a'_i \in \mathcal{A}_i} \delta(a'_i, s_i)}, \quad \forall a_i \in \mathcal{A}_i.
+\]
+\pi^*_i(a_i|s_i) = \frac{\delta(a_i, s_i)}{\sum_{a'_i \in \mathcal{A}_i} \delta(a'_i, s_i)}, \quad \forall a_i \in \mathcal{A}_i.",2501.18944,Missing Proofs
+3102363,86,"Putting everything together, we see that the following solution \( \pi^*_i \) \pi^*_i  is optimal for the local WBC:
+\[
+\pi_i(a_i|s_i) = \frac{\eta(s_i) \mu_i(a_i|s_i) e^{\frac{w^q_i q_i(s_i, a_i) - w^v_i v_i(s_i)}{\beta}}}{\Delta(s_i)},
+\]
+\pi_i(a_i|s_i) = \frac{\eta(s_i) \mu_i(a_i|s_i) e^{\frac{w^q_i q_i(s_i, a_i) - w^v_i v_i(s_i)}{\beta}}}{\Delta(s_i)},",2501.18944,Missing Proofs
+3102364,87,"where
+\[
+\Delta(s_i) = \sum_{a_i \in \mathcal{A}_i} \eta(s_i) \mu_i(a_i|s_i) e^{\frac{w^q_i q_i(s_i, a_i) - w^v_i v_i(s_i)}{\beta}}.
+\]
+\Delta(s_i) = \sum_{a_i \in \mathcal{A}_i}a_i \in \mathcal{A}_i \eta(s_i) \mu_i(a_i|s_i) e^{\frac{w^q_i q_i(s_i, a_i) - w^v_i v_i(s_i)}{\beta}}\frac{w^q_i q_i(s_i, a_i) - w^v_i v_i(s_i)}{\beta}.",2501.18944,Missing Proofs
+3102365,88,"\subsection{Proof of Proposition \ref{prop:log-sum-exp-v-q}}
+\textbf{Proposition \ref{prop:log-sum-exp-v-q}:}
+ \textit{   Each local value \( v_i \) can be expressed as a (modified) log-sum-exp of the local Q-function \( q_i \):
+    \begin{equation}\label{eq:log-sum-v-q}
+            v_i(s_i) = \frac{\beta}{w^v_i} \log \sum_{a_i\sim\mu_i(\cdot|s_i)} e^{\frac{w^q_i}{\beta} q_i(s_i,a_i)} + \frac{\beta}{w^v_i} \log\left(\frac{\eta(s_i)}{\Delta(s_i)}\right).
+    \end{equation}}
+\begin{proof}
+   Since \( \pi^*_i \) is a valid probability distribution, we have \( \sum_{a_i} \pi^*_i(a_i|s_i) = 1 \). Substituting the closed-form formula of \( \pi^*_i \) stated in Theorem \ref{thr:local-pi-local-qv}, we have:
+\[
+\sum_{a_i} \frac{\eta(s_i)}{\Delta(s_i)} \mu_i(a_i|s_i) e^{\frac{w^q_i q_i(s_i, a_i) - w^v_i v_i(s_i)}{\beta}} = 1.
+\]
+Taking \( e^{w^v_i v_i(s_i)/\beta} \) outside the summation, we get:
+\[
+\sum_{a_i} \frac{\eta(s_i)}{\Delta(s_i)} \mu_i(a_i|s_i) e^{\frac{w^q_i q_i(s_i, a_i)}{\beta}} = e^{w^v_i v_i(s_i)/\beta}.
+\]
+This directly leads to the log-sum-exp formula:
+\[
+v_i(s_i) = \frac{\beta}{w^v_i} \log\left( \sum_{a_i} \frac{\eta(s_i)}{\Delta(s_i)} \mu_i(a_i|s_i) e^{\frac{w^q_i q_i(s_i, a_i)}{\beta}} \right)=  \frac{\beta}{w^v_i} \log \sum_{a_i\sim\mu_i(\cdot|s_i)} e^{\frac{w^q_i}{\beta} q_i(s_i,a_i)} + \frac{\beta}{w^v_i} \log\left(\frac{\eta(s_i)}{\Delta(s_i)}\right).,
+\]
+as desired.
+    
+\end{proof}\begin{proof}
+   Since \( \pi^*_i \) is a valid probability distribution, we have \( \sum_{a_i} \pi^*_i(a_i|s_i) = 1 \). Substituting the closed-form formula of \( \pi^*_i \) stated in Theorem \ref{thr:local-pi-local-qv}, we have:
+\[
+\sum_{a_i} \frac{\eta(s_i)}{\Delta(s_i)} \mu_i(a_i|s_i) e^{\frac{w^q_i q_i(s_i, a_i) - w^v_i v_i(s_i)}{\beta}} = 1.
+\]
+Taking \( e^{w^v_i v_i(s_i)/\beta} \) outside the summation, we get:
+\[
+\sum_{a_i} \frac{\eta(s_i)}{\Delta(s_i)} \mu_i(a_i|s_i) e^{\frac{w^q_i q_i(s_i, a_i)}{\beta}} = e^{w^v_i v_i(s_i)/\beta}.
+\]
+This directly leads to the log-sum-exp formula:
+\[
+v_i(s_i) = \frac{\beta}{w^v_i} \log\left( \sum_{a_i} \frac{\eta(s_i)}{\Delta(s_i)} \mu_i(a_i|s_i) e^{\frac{w^q_i q_i(s_i, a_i)}{\beta}} \right)=  \frac{\beta}{w^v_i} \log \sum_{a_i\sim\mu_i(\cdot|s_i)} e^{\frac{w^q_i}{\beta} q_i(s_i,a_i)} + \frac{\beta}{w^v_i} \log\left(\frac{\eta(s_i)}{\Delta(s_i)}\right).,
+\]
+as desired.
+    
+\end{proof}
+   Since \( \pi^*_i \) \pi^*_i  is a valid probability distribution, we have \( \sum_{a_i} \pi^*_i(a_i|s_i) = 1 \) \sum_{a_i}a_i \pi^*_i(a_i|s_i) = 1 . Substituting the closed-form formula of \( \pi^*_i \) \pi^*_i  stated in Theorem \ref{thr:local-pi-local-qv}, we have:
+\[
+\sum_{a_i} \frac{\eta(s_i)}{\Delta(s_i)} \mu_i(a_i|s_i) e^{\frac{w^q_i q_i(s_i, a_i) - w^v_i v_i(s_i)}{\beta}} = 1.
+\]
+\sum_{a_i}a_i \frac{\eta(s_i)}{\Delta(s_i)} \mu_i(a_i|s_i) e^{\frac{w^q_i q_i(s_i, a_i) - w^v_i v_i(s_i)}{\beta}}\frac{w^q_i q_i(s_i, a_i) - w^v_i v_i(s_i)}{\beta} = 1.",2501.18944,Missing Proofs
+3102366,89,"Taking \( e^{w^v_i v_i(s_i)/\beta} \) e^{w^v_i v_i(s_i)/\beta}w^v_i v_i(s_i)/\beta  outside the summation, we get:
+\[
+\sum_{a_i} \frac{\eta(s_i)}{\Delta(s_i)} \mu_i(a_i|s_i) e^{\frac{w^q_i q_i(s_i, a_i)}{\beta}} = e^{w^v_i v_i(s_i)/\beta}.
+\]
+\sum_{a_i}a_i \frac{\eta(s_i)}{\Delta(s_i)} \mu_i(a_i|s_i) e^{\frac{w^q_i q_i(s_i, a_i)}{\beta}}\frac{w^q_i q_i(s_i, a_i)}{\beta} = e^{w^v_i v_i(s_i)/\beta}w^v_i v_i(s_i)/\beta.",2501.18944,Missing Proofs
+3102367,90,"This directly leads to the log-sum-exp formula:
+\[
+v_i(s_i) = \frac{\beta}{w^v_i} \log\left( \sum_{a_i} \frac{\eta(s_i)}{\Delta(s_i)} \mu_i(a_i|s_i) e^{\frac{w^q_i q_i(s_i, a_i)}{\beta}} \right)=  \frac{\beta}{w^v_i} \log \sum_{a_i\sim\mu_i(\cdot|s_i)} e^{\frac{w^q_i}{\beta} q_i(s_i,a_i)} + \frac{\beta}{w^v_i} \log\left(\frac{\eta(s_i)}{\Delta(s_i)}\right).,
+\]
+v_i(s_i) = \frac{\beta}{w^v_i} \log\left( \sum_{a_i}a_i \frac{\eta(s_i)}{\Delta(s_i)} \mu_i(a_i|s_i) e^{\frac{w^q_i q_i(s_i, a_i)}{\beta}}\frac{w^q_i q_i(s_i, a_i)}{\beta} \right)=  \frac{\beta}{w^v_i} \log \sum_{a_i\sim\mu_i(\cdot|s_i)}a_i\sim\mu_i(\cdot|s_i) e^{\frac{w^q_i}{\beta} q_i(s_i,a_i)}\frac{w^q_i}{\beta} q_i(s_i,a_i) + \frac{\beta}{w^v_i} \log\left(\frac{\eta(s_i)}{\Delta(s_i)}\right).,",2501.18944,Missing Proofs
+3102368,91,as desired.,2501.18944,Missing Proofs

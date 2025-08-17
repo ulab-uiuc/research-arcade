@@ -18,7 +18,8 @@ Paragraphs:
 1. {paragraph_1}
 2. {paragraph_2}
 3. {paragraph_3}
-...
+..
+
 N. {paragraph_N}
 
 ---

@@ -1,0 +1,53 @@
+id,paragraph_id,paper_section,paper_arxiv_id,reference_label,reference_type
+885382,1,Missing Proofs,2501.18944,prop:convex,
+885368,21,Multi-agent Preference-based RL (PbRL),2501.18944,prop:non-convex,
+885369,30,Multi-agent Preference-based RL (PbRL),2501.18944,thr:GLC,
+885370,31,Multi-agent Preference-based RL (PbRL),2501.18944,apd:proof-th-4.4,
+885371,31,Multi-agent Preference-based RL (PbRL),2501.18944,apd:proof-th-4.4,
+885372,31,Multi-agent Preference-based RL (PbRL),2501.18944,apd:proof-th-4.4,
+885373,32,Multi-agent Preference-based RL (PbRL),2501.18944,thr:local-pi-local-qv,
+885374,32,Multi-agent Preference-based RL (PbRL),2501.18944,thr:local-pi-local-qv,
+885375,34,Multi-agent Preference-based RL (PbRL),2501.18944,prop:log-sum-exp-v-q,
+885376,7,Practical Algorithm,2501.18944,algo:O-MAPL,
+885377,7,Experiments,2501.18944,tab:SMAC:winrates,table
+885378,7,Experiments,2501.18944,tab:mujoco:return,table
+885379,8,Experiments,2501.18944,tab:SMAC:winrates,table
+885380,9,Experiments,2501.18944,fig:smacv2:winrates,figure
+885381,9,Experiments,2501.18944,fig:mujoco-smac,figure
+885383,1,Missing Proofs,2501.18944,prop:convex,
+885384,37,Missing Proofs,2501.18944,prop:non-convex,
+885385,37,Missing Proofs,2501.18944,prop:convex,
+885386,41,Missing Proofs,2501.18944,fig:example,figure
+885387,44,Missing Proofs,2501.18944,fig:example,figure
+885388,54,Missing Proofs,2501.18944,fig:example,figure
+885389,56,Missing Proofs,2501.18944,thr:GLC,
+885390,57,Missing Proofs,2501.18944,thr:GLC,
+885391,62,Missing Proofs,2501.18944,thr:local-pi-local-qv,
+885392,62,Missing Proofs,2501.18944,thr:local-pi-local-qv,
+885393,88,Missing Proofs,2501.18944,prop:log-sum-exp-v-q,
+885394,88,Missing Proofs,2501.18944,prop:log-sum-exp-v-q,
+885395,88,Missing Proofs,2501.18944,thr:local-pi-local-qv,
+885396,88,Missing Proofs,2501.18944,thr:local-pi-local-qv,
+885397,88,Missing Proofs,2501.18944,thr:local-pi-local-qv,
+885398,2,Additional Details,2501.18944,tab:data,table
+885399,11,Additional Details,2501.18944,tab:sample_prompt,table
+885400,12,Additional Details,2501.18944,tab:api_cost,table
+885401,36,Additional Details,2501.18944,tab:hyperparameters,table
+885402,45,Additional Details,2501.18944,tab:rewards,table
+885403,49,Additional Details,2501.18944,tab:MaMujoco Returns - Rule-based,table
+885404,49,Additional Details,2501.18944,fig:MaMujoco Returns - Rule-based -evaluation curves,figure
+885405,51,Additional Details,2501.18944,tab:return-smacv1-rule-based,table
+885406,51,Additional Details,2501.18944,fig:Smacv1 Returns - Rule-based -evaluation curves,figure
+885407,53,Additional Details,2501.18944,tab:return-smacv2-rule-based,table
+885408,53,Additional Details,2501.18944,fig:Smacv2 Returns - Rule-based -evaluation curves,figure
+885409,56,Additional Details,2501.18944,tab:winrate-smacv1-rule-based,table
+885410,56,Additional Details,2501.18944,fig:curves-winrate-smacv1-rule-based,figure
+885411,58,Additional Details,2501.18944,tab:winrate-smacv2-rule-based,table
+885412,58,Additional Details,2501.18944,fig:curves-winrate-smacv2-rule-based,figure
+885413,61,Additional Details,2501.18944,tab:return-smacv1-LLM-based,table
+885414,61,Additional Details,2501.18944,fig:curves-smacv1-LLM-based,figure
+885415,61,Additional Details,2501.18944,tab:return-smacv1-LLM-based,table
+885416,63,Additional Details,2501.18944,tab:return-smacv2-LLM-based,table
+885417,63,Additional Details,2501.18944,fig:curves-smacv2-LLM-based,figure
+885418,68,Additional Details,2501.18944,tab:winrate-smacv2-LLM-based,table
+885419,68,Additional Details,2501.18944,fig:curves-smacv2-winrate-LLM-based,figure

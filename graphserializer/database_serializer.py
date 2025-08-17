@@ -3,9 +3,6 @@ import csv
 from io import StringIO
 import psycopg2
 
-PASSWORD = "Lcs20031121!"
-
-
 class DatabaseSerializer:
     """
     A versatile serializer that connects to a PostgreSQL database,
@@ -40,7 +37,7 @@ class DatabaseSerializer:
     def query_to_json_file(self, query, output_path, indent=2):
         """
         Execute a SQL query and write the result as a JSON file.
-
+        
         :param query: SQL query string to execute.
         :param output_path: Path to write the JSON output.
         :param indent: Pretty-print indentation (None for compact).
@@ -50,7 +47,7 @@ class DatabaseSerializer:
         with open(output_path, 'w', encoding='utf-8') as f:
             json.dump(records, f, indent=indent)
         return output_path
-
+        
     def query_to_csv_file(self, query, output_path, delimiter=',', include_header=True):
         """
         Execute a SQL query and write the result as a CSV file.
@@ -113,7 +110,7 @@ class DatabaseSerializer:
         SELECT * FROM {table_name}
         LIMIT {max_results}
         """
-
+        \
         dest_path = f"{dir_path}/{file_name}"
 
         op = self.query_to_csv_file(query=sql, output_path=dest_path)

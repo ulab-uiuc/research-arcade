@@ -1,0 +1,418 @@
+[
+  {
+    "id": 885382,
+    "paragraph_id": 1,
+    "paper_section": "Missing Proofs",
+    "paper_arxiv_id": "2501.18944",
+    "reference_label": "prop:convex",
+    "reference_type": null
+  },
+  {
+    "id": 885368,
+    "paragraph_id": 21,
+    "paper_section": "Multi-agent Preference-based RL (PbRL)",
+    "paper_arxiv_id": "2501.18944",
+    "reference_label": "prop:non-convex",
+    "reference_type": null
+  },
+  {
+    "id": 885369,
+    "paragraph_id": 30,
+    "paper_section": "Multi-agent Preference-based RL (PbRL)",
+    "paper_arxiv_id": "2501.18944",
+    "reference_label": "thr:GLC",
+    "reference_type": null
+  },
+  {
+    "id": 885370,
+    "paragraph_id": 31,
+    "paper_section": "Multi-agent Preference-based RL (PbRL)",
+    "paper_arxiv_id": "2501.18944",
+    "reference_label": "apd:proof-th-4.4",
+    "reference_type": null
+  },
+  {
+    "id": 885371,
+    "paragraph_id": 31,
+    "paper_section": "Multi-agent Preference-based RL (PbRL)",
+    "paper_arxiv_id": "2501.18944",
+    "reference_label": "apd:proof-th-4.4",
+    "reference_type": null
+  },
+  {
+    "id": 885372,
+    "paragraph_id": 31,
+    "paper_section": "Multi-agent Preference-based RL (PbRL)",
+    "paper_arxiv_id": "2501.18944",
+    "reference_label": "apd:proof-th-4.4",
+    "reference_type": null
+  },
+  {
+    "id": 885373,
+    "paragraph_id": 32,
+    "paper_section": "Multi-agent Preference-based RL (PbRL)",
+    "paper_arxiv_id": "2501.18944",
+    "reference_label": "thr:local-pi-local-qv",
+    "reference_type": null
+  },
+  {
+    "id": 885374,
+    "paragraph_id": 32,
+    "paper_section": "Multi-agent Preference-based RL (PbRL)",
+    "paper_arxiv_id": "2501.18944",
+    "reference_label": "thr:local-pi-local-qv",
+    "reference_type": null
+  },
+  {
+    "id": 885375,
+    "paragraph_id": 34,
+    "paper_section": "Multi-agent Preference-based RL (PbRL)",
+    "paper_arxiv_id": "2501.18944",
+    "reference_label": "prop:log-sum-exp-v-q",
+    "reference_type": null
+  },
+  {
+    "id": 885376,
+    "paragraph_id": 7,
+    "paper_section": "Practical Algorithm",
+    "paper_arxiv_id": "2501.18944",
+    "reference_label": "algo:O-MAPL",
+    "reference_type": null
+  },
+  {
+    "id": 885377,
+    "paragraph_id": 7,
+    "paper_section": "Experiments",
+    "paper_arxiv_id": "2501.18944",
+    "reference_label": "tab:SMAC:winrates",
+    "reference_type": "table"
+  },
+  {
+    "id": 885378,
+    "paragraph_id": 7,
+    "paper_section": "Experiments",
+    "paper_arxiv_id": "2501.18944",
+    "reference_label": "tab:mujoco:return",
+    "reference_type": "table"
+  },
+  {
+    "id": 885379,
+    "paragraph_id": 8,
+    "paper_section": "Experiments",
+    "paper_arxiv_id": "2501.18944",
+    "reference_label": "tab:SMAC:winrates",
+    "reference_type": "table"
+  },
+  {
+    "id": 885380,
+    "paragraph_id": 9,
+    "paper_section": "Experiments",
+    "paper_arxiv_id": "2501.18944",
+    "reference_label": "fig:smacv2:winrates",
+    "reference_type": "figure"
+  },
+  {
+    "id": 885381,
+    "paragraph_id": 9,
+    "paper_section": "Experiments",
+    "paper_arxiv_id": "2501.18944",
+    "reference_label": "fig:mujoco-smac",
+    "reference_type": "figure"
+  },
+  {
+    "id": 885383,
+    "paragraph_id": 1,
+    "paper_section": "Missing Proofs",
+    "paper_arxiv_id": "2501.18944",
+    "reference_label": "prop:convex",
+    "reference_type": null
+  },
+  {
+    "id": 885384,
+    "paragraph_id": 37,
+    "paper_section": "Missing Proofs",
+    "paper_arxiv_id": "2501.18944",
+    "reference_label": "prop:non-convex",
+    "reference_type": null
+  },
+  {
+    "id": 885385,
+    "paragraph_id": 37,
+    "paper_section": "Missing Proofs",
+    "paper_arxiv_id": "2501.18944",
+    "reference_label": "prop:convex",
+    "reference_type": null
+  },
+  {
+    "id": 885386,
+    "paragraph_id": 41,
+    "paper_section": "Missing Proofs",
+    "paper_arxiv_id": "2501.18944",
+    "reference_label": "fig:example",
+    "reference_type": "figure"
+  },
+  {
+    "id": 885387,
+    "paragraph_id": 44,
+    "paper_section": "Missing Proofs",
+    "paper_arxiv_id": "2501.18944",
+    "reference_label": "fig:example",
+    "reference_type": "figure"
+  },
+  {
+    "id": 885388,
+    "paragraph_id": 54,
+    "paper_section": "Missing Proofs",
+    "paper_arxiv_id": "2501.18944",
+    "reference_label": "fig:example",
+    "reference_type": "figure"
+  },
+  {
+    "id": 885389,
+    "paragraph_id": 56,
+    "paper_section": "Missing Proofs",
+    "paper_arxiv_id": "2501.18944",
+    "reference_label": "thr:GLC",
+    "reference_type": null
+  },
+  {
+    "id": 885390,
+    "paragraph_id": 57,
+    "paper_section": "Missing Proofs",
+    "paper_arxiv_id": "2501.18944",
+    "reference_label": "thr:GLC",
+    "reference_type": null
+  },
+  {
+    "id": 885391,
+    "paragraph_id": 62,
+    "paper_section": "Missing Proofs",
+    "paper_arxiv_id": "2501.18944",
+    "reference_label": "thr:local-pi-local-qv",
+    "reference_type": null
+  },
+  {
+    "id": 885392,
+    "paragraph_id": 62,
+    "paper_section": "Missing Proofs",
+    "paper_arxiv_id": "2501.18944",
+    "reference_label": "thr:local-pi-local-qv",
+    "reference_type": null
+  },
+  {
+    "id": 885393,
+    "paragraph_id": 88,
+    "paper_section": "Missing Proofs",
+    "paper_arxiv_id": "2501.18944",
+    "reference_label": "prop:log-sum-exp-v-q",
+    "reference_type": null
+  },
+  {
+    "id": 885394,
+    "paragraph_id": 88,
+    "paper_section": "Missing Proofs",
+    "paper_arxiv_id": "2501.18944",
+    "reference_label": "prop:log-sum-exp-v-q",
+    "reference_type": null
+  },
+  {
+    "id": 885395,
+    "paragraph_id": 88,
+    "paper_section": "Missing Proofs",
+    "paper_arxiv_id": "2501.18944",
+    "reference_label": "thr:local-pi-local-qv",
+    "reference_type": null
+  },
+  {
+    "id": 885396,
+    "paragraph_id": 88,
+    "paper_section": "Missing Proofs",
+    "paper_arxiv_id": "2501.18944",
+    "reference_label": "thr:local-pi-local-qv",
+    "reference_type": null
+  },
+  {
+    "id": 885397,
+    "paragraph_id": 88,
+    "paper_section": "Missing Proofs",
+    "paper_arxiv_id": "2501.18944",
+    "reference_label": "thr:local-pi-local-qv",
+    "reference_type": null
+  },
+  {
+    "id": 885398,
+    "paragraph_id": 2,
+    "paper_section": "Additional Details",
+    "paper_arxiv_id": "2501.18944",
+    "reference_label": "tab:data",
+    "reference_type": "table"
+  },
+  {
+    "id": 885399,
+    "paragraph_id": 11,
+    "paper_section": "Additional Details",
+    "paper_arxiv_id": "2501.18944",
+    "reference_label": "tab:sample_prompt",
+    "reference_type": "table"
+  },
+  {
+    "id": 885400,
+    "paragraph_id": 12,
+    "paper_section": "Additional Details",
+    "paper_arxiv_id": "2501.18944",
+    "reference_label": "tab:api_cost",
+    "reference_type": "table"
+  },
+  {
+    "id": 885401,
+    "paragraph_id": 36,
+    "paper_section": "Additional Details",
+    "paper_arxiv_id": "2501.18944",
+    "reference_label": "tab:hyperparameters",
+    "reference_type": "table"
+  },
+  {
+    "id": 885402,
+    "paragraph_id": 45,
+    "paper_section": "Additional Details",
+    "paper_arxiv_id": "2501.18944",
+    "reference_label": "tab:rewards",
+    "reference_type": "table"
+  },
+  {
+    "id": 885403,
+    "paragraph_id": 49,
+    "paper_section": "Additional Details",
+    "paper_arxiv_id": "2501.18944",
+    "reference_label": "tab:MaMujoco Returns - Rule-based",
+    "reference_type": "table"
+  },
+  {
+    "id": 885404,
+    "paragraph_id": 49,
+    "paper_section": "Additional Details",
+    "paper_arxiv_id": "2501.18944",
+    "reference_label": "fig:MaMujoco Returns - Rule-based -evaluation curves",
+    "reference_type": "figure"
+  },
+  {
+    "id": 885405,
+    "paragraph_id": 51,
+    "paper_section": "Additional Details",
+    "paper_arxiv_id": "2501.18944",
+    "reference_label": "tab:return-smacv1-rule-based",
+    "reference_type": "table"
+  },
+  {
+    "id": 885406,
+    "paragraph_id": 51,
+    "paper_section": "Additional Details",
+    "paper_arxiv_id": "2501.18944",
+    "reference_label": "fig:Smacv1 Returns - Rule-based -evaluation curves",
+    "reference_type": "figure"
+  },
+  {
+    "id": 885407,
+    "paragraph_id": 53,
+    "paper_section": "Additional Details",
+    "paper_arxiv_id": "2501.18944",
+    "reference_label": "tab:return-smacv2-rule-based",
+    "reference_type": "table"
+  },
+  {
+    "id": 885408,
+    "paragraph_id": 53,
+    "paper_section": "Additional Details",
+    "paper_arxiv_id": "2501.18944",
+    "reference_label": "fig:Smacv2 Returns - Rule-based -evaluation curves",
+    "reference_type": "figure"
+  },
+  {
+    "id": 885409,
+    "paragraph_id": 56,
+    "paper_section": "Additional Details",
+    "paper_arxiv_id": "2501.18944",
+    "reference_label": "tab:winrate-smacv1-rule-based",
+    "reference_type": "table"
+  },
+  {
+    "id": 885410,
+    "paragraph_id": 56,
+    "paper_section": "Additional Details",
+    "paper_arxiv_id": "2501.18944",
+    "reference_label": "fig:curves-winrate-smacv1-rule-based",
+    "reference_type": "figure"
+  },
+  {
+    "id": 885411,
+    "paragraph_id": 58,
+    "paper_section": "Additional Details",
+    "paper_arxiv_id": "2501.18944",
+    "reference_label": "tab:winrate-smacv2-rule-based",
+    "reference_type": "table"
+  },
+  {
+    "id": 885412,
+    "paragraph_id": 58,
+    "paper_section": "Additional Details",
+    "paper_arxiv_id": "2501.18944",
+    "reference_label": "fig:curves-winrate-smacv2-rule-based",
+    "reference_type": "figure"
+  },
+  {
+    "id": 885413,
+    "paragraph_id": 61,
+    "paper_section": "Additional Details",
+    "paper_arxiv_id": "2501.18944",
+    "reference_label": "tab:return-smacv1-LLM-based",
+    "reference_type": "table"
+  },
+  {
+    "id": 885414,
+    "paragraph_id": 61,
+    "paper_section": "Additional Details",
+    "paper_arxiv_id": "2501.18944",
+    "reference_label": "fig:curves-smacv1-LLM-based",
+    "reference_type": "figure"
+  },
+  {
+    "id": 885415,
+    "paragraph_id": 61,
+    "paper_section": "Additional Details",
+    "paper_arxiv_id": "2501.18944",
+    "reference_label": "tab:return-smacv1-LLM-based",
+    "reference_type": "table"
+  },
+  {
+    "id": 885416,
+    "paragraph_id": 63,
+    "paper_section": "Additional Details",
+    "paper_arxiv_id": "2501.18944",
+    "reference_label": "tab:return-smacv2-LLM-based",
+    "reference_type": "table"
+  },
+  {
+    "id": 885417,
+    "paragraph_id": 63,
+    "paper_section": "Additional Details",
+    "paper_arxiv_id": "2501.18944",
+    "reference_label": "fig:curves-smacv2-LLM-based",
+    "reference_type": "figure"
+  },
+  {
+    "id": 885418,
+    "paragraph_id": 68,
+    "paper_section": "Additional Details",
+    "paper_arxiv_id": "2501.18944",
+    "reference_label": "tab:winrate-smacv2-LLM-based",
+    "reference_type": "table"
+  },
+  {
+    "id": 885419,
+    "paragraph_id": 68,
+    "paper_section": "Additional Details",
+    "paper_arxiv_id": "2501.18944",
+    "reference_label": "fig:curves-smacv2-winrate-LLM-based",
+    "reference_type": "figure"
+  }
+]
