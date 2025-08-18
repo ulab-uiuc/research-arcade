@@ -43,10 +43,10 @@ def ref_insertion(args):
         # Then find the content
         ref_id_mapping[data_id] = ref_id_global
 
-
+    
     ground_truth = []
 
-    # Retrieve the ground truth
+    # Retrieve the ground truth TODO
     
 
     evals = []
