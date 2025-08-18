@@ -4,6 +4,8 @@ load_dotenv()
 API_KEY = os.getenv("API_KEY")
 BASE_URL = "https://integrate.api.nvidia.com/v1"
 
+from utils import paragraph_ref_to_global_ref, answer_evaluation, select_papers_with_criteria, paragraph_ref_id_to_global_ref
+
 def ref_insertion(args):
 
     """
@@ -274,8 +276,65 @@ def ref_insertion(args):
 def paragraph_generation(args):
     
     """
-    
+    Given the adjacent paragraphs, figures, tables and citations of that paragraph, re-gererate the paragraph.
     """
+
+    conn = psycopg2.connect(
+            host="localhost", dbname="postgres",
+            user="postgres", password=PASSWORD, port="5432"
+    )
+    cur = conn.cursor()
+
+
+    paragraph_ids = args.paragraph_ids
+    k_neighbour = args.paragraph_ids.k_neighbour
+
+    figure_available = args.figure_available
+    table_available = args.table_available
+
+    figure_paths = None
+    table_contents = None
+
+    for paragraph_id in paragraph_ids:
+        
+        # Fetch all the figures
+        if figure_available:
+            global_figure_ids = paragraph_ref_to_global_ref(paragraph_id = paragraph_id, ref_type = "figure")
+            # cur.execute("""
+            # SELECT * FROM paragraph_references WHERE paragraph_id = %s AND reference_type = 'figure';
+            # """)
+
+            # figure_ids = cur.fetchall()
+
+            # Fetch all the table paths
+            # Collect a set of figures and obtain the mapping from id to paths
+            cur.execute("""
+            SELECT {path} FROM figures WHERE id = global_figure_ids
+            """)
+
+            figure_paths = cur.fetchall()
+
+
+        
+        if table_available:
+            global_table_ids = paragraph_ref_to_global_ref(paragraph_id = paragraph_id, ref_type = "table")
+
+            # Fetch a set of table contents
+            cur.execute("""
+            SELECT {table_text} FROM figures WHERE id = global_figure_ids
+            """)
+
+            table_text = cur.fetchall()
+
+
+        # Fetch the abstracts of cited papers
+        
+        
+
+
+
+    
+
     
     pass
 

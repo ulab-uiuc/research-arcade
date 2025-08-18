@@ -213,14 +213,15 @@ def build_citation_graph(
     # print(os.path.join(output_path, 'history.json'))
     # print(os.path.exists(os.path.join(output_path, 'history.json')))
     if os.path.exists(os.path.join(output_path, "history.json")):
-        with open(os.path.join(output_path, "history.json"), "r") as f:
-            history = json.load(f)
-        for item in history:
-            for item_ in item["extended"]:
-                BFS_que.put(item_)
-            cnt += 1
-        visited = set([item["paper"] for item in history])
-        print(cnt)
+        pass
+        # with open(os.path.join(output_path, "history.json"), "r") as f:
+        #     history = json.load(f)
+        # for item in history:
+        #     for item_ in item["extended"]:
+        #         BFS_que.put(item_)
+        #     cnt += 1
+        # visited = set([item["paper"] for item in history])
+        # print(cnt)
     # Create a tqdm progress bar
     with tqdm(total=scale, desc="Processing") as pbar:
         for _ in range(cnt):
@@ -386,8 +387,9 @@ def build_citation_graph(
                     "endpoint": cnt >= scale,
                 }
             )
-            with open(os.path.join(output_path, "history.json"), "w") as f:
-                json.dump(history, f)
+            pass
+            # with open(os.path.join(output_path, "history.json"), "w") as f:
+            #     json.dump(history, f)
 
     print(f"Finished processing {cnt} papers")
 
@@ -432,15 +434,16 @@ def build_citation_graph_thread(
     os.system(f"rm -rf {working_path}/*")
     # Load history if exists
     if os.path.exists(os.path.join(output_path, "history.json")):
-        with open(os.path.join(output_path, "history.json"), "r") as f:
-            history = json.load(f)
-        # print(history)
-        for item in history:
-            for item_ in item["extended"]:
-                BFS_que.put(item_)
-            cnt += 1
-        visited = set([item["paper"] for item in history])
-        print(f"cnt: {cnt}")
+        pass
+        # with open(os.path.join(output_path, "history.json"), "r") as f:
+        #     history = json.load(f)
+        # # print(history)
+        # for item in history:
+        #     for item_ in item["extended"]:
+        #         BFS_que.put(item_)
+        #     cnt += 1
+        # visited = set([item["paper"] for item in history])
+        # print(f"cnt: {cnt}")
     print(f"BFS_que.qsize(): {BFS_que.qsize()}")
 
     def process_papers():
@@ -659,8 +662,9 @@ def build_citation_graph_thread(
                             "published": published,
                         }
                     )
-                    with open(os.path.join(output_path, "history.json"), "w") as f:
-                        json.dump(history, f)
+                    pass
+                    # with open(os.path.join(output_path, "history.json"), "w") as f:
+                    #     json.dump(history, f)
             except Exception as e:
                 print(e)
                 print(
@@ -678,8 +682,9 @@ def build_citation_graph_thread(
                             "published": str(published),
                         }
                     )
-                    with open(os.path.join(output_path, "history.json"), "w") as f:
-                        json.dump(history, f)
+                    pass
+                    # with open(os.path.join(output_path, "history.json"), "w") as f:
+                    #     json.dump(history, f)
                 continue
 
     # Create and start threads
