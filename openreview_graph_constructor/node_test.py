@@ -19,12 +19,20 @@ print(len(results))
 '''
 
 # 2024
-venue = 'ICLR.cc/2024/Conference'
+# venue = 'ICLR.cc/2024/Conference'
 # papers
 '''
 results = sql_database.get_node_features_by_venue("papers", venue=venue)
 print(len(results))
 '''
+# revisions
+'''
+results = sql_database.get_node_features_by_venue("revisions", venue=venue)
+print(len(results))
+'''
+
+# 2023
+# venue = 'ICLR.cc/2023/Conference'
 # revisions
 '''
 results = sql_database.get_node_features_by_venue("revisions", venue=venue)
