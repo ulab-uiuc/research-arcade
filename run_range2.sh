@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-START="2025-03-06"
+START="2025-03-12"
 END="2025-04-02"      # inclusive
 FIELD="cs"
 DEST="./download"

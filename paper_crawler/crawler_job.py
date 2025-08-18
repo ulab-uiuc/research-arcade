@@ -31,7 +31,7 @@ class CrawlerJob:
         """
         - dest_dir: str
         """
-
+        
         data_dir_path = f"{dest_dir}/output"
         figures_dir_path = f"{dest_dir}/output/images"
         output_dir_path = f"{dest_dir}/output/paragraphs"
@@ -145,13 +145,13 @@ class CrawlerJob:
         for id in cleaned_ids:
             try:
                 fetched = self.tdb.initialize_state(id)
-                if fetched:
-                    added.append(id)
-                    print(f"[+] Task for {id} initialized.")
-                else:
-                    skipped.append(id)
-                    print(f"[!]\tTask for {id} already exists — skipping.")
-
+                # if fetched:
+                added.append(id)
+                print(f"[+] Task for {id} initialized.")
+                # else:
+                #     skipped.append(id)
+                #     print(f"[!]\tTask for {id} already exists — skipping.")
+            
             except Exception as e:
                 failed[id] = repr(e)
                 print(f"[!]\tPaper {id} not added into database: {e}")

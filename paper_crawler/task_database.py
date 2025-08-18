@@ -178,7 +178,7 @@ class TaskDatabase:
         ON CONFLICT (paper_arxiv_id) DO NOTHING
         RETURNING id
         """
-
+        
         params = (paper_arxiv_id, False, False, False, False, False)
         self.cur.execute(sql, params)
         return self.cur.fetchone()

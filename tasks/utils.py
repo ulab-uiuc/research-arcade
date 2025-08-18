@@ -149,7 +149,7 @@ def paragraph_ref_to_global_ref(paragraph_id, ref_type):
                 cur.execute(
                     """
                     SELECT paper_arxiv_id, reference_label
-                    FROM paragraph_figures
+                    FROM paragraph_references
                     WHERE paragraph_id = %s AND reference_type = %s
                     """,
                     (paragraph_id, ref_type)
@@ -183,7 +183,7 @@ def paragraph_ref_to_global_ref(paragraph_id, ref_type):
 
 def paragraph_ref_id_to_global_ref(paragraph_ref_id, ref_type):
     """
-    Given a specific paragraph_figures.id and ref_type ('figure' or 'table'),
+    Given a specific paragraph_references.id and ref_type ('figure' or 'table'),
     return the corresponding global id from figures/tables.
     Returns: int | None
     """
@@ -202,11 +202,11 @@ def paragraph_ref_id_to_global_ref(paragraph_ref_id, ref_type):
 
     try:
         with conn, conn.cursor() as cur:
-            # 1) Fetch the (paper_arxiv_id, reference_label) for this specific paragraph_figures row
+            # 1) Fetch the (paper_arxiv_id, reference_label) for this specific paragraph_references row
             cur.execute(
                 """
                 SELECT paper_arxiv_id, reference_label
-                FROM paragraph_figures
+                FROM paragraph_references
                 WHERE id = %s AND reference_type = %s
                 """,
                 (paragraph_ref_id, ref_type)
@@ -234,14 +234,62 @@ def paragraph_ref_id_to_global_ref(paragraph_ref_id, ref_type):
         conn.close()
 
 
+def paragraph_citation_to_global_citation(paragraph_id):
+
+    conn = psycopg2.connect(
+        host="localhost",
+        dbname="postgres",
+        user="postgres",
+        password=PASSWORD,
+        port="5432"
+    )
+
+    abstract_list = []
+    
+    try:
+        with conn:
+            with conn.cursor() as cur:
+                # 1) Get (paper_arxiv_id, bib_key) pairs
+                cur.execute(
+                    """
+                    SELECT paper_arxiv_id, bib_key
+                    FROM paragraph_citations
+                    WHERE paragraph_id = %s
+                    """,
+                    (paragraph_id,)
+                )
+                pairs = cur.fetchall()
+
+                if not pairs:
+                    return ref_id_mapping  # empty dict
+
+                # 2) Resolve each reference
+                for arxiv_id, bib_key in pairs:
+
+                    cur.execute(
+                        sql.SQL("""
+                            SELECT cited_arxiv_id, bib_title FROM citations
+                            WHERE paper_arxiv_id = %s AND bib_key = %s
+                        """),
+                        (arxiv_id, bib_key)
+                    )
+                    row = cur.fetchone()
+                    if row is not None:
+
+        return ref_id_mapping
+
+    finally:
+        conn.close()
+
+
 def locate_reference(reference_id):
     try:
         with conn, conn.cursor() as cur:
-            # 1) Fetch the (paper_arxiv_id, reference_label) for this specific paragraph_figures row
+            # 1) Fetch the (paper_arxiv_id, reference_label) for this specific paragraph_refenrences row
             cur.execute(
                 """
                 SELECT paragraph_id
-                FROM paragraph_figures
+                FROM paragraph_references
                 WHERE id = %s AND reference_type = %s
                 """,
                 (paragraph_ref_id, ref_type)
