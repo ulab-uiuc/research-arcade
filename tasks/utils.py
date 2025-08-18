@@ -6,6 +6,8 @@ from openai import OpenAI
 import os
 import os
 import re
+import psycopg2
+from typing import List, Dict, Optional
 
 PASSWORD = "Lcs20031121!"
 
@@ -234,68 +236,57 @@ def paragraph_ref_id_to_global_ref(paragraph_ref_id, ref_type):
         conn.close()
 
 
-def paragraph_citation_to_global_citation(paragraph_id):
 
+def paragraph_to_global_citation(paragraph_id):
+    """
+    Return a list of {"cited_arxiv_id": str | None, "bib_title": str | None}
+    for all citations referenced by the given paragraph_id.
+    """
     conn = psycopg2.connect(
         host="localhost",
         dbname="postgres",
         user="postgres",
         password=PASSWORD,
-        port="5432"
+        port="5432",
     )
 
-    abstract_list = []
-
     try:
-        with conn:
-            with conn.cursor() as cur:
-                # 1) Get (paper_arxiv_id, bib_key) pairs
-                cur.execute(
-                    """
-                    SELECT paper_arxiv_id, bib_key
-                    FROM paragraph_citations
-                    WHERE paragraph_id = %s
-                    """,
-                    (paragraph_id,)
-                )
-                pairs = cur.fetchall()
+        with conn, conn.cursor() as cur:
+            # INNER JOIN: only rows that resolve in `citations`
+            cur.execute(
+                """
+                SELECT c.cited_arxiv_id, c.bib_title
+                FROM paragraph_citations pc
+                JOIN citations c
+                  ON c.paper_arxiv_id = pc.paper_arxiv_id
+                 AND c.bib_key = pc.bib_key
+                WHERE pc.paragraph_id = %s
+                """,
+                (paragraph_id,),
+            )
+            rows = cur.fetchall()
 
-                if not pairs:
-                    return ref_id_mapping  # empty dict
-
-                # 2) Resolve each reference
-                for arxiv_id, bib_key in pairs:
-
-                    cur.execute(
-                        sql.SQL("""
-                            SELECT cited_arxiv_id, bib_title FROM citations
-                            WHERE paper_arxiv_id = %s AND bib_key = %s
-                        """),
-                        (arxiv_id, bib_key)
-                    )
-                    # Then refer to the
-                    row = cur.fetchone()
-                    if row is not None:
-
-        return ref_id_mapping
-
+        return [(r[0], r[1]) for r in rows]
+    
     finally:
         conn.close()
 
 
-def locate_reference(reference_id):
-    try:
-        with conn, conn.cursor() as cur:
-            # 1) Fetch the (paper_arxiv_id, reference_label) for this specific paragraph_refenrences row
-            cur.execute(
-                """
-                SELECT paragraph_id
-                FROM paragraph_references
-                WHERE id = %s AND reference_type = %s
-                """,
-                (paragraph_ref_id, ref_type)
-            )
-        
+# def locate_reference(reference_id):
+#     """
+#     Given the id of a reference, locate which paragaph it belongs to
+#     """
+#     try:
+#         with conn, conn.cursor() as cur:
+#             # 1) Fetch the (paper_arxiv_id, reference_label) for this specific paragraph_refenrences row
+#             cur.execute(
+#                 """
+#                 SELECT paragraph_id
+#                 FROM paragraph_references
+#                 WHERE id = %s AND reference_type = %s
+#                 """,
+#                 (paragraph_ref_id, ref_type)
+#             )
 
 
 def figure_latex_path_to_path(path, arxiv_id, latex_path):

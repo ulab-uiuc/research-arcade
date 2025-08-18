@@ -1,10 +1,13 @@
-from util import load_client, answer_evaluation, load_prompt
 from dotenv import load_dotenv
 load_dotenv()
+import os
 API_KEY = os.getenv("API_KEY")
 BASE_URL = "https://integrate.api.nvidia.com/v1"
-
-from utils import paragraph_ref_to_global_ref, answer_evaluation, select_papers_with_criteria, paragraph_ref_id_to_global_ref
+PASSWORD = "Lcs20031121!"
+from utils import paragraph_ref_to_global_ref, answer_evaluation, select_papers_with_criteria, paragraph_ref_id_to_global_ref, load_client, load_prompt, paragraph_to_global_citation
+import psycopg2
+import Image
+from openai import OpenAI
 
 def ref_insertion(args):
 
@@ -22,10 +25,6 @@ def ref_insertion(args):
     )
     cur = conn.cursor()
     
-    client = OpenAI(
-        base_url=BASE_URL,
-        api_key=API_KEY
-    )
     
     data_type = args.data_type
 
@@ -39,7 +38,7 @@ def ref_insertion(args):
 
     ref_id_mapping = {}
 
-    for data_id in data_ids
+    for data_id in data_ids:
         # First retrieve the id
         ref_id_global = paragraph_ref_id_to_global_ref(data_id)
         # Then find the content
@@ -99,6 +98,10 @@ def ref_insertion(args):
 
             Final Answer (only indexes, comma-separated):
             """
+            client = OpenAI(
+            base_url = "https://integrate.api.nvidia.com/v1",
+            api_key = API_KEY
+            )
 
             completion = client.chat.completions.create(
             model="meta/llama-3.1-405b-instruct",
@@ -111,8 +114,8 @@ def ref_insertion(args):
 
             answer = ""
             for chunk in completion:
-            if chunk.choices[0].delta.content is not None:
-                answer = answer + chunk.choices[0].delta.content.strip()
+                if chunk.choices[0].delta.content is not None:
+                    answer = answer + chunk.choices[0].delta.content.strip()
                 # print(chunk.choices[0].delta.content, end="")
             
             # Finally find the ground truth
@@ -124,7 +127,7 @@ def ref_insertion(args):
             )
             """)
             
-            answer_evaluation = answer_evaluation(model_answer, ground_truth)
+            answer_evaluation = answer_evaluation(answer, ground_truth)
             evals.append(answer_evaluation)
 
 
@@ -186,11 +189,11 @@ def ref_insertion(args):
 
             answer = ""
             for chunk in completion:
-            if chunk.choices[0].delta.content is not None:
-                answer = answer + chunk.choices[0].delta.content.strip()
-                # print(chunk.choices[0].delta.content, end="")
+                if chunk.choices[0].delta.content is not None:
+                    answer = answer + chunk.choices[0].delta.content.strip()
+                    # print(chunk.choices[0].delta.content, end="")
 
-            answer_evaluation = answer_evaluation(model_answer, ground_truth)
+            answer_evaluation = answer_evaluation(answer, ground_truth)
             evals.append(answer_evaluation)
 
 
@@ -255,11 +258,11 @@ def ref_insertion(args):
 
             answer = ""
             for chunk in completion:
-            if chunk.choices[0].delta.content is not None:
-                answer = answer + chunk.choices[0].delta.content.strip()
-                # print(chunk.choices[0].delta.content, end="")
+                if chunk.choices[0].delta.content is not None:
+                    answer = answer + chunk.choices[0].delta.content.strip()
+                    # print(chunk.choices[0].delta.content, end="")
 
-            answer_evaluation = answer_evaluation(model_answer, ground_truth)
+            answer_evaluation = answer_evaluation(answer, ground_truth)
             evals.append(answer_evaluation)
     
     
@@ -293,7 +296,7 @@ def paragraph_generation(args):
     table_available = args.table_available
 
     figure_paths = None
-    table_contents = None
+    table_text = None
 
     for paragraph_id in paragraph_ids:
         
@@ -311,24 +314,50 @@ def paragraph_generation(args):
             cur.execute("""
             SELECT {path} FROM figures WHERE id = global_figure_ids
             """)
-
             figure_paths = cur.fetchall()
 
-
-        
         if table_available:
             global_table_ids = paragraph_ref_to_global_ref(paragraph_id = paragraph_id, ref_type = "table")
 
             # Fetch a set of table contents
             cur.execute("""
-            SELECT {table_text} FROM figures WHERE id = global_figure_ids
+            SELECT table_text FROM figures WHERE id = global_figure_ids
             """)
 
             table_text = cur.fetchall()
 
 
-        # Fetch the abstracts of cited papers
+            # Fetch the abstracts of cited papers
         
+        id_title_pairs = paragraph_to_global_citation(paragraph_id)
+        abstracts = []
+
+        for id, bib_title in id_title_pairs: 
+            if id:
+                id = id.split('/')[-1]
+                id_pure = id.split['v'][0]
+
+                # Search with both id and id_pure
+
+                cur.execute("""
+                SELECT abstract FROM figures WHERE arxiv_id = %s
+                """, (id, ))
+
+
+                res = cur.fetchone()
+
+                if not res:
+                    cur.execute("""
+                    SELECT abstract FROM figures WHERE arxiv_id = %s
+                    """, (id_pure, ))
+                    abs = cur.fetchone()
+
+                    abstracts.append(abs)
+        
+                
+
+        
+            # Give the current information to the LLM
         
 
 
