@@ -245,7 +245,7 @@ def paragraph_citation_to_global_citation(paragraph_id):
     )
 
     abstract_list = []
-    
+
     try:
         with conn:
             with conn.cursor() as cur:
@@ -273,6 +273,7 @@ def paragraph_citation_to_global_citation(paragraph_id):
                         """),
                         (arxiv_id, bib_key)
                     )
+                    # Then refer to the
                     row = cur.fetchone()
                     if row is not None:
 
