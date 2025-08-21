@@ -10,6 +10,8 @@ import time
 import os
 from dotenv import load_dotenv
 from typing import List, Tuple
+import unicodedata
+import difflib
 
 class NodeConstructor:
 
@@ -418,25 +420,68 @@ class NodeConstructor:
     def drop_tables(self):
         self.db.drop_all()
 
-    def search_title_with_name(self, title, name, max_result=20):
-        query = f"ti:{title} AND au:{name}"
+    # def search_title_with_name(self, title, name, max_result=20):
+    #     query = f"ti:{title} AND au:{name}"
+    #     search = arxiv.Search(
+    #         query=query,
+    #         max_results=max_result,
+    #         sort_by=arxiv.SortCriterion.Relevance,
+    #     )
+
+    #     print("Title of Cited Paper:")
+    #     print(title)
+    #     try:
+    #         print("Result:")
+    #         for result in search.results():
+    #             print(result.title)
+    #             if (self.title_cleaner(result.title )== title):
+    #                     # and any(name.lower() in a.name.lower() for a in result.authors)):
+    #                 return result.entry_id
+    #     except UnexpectedEmptyPageError:
+    #         # no more pages—stop iterating
+    #         pass
+
+    def _norm(self, s):
+        s = unicodedata.normalize("NFKC", s).casefold()
+        s = re.sub(r"\s+", " ", s)
+        s = re.sub(r"[^\w\s]", "", s)
+        return s.strip()
+
+    def search_title_with_name(self, title, name, max_result= 20, return_short_id= True):
+        def _q(s: str) -> str:
+            return '"' + s.replace('"', '\\"') + '"'
+
+        query = f'ti:{_q(title)} AND au:{_q(name)}'
         search = arxiv.Search(
             query=query,
             max_results=max_result,
             sort_by=arxiv.SortCriterion.Relevance,
         )
 
-        print("Title of Cited Paper:")
-        print(title)
+        client = arxiv.Client(page_size=min(max_result, 100), delay_seconds=3.0, num_retries=3)
+
+        want_title = self._norm(title)
+        want_author = self._norm(name)
+
         try:
-            print("Result:")
-            for result in search.results():
-                print(result.title)
-                if (self.title_cleaner(result.title )== title):
-                        # and any(name.lower() in a.name.lower() for a in result.authors)):
-                    return result.entry_id
-        except UnexpectedEmptyPageError:
-            # no more pages—stop iterating
+            for r in client.results(search):
+                # strict or near-exact title match
+                title_ok = (self._norm(r.title) == want_title) or (
+                    difflib.SequenceMatcher(a=self._norm(r.title), b=want_title).ratio() >= 0.97
+                )
+                if not title_ok:
+                    continue
+
+                # authors = [self._norm(getattr(a, "name", str(a))) for a in r.authors]
+                # if not any(want_author in a or a in want_author for a in authors):
+                #     continue
+
+                # prefer short arXiv ID; otherwise fall back to /abs/ tail
+                if return_short_id and hasattr(r, "get_short_id"):
+                    return r.get_short_id()
+                return r.entry_id.rsplit("/", 1)[-1]
+        except (arxiv.UnexpectedEmptyPageError, arxiv.HTTPError, arxiv.ArxivError):
+            # nothing found or transient API issue
             pass
 
         return None
@@ -492,15 +537,17 @@ class NodeConstructor:
         try to look it up via title + author surname, and update the record in the DB.
         """
         # 1. Pull the relevant citation rows
+        # TODO
         select_sql = """
             SELECT id, bib_title, author_cited_paper
             FROM citations
             WHERE citing_arxiv_id = %s
-            AND (cited_arxiv_id IS NULL OR cited_arxiv_id = '')
+            AND (cited_arxiv_id IS NULL OR TRIM(cited_arxiv_id) = '');
         """
         self.db.cur.execute(select_sql, (arxiv_id,))
         rows = self.db.cur.fetchall()
-
+        print(arxiv_id)
+        print(rows)
         # 2. For each, try to look up the arXiv ID and write it back
         for row in rows:
             citation_id, bib_title, bib_author_full = row

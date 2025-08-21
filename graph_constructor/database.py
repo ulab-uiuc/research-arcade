@@ -206,6 +206,16 @@ class Database:
             PRIMARY KEY (author_id, institution_id)
         )
         """)
+
+    def create_citation_sch_table(self):
+        self.cur.execute("""
+        CREATE TABLE IF NOT EXISTS citation_sch(
+            id SERIAL PRIMARY KEY,
+            arxiv_id VARCHAR(100) NOT NULL,
+            title TEXT NOT NULL,
+            abstract TEXT
+        );
+        """)
     
 
     def create_all(self):

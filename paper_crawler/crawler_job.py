@@ -124,7 +124,7 @@ class CrawlerJob:
             id_category = self.ids_with_major_category(arxiv_ids=arxiv_ids, category=category)
         else:
             id_category = arxiv_ids
-
+        
         cleaned_ids = []
 
         seen = set()
@@ -265,7 +265,7 @@ class CrawlerJob:
 
         # Instead of processing all papers at one, we process each paper separately
         # This avoids different papers using the same dir with some arxiv id (possible the id of the very first paper)
-
+        
         for arxiv_id in arxiv_ids:
             try:
                 self.md.build_paper_graph(
