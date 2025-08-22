@@ -21,7 +21,7 @@ for chunk in completion:
 
 client = OpenAI(
   base_url = "https://integrate.api.nvidia.com/v1",
-  api_key = “xxx”
+  api_key = ""
 )
 
 def generate_answer(text):
@@ -38,6 +38,3 @@ def generate_answer(text):
     for chunk in completion:
       if chunk.choices[0].delta.content is not None:
         print(chunk.choices[0].delta.content, end="")
-
-https://build.nvidia.com/nim
-这是所有的模型，我看也有multimodal的

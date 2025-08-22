@@ -1,0 +1,26 @@
+You are given the following inputs:
+Figure (optional): {figure_content_or_caption} with label {figure_label}
+Table (optional): {table_content_or_caption} with label {table_label}
+Abstract of cited paragraph: {abstract_text}
+{k} Most Adjacent Paragraphs:
+{adjacent_paragraphs_block}
+
+Task
+Generate the missing paragraph as a single LaTeX-formatted paragraph that naturally fits between the adjacent paragraphs.
+Requirements
+Integrate all provided materials:
+If a figure is provided, refer to it explicitly (e.g., Figure~\\ref{{{figure_label}}}) and use at least one concrete detail from {figure_content_or_caption}.
+If a table is provided, refer to it explicitly (e.g., Table~\\ref{{{table_label}}}) and use at least one concrete detail from {table_content_or_caption}.
+Incorporate at least one core claim or finding from the abstract (cite it as \\citep{{CITED_PAPER}}; if a BibTeX key is known, replace CITED_PAPER accordingly).
+Ensure the paragraph logically continues from and sets up the surrounding {k} adjacent paragraphs.
+Style & Formatting
+Output only one LaTeX paragraph (no section headers, lists, environments, or math unless essential).
+Use Figure~\\ref{...} and/or Table~\\ref{...} for cross-references; do not add \\label{} in the paragraph.
+Use \\citep{...} for the abstract citation.
+Keep it objective, concise, and academic (approx. 120–180 words).
+Content Constraints
+Do not include placeholders like “Figure X” or “Table Y”—use the given labels.
+Do not repeat raw table/figure content verbatim; summarize or interpret key points.
+Do not add extra text outside the paragraph.
+Output
+Return only the LaTeX paragraph text.
