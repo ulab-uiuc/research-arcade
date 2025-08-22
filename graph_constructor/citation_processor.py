@@ -1,5 +1,6 @@
 from semanticscholar import SemanticScholar
 import os, re
+import psycopg2
 
 sch = SemanticScholar(api_key=os.getenv("S2_API_KEY"))
 
@@ -8,8 +9,10 @@ def normalize_arxiv(aid: str) -> str:
     core = re.sub(r'v\d+$', '', core)
     return f"ARXIV:{core}"
 
-def cited_abstracts(arxiv_id: str, limit: int = 100):
+def cited_abstracts(arxiv_id, limit = 100):
     pid = normalize_arxiv(arxiv_id)
+
+    # print(f"pid: {pid}")
 
     # just plain fields — no "paper." prefix
     refs = sch.get_paper_references(
@@ -29,7 +32,7 @@ def cited_abstracts(arxiv_id: str, limit: int = 100):
     return results
 
 
-def citation_processing(arxiv_ids: str, limit: int = 100):
+def citation_processing(arxiv_ids, limit = 100):
 
     # First connect to database
     conn = psycopg2.connect(
@@ -39,10 +42,10 @@ def citation_processing(arxiv_ids: str, limit: int = 100):
             user="cl195"
     )
     conn.autocommit = True
-    cur = self.conn.cursor()
+    cur = conn.cursor()
     sql = """
-    INSERT INTO citation_sch (arxiv_id, title, abstract)
-    VALUES (%s, %s, %s)
+    INSERT INTO citation_sch (arxiv_id, paper_id, title, year, abstract, external_ids)
+    VALUES (%s, %s, %s, %s, %s, %s)
     RETURNING id
     """
     
@@ -50,10 +53,16 @@ def citation_processing(arxiv_ids: str, limit: int = 100):
         data = cited_abstracts(arxiv_id, limit=limit)
 
         for datum in data:
+            
+            paperId = datum["paperId"]
             title = datum["title"]
-            abstract datum["abstract"]
-            cur.execute(sql, (arxiv_id, title, abstract))
+            year = datum["year"]
+            abstract = datum["abstract"]
+            externalIds = datum["externalIds"]
+            cur.execute(sql, (arxiv_id, paperId, title, year, abstract, str(externalIds)))
     
+    
+        
         # Inser the stuff into database
 # # Example
 # data = cited_abstracts("1706.03762")

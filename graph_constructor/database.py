@@ -212,11 +212,14 @@ class Database:
         CREATE TABLE IF NOT EXISTS citation_sch(
             id SERIAL PRIMARY KEY,
             arxiv_id VARCHAR(100) NOT NULL,
+            paper_id VARCHAR(100),
             title TEXT NOT NULL,
-            abstract TEXT
+            year VARCHAR(100),
+            abstract TEXT,
+            external_ids TEXT
         );
         """)
-    
+        
 
     def create_all(self):
         # Create tables in order respecting dependencies
