@@ -1,0 +1,105 @@
+prompt:You are given the following inputs for reconstructing a missing paragraph in a research paper.
+
+Title: When Relevance Meets Novelty: Dual-Stable Periodic Optimization for Exploratory Recommendation
+Abstract: Traditional recommendation systems tend to trap users in strong feedback
+loops by excessively pushing content aligned with their historical preferences,
+thereby limiting exploration opportunities and causing content fatigue.
+Although large language models (LLMs) demonstrate potential with their diverse
+content generation capabilities, existing LLM-enhanced dual-model frameworks
+face two major limitations: first, they overlook long-term preferences driven
+by group identity, leading to biased interest modeling; second, they suffer
+from static optimization flaws, as a one-time alignment process fails to
+leverage incremental user data for closed-loop optimization. To address these
+challenges, we propose the Co-Evolutionary Alignment (CoEA) method. For
+interest modeling bias, we introduce Dual-Stable Interest Exploration (DSIE)
+module, jointly modeling long-term group identity and short-term individual
+interests through parallel processing of behavioral sequences. For static
+optimization limitations, we design a Periodic Collaborative Optimization (PCO)
+mechanism. This mechanism regularly conducts preference verification on
+incremental data using the Relevance LLM, then guides the Novelty LLM to
+perform fine-tuning based on the verification results, and subsequently feeds
+back the output of the incrementally fine-tuned Novelty LLM to the Relevance
+LLM for re-evaluation, thereby achieving a dynamic closed-loop optimization.
+Extensive online and offline experiments verify the effectiveness of the CoEA
+model in exploratory recommendation.
+Section name: Preliminary
+
+Figure block (optional): Figure (optional):
+- label: \label{fig:framework}; caption: \caption{  The \textit{Sel3DCraft} pipeline begins by expanding user text input into multiple candidates via LLM. A dual-branch pipeline then generates/retrieves corresponding multi-view images, displayed in an interactive satellite view fo
+- label: \label{fig:sd_latents}; caption: \caption{The generated results at each timestep of the diffusion sampling process from $T$ to $1$. For example, given one prompt case ``A man with a beard wearing glasses in blue shirt'', the noise in the image is gradually reduced from tim
+- label: None; caption: \caption{Llama2-7b}
+- label: None; caption: \caption{Simply supported beam with distributed loading.}
+- label: None; caption: \caption{Additional qualitative results for Edges$\rightarrow$Shoes$\times64$, where each pair of consecutive rows displaying the input image in the ``Edges'' domain and its translation in the ``Shoes'' domain, respectively.\label{fig:e2s_a
+- label: \label{fig:juxtaposition}; caption: \caption{Performance on a commonsense benchmark (HellaSwag), a linguistic understanding benchmark (SuperGLUE), and the massive multitask test. On previous benchmarks, smaller models start well above random chance levels and exhibit more con
+- label: \label{fig:sfig2}; caption: \caption{}
+- label: \label{fig:rarl_curves}; caption: \caption{}
+- label: \label{fig:combined_benchmarkgss-26-s100.cnf}; caption: \caption{gss-26-s100}
+- label: \label{fig:diversity_stats_places}; caption: \caption{Statistics over locations}
+Table block (optional): Table (optional):
+- label: \label{tab:results}; text: 
+- label: None; text: 
+- label: \label{table:example_str}; text: \begin{tabular}{p{2.5cm}|p{12cm}@{}}     \toprule     Examples &  Help me answer question regarding spatial relationship in a 2D plane:  Given Information:      You will receive a series of object trajectory and the corresponding timestamps
+- label: \label{tab:ED.compare}; text: \begin{tabular}{l c c c}          \toprule          \textbf{Method} & ($g_1^*$, $g_2^*$, $g_3^*$) \textbf{(MW/h)} & \textbf{Nominal cost (\$/h)}  \\          \midrule          ED & (144.3, 170.7, 0) & 926 \\          \PSCED{} & (110, 160, 4
+Cited paper titles/abstracts (optional): (none)
+
+k-most adjacent paragraphs (context): Previous:
+1. \subsection{Causal Self-Attention}
+\label{subsec:causal_attn}
+Causal self-attention \cite{yang2021causal} maintains temporal ordering constraints in sequence modeling across $L$L layers by ensuring that position \(i\)i cannot attend to any subsequent positions \(j > i\)j > i at each layer. For an input sequence \(\bm{H}^{(l-1)} \in \mathbb{R}^{T \times d}\)\bm{H}H^{(l-1)}(l-1) \in \mathbb{R}^{T \times d}T \times d at the \(l\)l-th layer (where \(1 \leq l \leq L\)1 \leq l \leq L), query (\(\bm{Q}\)\bm{Q}Q), key (\(\bm{K}\)\bm{K}K), and value (\(\bm{V}\)\bm{V}V) matrices are generated through three learnable projections \(\bm{W}_Q, \bm{W}_K, \bm{W}_V \in \mathbb{R}^{d \times d_k}\)\bm{W}W_Q, \bm{W}W_K, \bm{W}W_V \in \mathbb{R}^{d \times d_k}d \times d_k, with each matrix derived by multiplying the input sequence by its corresponding projection matrix.
+Attention weights at each layer are computed under temporal constraints using these three matrices:
+\begin{equation}
+\bm{A} = \text{softmax}( \frac{\bm{Q}\bm{K}^T}{\sqrt{d_k}} + \bm{M} ) \bm{V},
+\label{eq:15}
+\end{equation}\begin{equation}
+\bm{A} = \text{softmax}( \frac{\bm{Q}\bm{K}^T}{\sqrt{d_k}} + \bm{M} ) \bm{V},
+\label{eq:15}
+\end{equation}
+\bm{A}A = \text{softmax}( \frac{\bm{Q}\bm{K}^T}{\sqrt{d_k}} + \bm{M}M ) \bm{V}V,
+\label{eq:15}
+Next:
+1. The encoder \(\mathcal{E}\)\mathcal{E} compresses continuous vectors into a latent embedding \(\bm{z} \in \mathbb{R}^{d_z}\)\bm{z}z \in \mathbb{R}^{d_z}d_z through \(\bm{z} = \mathcal{E}(\bm{u};\theta_E)\)\bm{z}z = \mathcal{E}(\bm{u}u;\theta_E). Quantization then occurs through \(K\)K residual steps, where each step \(k\)k selects the closest codebook vector to the current residual as \(\bm{q}^{(k)} = \underset{\bm{c} \in \mathcal{C}^{(k)}}{\arg\min} \|\bm{r}^{(k)} - \bm{c}\|_2\)\bm{q}q^{(k)}(k) = \underset{\bm{c} \in \mathcal{C}^{(k)}}\bm{c}c \in \mathcal{C}^{(k)}(k){\arg\min}\arg\min \|\bm{r}r^{(k)}(k) - \bm{c}c\|_2,
+\begin{equation}
+\bm{r}^{(k+1)} = \bm{r}^{(k)} - \bm{q}^{(k)},
+\end{equation}\begin{equation}
+\bm{r}^{(k+1)} = \bm{r}^{(k)} - \bm{q}^{(k)},
+\end{equation}
+\bm{r}r^{(k+1)}(k+1) = \bm{r}r^{(k)}(k) - \bm{q}q^{(k)}(k),
+2. where \(\bm{r}^{(0)} = \bm{z}\)\bm{r}r^{(0)}(0) = \bm{z}z initializes the residual.
+The Group CSID combines quantization indices into \(CSID(\bm{u}) = (i^{(1)}, i^{(2)}, ..., i^{(K)})\)CSID(\bm{u}u) = (i^{(1)}(1), i^{(2)}(2), ..., i^{(K)}(K)), with \(i^{(k)}\)i^{(k)}(k) denoting the codebook index of \(\bm{q}^{(k)}\)\bm{q}q^{(k)}(k). Reconstruction uses decoder \(\mathcal{D}\)\mathcal{D} to map the quantized embedding $\bm{\hat{z}} = \sum_{i = 1}^{K} \bm{q}^{(i)}$\bm{\hat{z}}\hat{z} = \sum_{i = 1}i = 1^{K}K \bm{q}q^{(i)}(i) back to the input space as \(\hat{\bm{u}} = \mathcal{D}(\bm{\hat{z}};\theta_D)\)\hat{\bm{u}} = \mathcal{D}(\bm{\hat{z}}\hat{z};\theta_D).
+Target length (characters): 1418
+
+# Task
+Write exactly one LaTeX-formatted paragraph that naturally fits between the adjacent paragraphs.
+
+# HARD REQUIREMENTS (must all be satisfied)
+1) If fig_labels is non-empty, include each label **exactly once** using \label{<label>} in the paragraph text (e.g., "see Fig.~\label{fig:framework}").
+2) If table_labels is non-empty, include each label **exactly once** using \label{<label>}.
+3) If bib_keys is non-empty, **cite all of them** (you may group keys in a single \cite{...}).
+   - If allow_derived_bib_keys=true and a cited item lacks a key, derive a stable placeholder from its title: lowercase, keep a–z0–9 and hyphens only.
+   - Do not invent any other keys.
+4) Maintain objective, concise academic tone; ensure logical continuity with the provided context.
+5) Length ≈ 1418 (±15%). Produce exactly one paragraph (no lists/headers/environments).
+
+# ORDERING
+- When mentioning multiple figures/tables, follow the order in fig_labels/table_labels.
+
+# SILENT SELF-CHECK (do not print this checklist)
+- Verify every l in fig_labels ∪ table_labels appears exactly once as the substring "\ref{" + l + "}".
+- Verify every key in bib_keys (plus any allowed derived keys) appears in a \cite{...}.
+- Verify the output is a single paragraph (no blank lines).
+
+# Output
+Return only the LaTeX paragraph text. No explanations, no markdown, no extra lines.
+---------------------------------------------------
+generate_answer: To address the limitations of existing LLM-enhanced dual-model frameworks, we propose the Co-Evolutionary Alignment (CoEA) method. CoEA consists of two main components: the Dual-Stable Interest Exploration (DSIE) module and the Periodic Collaborative Optimization (PCO) mechanism. The DSIE module jointly models long-term group identity and short-term individual interests through parallel processing of behavioral sequences, thereby addressing the interest modeling bias. The PCO mechanism, on the other hand, conducts preference verification on incremental data using the Relevance LLM and guides the Novelty LLM to perform fine-tuning based on the verification results, thereby achieving a dynamic closed-loop optimization. Extensive online and offline experiments verify the effectiveness of the CoEA model in exploratory recommendation.
+---------------------------------------------------
+original_answer: where the scaled dot product of query and key matrices is computed by dividing their product by \(\sqrt{d_k}\)\sqrt{d_k}. A causal mask \(\bm{M}\)\bm{M}M — with \(\bm{M}_{ij} = 0\)\bm{M}M_{ij}ij = 0 if \(i \geq j\)i \geq j and \(\bm{M}_{ij} = -\infty\)\bm{M}M_{ij}ij = -\infty if \(i < j\)i < j — is added to enforce autoregressive properties. Softmax is applied to this result, which is then multiplied by the value matrix to generate attention output \(\bm{A}\)\bm{A}A.
+This mask prevents future information leakage, ensuring temporal consistency across \(L\)L layers. Each layer’s output is \(\bm{H}^{(l)} = \text{LayerNorm}\left( \bm{A} + \bm{H}^{(l-1)} \right)\)\bm{H}H^{(l)}(l) = \text{LayerNorm}\left( \bm{A}A + \bm{H}H^{(l-1)}(l-1) \right). For the final token at position \(T\)T, its layer-\(l\)l representation is \(\bm{H}^{(l)}_T\)\bm{H}H^{(l)}(l)_T; after \(L\)L layers, \(\bm{H}^{(L)}_T\)\bm{H}H^{(L)}(L)_T encodes the entire sequence’s hierarchical context.
+\subsection{RQ-VAE for Group Clustering}
+\label{subsec:rq_vae}
+Residual-Quantized Variational AutoEncoder (RQ-VAE) \cite{rajput2023recommender} provides hierarchical vector quantization for efficient representation learning. Given user representations \(\bm{u} \in \mathbb{R}^d\)\bm{u}u \in \mathbb{R}^d encoded from long-term sequences, we map them to discrete Group Collaborative Semantic IDs (Group CSID) that capture stable group preferences.
+---------------------------------------------------
+Rouge Score: 0.05405405405405405
+SBERT Score: 0.26926836371421814
+GPT Evaluation Score: {'adequacy': 1, 'coverage': 1, 'fluency': 5, 'overall': 2, 'notes': "Candidate completely diverges from Reference's topic (scaled dot product, causal mask, RQ-VAE); exhibits excellent grammar, clarity, and coherence, but lacks relevance to the Reference."}
+---------------------------------------------------

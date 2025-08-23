@@ -48,5 +48,4 @@ def gpt_evaluation(generate_answer, original_answer, model_name="nvdev/nvidia/ll
     )
     j = json.loads(resp.choices[0].message.content)
     return j
-
-
+    

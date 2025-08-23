@@ -51,12 +51,15 @@ if __name__ == "__main__":
         print("---------------------------------------------------")
         print(f"original_answer: {original_answer}")
         print("---------------------------------------------------")
-        rouge_score = rouge_similarity(generate_answer, original_answer)
-        sbert_score = sbert_similarity(generate_answer, original_answer)
-        gpt_evaluation_score = gpt_evaluation(generate_answer, original_answer)
 
+        # TODO remove it
+        continue
+        rouge_score = rouge_similarity(generate_answer, original_answer)
         print(f"Rouge Score: {rouge_score}")
+        sbert_score = sbert_similarity(generate_answer, original_answer)
         print(f"SBERT Score: {sbert_score}")
+        gpt_evaluation_score = gpt_evaluation(generate_answer, original_answer)
+    
         print(f"GPT Evaluation Score: {gpt_evaluation_score}")
         print("---------------------------------------------------")
 

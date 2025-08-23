@@ -5,6 +5,8 @@ from typing import Callable, List, Optional, Tuple, Dict
 from dotenv import load_dotenv
 from graph_constructor.utils import figure_latex_path_to_path
 import shutil
+import re
+import unicodedata
 
 import psycopg2
 import psycopg2.extras
@@ -146,7 +148,7 @@ def _fetch_adjacent_paragraphs(cur, paper_arxiv_id: str, paper_section: str, piv
     return (prev_texts, next_texts)
 
 
-def _fetch_global_refs_for_paragraph(cur, paper_arxiv_id: str, paragraph_id: int, ref_type: str) -> List[int]:
+def _fetch_global_refs_for_paragraph(cur, paper_arxiv_id: str, paragraph_id: int, paper_section: str , ref_type: str) -> List[int]:
     """
     Uses your helper mapping. If you already have paragraph_ref_to_global_ref, call it;
     otherwise select from a junction table like paragraph_references(paragraph_id, reference_type, global_id).
@@ -157,9 +159,9 @@ def _fetch_global_refs_for_paragraph(cur, paper_arxiv_id: str, paragraph_id: int
         """
         SELECT id
         FROM paragraph_references
-        WHERE paper_arxiv_id = %s AND paragraph_id = %s AND reference_type = %s;
+        WHERE paper_arxiv_id = %s AND paper_section = %s AND paragraph_id = %s AND reference_type = %s;
         """,
-        (paper_arxiv_id, paragraph_id, ref_type),
+        (paper_arxiv_id, paper_section, paragraph_id, ref_type),
     )
     return [r[0] for r in cur.fetchall()]
 
@@ -328,7 +330,7 @@ def _build_prompt(
         short_abs = abstract[:600].replace("\n", " ").strip()
         abs_lines.append(f"- [{bib_key}] {title}: {short_abs}")
     abstracts_block = _format_block("Abstract(s) of cited paper(s)", abs_lines).strip()
-    
+
     # Adjacent paragraphs
     adj_lines = []
     if prev_paras:
@@ -341,59 +343,100 @@ def _build_prompt(
             adj_lines.append(f"{i}. {p}")
     adjacent_paragraphs_block = "\n".join(adj_lines).strip()
     # Sufficient information needs to be provided for effective learning
+#     prompt = f"""
+# You are given the following inputs for reconstructing a missing paragraph in a research paper.
+
+# Title of the paper:
+# {paper_title}
+
+# Abstract of the paper:
+# {abstract}
+
+# Section name of the paragraph:
+# {paper_section}
+
+# Figure (optional):
+# {figure_block if figure_block else "(none)"}
+
+# If figures are present, the images of them will be given following the order of figure blocks.
+
+# Table (optional):
+# {table_block if table_block else "(none)"}
+
+# Title and abstract(s) of cited paper(s) if available:
+# {abstracts_block if abstracts_block else "(none)"}
+
+# {k}-Most Adjacent Paragraphs (context):
+# {adjacent_paragraphs_block}
+
+# Number of letters in the original paragraph:
+# {num_char}
+
+# # Task
+# Write exactly one LaTeX-formatted paragraph that naturally fits between the adjacent paragraphs.
+
+# # Requirements
+# - If a figure is provided, explicitly reference it with \\label{{...}} using the label provided; remember to insert ALL THE FIGURES into the generated paragraph if provided.
+# - If a table is provided, explicitly reference it with: \\label{{...}} using the label provided; remember to insert ALL THE TABLES into the generated paragraph if provided.
+# - Incorporate all the citation information, provided the abstract(s) or title, and cite it with \\cite{{}}. Use the provided BibTeX key(s) if present; otherwise, use a stable placeholder key derived from title (e.g., {{derived_bib_key}}).  
+# - Ensure the paragraph logically continues from and sets up the surrounding {k} adjacent paragraph(s).
+# - Ensure that the generated paragraph has approximately the same length as the orginal answer.
+# - Style: objective, concise, academic tone.
+# - Formatting: produce a single LaTeX paragraph only (no section headers, lists, environments; math only if essential).
+
+# # Output
+# Return only the LaTeX paragraph text, nothing else.
+# """.strip()
     prompt = f"""
 You are given the following inputs for reconstructing a missing paragraph in a research paper.
 
-Title of the paper:
-{paper_title}
+Title: {paper_title}
+Abstract: {abstract}
+Section name: {paper_section}
 
-Abstract of the paper:
-{abstract}
+Figure block (optional): {figure_block if figure_block else "(none)"}
+Table block (optional): {table_block if table_block else "(none)"}
+Cited paper titles/abstracts (optional): {abstracts_block if abstracts_block else "(none)"}
 
-Section name of the paragraph:
-{paper_section}
-
-Figure (optional):
-{figure_block if figure_block else "(none)"}
-
-If figures are present, the images of them will be given following the order of figure blocks.
-
-Table (optional):
-{table_block if table_block else "(none)"}
-
-Title and abstract(s) of cited paper(s) if available:
-{abstracts_block if abstracts_block else "(none)"}
-
-{k}-Most Adjacent Paragraphs (context):
-{adjacent_paragraphs_block}
-
-Number of letters in the original paragraph:
-{num_char}
+k-most adjacent paragraphs (context): {adjacent_paragraphs_block}
+Target length (characters): {num_char}
 
 # Task
 Write exactly one LaTeX-formatted paragraph that naturally fits between the adjacent paragraphs.
 
-# Requirements
-- If a figure is provided, explicitly reference it with: Figure~\\ref{{{{{ '{' }figure_label{ '}' } }}}}, and incorporate at least one concrete detail from the figure’s content or caption.
-- If a table is provided, explicitly reference it with: Table~\\ref{{{{{ '{' }table_label{ '}' } }}}}, and incorporate at least one concrete detail from the table’s content.
-- Incorporate at least one core claim or finding from the abstract(s) and cite it with \\citep{{{{{ '{' }bib_key{ '}' } }}}}. Use the provided BibTeX key(s) if present; otherwise, use a stable placeholder key derived from title (e.g., {{derived_bib_key}}).
-- Ensure the paragraph logically continues from and sets up the surrounding {k} adjacent paragraph(s).
-- Ensure that the generated paragraph has approximately the same length as the orginal answer.
-- Style: objective, concise, academic tone.
-- Formatting: produce a single LaTeX paragraph only (no section headers, lists, environments; math only if essential).
-- Constraints: do not include \\label{{...}}; do not write “Figure X”/“Table Y”; do not copy raw table/figure content verbatim; summarize/interpret key points.
+# HARD REQUIREMENTS (must all be satisfied)
+1) If fig_labels is non-empty, include each label **exactly once** using \\label{{<label>}} in the paragraph text (e.g., "see Fig.~\\label{{fig:framework}}").
+2) If table_labels is non-empty, include each label **exactly once** using \\label{{<label>}}.
+3) If bib_keys is non-empty, **cite all of them** (you may group keys in a single \\cite{{...}}).
+   - If allow_derived_bib_keys=true and a cited item lacks a key, derive a stable placeholder from its title: lowercase, keep a–z0–9 and hyphens only.
+   - Do not invent any other keys.
+4) Maintain objective, concise academic tone; ensure logical continuity with the provided context.
+5) Length ≈ {num_char} (±15%). Produce exactly one paragraph (no lists/headers/environments).
+
+# ORDERING
+- When mentioning multiple figures/tables, follow the order in fig_labels/table_labels.
 
 # Output
-Return only the LaTeX paragraph text, nothing else.
+Return only the LaTeX paragraph text. No explanations, no markdown, no extra lines.
 """.strip()
 
+    prompt = "Describe the provided images senquentially."
+
+    
     return prompt
 
 
 def _figure_paths_to_embeddings(figure_paths):
 
+    print(f"Figure paths:{figure_paths}")
     embeddings = []
     file_fomats = [".jpg", ".png", ".jpeg"]
+
+    # File accessibility verification
+
+    for file_path in figure_paths:
+        if os.path.isfile(file_path):
+            print(f"File exists: {file_path}")
 
     for fs_path in figure_paths:
         if os.path.isfile(fs_path):
@@ -422,6 +465,53 @@ def _figure_paths_to_embeddings(figure_paths):
         
         return embeddings
 
+
+def _slug(s, prefix="fig", maxlen=48):
+    # make a deterministic placeholder from caption text
+    s = unicodedata.normalize("NFKD", s)
+    s = re.sub(r"\\caption\s*{", "", s, flags=re.I)
+    s = s.replace("}", " ")
+    s = re.sub(r"[^A-Za-z0-9]+", "-", s).strip("-").lower()
+    s = re.sub(r"-{2,}", "-", s)
+    s = s[:maxlen].strip("-")
+    return f"{prefix}:{s or 'placeholder'}"
+
+def collect_fig_labels(fig_blocks):
+    """
+    fig_blocks: list of dicts like
+      {"label": "\\label{fig:framework}", "caption": "\\caption{...}"}
+      {"label": None, "caption": "\\caption{...\\label{fig:e2s_a} ...}"}
+      {"label": None, "caption": "\\caption{Llama2-7b}"}
+    Returns: ["fig:framework", "fig:sd_latents", "fig:e2s-a", ...]
+    """
+    out = []
+    for i, fb in enumerate(fig_blocks):
+        lab = fb.get("label") or ""
+        cap = fb.get("caption") or ""
+
+        # 1) explicit label field
+        m = re.search(r"\\label\{([^}]+)\}", lab)
+        if not m:
+            # 2) label inside caption
+            m = re.search(r"\\label\{([^}]+)\}", cap)
+
+        if m:
+            out.append(m.group(1))
+        else:
+            # 3) derive from caption (or index if empty)
+            base = _slug(cap) if cap else f"fig:missing-{i+1}"
+            out.append(base)
+    # de-dup if needed by appending index
+    seen = {}
+    uniq = []
+    for lbl in out:
+        if lbl not in seen:
+            seen[lbl] = 0
+            uniq.append(lbl)
+        else:
+            seen[lbl] += 1
+            uniq.append(f"{lbl}-{seen[lbl]}")
+    return uniq
 
 def paragraph_generation(args: Args) -> List[Dict[str, str]]:
     """
@@ -459,13 +549,13 @@ def paragraph_generation(args: Args) -> List[Dict[str, str]]:
         # figures
         figures = []
         if args.figure_available:
-            fig_ids = _fetch_global_refs_for_paragraph(cur = cur, paper_arxiv_id = paper_arxiv_id, paragraph_id = paragraph_id, ref_type = "figure")
+            fig_ids = _fetch_global_refs_for_paragraph(cur = cur, paper_arxiv_id = paper_arxiv_id, paper_section = paper_section, paragraph_id = paragraph_id, ref_type = "figure")
             figures = _fetch_figures(cur, fig_ids)
 
         # tables
         tables = []
         if args.table_available:
-            tab_ids = _fetch_global_refs_for_paragraph(cur = cur, paper_arxiv_id = paper_arxiv_id, paragraph_id = paragraph_id, ref_type = "table")
+            tab_ids = _fetch_global_refs_for_paragraph(cur = cur, paper_arxiv_id = paper_arxiv_id, paper_section = paper_section,paragraph_id = paragraph_id, ref_type = "table")
             tables = _fetch_tables(cur, tab_ids)
 
         # print(f"Fetched figures: {figures}")
@@ -502,7 +592,7 @@ def paragraph_generation(args: Args) -> List[Dict[str, str]]:
             title=paper_title,
             abstract=paper_abstract
         )
-        
+
         # print(f"Prompt: {prompt}")
 
         figure_paths = []
@@ -511,9 +601,12 @@ def paragraph_generation(args: Args) -> List[Dict[str, str]]:
             latex_path = figure["path"]
             figure_path = figure_latex_path_to_path(path=download_path, arxiv_id = paper_arxiv_id, latex_path = latex_path)
             figure_paths.append(figure_path)
-        
+
+        print(f"Number of figure paths collected: {len(figure_paths)}")
         image_embeddings = _figure_paths_to_embeddings(figure_paths)
 
+        print(f"Number of image embeddings collected: {len(image_embeddings)}")
+        sys.exit()
         # Dont need to print embeddings since we cannot understand it
         llm_output = llm_generate(prompt=prompt, image_embeddings=image_embeddings, model_name=model_name)
 

@@ -103,7 +103,7 @@ class DatabaseSerializer:
         with open(output_path, 'w', encoding='utf-8') as f:
             f.write("\n".join(xml_lines))
         return output_path
-
+    
     def all_to_csv(self, table_name, file_name, dir_path, max_results=100):
 
         sql = f"""
