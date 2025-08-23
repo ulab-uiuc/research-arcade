@@ -52,7 +52,6 @@ if __name__ == "__main__":
         print(f"original_answer: {original_answer}")
         print("---------------------------------------------------")
 
-        # TODO remove it
         continue
         rouge_score = rouge_similarity(generate_answer, original_answer)
         print(f"Rouge Score: {rouge_score}")
