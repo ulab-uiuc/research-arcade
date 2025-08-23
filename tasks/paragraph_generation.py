@@ -550,6 +550,11 @@ def paragraph_generation(args: Args) -> List[Dict[str, str]]:
         figures = []
         if args.figure_available:
             fig_ids = _fetch_global_refs_for_paragraph(cur = cur, paper_arxiv_id = paper_arxiv_id, paper_section = paper_section, paragraph_id = paragraph_id, ref_type = "figure")
+            #TODO remove it
+            print(f"paper_arxiv_id: {paper_arxiv_id}")
+            print(f"paper_section: {paper_section}")
+            print(f"paragraph_id: {paragraph_id}")
+            print(f"Number of figure ids collected: {len(fig_ids)}")
             figures = _fetch_figures(cur, fig_ids)
 
         # tables
@@ -574,7 +579,6 @@ def paragraph_generation(args: Args) -> List[Dict[str, str]]:
             cur, paper_arxiv_id, paper_section, pivot_local_id, args.k_neighbour
         )
 
-        # TODO remove the print statement
         # print(f"Previous paragraphs: {prev_paras}")
         # print(f"Next paragraphs: {next_paras}")
 
@@ -593,18 +597,20 @@ def paragraph_generation(args: Args) -> List[Dict[str, str]]:
             abstract=paper_abstract
         )
 
-        # print(f"Prompt: {prompt}")
-
         figure_paths = []
         download_path = args.download_path  
+        #TODO remove it
+        print(f"Number of figures collected {len(figures)}")
         for figure in figures:
             latex_path = figure["path"]
             figure_path = figure_latex_path_to_path(path=download_path, arxiv_id = paper_arxiv_id, latex_path = latex_path)
             figure_paths.append(figure_path)
 
+        #TODO remove it
         print(f"Number of figure paths collected: {len(figure_paths)}")
         image_embeddings = _figure_paths_to_embeddings(figure_paths)
 
+        #TODO remove it
         print(f"Number of image embeddings collected: {len(image_embeddings)}")
         sys.exit()
         # Dont need to print embeddings since we cannot understand it
