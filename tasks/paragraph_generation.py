@@ -2,25 +2,69 @@ import os
 import re
 from dataclasses import dataclass
 from typing import Callable, List, Optional, Tuple, Dict
+from dotenv import load_dotenv
+from graph_constructor.utils import figure_latex_path_to_path
+import shutil
 
 import psycopg2
 import psycopg2.extras
+from PIL import Image
+import base64
+import sys
+import fitz
+import io
+from openai import OpenAI
 
+load_dotenv()
 
 # ---------- Config ----------
 PASSWORD = os.getenv("PGPASSWORD", "REPLACE_ME")
+API_KEY = os.getenv("API_KEY")
 
-
-# ---------- Types ----------
 @dataclass
 class Args:
     paragraph_ids: List[int]
+    model_name: str
     k_neighbour: int = 2
     figure_available: bool = True
     table_available: bool = True
-    # Optional: pass an LLM function that takes a prompt and returns text
-    llm_generate: Optional[Callable[[str], str]] = None
+    download_path: str = "./download"
 
+def llm_generate(prompt, image_embeddings, model_name):
+
+    client = OpenAI(
+        base_url = "https://integrate.api.nvidia.com/v1",
+        api_key = API_KEY
+    )
+
+    content = []
+    if image_embeddings:
+        for image_embedding in image_embeddings:
+            content.append({ "type": "image_url", "image_url": { "url": f"data:image/png;base64,{image_embedding}" } },)
+    content.append({ "type": "text", "text": prompt})
+
+    completion = client.chat.completions.create(
+        model=model_name,
+        messages=[
+            {
+                "role": "user",
+                "content": content
+            }
+            ],
+        temperature=1.00,
+        top_p=0.01,
+        max_tokens=1024,
+        stream=True
+    )
+
+    ans = ""
+    
+    for chunk in completion:
+      if chunk.choices[0].delta.content is not None:
+        ans = ans + chunk.choices[0].delta.content
+        # print(chunk.choices[0].delta.content, end="")
+    # print("")
+    return ans
 
 # ---------- Utilities ----------
 def _derived_bib_key(title: str) -> str:
@@ -43,18 +87,21 @@ def _format_block(label: str, lines: List[str]) -> str:
     return header + "\n".join(lines)
 
 
-def _fetch_context_for_paragraph(cur, paragraph_id: int) -> Tuple[str, str, int]:
+def _fetch_context_for_paragraph(cur, arxiv_id, paragraph_id, paper_section):
+    
+    # print(f"paper_section: {paper_section}")
     cur.execute(
         """
-        SELECT paper_arxiv_id, paper_section, paragraph_id
+        SELECT paper_arxiv_id, paragraph_id, content
         FROM paragraphs
-        WHERE id = %s
+        WHERE paper_arxiv_id = %s AND paper_section = %s AND paragraph_id = %s 
         """,
-        (paragraph_id,),
+        (arxiv_id, paper_section, paragraph_id),
     )
+    # The three inputs ensures the uniqueness of the row
     row = cur.fetchone()
     if not row:
-        raise ValueError(f"Paragraph id {paragraph_id} not found.")
+        raise ValueError(f"Arxiv id {arxiv_id} + Paragraph id {paragraph_id} not found.")
     return row  # (paper_arxiv_id, paper_section, paragraph_id_local)
 
 
@@ -99,19 +146,20 @@ def _fetch_adjacent_paragraphs(cur, paper_arxiv_id: str, paper_section: str, piv
     return (prev_texts, next_texts)
 
 
-def _fetch_global_refs_for_paragraph(cur, paragraph_id: int, ref_type: str) -> List[int]:
+def _fetch_global_refs_for_paragraph(cur, paper_arxiv_id: str, paragraph_id: int, ref_type: str) -> List[int]:
     """
     Uses your helper mapping. If you already have paragraph_ref_to_global_ref, call it;
     otherwise select from a junction table like paragraph_references(paragraph_id, reference_type, global_id).
     """
+
     # If you do have a Python helper, swap this body out:
     cur.execute(
         """
-        SELECT global_id
+        SELECT id
         FROM paragraph_references
-        WHERE paragraph_id = %s AND reference_type = %s
+        WHERE paper_arxiv_id = %s AND paragraph_id = %s AND reference_type = %s;
         """,
-        (paragraph_id, ref_type),
+        (paper_arxiv_id, paragraph_id, ref_type),
     )
     return [r[0] for r in cur.fetchall()]
 
@@ -121,7 +169,7 @@ def _fetch_figures(cur, figure_ids: List[int]) -> List[Dict]:
         return []
     cur.execute(
         """
-        SELECT id, reference_label, caption, file_path
+        SELECT id, label, caption, path
         FROM figures
         WHERE id = ANY(%s)
         """,
@@ -134,7 +182,7 @@ def _fetch_figures(cur, figure_ids: List[int]) -> List[Dict]:
             "id": rid,
             "label": label,
             "caption": caption or "",
-            "file_path": path or ""
+            "path": path or ""
         })
     return figures
 
@@ -144,7 +192,7 @@ def _fetch_tables(cur, table_ids: List[int]) -> List[Dict]:
         return []
     cur.execute(
         """
-        SELECT id, reference_label, table_text
+        SELECT id, label, table_text
         FROM tables
         WHERE id = ANY(%s)
         """,
@@ -168,7 +216,7 @@ def _fetch_cited_pairs(cur, paragraph_id: int) -> List[Tuple[str, Optional[str]]
     """
     cur.execute(
         """
-        SELECT cited_arxiv_id, bib_key
+        SELECT citing_arxiv_id, bib_key
         FROM paragraph_citations
         WHERE paragraph_id = %s
         """,
@@ -208,6 +256,43 @@ def _fetch_abstracts(cur, arxiv_ids_or_urls: List[str]) -> List[Tuple[str, str, 
 
     return results
 
+def _fetch_paper_title_abstract(cur, arxiv_id):
+    """
+    Given paper arxiv id, fetch its abstract for LLM reference
+    """
+
+    cur.execute("""
+    SELECT title, abstract
+    FROM papers
+    WHERE arxiv_id = %s
+    """, (arxiv_id,))
+    row = cur.fetchone()
+    if row:
+        return row[0], row[1]
+    else:
+        return None
+
+
+def _fetch_arxiv_id_paragraph_id_section_name(cur, id):
+    """
+    Given the id (PRIMARY KEY) of a paragraph, return its (paper_arxiv_id, paragraph_id).
+    """
+    cur.execute(
+        """
+        SELECT paper_arxiv_id, paragraph_id, paper_section
+        FROM paragraphs
+        WHERE id = %s
+        """,
+        (id,)
+    )
+    row = cur.fetchone()
+    if row:
+        return row[0], row[1], row[2]
+    else:
+        return None  # or raise an error, depending on your needs
+
+
+
 
 def _build_prompt(
     k: int,
@@ -216,7 +301,13 @@ def _build_prompt(
     abstracts: List[Tuple[str, str, str]],
     prev_paras: List[str],
     next_paras: List[str],
+    paper_section: str,
+    num_char: int,
+    title: str,
+    abstract: str,
 ) -> str:
+
+    paper_title = title
     # Figure block
     fig_lines = []
     for f in figures:
@@ -237,7 +328,7 @@ def _build_prompt(
         short_abs = abstract[:600].replace("\n", " ").strip()
         abs_lines.append(f"- [{bib_key}] {title}: {short_abs}")
     abstracts_block = _format_block("Abstract(s) of cited paper(s)", abs_lines).strip()
-
+    
     # Adjacent paragraphs
     adj_lines = []
     if prev_paras:
@@ -249,21 +340,35 @@ def _build_prompt(
         for i, p in enumerate(next_paras, 1):
             adj_lines.append(f"{i}. {p}")
     adjacent_paragraphs_block = "\n".join(adj_lines).strip()
-
+    # Sufficient information needs to be provided for effective learning
     prompt = f"""
 You are given the following inputs for reconstructing a missing paragraph in a research paper.
+
+Title of the paper:
+{paper_title}
+
+Abstract of the paper:
+{abstract}
+
+Section name of the paragraph:
+{paper_section}
 
 Figure (optional):
 {figure_block if figure_block else "(none)"}
 
+If figures are present, the images of them will be given following the order of figure blocks.
+
 Table (optional):
 {table_block if table_block else "(none)"}
 
-Abstract(s) of cited paper(s):
+Title and abstract(s) of cited paper(s) if available:
 {abstracts_block if abstracts_block else "(none)"}
 
 {k}-Most Adjacent Paragraphs (context):
 {adjacent_paragraphs_block}
+
+Number of letters in the original paragraph:
+{num_char}
 
 # Task
 Write exactly one LaTeX-formatted paragraph that naturally fits between the adjacent paragraphs.
@@ -273,7 +378,8 @@ Write exactly one LaTeX-formatted paragraph that naturally fits between the adja
 - If a table is provided, explicitly reference it with: Table~\\ref{{{{{ '{' }table_label{ '}' } }}}}, and incorporate at least one concrete detail from the table’s content.
 - Incorporate at least one core claim or finding from the abstract(s) and cite it with \\citep{{{{{ '{' }bib_key{ '}' } }}}}. Use the provided BibTeX key(s) if present; otherwise, use a stable placeholder key derived from title (e.g., {{derived_bib_key}}).
 - Ensure the paragraph logically continues from and sets up the surrounding {k} adjacent paragraph(s).
-- Style: objective, concise, academic tone; ~120–180 words.
+- Ensure that the generated paragraph has approximately the same length as the orginal answer.
+- Style: objective, concise, academic tone.
 - Formatting: produce a single LaTeX paragraph only (no section headers, lists, environments; math only if essential).
 - Constraints: do not include \\label{{...}}; do not write “Figure X”/“Table Y”; do not copy raw table/figure content verbatim; summarize/interpret key points.
 
@@ -282,6 +388,39 @@ Return only the LaTeX paragraph text, nothing else.
 """.strip()
 
     return prompt
+
+
+def _figure_paths_to_embeddings(figure_paths):
+
+    embeddings = []
+    file_fomats = [".jpg", ".png", ".jpeg"]
+
+    for fs_path in figure_paths:
+        if os.path.isfile(fs_path):
+            if fs_path.endswith(".pdf"):
+                    doc = fitz.open(fs_path)
+                    for page_num in range(len(doc)):
+                        page = doc[page_num]
+
+                        # Step 2: Render PDF page to an image (pixmap)
+                        pix = page.get_pixmap()
+
+                        # Convert pixmap to PIL Image
+                        img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
+
+                        # Step 3: Save image to memory buffer (JPEG format)
+                        buffer = io.BytesIO()
+                        img.save(buffer, format="JPEG")
+
+                        # Step 4: Encode in base64
+                        image_b64_0 = base64.b64encode(buffer.getvalue()).decode("utf-8")
+                        embeddings.append(image_b64_0)
+            elif fs_path.endswith(".jpg") or fs_path.endswith(".png") or fs_path.endswith(".jpeg"):
+                with open(fs_path, 'rb') as f:
+                    image_b64_0 = base64.b64encode(f.read()).decode('utf-8')
+                    embeddings.append(image_b64_0)
+        
+        return embeddings
 
 
 def paragraph_generation(args: Args) -> List[Dict[str, str]]:
@@ -296,41 +435,61 @@ def paragraph_generation(args: Args) -> List[Dict[str, str]]:
     conn = psycopg2.connect(
         host="localhost",
         dbname="postgres",
-        user="postgres",
+        user="cl195",
         password=PASSWORD,
-        port="5432",
+        port="5433",
     )
+
     conn.autocommit = True
     cur = conn.cursor()
 
+    paper_arxiv_id = None
+    
     outputs: List[Dict[str, str]] = []
 
+    model_name = args.model_name
+
     for pid in args.paragraph_ids:
+        paper_arxiv_id, paragraph_id, paper_section = _fetch_arxiv_id_paragraph_id_section_name(cur, pid)
         # context anchor
-        paper_arxiv_id, paper_section, pivot_local_id = _fetch_context_for_paragraph(cur, pid)
+        paper_arxiv_id, pivot_local_id, paragraph_content = _fetch_context_for_paragraph(cur, arxiv_id = paper_arxiv_id, paragraph_id = paragraph_id, paper_section = paper_section)
+
+# def _fetch_global_refs_for_paragraph(cur, paper_arxiv_id: str, paragraph_id: int, ref_type: str) -> List[int]:
 
         # figures
         figures = []
         if args.figure_available:
-            fig_ids = _fetch_global_refs_for_paragraph(cur, pid, "figure")
+            fig_ids = _fetch_global_refs_for_paragraph(cur = cur, paper_arxiv_id = paper_arxiv_id, paragraph_id = paragraph_id, ref_type = "figure")
             figures = _fetch_figures(cur, fig_ids)
 
         # tables
         tables = []
         if args.table_available:
-            tab_ids = _fetch_global_refs_for_paragraph(cur, pid, "table")
+            tab_ids = _fetch_global_refs_for_paragraph(cur = cur, paper_arxiv_id = paper_arxiv_id, paragraph_id = paragraph_id, ref_type = "table")
             tables = _fetch_tables(cur, tab_ids)
 
+        # print(f"Fetched figures: {figures}")
+        # print(tables)
+        # print(f"Fetched tables: {tables}")
         # citations → abstracts (+bib keys)
         cited_pairs = _fetch_cited_pairs(cur, pid)  # (arxiv_or_url, bib_key_or_none)
         cited_ids = [cp[0] for cp in cited_pairs]
         abstracts = _fetch_abstracts(cur, cited_ids)
+
+        # Abstract of the paper
+        paper_title, paper_abstract = _fetch_paper_title_abstract(cur=cur, arxiv_id=paper_arxiv_id)
 
         # adjacent paragraphs
         prev_paras, next_paras = _fetch_adjacent_paragraphs(
             cur, paper_arxiv_id, paper_section, pivot_local_id, args.k_neighbour
         )
 
+        # TODO remove the print statement
+        # print(f"Previous paragraphs: {prev_paras}")
+        # print(f"Next paragraphs: {next_paras}")
+
+
+        num_char = len(paragraph_content)
         prompt = _build_prompt(
             k=args.k_neighbour,
             figures=figures,
@@ -338,15 +497,30 @@ def paragraph_generation(args: Args) -> List[Dict[str, str]]:
             abstracts=abstracts,
             prev_paras=prev_paras,
             next_paras=next_paras,
+            paper_section=paper_section,
+            num_char=num_char,
+            title=paper_title,
+            abstract=paper_abstract
         )
+        
+        # print(f"Prompt: {prompt}")
 
-        llm_output = None
-        if args.llm_generate:
-            llm_output = args.llm_generate(prompt)
+        figure_paths = []
+        download_path = args.download_path  
+        for figure in figures:
+            latex_path = figure["path"]
+            figure_path = figure_latex_path_to_path(path=download_path, arxiv_id = paper_arxiv_id, latex_path = latex_path)
+            figure_paths.append(figure_path)
+        
+        image_embeddings = _figure_paths_to_embeddings(figure_paths)
+
+        # Dont need to print embeddings since we cannot understand it
+        llm_output = llm_generate(prompt=prompt, image_embeddings=image_embeddings, model_name=model_name)
 
         outputs.append({
             "paragraph_id": str(pid),
             "prompt": prompt,
+            "original content": paragraph_content,
             "llm_output": llm_output or ""
         })
 
@@ -385,23 +559,3 @@ def example_openai_adapter(model: str = "gpt-4o-mini", temperature: float = 0.2)
     return _generate
 
 
-# ---------- Usage example ----------
-if __name__ == "__main__":
-    # Plug your own LLM adapter here if desired
-    # llm_fn = example_openai_adapter()
-    llm_fn = None  # build prompts only
-
-    args = Args(
-        paragraph_ids=[12345, 12346],
-        k_neighbour=2,
-        figure_available=True,
-        table_available=True,
-        llm_generate=llm_fn,
-    )
-
-    results = paragraph_generation(args)
-    for r in results:
-        print("\n=== Paragraph ID:", r["paragraph_id"], "===\n")
-        print("PROMPT:\n", r["prompt"])
-        if r["llm_output"]:
-            print("\nLLM OUTPUT:\n", r["llm_output"])

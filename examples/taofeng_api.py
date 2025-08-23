@@ -2,7 +2,7 @@ from openai import OpenAI
 
 client = OpenAI(
   base_url = "https://integrate.api.nvidia.com/v1",
-  api_key = "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"
+  api_key = "xxx"
 )
 
 completion = client.chat.completions.create(
@@ -21,7 +21,7 @@ for chunk in completion:
 
 client = OpenAI(
   base_url = "https://integrate.api.nvidia.com/v1",
-  api_key = “xxx”
+  api_key = "xxx"
 )
 
 def generate_answer(text):
