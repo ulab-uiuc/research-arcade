@@ -23,22 +23,22 @@ class Args:
 if __name__ == "__main__":
 
     args = Args(
-        paragraph_ids=[21812255],
+        paragraph_ids=[21841054],
         k_neighbour=4,
         figure_available=True,
         table_available=True,
         model_name="nvidia/llama-3.1-nemotron-nano-vl-8b-v1",
         download_path="./download"
     )
-    
+
     results = paragraph_generation(args)
-    
+
     # for r in results:
     #     print("\n=== Paragraph ID:", r["paragraph_id"], "===\n")
     #     print("PROMPT:\n", r["prompt"])
     #     if r["llm_output"]:
     #         print("\nLLM OUTPUT:\n", r["llm_output"])
-    
+
     # Evaluate the generated results
 
     for result in results:

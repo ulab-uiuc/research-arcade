@@ -228,22 +228,41 @@ def _fetch_cited_pairs(cur, citing_arxiv_id: str, paper_section: str, paragraph_
     """
     cur.execute(
         """
-        SELECT citing_arxiv_id, bib_key
+        SELECT bib_key
         FROM paragraph_citations
         WHERE citing_arxiv_id = %s AND paper_section= %s AND paragraph_id = %s
         """,
-        (paragraph_id, paper_section, paragraph_id),
+        (citing_arxiv_id, paper_section, paragraph_id),
     )
-    return [(r[0], r[1]) for r in cur.fetchall()]
+    return [(r[0]) for r in cur.fetchall()]
+
+def _fetch_titles(cur, citing_arxiv_id, cited_bib_keys):
+
+    """
+    Return bib_key->bib_title pairs
+    """
+    keys = [str(k) for k in (cited_bib_keys or [])]
+    if not keys:
+        return {}  # nothing to fetch
+
+    sql = """
+    SELECT bib_key, bib_title
+    FROM citations
+    WHERE citing_arxiv_id = %s
+      AND bib_key = ANY(%s::text[])
+    """
+    cur.execute(sql, (str(citing_arxiv_id), keys))
+    return dict(cur.fetchall())
 
 
-def _fetch_abstracts(cur, arxiv_ids_or_urls: List[str]) -> List[Tuple[str, str, str]]:
+
+def _fetch_abstracts(cur, arxiv_ids: List[str]) -> List[Tuple[str, str, str]]:
     """
     Returns list of (bib_key, title, abstract).
     We try exact id, and then the versionless id (split at 'v').
     """
     results = []
-    for raw in arxiv_ids_or_urls:
+    for raw in arxiv_ids:
         if not raw:
             continue
         # extract id if it's a URL
@@ -254,17 +273,16 @@ def _fetch_abstracts(cur, arxiv_ids_or_urls: List[str]) -> List[Tuple[str, str, 
 
         versionless = arx.split("v", 1)[0] if "v" in arx else arx
         
-        cur.execute("SELECT title, abstract, bib_key FROM papers WHERE arxiv_id = %s", (arx,))
+        cur.execute("SELECT title, abstract FROM papers WHERE arxiv_id = %s", (arx,))
         row = cur.fetchone()
         if not row:
-            cur.execute("SELECT title, abstract, bib_key FROM papers WHERE arxiv_id = %s", (versionless,))
+            cur.execute("SELECT title, abstract FROM papers WHERE arxiv_id = %s", (versionless,))
             row = cur.fetchone()
 
         if row:
-            title, abstract, bib_key = row
-            if not bib_key:
-                bib_key = _derived_bib_key(title or versionless)
-            results.append((bib_key, title or "", abstract or ""))
+            title, abstract = row
+            print(f"row: {row}")
+            results.append((title or "", abstract or ""))
 
     return results
 
@@ -604,7 +622,7 @@ def paragraph_generation(args: Args) -> List[Dict[str, str]]:
         print(f"Collected figure labels: {fig_labels}")
 
         if args.table_available:
-            tab_ids = _fetch_global_refs_for_paragraph(cur = cur, paper_arxiv_id = paper_arxiv_id, paper_section = paper_section,paragraph_id = paragraph_id, ref_type = "table")
+            tab_ids = _fetch_global_refs_for_paragraph(cur = cur, paper_arxiv_id = paper_arxiv_id, paper_section = paper_section, paragraph_id = paragraph_id, ref_type = "table")
             tables = _fetch_tables(cur, tab_ids)
             print(f"tables: {tables}")
 
@@ -618,13 +636,18 @@ def paragraph_generation(args: Args) -> List[Dict[str, str]]:
         # print(tables)
         # print(f"Fetched tables: {tables}")
         # citations → abstracts (+bib keys)
-        cited_pairs = _fetch_cited_pairs(cur, pid)  # (arxiv_or_url, bib_key_or_none)
+        cited_pairs = _fetch_cited_pairs(cur=cur, citing_arxiv_id=paper_arxiv_id, paper_section=paper_section, paragraph_id = paragraph_id)  # (arxiv_or_url, bib_key_or_none)
+        print(f"cited pairs: {cited_pairs}")
         cited_ids = [cp[0] for cp in cited_pairs]
+        print(f"cited_ids: {cited_ids}")
+        cited_bib_keys = [cp[1] for cp in cited_pairs]
+        titles = _fetch_titles(cur, paper_arxiv_id, cited_bib_keys)
+        
+        print(f"fetched titles: {titles}")
+
         abstracts = _fetch_abstracts(cur, cited_ids)
-
-        print(f"abstracts and titles: {abstracts}")
+        print(f"fetched abstracts: {abstracts}")
         sys.exit()
-
 
         # Abstract of the paper
         paper_title, paper_abstract = _fetch_paper_title_abstract(cur=cur, arxiv_id=paper_arxiv_id)
