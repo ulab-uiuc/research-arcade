@@ -137,12 +137,14 @@ def paragraph_ref_to_global_ref(paragraph_id, ref_type):
     conn = psycopg2.connect(
         host="localhost",
         dbname="postgres",
-        user="postgres",
+        user="cl195",
         password=PASSWORD,
-        port="5432"
+        port="5433",
     )
 
     ref_id_mapping = {}
+    res = []
+
 
     try:
         with conn:
@@ -164,6 +166,7 @@ def paragraph_ref_to_global_ref(paragraph_id, ref_type):
                 # 2) Resolve each reference
                 for arxiv_id, ref_label in pairs:
                     formatted_label = figure_label_add_latex_format(ref_label)
+                    print(f"formatted_label: {formatted_label}")
 
                     cur.execute(
                         sql.SQL("""
@@ -176,8 +179,10 @@ def paragraph_ref_to_global_ref(paragraph_id, ref_type):
                     if row is not None:
                         # map (arxiv_id, original ref_label) -> global_id
                         ref_id_mapping[(arxiv_id, ref_label)] = row[0]
+                        res.append(row[0])
 
-        return ref_id_mapping
+        # return ref_id_mapping
+        return res
 
     finally:
         conn.close()

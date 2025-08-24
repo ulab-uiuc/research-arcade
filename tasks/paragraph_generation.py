@@ -7,6 +7,7 @@ from graph_constructor.utils import figure_latex_path_to_path
 import shutil
 import re
 import unicodedata
+from tasks.utils import paragraph_ref_to_global_ref
 
 import psycopg2
 import psycopg2.extras
@@ -163,10 +164,20 @@ def _fetch_global_refs_for_paragraph(cur, paper_arxiv_id: str, paragraph_id: int
         """,
         (paper_arxiv_id, paper_section, paragraph_id, ref_type),
     )
-    return [r[0] for r in cur.fetchall()]
+    
+    rows = cur.fetchall()
+
+    for row in rows:
+        paragraph_id = row[0]
+        global_vals = paragraph_ref_to_global_ref(paragraph_id=paragraph_id, ref_type=ref_type)
+
+        print(global_vals)
+    
+    return rows
 
 
 def _fetch_figures(cur, figure_ids: List[int]) -> List[Dict]:
+    
     if not figure_ids:
         return []
     cur.execute(
@@ -387,39 +398,39 @@ def _build_prompt(
 # # Output
 # Return only the LaTeX paragraph text, nothing else.
 # """.strip()
-    prompt = f"""
-You are given the following inputs for reconstructing a missing paragraph in a research paper.
+#     prompt = f"""
+# You are given the following inputs for reconstructing a missing paragraph in a research paper.
 
-Title: {paper_title}
-Abstract: {abstract}
-Section name: {paper_section}
+# Title: {paper_title}
+# Abstract: {abstract}
+# Section name: {paper_section}
 
-Figure block (optional): {figure_block if figure_block else "(none)"}
-Table block (optional): {table_block if table_block else "(none)"}
-Cited paper titles/abstracts (optional): {abstracts_block if abstracts_block else "(none)"}
+# Figure block (optional): {figure_block if figure_block else "(none)"}
+# Table block (optional): {table_block if table_block else "(none)"}
+# Cited paper titles/abstracts (optional): {abstracts_block if abstracts_block else "(none)"}
 
-k-most adjacent paragraphs (context): {adjacent_paragraphs_block}
-Target length (characters): {num_char}
+# k-most adjacent paragraphs (context): {adjacent_paragraphs_block}
+# Target length (characters): {num_char}
 
-# Task
-Write exactly one LaTeX-formatted paragraph that naturally fits between the adjacent paragraphs.
+# # Task
+# Write exactly one LaTeX-formatted paragraph that naturally fits between the adjacent paragraphs.
 
-# HARD REQUIREMENTS (must all be satisfied)
-1) If fig_labels is non-empty, include each label **exactly once** using \\label{{<label>}} in the paragraph text (e.g., "see Fig.~\\label{{fig:framework}}").
-2) If table_labels is non-empty, include each label **exactly once** using \\label{{<label>}}.
-3) If bib_keys is non-empty, **cite all of them** (you may group keys in a single \\cite{{...}}).
-   - If allow_derived_bib_keys=true and a cited item lacks a key, derive a stable placeholder from its title: lowercase, keep a–z0–9 and hyphens only.
-   - Do not invent any other keys.
-4) Maintain objective, concise academic tone; ensure logical continuity with the provided context.
-5) Length ≈ {num_char} (±15%). Produce exactly one paragraph (no lists/headers/environments).
+# # HARD REQUIREMENTS (must all be satisfied)
+# 1) If fig_labels is non-empty, include each label **exactly once** using \\label{{<label>}} in the paragraph text (e.g., "see Fig.~\\label{{fig:framework}}").
+# 2) If table_labels is non-empty, include each label **exactly once** using \\label{{<label>}}.
+# 3) If bib_keys is non-empty, **cite all of them** (you may group keys in a single \\cite{{...}}).
+#    - If allow_derived_bib_keys=true and a cited item lacks a key, derive a stable placeholder from its title: lowercase, keep a-z0-9 and hyphens only.
+#    - Do not invent any other keys.
+# 4) Maintain objective, concise academic tone; ensure logical continuity with the provided context.
+# 5) Length ≈ {num_char} (±15%). Produce exactly one paragraph (no lists/headers/environments).
 
-# ORDERING
-- When mentioning multiple figures/tables, follow the order in fig_labels/table_labels.
+# # ORDERING
+# - When mentioning multiple figures/tables, follow the order in fig_labels/table_labels.
 
-# Output
-Return only the LaTeX paragraph text. No explanations, no markdown, no extra lines.
-""".strip()
-
+# # Output
+# Return only the LaTeX paragraph text. No explanations, no markdown, no extra lines.
+# """.strip()
+    
     prompt = "Describe the provided images senquentially."
 
     
@@ -544,7 +555,6 @@ def paragraph_generation(args: Args) -> List[Dict[str, str]]:
         # context anchor
         paper_arxiv_id, pivot_local_id, paragraph_content = _fetch_context_for_paragraph(cur, arxiv_id = paper_arxiv_id, paragraph_id = paragraph_id, paper_section = paper_section)
 
-# def _fetch_global_refs_for_paragraph(cur, paper_arxiv_id: str, paragraph_id: int, ref_type: str) -> List[int]:
 
         # figures
         figures = []
@@ -555,6 +565,8 @@ def paragraph_generation(args: Args) -> List[Dict[str, str]]:
             print(f"paper_section: {paper_section}")
             print(f"paragraph_id: {paragraph_id}")
             print(f"Number of figure ids collected: {len(fig_ids)}")
+            print(f"fig_ids: {fig_ids}")
+            sys.exit()
             figures = _fetch_figures(cur, fig_ids)
 
         # tables

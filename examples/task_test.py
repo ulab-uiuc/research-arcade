@@ -23,7 +23,7 @@ class Args:
 if __name__ == "__main__":
 
     args = Args(
-        paragraph_ids=[26095],
+        paragraph_ids=[21812255],
         k_neighbour=4,
         figure_available=True,
         table_available=True,
@@ -52,6 +52,7 @@ if __name__ == "__main__":
         print(f"original_answer: {original_answer}")
         print("---------------------------------------------------")
 
+        #TODO remove it. This is just for skipping the evals
         continue
         rouge_score = rouge_similarity(generate_answer, original_answer)
         print(f"Rouge Score: {rouge_score}")
