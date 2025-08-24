@@ -155,25 +155,24 @@ def _fetch_global_refs_for_paragraph(cur, paper_arxiv_id: str, paragraph_id: int
     otherwise select from a junction table like paragraph_references(paragraph_id, reference_type, global_id).
     """
 
-    # If you do have a Python helper, swap this body out:
-    cur.execute(
-        """
-        SELECT id
-        FROM paragraph_references
-        WHERE paper_arxiv_id = %s AND paper_section = %s AND paragraph_id = %s AND reference_type = %s;
-        """,
-        (paper_arxiv_id, paper_section, paragraph_id, ref_type),
-    )
-    
-    rows = cur.fetchall()
+    # cur.execute(
+    #     """
+    #     SELECT id
+    #     FROM paragraph_references
+    #     WHERE paper_arxiv_id = %s AND paper_section = %s AND paragraph_id = %s AND reference_type = %s;
+    #     """,
+    #     (paper_arxiv_id, paper_section, paragraph_id, ref_type),
+    # )
 
-    for row in rows:
-        paragraph_id = row[0]
-        global_vals = paragraph_ref_to_global_ref(paragraph_id=paragraph_id, ref_type=ref_type)
+    # rows = cur.fetchall()
 
-        print(global_vals)
+    # for row in rows:
+    #     paragraph_id = row[0]
+    global_vals = paragraph_ref_to_global_ref(arxiv_id = paper_arxiv_id, paper_section=paper_section,paragraph_id=paragraph_id, ref_type=ref_type)
     
-    return rows
+    # print(f"global_vals: {global_vals}")
+    
+    return global_vals
 
 
 def _fetch_figures(cur, figure_ids: List[int]) -> List[Dict]:
@@ -222,7 +221,7 @@ def _fetch_tables(cur, table_ids: List[int]) -> List[Dict]:
     return tables
 
 
-def _fetch_cited_pairs(cur, paragraph_id: int) -> List[Tuple[str, Optional[str]]]:
+def _fetch_cited_pairs(cur, citing_arxiv_id: str, paper_section: str, paragraph_id: int) -> List[Tuple[str, Optional[str]]]:
     """
     Returns list of (arxiv_id_or_url, bib_key_or_none).
     If you already have paragraph_to_global_citation(paragraph_id) in Python, call that instead.
@@ -231,9 +230,9 @@ def _fetch_cited_pairs(cur, paragraph_id: int) -> List[Tuple[str, Optional[str]]
         """
         SELECT citing_arxiv_id, bib_key
         FROM paragraph_citations
-        WHERE paragraph_id = %s
+        WHERE citing_arxiv_id = %s AND paper_section= %s AND paragraph_id = %s
         """,
-        (paragraph_id,),
+        (paragraph_id, paper_section, paragraph_id),
     )
     return [(r[0], r[1]) for r in cur.fetchall()]
 
@@ -254,7 +253,7 @@ def _fetch_abstracts(cur, arxiv_ids_or_urls: List[str]) -> List[Tuple[str, str, 
             arx = raw.strip()
 
         versionless = arx.split("v", 1)[0] if "v" in arx else arx
-
+        
         cur.execute("SELECT title, abstract, bib_key FROM papers WHERE arxiv_id = %s", (arx,))
         row = cur.fetchone()
         if not row:
@@ -318,6 +317,9 @@ def _build_prompt(
     num_char: int,
     title: str,
     abstract: str,
+    fig_labels: List[str],
+    table_labels: List[str],
+    bib_keys: List[str]
 ) -> str:
 
     paper_title = title
@@ -431,7 +433,51 @@ def _build_prompt(
 # Return only the LaTeX paragraph text. No explanations, no markdown, no extra lines.
 # """.strip()
     
-    prompt = "Describe the provided images senquentially."
+    # prompt = "Describe the provided images senquentially."
+    print(f"figure_block: {figure_block}")
+    print(f"Collected fig_labels: {fig_labels}")
+    prompt = f"""
+    You are given the following inputs for reconstructing a missing paragraph in a research paper.
+
+    Title: {paper_title}
+    Abstract: {abstract}
+    Section name: {paper_section}
+
+    Figure block (optional): {figure_block if figure_block else "(none)"}
+    Table block (optional): {table_block if table_block else "(none)"}
+    Cited paper titles/abstracts (optional): {abstracts_block if abstracts_block else "(none)"}
+
+    k-most adjacent paragraphs (context): {adjacent_paragraphs_block}
+    Target length (characters): {num_char}
+
+    # Canonicalized metadata for enforcement (already cleaned)
+    fig_labels = {fig_labels}          # e.g., ["fig:framework","fig:sd_latents"]; [] if none
+    table_labels = {table_labels}      # e.g., ["tab:results"]; [] if none
+    bib_keys = {bib_keys}              # e.g., ["smith2024", "lee2023"]; [] if none
+
+    # Task
+    Write exactly one LaTeX-formatted paragraph that naturally fits between the adjacent paragraphs.
+
+    # HARD REQUIREMENTS (must all be satisfied)
+    1) If fig_labels is non-empty, include each label **exactly once** using \\ref{{<label>}} in the paragraph text (e.g., "see Fig.~\\ref{{fig:framework}}").
+    2) If table_labels is non-empty, include each label **exactly once** using \\ref{{<label>}}.
+    3) If bib_keys is non-empty, **cite all of them** (you may group keys in a single \\cite{{...}}).
+    - If allow_derived_bib_keys=true and a cited item lacks a key, derive a stable placeholder from its title: lowercase, keep a-z0-9 and hyphens only.
+    - Do not invent any other keys.
+    4) Maintain objective, concise academic tone; ensure logical continuity with the provided context.
+    5) Length approximately equals to {num_char} (plus or minus 15%). Produce exactly one paragraph (no lists/headers/environments).
+
+    # ORDERING
+    - When mentioning multiple figures/tables, follow the order in fig_labels/table_labels.
+
+    # SILENT SELF-CHECK (do not print this checklist)
+    - Verify every l in fig_labels and table_labels appears exactly once as the substring "\\ref{{" + l + "}}".
+    - Verify every key in bib_keys (plus any allowed derived keys) appears in a \\cite{{...}}.
+    - Verify the output is a single paragraph (no blank lines).
+
+    # Output
+    Return only the LaTeX paragraph text. No explanations, no markdown, no extra lines.
+    """.strip()
 
     
     return prompt
@@ -487,42 +533,23 @@ def _slug(s, prefix="fig", maxlen=48):
     s = s[:maxlen].strip("-")
     return f"{prefix}:{s or 'placeholder'}"
 
-def collect_fig_labels(fig_blocks):
+def collect_fig_labels(figure_labels_raw):
     """
-    fig_blocks: list of dicts like
-      {"label": "\\label{fig:framework}", "caption": "\\caption{...}"}
-      {"label": None, "caption": "\\caption{...\\label{fig:e2s_a} ...}"}
-      {"label": None, "caption": "\\caption{Llama2-7b}"}
-    Returns: ["fig:framework", "fig:sd_latents", "fig:e2s-a", ...]
+    fig_blocks: list like \\label{fig:framework}, ...
+
+    return what is inside of the parenthesis using regular expression
     """
-    out = []
-    for i, fb in enumerate(fig_blocks):
-        lab = fb.get("label") or ""
-        cap = fb.get("caption") or ""
+    _LABEL_RE = re.compile(r"""\\label\s*\{\s*([^}]+?)\s*\}""", re.IGNORECASE | re.DOTALL)
+    texts = [figure_labels_raw] if isinstance(figure_labels_raw, str) else list(figure_labels_raw)
+    found = []
+    for s in texts:
+        matches = _LABEL_RE.findall(s or "")
+        for m in matches:
+            lbl = m.strip()
+            found.append(lbl)
+    return found[0]
 
-        # 1) explicit label field
-        m = re.search(r"\\label\{([^}]+)\}", lab)
-        if not m:
-            # 2) label inside caption
-            m = re.search(r"\\label\{([^}]+)\}", cap)
-
-        if m:
-            out.append(m.group(1))
-        else:
-            # 3) derive from caption (or index if empty)
-            base = _slug(cap) if cap else f"fig:missing-{i+1}"
-            out.append(base)
-    # de-dup if needed by appending index
-    seen = {}
-    uniq = []
-    for lbl in out:
-        if lbl not in seen:
-            seen[lbl] = 0
-            uniq.append(lbl)
-        else:
-            seen[lbl] += 1
-            uniq.append(f"{lbl}-{seen[lbl]}")
-    return uniq
+    
 
 def paragraph_generation(args: Args) -> List[Dict[str, str]]:
     """
@@ -561,19 +588,31 @@ def paragraph_generation(args: Args) -> List[Dict[str, str]]:
         if args.figure_available:
             fig_ids = _fetch_global_refs_for_paragraph(cur = cur, paper_arxiv_id = paper_arxiv_id, paper_section = paper_section, paragraph_id = paragraph_id, ref_type = "figure")
             #TODO remove it
-            print(f"paper_arxiv_id: {paper_arxiv_id}")
-            print(f"paper_section: {paper_section}")
-            print(f"paragraph_id: {paragraph_id}")
-            print(f"Number of figure ids collected: {len(fig_ids)}")
-            print(f"fig_ids: {fig_ids}")
-            sys.exit()
+            # Ensure that each figure is 
+            # print(f"paper_arxiv_id: {paper_arxiv_id}")
+            # print(f"paper_section: {paper_section}")
+            # print(f"paragraph_id: {paragraph_id}")
+            # print(f"Number of figure ids collected: {len(fig_ids)}")
+            # print(f"fig_ids: {fig_ids}")
             figures = _fetch_figures(cur, fig_ids)
+            print(f"figures: {figures}")
+        
+        # TODO: deal with this part
+        figure_labels_raw = [figure["label"] for figure in figures]
 
-        # tables
-        tables = []
+        fig_labels = [collect_fig_labels(figure_label) for figure_label in figure_labels_raw]
+        print(f"Collected figure labels: {fig_labels}")
+
         if args.table_available:
             tab_ids = _fetch_global_refs_for_paragraph(cur = cur, paper_arxiv_id = paper_arxiv_id, paper_section = paper_section,paragraph_id = paragraph_id, ref_type = "table")
             tables = _fetch_tables(cur, tab_ids)
+            print(f"tables: {tables}")
+
+        table_labels_raw = [table["label"] for table in tables]
+    
+        table_labels = [collect_fig_labels(table_label) for table_label in table_labels_raw]
+        print(f"Collected table labels: {table_labels}")
+
 
         # print(f"Fetched figures: {figures}")
         # print(tables)
@@ -582,6 +621,10 @@ def paragraph_generation(args: Args) -> List[Dict[str, str]]:
         cited_pairs = _fetch_cited_pairs(cur, pid)  # (arxiv_or_url, bib_key_or_none)
         cited_ids = [cp[0] for cp in cited_pairs]
         abstracts = _fetch_abstracts(cur, cited_ids)
+
+        print(f"abstracts and titles: {abstracts}")
+        sys.exit()
+
 
         # Abstract of the paper
         paper_title, paper_abstract = _fetch_paper_title_abstract(cur=cur, arxiv_id=paper_arxiv_id)
@@ -606,25 +649,27 @@ def paragraph_generation(args: Args) -> List[Dict[str, str]]:
             paper_section=paper_section,
             num_char=num_char,
             title=paper_title,
-            abstract=paper_abstract
+            abstract=paper_abstract,
+            fig_labels=fig_labels,
+            table_labels=table_labels,
         )
 
         figure_paths = []
         download_path = args.download_path  
         #TODO remove it
-        print(f"Number of figures collected {len(figures)}")
+        # print(f"Number of figures collected {len(figures)}")
         for figure in figures:
             latex_path = figure["path"]
             figure_path = figure_latex_path_to_path(path=download_path, arxiv_id = paper_arxiv_id, latex_path = latex_path)
             figure_paths.append(figure_path)
-
+        
         #TODO remove it
-        print(f"Number of figure paths collected: {len(figure_paths)}")
+        # print(f"Number of figure paths collected: {len(figure_paths)}")
         image_embeddings = _figure_paths_to_embeddings(figure_paths)
 
         #TODO remove it
-        print(f"Number of image embeddings collected: {len(image_embeddings)}")
-        sys.exit()
+        # print(f"Number of image embeddings collected: {len(image_embeddings)}")
+        
         # Dont need to print embeddings since we cannot understand it
         llm_output = llm_generate(prompt=prompt, image_embeddings=image_embeddings, model_name=model_name)
 

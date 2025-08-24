@@ -51,9 +51,9 @@ if __name__ == "__main__":
         print("---------------------------------------------------")
         print(f"original_answer: {original_answer}")
         print("---------------------------------------------------")
-
+        
         #TODO remove it. This is just for skipping the evals
-        continue
+        # continue
         rouge_score = rouge_similarity(generate_answer, original_answer)
         print(f"Rouge Score: {rouge_score}")
         sbert_score = sbert_similarity(generate_answer, original_answer)

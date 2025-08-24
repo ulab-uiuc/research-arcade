@@ -122,7 +122,7 @@ def answer_evaluation(answer, ground_truth, data_type=None):
     }
 
 
-def paragraph_ref_to_global_ref(paragraph_id, ref_type):
+def paragraph_ref_to_global_ref(arxiv_id, paragraph_id, paper_section, ref_type):
     """
     Given a paragraph_id and ref_type ('figure' or 'table'), return a mapping
     from (paper_arxiv_id, reference_label) to the global ID in the corresponding
@@ -154,19 +154,18 @@ def paragraph_ref_to_global_ref(paragraph_id, ref_type):
                     """
                     SELECT paper_arxiv_id, reference_label
                     FROM paragraph_references
-                    WHERE paragraph_id = %s AND reference_type = %s
+                    WHERE paper_arxiv_id = %s AND paper_section = %s AND paragraph_id = %s AND reference_type = %s
                     """,
-                    (paragraph_id, ref_type)
+                    (arxiv_id, paper_section, paragraph_id, ref_type)
                 )
                 pairs = cur.fetchall()
-
                 if not pairs:
                     return ref_id_mapping  # empty dict
 
                 # 2) Resolve each reference
                 for arxiv_id, ref_label in pairs:
                     formatted_label = figure_label_add_latex_format(ref_label)
-                    print(f"formatted_label: {formatted_label}")
+                    # print(f"formatted_label: {formatted_label}")
 
                     cur.execute(
                         sql.SQL("""
@@ -180,8 +179,8 @@ def paragraph_ref_to_global_ref(paragraph_id, ref_type):
                         # map (arxiv_id, original ref_label) -> global_id
                         ref_id_mapping[(arxiv_id, ref_label)] = row[0]
                         res.append(row[0])
-
-        # return ref_id_mapping
+        # TODO remove it
+        # print(f"searching results: {res}")
         return res
 
     finally:
