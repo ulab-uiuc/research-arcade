@@ -1,0 +1,22 @@
+INFO 08-29 16:27:35 [__init__.py:241] Automatically detected platform cuda.
+figure_block: Figure (optional):
+- label: \label{fig:qualitative_faceid}; caption: \caption{Examples of the FaceID guidance generation with pre-trained CelebA-HQ models. }
+Collected fig_labels: ['fig:qualitative_faceid']
+INFO 08-29 16:28:51 [__init__.py:241] Automatically detected platform cuda.
+figure_block: Figure (optional):
+- label: \label{fig:qualitative_faceid}; caption: \caption{Examples of the FaceID guidance generation with pre-trained CelebA-HQ models. }
+Collected fig_labels: ['fig:qualitative_faceid']
+INFO 08-29 16:30:24 [__init__.py:241] Automatically detected platform cuda.
+INFO 08-29 16:30:45 [__init__.py:241] Automatically detected platform cuda.
+figure_block: Figure (optional):
+- label: \label{fig:qualitative_faceid}; caption: \caption{Examples of the FaceID guidance generation with pre-trained CelebA-HQ models. }
+Collected fig_labels: ['fig:qualitative_faceid']
+INFO 08-29 16:32:13 [__init__.py:241] Automatically detected platform cuda.
+figure_block: Figure (optional):
+- label: \label{fig:qualitative_faceid}; caption: \caption{Examples of the FaceID guidance generation with pre-trained CelebA-HQ models. }
+Collected fig_labels: ['fig:qualitative_faceid']
+INFO 08-29 16:33:20 [__init__.py:241] Automatically detected platform cuda.
+figure_block: Figure (optional):
+- label: \label{fig:qualitative_faceid}; caption: \caption{Examples of the FaceID guidance generation with pre-trained CelebA-HQ models. }
+Collected fig_labels: ['fig:qualitative_faceid']
+CLIP image features: (1, 512)

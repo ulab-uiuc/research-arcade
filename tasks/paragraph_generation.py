@@ -8,6 +8,10 @@ import shutil
 import re
 import unicodedata
 from tasks.utils import paragraph_ref_to_global_ref
+import pandas as pd
+
+import json
+from pathlib import Path
 
 import psycopg2
 import psycopg2.extras
@@ -17,6 +21,7 @@ import sys
 import fitz
 import io
 from openai import OpenAI
+from pathlib import Path
 
 load_dotenv()
 
@@ -45,7 +50,7 @@ def llm_generate(prompt, image_embeddings, model_name):
         for image_embedding in image_embeddings:
             content.append({ "type": "image_url", "image_url": { "url": f"data:image/png;base64,{image_embedding}" } },)
     content.append({ "type": "text", "text": prompt})
-
+    
     completion = client.chat.completions.create(
         model=model_name,
         messages=[
@@ -83,16 +88,161 @@ def _derived_bib_key(title: str) -> str:
     return f"{base}_tmpkey"
 
 
+
+def _data_fetching(paragraph_key_ids, data_path, k_neighbour):
+    """
+    Given paragraph primary-key IDs (from table `paragraphs.id`), fetch and serialize,
+    for each paragraph, the following into a JSONL at `data_path`:
+
+      - figures: List[Dict] with id/label/caption/path
+      - tables:  List[Dict] with id/label/text
+      - abstracts + title of cited papers: List[Tuple[bib_key, title, abstract]]
+      - prev_paras: List[str]
+      - next_paras: List[str]
+      - paper_section: str
+      - num_char: int              (length of the original paragraph content)
+      - title: str                 (paper title)
+      - abstract: str              (paper abstract)
+      - fig_labels: List[str]      (parsed from \\label{...} in figure labels)
+      - table_labels: List[str]    (parsed from \\label{...} in table labels)
+      - bib_keys: List[str]        (keys cited in this paragraph)
+      - original_content: str      (the paragraph text itself)
+      - paragraph_key_id: int
+      - paper_arxiv_id: str
+      - paragraph_id_local: int
+    """
+    # Ensure target directory exists
+    Path(data_path).parent.mkdir(parents=True, exist_ok=True)
+
+    conn = psycopg2.connect(
+        host="localhost",
+        dbname="postgres",
+        user="cl195",
+        password=PASSWORD,
+        port="5433",
+    )
+    conn.autocommit = True
+    cur = conn.cursor()
+
+    # Open (overwrite) JSONL for this run
+    with open(data_path, "w", encoding="utf-8") as fp:
+        for paragraph_key_id in paragraph_key_ids:
+            # 1) Resolve (paper_arxiv_id, paragraph_id_local, paper_section) from PK
+            got = _fetch_arxiv_id_paragraph_id_section_name(cur, paragraph_key_id)
+            if not got:
+                # Skip missing PKs; you can raise if you prefer strictness
+                print(f"[WARN] paragraph id {paragraph_key_id} not found in `paragraphs`.")
+                continue
+            paper_arxiv_id, paragraph_id_local, paper_section = got
+
+            # 2) Fetch the paragraph content (also returns arxiv id and local id)
+            _arxiv_id, _local_id, paragraph_content = _fetch_context_for_paragraph(
+                cur, arxiv_id=paper_arxiv_id, paragraph_id=paragraph_id_local, paper_section=paper_section
+            )
+            # 3) Adjacent context
+            prev_paras, next_paras = _fetch_adjacent_paragraphs(
+                cur, paper_arxiv_id, paper_section, paragraph_id_local, k=k_neighbour  # you can parameterize k if desired
+            )
+
+            # 4) Figures
+            fig_ids = _fetch_global_refs_for_paragraph(
+                cur=cur,
+                paper_arxiv_id=paper_arxiv_id,
+                paper_section=paper_section,
+                paragraph_id=paragraph_id_local,
+                ref_type="figure",
+            )
+            figures = _fetch_figures(cur, fig_ids)
+            # Parse labels like \label{fig:foo} -> "fig:foo"
+            fig_labels = []
+            for f in figures:
+                try:
+                    lbl = collect_fig_labels(f.get("label", ""))
+                except Exception:
+                    lbl = None
+                if lbl:
+                    fig_labels.append(lbl)
+
+            # 5) Tables
+            tab_ids = _fetch_global_refs_for_paragraph(
+                cur=cur,
+                paper_arxiv_id=paper_arxiv_id,
+                paper_section=paper_section,
+                paragraph_id=paragraph_id_local,
+                ref_type="table",
+            )
+            tables = _fetch_tables(cur, tab_ids)
+            table_labels = []
+            for t in tables:
+                try:
+                    tlbl = collect_fig_labels(t.get("label", ""))
+                except Exception:
+                    tlbl = None
+                if tlbl:
+                    table_labels.append(tlbl)
+
+            # 6) Cited bib keys for this paragraph
+            bib_keys = _fetch_cited_bib_key(
+                cur=cur,
+                citing_arxiv_id=paper_arxiv_id,
+                paper_section=paper_section,
+                paragraph_id=paragraph_id_local,
+            ) or []
+
+            # 7) Titles + (potential) arxiv ids for cited entries
+            title_id_pairs = _fetch_titles(cur, paper_arxiv_id, bib_keys)
+            # title_id_pairs: List[(bib_key, bib_title, cited_arxiv_id)]
+            cited_arxiv_ids = [row[2] for row in title_id_pairs]
+
+            # 8) Abstracts for cited arxiv ids (empty string if not found)
+            cited_abstracts = _fetch_abstracts(cur, cited_arxiv_ids)  # List[str]
+            # Build triples aligned to title_id_pairs
+            cited_triples = []
+            for (bib_key, bib_title, _arx), abs_txt in zip(title_id_pairs, cited_abstracts):
+                cited_triples.append((bib_key, bib_title, abs_txt or ""))
+
+            # 9) Paper title/abstract
+            paper_title, paper_abs = _fetch_paper_title_abstract(cur=cur, arxiv_id=paper_arxiv_id) or ("", "")
+
+            # 10) Compose record
+            record = {
+                "paragraph_key_id": int(paragraph_key_id),
+                "paper_arxiv_id": paper_arxiv_id,
+                "paragraph_id_local": int(paragraph_id_local),
+                "paper_section": paper_section,
+                "original_content": paragraph_content or "",
+                "num_char": len(paragraph_content or ""),
+                "title": paper_title or "",
+                "abstract": paper_abs or "",
+                "prev_paras": prev_paras,
+                "next_paras": next_paras,
+                "figures": figures,          # [{id,label,caption,path}, ...]
+                "tables": tables,            # [{id,label,text}, ...]
+                "fig_labels": fig_labels,    # ["fig:...", ...]
+                "table_labels": table_labels,# ["tab:...", ...]
+                "bib_keys": bib_keys,        # ["smith2024", ...]
+                "cited_triples": cited_triples,  # [(bib_key, title, abstract), ...]
+            }
+
+            # 11) Write one line per paragraph_key_id
+            fp.write(json.dumps(record, ensure_ascii=False) + "\n")
+
+    cur.close()
+    conn.close()
+
+    
+
+
+
 def _format_block(label: str, lines: List[str]) -> str:
     if not lines:
         return ""
     header = f"{label}:\n"
     return header + "\n".join(lines)
 
-
+# Here, we need to use pandas
 def _fetch_context_for_paragraph(cur, arxiv_id, paragraph_id, paper_section):
-    
-    # print(f"paper_section: {paper_section}")
+
     cur.execute(
         """
         SELECT paper_arxiv_id, paragraph_id, content
@@ -221,9 +371,9 @@ def _fetch_tables(cur, table_ids: List[int]) -> List[Dict]:
     return tables
 
 
-def _fetch_cited_pairs(cur, citing_arxiv_id: str, paper_section: str, paragraph_id: int) -> List[Tuple[str, Optional[str]]]:
+def _fetch_cited_bib_key(cur, citing_arxiv_id: str, paper_section: str, paragraph_id: int) -> List[Tuple[str, Optional[str]]]:
     """
-    Returns list of (arxiv_id_or_url, bib_key_or_none).
+    Returns list of (bib_key_or_none).
     If you already have paragraph_to_global_citation(paragraph_id) in Python, call that instead.
     """
     cur.execute(
@@ -244,15 +394,15 @@ def _fetch_titles(cur, citing_arxiv_id, cited_bib_keys):
     keys = [str(k) for k in (cited_bib_keys or [])]
     if not keys:
         return {}  # nothing to fetch
-
+    print(f"keys for query: {keys}")
     sql = """
-    SELECT bib_key, bib_title
+    SELECT bib_key, bib_title, cited_arxiv_id
     FROM citations
     WHERE citing_arxiv_id = %s
       AND bib_key = ANY(%s::text[])
     """
     cur.execute(sql, (str(citing_arxiv_id), keys))
-    return dict(cur.fetchall())
+    return list(cur.fetchall())
 
 
 
@@ -264,6 +414,7 @@ def _fetch_abstracts(cur, arxiv_ids: List[str]) -> List[Tuple[str, str, str]]:
     results = []
     for raw in arxiv_ids:
         if not raw:
+            results.append("")
             continue
         # extract id if it's a URL
         if "/" in raw:
@@ -282,8 +433,9 @@ def _fetch_abstracts(cur, arxiv_ids: List[str]) -> List[Tuple[str, str, str]]:
         if row:
             title, abstract = row
             print(f"row: {row}")
-            results.append((title or "", abstract or ""))
-
+            results.append((abstract or ""))
+        else:
+            results.append("")
     return results
 
 def _fetch_paper_title_abstract(cur, arxiv_id):
@@ -502,43 +654,41 @@ def _build_prompt(
 
 
 def _figure_paths_to_embeddings(figure_paths):
+    if not figure_paths:
+        return []
 
-    print(f"Figure paths:{figure_paths}")
     embeddings = []
-    file_fomats = [".jpg", ".png", ".jpeg"]
-
-    # File accessibility verification
-
-    for file_path in figure_paths:
-        if os.path.isfile(file_path):
-            print(f"File exists: {file_path}")
+    allowed = {".jpg", ".jpeg", ".png", ".pdf"}
 
     for fs_path in figure_paths:
-        if os.path.isfile(fs_path):
-            if fs_path.endswith(".pdf"):
-                    doc = fitz.open(fs_path)
-                    for page_num in range(len(doc)):
-                        page = doc[page_num]
+        if not os.path.isfile(fs_path):
+            print(f"[WARN] Not a file: {fs_path}")
+            continue
 
-                        # Step 2: Render PDF page to an image (pixmap)
-                        pix = page.get_pixmap()
+        ext = Path(fs_path).suffix.lower()
+        if ext not in allowed:
+            print(f"[WARN] Skipping unsupported extension ({ext}): {fs_path}")
+            continue
 
-                        # Convert pixmap to PIL Image
-                        img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
+        try:
+            if ext == ".pdf":
+                # Convert each PDF page to JPEG and base64-encode
+                with fitz.open(fs_path) as doc:
+                    for page in doc:
+                        pix = page.get_pixmap()               # render page
+                        if pix.alpha:                          # drop alpha if present
+                            pix = fitz.Pixmap(fitz.csRGB, pix)
+                        jpeg_bytes = pix.tobytes("jpg")        # encode as JPEG bytes
+                        embeddings.append(base64.b64encode(jpeg_bytes).decode("utf-8"))
+            else:
+                # Image file: read and base64-encode
+                with open(fs_path, "rb") as f:
+                    embeddings.append(base64.b64encode(f.read()).decode("utf-8"))
 
-                        # Step 3: Save image to memory buffer (JPEG format)
-                        buffer = io.BytesIO()
-                        img.save(buffer, format="JPEG")
+        except Exception as e:
+            print(f"[ERROR] Failed to process {fs_path}: {e}")
 
-                        # Step 4: Encode in base64
-                        image_b64_0 = base64.b64encode(buffer.getvalue()).decode("utf-8")
-                        embeddings.append(image_b64_0)
-            elif fs_path.endswith(".jpg") or fs_path.endswith(".png") or fs_path.endswith(".jpeg"):
-                with open(fs_path, 'rb') as f:
-                    image_b64_0 = base64.b64encode(f.read()).decode('utf-8')
-                    embeddings.append(image_b64_0)
-        
-        return embeddings
+    return embeddings
 
 
 def _slug(s, prefix="fig", maxlen=48):
@@ -636,18 +786,17 @@ def paragraph_generation(args: Args) -> List[Dict[str, str]]:
         # print(tables)
         # print(f"Fetched tables: {tables}")
         # citations → abstracts (+bib keys)
-        cited_pairs = _fetch_cited_pairs(cur=cur, citing_arxiv_id=paper_arxiv_id, paper_section=paper_section, paragraph_id = paragraph_id)  # (arxiv_or_url, bib_key_or_none)
-        print(f"cited pairs: {cited_pairs}")
-        cited_ids = [cp[0] for cp in cited_pairs]
-        print(f"cited_ids: {cited_ids}")
-        cited_bib_keys = [cp[1] for cp in cited_pairs]
-        titles = _fetch_titles(cur, paper_arxiv_id, cited_bib_keys)
+        cited_bib_keys = _fetch_cited_bib_key(cur=cur, citing_arxiv_id=paper_arxiv_id, paper_section=paper_section, paragraph_id = paragraph_id)  # (arxiv_or_url, bib_key_or_none)
+        title_id_pairs = _fetch_titles(cur, paper_arxiv_id, cited_bib_keys)
         
-        print(f"fetched titles: {titles}")
+        print(f"fetched title_id_pairs: {title_id_pairs}")
+        
+        
+        cited_ids = [title_id_pair[0] for title_id_pair in title_id_pairs]
+        # Then we fetch the arxiv ids of cited papers if exits
 
         abstracts = _fetch_abstracts(cur, cited_ids)
         print(f"fetched abstracts: {abstracts}")
-        sys.exit()
 
         # Abstract of the paper
         paper_title, paper_abstract = _fetch_paper_title_abstract(cur=cur, arxiv_id=paper_arxiv_id)
@@ -659,14 +808,19 @@ def paragraph_generation(args: Args) -> List[Dict[str, str]]:
 
         # print(f"Previous paragraphs: {prev_paras}")
         # print(f"Next paragraphs: {next_paras}")
+        abstract_triple = []
 
+        for i in range(len(title_id_pairs)):
+            abstract_triple.append([title_id_pairs[i][0], title_id_pairs[i][1], abstracts[i]])
+
+        print(f"triple: {abstract_triple}")
 
         num_char = len(paragraph_content)
         prompt = _build_prompt(
             k=args.k_neighbour,
             figures=figures,
             tables=tables,
-            abstracts=abstracts,
+            abstracts=abstract_triple,
             prev_paras=prev_paras,
             next_paras=next_paras,
             paper_section=paper_section,
@@ -675,6 +829,7 @@ def paragraph_generation(args: Args) -> List[Dict[str, str]]:
             abstract=paper_abstract,
             fig_labels=fig_labels,
             table_labels=table_labels,
+            bib_keys=cited_bib_keys,
         )
 
         figure_paths = []
@@ -685,13 +840,14 @@ def paragraph_generation(args: Args) -> List[Dict[str, str]]:
             latex_path = figure["path"]
             figure_path = figure_latex_path_to_path(path=download_path, arxiv_id = paper_arxiv_id, latex_path = latex_path)
             figure_paths.append(figure_path)
-        
-        #TODO remove it
-        # print(f"Number of figure paths collected: {len(figure_paths)}")
+
+
         image_embeddings = _figure_paths_to_embeddings(figure_paths)
 
         #TODO remove it
-        # print(f"Number of image embeddings collected: {len(image_embeddings)}")
+        print(f"Number of image embeddings collected: {len(image_embeddings)}")
+
+        # sys.exit()
         
         # Dont need to print embeddings since we cannot understand it
         llm_output = llm_generate(prompt=prompt, image_embeddings=image_embeddings, model_name=model_name)

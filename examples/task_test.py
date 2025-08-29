@@ -52,7 +52,6 @@ if __name__ == "__main__":
         print(f"original_answer: {original_answer}")
         print("---------------------------------------------------")
         
-        #TODO remove it. This is just for skipping the evals
         # continue
         rouge_score = rouge_similarity(generate_answer, original_answer)
         print(f"Rouge Score: {rouge_score}")
@@ -60,8 +59,8 @@ if __name__ == "__main__":
         print(f"SBERT Score: {sbert_score}")
         gpt_evaluation_score = gpt_evaluation(generate_answer, original_answer)
     
-        print(f"GPT Evaluation Score: {gpt_evaluation_score}")
-        print("---------------------------------------------------")
+        # print(f"GPT Evaluation Score: {gpt_evaluation_score}")
+        # print("---------------------------------------------------")
 
     #     outputs.append({
     #         "paragraph_id": str(pid),
