@@ -12,7 +12,6 @@ try:
 except Exception:
     _HAS_FAISS = False
 
-
 # -----------------------
 # Utilities
 # -----------------------

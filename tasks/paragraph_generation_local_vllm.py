@@ -1,7 +1,8 @@
 import os
 import re
 from dataclasses import dataclass
-from typing import Callable, List, Optional, Tuple, Dict, Any
+from typing import Callable, List, Optional, Tuple, Dict, Any, Sequence
+
 from dotenv import load_dotenv
 from graph_constructor.utils import figure_latex_path_to_path
 import shutil
@@ -31,7 +32,21 @@ except Exception:
 
 load_dotenv()
 
+CANDIDATE_TAGS = [
+    "diagram", "graph", "map", "network", "bridges", "math figure",
+    "printed text", "table", "chart", "equation", "flowchart",
+    "scatter plot", "bar chart", "ROC curve", "heatmap", "topology",
+]
 
+TAG_TEMPLATES = [
+    "a diagram of {}",
+    "a figure showing {}",
+    "a technical illustration of {}",
+    "contains {}",
+    "a chart about {}",
+]
+
+TOPK_TAGS = 1
 """
 The local vllm version of task implementation varies from the usual one in two different ways.
 
@@ -415,7 +430,7 @@ def _data_extraction_non_vlm(jsonl_file_path, model_name="openai/clip-vit-base-p
             image_tag_list = []
             for tag, projection in image_tags_projections:
                 image_tag_list.append(tag)
-            
+
             print(f"Image tag list: {image_tag_list}")
 
 
@@ -460,21 +475,34 @@ def clip_image_features(clip_model: CLIPModel, clip_processor: CLIPProcessor, im
     feats = feats / feats.norm(dim=-1, keepdim=True)        # cosine norm
     return feats
 
+
+
+
 @torch.no_grad()
 def clip_rank_tags(
     clip_model: CLIPModel,
     clip_processor: CLIPProcessor,
-    image_feats: torch.Tensor,
-    candidates: List[str],
-    topk: int = 5
+    image_feats: torch.Tensor, 
+    candidates: Sequence[str],
+    tag_templates: Sequence[str],
+    topk: int = 5,
 ) -> List[str]:
-    text_inputs = clip_processor(text=candidates, padding=True, return_tensors="pt")
-    text_feats = clip_model.get_text_features(**text_inputs)    # [N, D]
+    texts = [tpl.format(tag) for tag in candidates for tpl in tag_templates]
+    if not texts:
+        return []
+    inputs = clip_processor(text=texts, padding=True, return_tensors="pt")
+    text_feats = clip_model.get_text_features(**inputs)
     text_feats = text_feats / text_feats.norm(dim=-1, keepdim=True)
-    # cosine similarity: [1, D] @ [D, N] -> [1, N]
-    sims = (image_feats @ text_feats.T).squeeze(0)
-    topk_idx = torch.topk(sims, k=min(topk, sims.shape[0])).indices.tolist()
-    return [candidates[i] for i in topk_idx]
+    sims = (image_feats @ text_feats.T).squeeze(0)               # [len(cands)*len(tpls)]
+
+    T = len(tag_templates)
+    sims_by_tag = sims.view(len(candidates), T)
+    # pick best template for each tag
+    best_vals, best_tpl_idx = sims_by_tag.max(dim=1)             # [len(candidates)]
+    # rank tags by their best template
+    k = min(topk, len(candidates))
+    tag_order = torch.topk(best_vals, k=k).indices.tolist()
+    return [tag_templates[best_tpl_idx[i]].format(candidates[i]) for i in tag_order]
 
 
 
@@ -483,6 +511,18 @@ def project_to_embedding_space(img_feats: torch.Tensor, target_dim: int = 4096) 
     with torch.no_grad():
         img_token = projector(img_feats)   # [1, target_dim]
     return img_token
+
+def _as_rgb_image(path: Path) -> Optional[Image.Image]:
+    """
+    Open a raster image as PIL.Image in RGB. Returns None if it fails.
+    """
+    try:
+        with Image.open(path) as im:
+            im = im.convert("RGB")
+            return im
+    except Exception as e:
+        print(f"[WARN] Failed to open image '{path}': {e}")
+        return None
 
 
 def visual_adaptation(image_paths, model_name = "openai/clip-vit-base-patch32", projection_dimension = 4096):
@@ -522,15 +562,16 @@ def visual_adaptation(image_paths, model_name = "openai/clip-vit-base-patch32", 
         clip_model, clip_processor = load_model(model_name)
         img_feats = clip_image_features(clip_model, clip_processor, image)
         print("CLIP image features:", tuple(img_feats.shape))
-        top_tags = clip_rank_tags(clip_model, clip_processor, img_feats, CANDIDATE_TAGS, topk=TOPK_TAGS)
+        top_tags = clip_rank_tags(clip_model=clip_model, clip_processor=clip_processor, image_feats=img_feats, candidates=CANDIDATE_TAGS, tag_templates=TAG_TEMPLATES, topk=TOPK_TAGS)
         print("Top CLIP tags:", top_tags)
         
         projected = None
         if projection_dimension:
             projected = project_to_embedding_space(img_feats, target_dim=4096)
         pairs.append([top_tags, projected])
-    
+
     return pairs
+
 
 
 def pdf_first_page_to_image(pdf_path: str, dpi: int = 200, save_jpg_path: str = None) -> Image.Image:
