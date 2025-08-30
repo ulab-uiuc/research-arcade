@@ -1,18 +1,19 @@
-import openreview
-import arxiv
 import os
 import re
+import ast
 import time
 import json
-from arxiv import UnexpectedEmptyPageError
-import pandas as pd
-from datetime import datetime
 from tqdm import tqdm
-from database import Database
-from pdf_utils import connect_diffs_and_paragraphs, extract_paragraphs_from_pdf_new
+from datetime import datetime
+import pandas as pd
+import openreview
+import arxiv
+from arxiv import UnexpectedEmptyPageError
+from .sqlDatabase import sqlDatabase
+from .pdf_utils import connect_diffs_and_paragraphs, extract_paragraphs_from_pdf_new
 
-class sqlDatabaseConstructor:
-    def __init__(self):
+class Database:
+    def __init__(self, host: str = "localhost", dbname: str = "iclr_openreview_database", user: str = "jingjunx", password: str = "", port: str = "5432") -> None:
         self.client_v1 = openreview.Client(
             baseurl='https://api.openreview.net'
         )
@@ -21,12 +22,12 @@ class sqlDatabaseConstructor:
             baseurl='https://api2.openreview.net'
         )
         
-        self.db = Database()
+        self.db = sqlDatabase(host=host, dbname=dbname, user=user, password=password, port=port)
 
-    def construct_review_table(self, venue, version = "v2"):
+    def construct_review_table(self, venue: str) -> None:
         # create sql table
         self.db.create_review_table()
-        if version == "v2":
+        if "2025" or "2024" in venue:
             # get all reviews
             reviews = self.client_v2.get_all_notes(invitation=f'{venue}/-/Submission', details='replies')
             # remove withdrawn papers
@@ -109,9 +110,12 @@ class sqlDatabaseConstructor:
                                 "Comment": comment,
                             }
                         self.db.insert_review(venue, reply_id, replyto_id, writer, title, content, time)
-        elif version == "v1":
+        elif "2023" or "2022" or "2021" or "2020" or "2019" or "2018" or "2017" or "2014" or "2013" in venue:
             # get all reviews
-            reviews = self.client_v1.get_all_notes(invitation=f'{venue}/-/Blind_Submission', details='replies')
+            if "2023" or "2022" or "2021" or "2020" or "2019" or "2018" in venue:
+                reviews = self.client_v1.get_all_notes(invitation=f'{venue}/-/Blind_Submission', details='replies')
+            elif "2017" or "2014" or "2013" in venue:
+                reviews = self.client_v1.get_all_notes(invitation=f'{venue}/-/submission', details='replies')
             # remove withdrawn papers
             for review in tqdm(reviews):
                 # # get paper openreview id
@@ -174,11 +178,11 @@ class sqlDatabaseConstructor:
                         }
                     self.db.insert_review(venue, reply_id, replyto_id, writer, title, content, time)
                         
-    def construct_author_table(self, venue, version = "v2"): # author_list contains authors' openreview ids
+    def construct_author_table(self, venue: str) -> None: # author_list contains authors' openreview ids
         # create sql table
         self.db.create_author_table()
         
-        if version == "v2":
+        if "2025" or "2024" in venue:
             author_set = set()
             # retrieve all the authors in this venue, skip the authors in the withdrawn submissions
             submissions = self.client_v2.get_all_notes(invitation=f'{venue}/-/Submission')
@@ -244,10 +248,13 @@ class sqlDatabaseConstructor:
                     dblp = ""
                 # add to author table
                 self.db.insert_author(venue, author_id, fullname, email, affiliation, homepage, dblp)
-        elif version == "v1":
+        elif "2023" or "2022" or "2021" or "2020" or "2019" or "2018" or "2017" or "2014" or "2013" in venue:
             author_set = set()
             # retrieve all the authors in this venue, skip the authors in the withdrawn submissions
-            submissions = self.client_v1.get_all_notes(invitation=f'{venue}/-/Blind_Submission')
+            if "2023" or "2022" or "2021" or "2020" or "2019" or "2018" in venue:
+                submissions = self.client_v1.get_all_notes(invitation=f'{venue}/-/Blind_Submission')
+            elif "2017" or "2014" or "2013" in venue:
+                submissions = self.client_v1.get_all_notes(invitation=f'{venue}/-/submission')
             for submission in tqdm(submissions):
                 # get author openreview ids
                 author_ids = submission.content["authorids"]
@@ -307,12 +314,13 @@ class sqlDatabaseConstructor:
                 self.db.insert_author(venue, author_id, fullname, email, affiliation, homepage, dblp)
                 
             
-    def construct_paper_table(self, venue, filter_list, pdf_dir = "/data/jingjunx/openreview_pdfs/", log_file="not_found_papers_2024.txt", version="v2"):
+    def construct_paper_table(self, venue: str, with_pdf: bool = True, filter_list: list = [], pdf_dir: str = "./", log_file: str = "not_found_papers.txt") -> None:
         # create sql table
         self.db.create_papers_table()
-        self.db.create_paragraphs_table()
+        if with_pdf:
+            self.db.create_paragraphs_table()
         
-        if version == "v2":
+        if "2025" or "2024" in venue:
             # get all submissions
             submissions = self.client_v2.get_all_notes(invitation=f'{venue}/-/Submission')
             for submission in tqdm(submissions):
@@ -327,26 +335,27 @@ class sqlDatabaseConstructor:
                     paper_id = submission.id
                     
                     # insert paragraphs
-                    pdf_path = str(pdf_dir)+str(paper_id)+".pdf"
-                    if os.path.exists(pdf_path):
-                        try:
-                            structured_content = extract_paragraphs_from_pdf_new(pdf_path, filter_list)
-                            
-                            paragraph_counter = 1
-                            for section, paragraphs in structured_content.items():
-                                for paragraph in paragraphs:
-                                    self.db.insert_paragraph(venue, paper_id, paragraph_counter, section, paragraph)
-                                    paragraph_counter += 1
-                            
-                            # delete the original pdf
-                            os.remove(pdf_path)
-                            print(pdf_path+" Deleted")
-                        except:
+                    if with_pdf:
+                        pdf_path = str(pdf_dir)+str(paper_id)+".pdf"
+                        if os.path.exists(pdf_path):
+                            try:
+                                structured_content = extract_paragraphs_from_pdf_new(pdf_path, filter_list)
+                                
+                                paragraph_counter = 1
+                                for section, paragraphs in structured_content.items():
+                                    for paragraph in paragraphs:
+                                        self.db.insert_paragraph(venue, paper_id, paragraph_counter, section, paragraph)
+                                        paragraph_counter += 1
+                                
+                                # delete the original pdf
+                                os.remove(pdf_path)
+                                print(pdf_path+" Deleted")
+                            except:
+                                with open(log_file, "a") as log:
+                                    log.write(f"{pdf_path}\n")
+                        else:
                             with open(log_file, "a") as log:
                                 log.write(f"{pdf_path}\n")
-                    else:
-                        with open(log_file, "a") as log:
-                            log.write(f"{pdf_path}\n")
                     
                     # # get revisions and their time
                     # revisions = {}
@@ -371,9 +380,12 @@ class sqlDatabaseConstructor:
                     pdf = submission.content["pdf"]["value"]
                     # add to paper table
                     self.db.insert_paper(venue, paper_id, title, abstract, decision, pdf)
-        elif version == "v1":
+        elif "2023" or "2022" or "2021" or "2020" or "2019" or "2018" or "2017" or "2014" or "2013" in venue:
             # get all submissions
-            submissions = self.client_v1.get_all_notes(invitation=f'{venue}/-/Blind_Submission')
+            if "2023" or "2022" or "2021" or "2020" or "2019" or "2018" in venue:
+                submissions = self.client_v1.get_all_notes(invitation=f'{venue}/-/Blind_Submission')
+            elif "2017" or "2014" or "2013" in venue:
+                submissions = self.client_v1.get_all_notes(invitation=f'{venue}/-/submission')
             for submission in tqdm(submissions):
                 # get paper decision and remove withdrawn papers
                 try:
@@ -415,12 +427,12 @@ class sqlDatabaseConstructor:
                 # insert paper
                 self.db.insert_paper(venue, paper_id, title, abstract, decision, pdf)
     
-    def construct_revision_table(self, venue, filter_list, pdf_dir = "/data/jingjunx/openreview_pdfs/", log_file="not_found_pdfs.txt", version = "v2"):
+    def construct_revision_table(self, venue: str, filter_list: list, pdf_dir: str = "./", log_file: str = "not_found_pdfs.txt") -> None:
         # create sql table
         self.db.create_revisions_table()
         self.db.create_paragraphs_table()
         import time
-        if version == "v2":
+        if "2025" or "2024" in venue:
             # get all submissions
             submissions = self.client_v2.get_all_notes(invitation=f'{venue}/-/Submission')
             for submission in tqdm(submissions):
@@ -516,9 +528,12 @@ class sqlDatabaseConstructor:
                                             with open(log_file, "a") as log:
                                                 log.write(f"{modified_pdf}\n")
                                             print("File not exist")
-        elif version == "v1":
+        elif "2023" or "2022" or "2021" or "2020" or "2019" or "2018" or "2017" or "2014" or "2013" in venue:
             # get all submissions
-            submissions = self.client_v1.get_all_notes(invitation=f'{venue}/-/Blind_Submission', details='revisions')
+            if "2023" or "2022" or "2021" or "2020" or "2019" or "2018" in venue:
+                submissions = self.client_v1.get_all_notes(invitation=f'{venue}/-/Blind_Submission', details='revisions')
+            elif "2017" or "2014" or "2013" in venue:
+                submissions = self.client_v1.get_all_notes(invitation=f'{venue}/-/submission', details='revisions')
             for submission in tqdm(submissions):
                 # get paper openreview id
                 paper_id = submission.id
@@ -608,10 +623,10 @@ class sqlDatabaseConstructor:
                                         log.write(f"{modified_pdf}\n")
                                     print("File not exist")
     
-    def construct_papers_authors_table(self, venue, version = "v2"):
+    def construct_papers_authors_table(self, venue: str) -> None:
         # create sql table
         self.db.create_papers_authors_table()
-        if version == "v2":
+        if "2025" or "2024" in venue:
             # get all submissions
             submissions = self.client_v2.get_all_notes(invitation=f'{venue}/-/Submission')
             for submission in tqdm(submissions):
@@ -627,9 +642,12 @@ class sqlDatabaseConstructor:
                     # add to papers authors table
                     for author_id in author_ids:
                         self.db.insert_paper_authors(venue, paper_id, author_id)
-        elif version == "v1":
+        elif "2023" or "2022" or "2021" or "2020" or "2019" or "2018" or "2017" or "2014" or "2013" in venue:
             # get all submissions
-            submissions = self.client_v1.get_all_notes(invitation=f'{venue}/-/Blind_Submission')
+            if "2023" or "2022" or "2021" or "2020" or "2019" or "2018" in venue:
+                submissions = self.client_v1.get_all_notes(invitation=f'{venue}/-/Blind_Submission')
+            elif "2017" or "2014" or "2013" in venue:
+                submissions = self.client_v1.get_all_notes(invitation=f'{venue}/-/submission')
             for submission in tqdm(submissions):
                 paper_id = submission.id
                 # get author openreview ids
@@ -638,11 +656,11 @@ class sqlDatabaseConstructor:
                 for author_id in author_ids:
                     self.db.insert_paper_authors(venue, paper_id, author_id)
                 
-    def construct_papers_revisions_table(self, venue, version = "v2"):
+    def construct_papers_revisions_table(self, venue: str) -> None:
         # create sql table
         import time
         self.db.create_papers_revisions_table()
-        if version == "v2":
+        if "2025" or "2024" in venue:
             # get all submissions
             submissions = self.client_v2.get_all_notes(invitation=f'{venue}/-/Submission')
             for submission in tqdm(submissions):
@@ -664,9 +682,12 @@ class sqlDatabaseConstructor:
                             title = note.invitation.split('/')[-1]
                             date = datetime.fromtimestamp(note.tmdate / 1000).strftime("%Y-%m-%d %H:%M:%S")
                             self.db.insert_paper_revisions(venue, paper_id, revision_openreview_id, title, date)
-        elif version == "v1":
+        elif "2023" or "2022" or "2021" or "2020" or "2019" or "2018" or "2017" or "2014" or "2013" in venue:
             # get all submissions
-            submissions = self.client_v1.get_all_notes(invitation=f'{venue}/-/Blind_Submission', details='revisions')
+            if "2023" or "2022" or "2021" or "2020" or "2019" or "2018" in venue:
+                submissions = self.client_v1.get_all_notes(invitation=f'{venue}/-/Blind_Submission', details='revisions')
+            elif "2017" or "2014" or "2013" in venue:
+                submissions = self.client_v1.get_all_notes(invitation=f'{venue}/-/submission', details='revisions')
             for submission in tqdm(submissions):
                 # get paper openreview id
                 paper_id = submission.id
@@ -688,10 +709,10 @@ class sqlDatabaseConstructor:
                         date = datetime.fromtimestamp(revision.tmdate / 1000).strftime("%Y-%m-%d %H:%M:%S")
                         self.db.insert_paper_revisions(venue, paper_id, revision_openreview_id, title, date)
                 
-    def construct_papers_reviews_table(self, venue, version = "v2"):
+    def construct_papers_reviews_table(self, venue: str) -> None:
         # create sql table
         self.db.create_papers_reviews_table()
-        if version == "v2":
+        if "2025" or "2024" in venue:
             # get all submissions with reviews
             submissions = self.client_v2.get_all_notes(invitation=f'{venue}/-/Submission', details='replies')
             # remove withdrawn papers
@@ -728,9 +749,12 @@ class sqlDatabaseConstructor:
                             else:
                                 title = "Paper Decision"
                         self.db.insert_paper_reviews(venue, paper_id, reply_id, title, time)
-        elif version == "v1":
+        elif "2023" or "2022" or "2021" or "2020" or "2019" or "2018" or "2017" or "2014" or "2013" in venue:
             # get all reviews
-            reviews = self.client_v1.get_all_notes(invitation=f'{venue}/-/Blind_Submission', details='replies')
+            if "2023" or "2022" or "2021" or "2020" or "2019" or "2018" in venue:
+                reviews = self.client_v1.get_all_notes(invitation=f'{venue}/-/Blind_Submission', details='replies')
+            elif "2017" or "2014" or "2013" in venue:
+                reviews = self.client_v1.get_all_notes(invitation=f'{venue}/-/submission', details='replies')
             # remove withdrawn papers
             for review in tqdm(reviews):
                 paper_id = review.id
@@ -760,7 +784,7 @@ class sqlDatabaseConstructor:
                             title = "Paper Decision"
                     self.db.insert_paper_reviews(venue, paper_id, reply_id, title, time)
     
-    def construct_revisions_reviews_table(self, venue):
+    def construct_revisions_reviews_table(self, venue: str) -> None:
         # create sql table
         self.db.create_revisions_reviews_table()
         
@@ -826,7 +850,7 @@ class sqlDatabaseConstructor:
         except UnexpectedEmptyPageError:
             return None
     
-    def construct_openreview_arxiv_table(self, venue):
+    def construct_openreview_arxiv_table(self, venue: str) -> None:
         # create sql table
         self.db.create_openreview_arxiv_table()
         
@@ -859,6 +883,389 @@ class sqlDatabaseConstructor:
                 # insert into openreview_arxiv table
                 self.db.insert_openreview_arxiv(openreview_id, arxiv_id, title, author_names)
     
+    def construct_paper_table_by_csv(self, csv_file_path: str, with_pdf: bool = True, filter_list: list = [], pdf_dir: str = "./", log_file: str = "not_found_papers.txt") -> None:
+        # create sql table
+        self.db.create_papers_table()
+        if with_pdf:
+            self.db.create_paragraphs_table()
+        
+        # read csv file
+        df = pd.read_csv(csv_file_path)
+        
+        # insert into papers table
+        for index, row in df.iterrows():
+            row.to_dict()
+            self.db.insert_paper(**row)
+            
+            venue = row['venue']
+            paper_id = row['paper_openreview_id']
+            if with_pdf:
+                pdf_path = str(pdf_dir)+str(paper_id)+".pdf"
+                if os.path.exists(pdf_path):
+                    try:
+                        structured_content = extract_paragraphs_from_pdf_new(pdf_path, filter_list)
+                        
+                        paragraph_counter = 1
+                        for section, paragraphs in structured_content.items():
+                            for paragraph in paragraphs:
+                                self.db.insert_paragraph(venue, paper_id, paragraph_counter, section, paragraph)
+                                paragraph_counter += 1
+                        
+                        # delete the original pdf
+                        os.remove(pdf_path)
+                        print(pdf_path+" Deleted")
+                    except:
+                        with open(log_file, "a") as log:
+                            log.write(f"{pdf_path}\n")
+                else:
+                    with open(log_file, "a") as log:
+                        log.write(f"{pdf_path}\n")
+        print("Paper table constructed successfully")
+                        
+    def construct_revision_table_by_csv(self, csv_file_path: str, with_pdf: bool = True, filter_list: list = [], pdf_dir: str = "./", log_file: str = "not_found_revisions.txt") -> None:
+        # create sql table
+        self.db.create_revisions_table()
+        self.db.create_paragraphs_table()
+        
+        # read csv file
+        df = pd.read_csv(csv_file_path)
+        
+        # insert into revisions table
+        for index, row in df.iterrows():
+            row.to_dict()
+            row["content"] = ast.literal_eval(row["content"])
+            print(row)
+            self.db.insert_revision(**row)
+            
+            venue = row['venue']
+            revision_id = row['revision_openreview_id']
+            original_id = row['original_openreview_id']
+            if with_pdf:
+                pdf_path = str(pdf_dir)+str(revision_id)+".pdf"
+                if os.path.exists(pdf_path):
+                    try:
+                        structured_content = extract_paragraphs_from_pdf_new(pdf_path, filter_list)
+                        
+                        paragraph_counter = 1
+                        for section, paragraphs in structured_content.items():
+                            for paragraph in paragraphs:
+                                self.db.insert_paragraph(venue, revision_id, paragraph_counter, section, paragraph)
+                                paragraph_counter += 1
+                                
+                        # delete the original pdf
+                        os.remove(pdf_path)
+                        print(pdf_path+" Deleted")
+                    except:
+                        with open(log_file, "a") as log:
+                            log.write(f"{pdf_path}\n")
+                else:
+                    with open(log_file, "a") as log:
+                        log.write(f"{pdf_path}\n")
+                        
+                pdf_path = str(pdf_dir)+str(original_id)+".pdf"
+                if os.path.exists(pdf_path):
+                    try:
+                        structured_content = extract_paragraphs_from_pdf_new(pdf_path, filter_list)
+                        
+                        paragraph_counter = 1
+                        for section, paragraphs in structured_content.items():
+                            for paragraph in paragraphs:
+                                self.db.insert_paragraph(venue, original_id, paragraph_counter, section, paragraph)
+                                paragraph_counter += 1
+                                
+                        # delete the original pdf
+                        os.remove(pdf_path)
+                        print(pdf_path+" Deleted")
+                    except:
+                        with open(log_file, "a") as log:
+                            log.write(f"{pdf_path}\n")
+                else:
+                    with open(log_file, "a") as log:
+                        log.write(f"{pdf_path}\n")
+        print("Revision table constructed successfully")
+    
+    def construct_author_table_by_csv(self, csv_file_path: str) -> None:
+        # create sql table
+        self.db.create_author_table()
+        
+        # read csv file
+        df = pd.read_csv(csv_file_path)
+        
+        # insert into authors table
+        for index, row in df.iterrows():
+            row.to_dict()
+            self.db.insert_author(**row)
+        print("Author table constructed successfully")
+            
+    def construct_review_table_by_csv(self, csv_file_path: str) -> None:
+        # create sql table
+        self.db.create_review_table()
+        
+        # read csv file
+        df = pd.read_csv(csv_file_path)
+        
+        # insert into reviews table
+        for index, row in df.iterrows():
+            row.to_dict()
+            row["content"] = ast.literal_eval(row["content"])
+            self.db.insert_review(**row)
+        print("Review table constructed successfully")
+        
+    def construct_papers_authors_table_by_csv(self, csv_file_path: str) -> None:
+        # create sql table
+        self.db.create_papers_authors_table()
+        
+        # read csv file
+        df = pd.read_csv(csv_file_path)
+        
+        # insert into papers_authors table
+        for index, row in df.iterrows():
+            self.db.insert_paper_author(**row)
+        print("Papers authors table constructed successfully")
+    
+    def construct_papers_revisions_table_by_csv(self, csv_file_path: str) -> None:
+        # create sql table
+        self.db.create_papers_revisions_table()
+        
+        # read csv file
+        df = pd.read_csv(csv_file_path)
+        
+        # insert into papers_revisions table
+        for index, row in df.iterrows():
+            self.db.insert_paper_revision(**row)
+        print("Papers revisions table constructed successfully")
+    
+    def construct_papers_reviews_table_by_csv(self, csv_file_path: str) -> None:
+        # create sql table
+        self.db.create_papers_reviews_table()
+        
+        # read csv file
+        df = pd.read_csv(csv_file_path)
+        
+        # insert into papers_reviews table
+        for index, row in df.iterrows():
+            self.db.insert_paper_review(**row)
+        print("Papers reviews table constructed successfully")
+
+    def construct_papers_revisions_reviews_table_by_csv(self, csv_file_path: str) -> None:
+        # create sql table
+        self.db.create_papers_revisions_reviews_table()
+        
+        # read csv file
+        df = pd.read_csv(csv_file_path)
+        
+        # insert into papers_revisions_reviews table
+        for index, row in df.iterrows():
+            self.db.insert_paper_revision_review(**row)
+        print("Papers revisions reviews table constructed successfully")
+            
+    
+    def construct_revisions_reviews_table_by_csv(self, csv_file_path: str) -> None:
+        # create sql table
+        self.db.create_revisions_reviews_table()
+        
+        # read csv file
+        df = pd.read_csv(csv_file_path)
+        
+        # insert into revisions_reviews table
+        for index, row in df.iterrows():
+            self.db.insert_revision_review(**row)
+        print("Revisions reviews table constructed successfully")
+            
+    def construct_openreview_arxiv_table_by_csv(self, csv_file_path: str) -> None:
+        # create sql table
+        self.db.create_openreview_arxiv_table()
+        
+        # read csv file
+        df = pd.read_csv(csv_file_path)
+        
+        # insert into openreview_arxiv table
+        for index, row in df.iterrows():
+            self.db.insert_openreview_arxiv(**row)
+        print("Openreview arxiv table constructed successfully")
+            
+    def construct_review_table_by_json(self, json_file_path: str) -> None:
+        # create sql table
+        self.db.create_review_table()
+        
+        # read json file
+        with open(json_file_path, "r", encoding="utf-8") as f:
+            dataset = json.load(f)
+            
+        # insert into reviews table
+        for index, row in enumerate(dataset):
+            self.db.insert_review(**row)
+        print("Review table constructed successfully")
+            
+    def construct_author_table_by_json(self, json_file_path: str) -> None:
+        # create sql table
+        self.db.create_author_table()
+        
+        # read json file
+        with open(json_file_path, "r", encoding="utf-8") as f:
+            dataset = json.load(f)
+            
+        # insert into authors table
+        for index, row in enumerate(dataset):
+            self.db.insert_author(**row)
+        print("Author table constructed successfully")
+            
+    def construct_paper_table_by_json(self, json_file_path: str, with_pdf: bool = True, filter_list: list = [], pdf_dir: str = "./", log_file: str = "not_found_papers.txt") -> None:
+        # create sql table
+        self.db.create_papers_table()
+        if with_pdf:
+            self.db.create_paragraphs_table()
+            
+        # read json file
+        with open(json_file_path, "r", encoding="utf-8") as f:
+            dataset = json.load(f)
+            
+        # insert into papers table
+        for index, row in enumerate(dataset):
+            self.db.insert_paper(**row)
+            
+            venue = row['venue']
+            paper_id = row['paper_openreview_id']
+            if with_pdf:
+                pdf_path = str(pdf_dir)+str(paper_id)+".pdf"
+                if os.path.exists(pdf_path):
+                    try:
+                        structured_content = extract_paragraphs_from_pdf_new(pdf_path, filter_list)
+                        
+                        paragraph_counter = 1
+                        for section, paragraphs in structured_content.items():
+                            for paragraph in paragraphs:
+                                self.db.insert_paragraph(venue, paper_id, paragraph_counter, section, paragraph)
+                                paragraph_counter += 1
+                                
+                        # delete the original pdf
+                        os.remove(pdf_path)
+                        print(pdf_path+" Deleted")
+                    except:
+                        with open(log_file, "a") as log:
+                            log.write(f"{pdf_path}\n")
+                else:
+                    with open(log_file, "a") as log:
+                        log.write(f"{pdf_path}\n")
+        print("Paper table constructed successfully")
+        
+    def construct_revision_table_by_json(self, json_file_path: str, with_pdf: bool = True, filter_list: list = [], pdf_dir: str = "./", log_file: str = "not_found_revisions.txt") -> None:
+        # create sql table
+        self.db.create_revisions_table()
+        self.db.create_paragraphs_table()
+        
+        # read json file
+        with open(json_file_path, "r", encoding="utf-8") as f:
+            dataset = json.load(f)
+            
+        # insert into revisions table
+        for index, row in enumerate(dataset):
+            self.db.insert_revision(**row)
+            
+            venue = row['venue']
+            revision_id = row['revision_openreview_id']
+            original_id = row['original_openreview_id']
+            if with_pdf:
+                pdf_path = str(pdf_dir)+str(revision_id)+".pdf"
+                if os.path.exists(pdf_path):
+                    try:
+                        structured_content = extract_paragraphs_from_pdf_new(pdf_path, filter_list)
+                        
+                        paragraph_counter = 1
+                        for section, paragraphs in structured_content.items():
+                            for paragraph in paragraphs:
+                                self.db.insert_paragraph(venue, revision_id, paragraph_counter, section, paragraph)
+                                paragraph_counter += 1
+                                
+                        # delete the original pdf
+                        os.remove(pdf_path)
+                        print(pdf_path+" Deleted")
+                    except:
+                        with open(log_file, "a") as log:
+                            log.write(f"{pdf_path}\n")
+                else:
+                    with open(log_file, "a") as log:
+                        log.write(f"{pdf_path}\n")
+        print("Revision table constructed successfully")
+                        
+    def construct_papers_authors_table_by_json(self, json_file_path: str) -> None:
+        # create sql table
+        self.db.create_papers_authors_table()
+        
+        # read json file
+        with open(json_file_path, "r", encoding="utf-8") as f:
+            dataset = json.load(f)
+            
+        # insert into papers_authors table
+        for index, row in enumerate(dataset):
+            self.db.insert_paper_author(**row)
+        print("Papers authors table constructed successfully")
+    
+    def construct_papers_revisions_table_by_json(self, json_file_path: str) -> None:
+        # create sql table
+        self.db.create_papers_revisions_table()
+        
+        # read json file
+        with open(json_file_path, "r", encoding="utf-8") as f:
+            dataset = json.load(f)
+            
+        # insert into papers_revisions table
+        for index, row in enumerate(dataset):
+            self.db.insert_paper_revision(**row)
+        print("Papers revisions table constructed successfully")
+            
+    def construct_papers_reviews_table_by_json(self, json_file_path: str) -> None:
+        # create sql table
+        self.db.create_papers_reviews_table()
+        
+        # read json file
+        with open(json_file_path, "r", encoding="utf-8") as f:
+            dataset = json.load(f)
+            
+        # insert into papers_reviews table
+        for index, row in enumerate(dataset):
+            self.db.insert_paper_review(**row)
+        print("Papers reviews table constructed successfully")
+    
+    def construct_papers_revisions_reviews_table_by_json(self, json_file_path: str) -> None:
+        # create sql table
+        self.db.create_papers_revisions_reviews_table()
+        
+        # read json file
+        with open(json_file_path, "r", encoding="utf-8") as f:
+            dataset = json.load(f)
+            
+        # insert into papers_revisions_reviews table
+        for index, row in enumerate(dataset):
+            self.db.insert_paper_revision_review(**row)
+        print("Papers revisions reviews table constructed successfully")
+            
+    def construct_revisions_reviews_table_by_json(self, json_file_path: str) -> None:
+        # create sql table
+        self.db.create_revisions_reviews_table()
+        
+        # read json file
+        with open(json_file_path, "r", encoding="utf-8") as f:
+            dataset = json.load(f)
+            
+        # insert into revisions_reviews table
+        for index, row in enumerate(dataset):
+            self.db.insert_revision_review(**row)
+        print("Revisions reviews table constructed successfully")
+            
+    def construct_openreview_arxiv_table_by_json(self, json_file_path: str) -> None:
+        # create sql table
+        self.db.create_openreview_arxiv_table()
+        
+        # read json file
+        with open(json_file_path, "r", encoding="utf-8") as f:
+            dataset = json.load(f)
+            
+        # insert into openreview_arxiv table
+        for index, row in enumerate(dataset):
+            self.db.insert_openreview_arxiv(**row)
+        print("Openreview arxiv table constructed successfully")
+            
     # def construct_papers_revisions_reviews_table(self, venue):
     #     # create sql table
     #     self.db.create_papers_revisions_reviews_table()
@@ -901,7 +1308,7 @@ class sqlDatabaseConstructor:
     #                     break
     
     # node          
-    def insert_node(self, table: str, node_features: dict):
+    def insert_node(self, table: str, node_features: dict) -> None:
         if table == "papers":
             try:
                 self.db.insert_paper(**node_features)
@@ -978,21 +1385,21 @@ class sqlDatabaseConstructor:
         else:
             print(f"The table {table} is not exist in this database")
     
-    def insert_node_by_csv(self, table: str, csv_file_path: str):
+    def insert_node_by_csv(self, table: str, csv_file_path: str) -> None:
         df = pd.read_csv(csv_file_path)
         for index, row in df.iterrows():
             node_features = row.to_dict()
             self.insert_node(table, node_features)
             print(f"Node with {table} {index} inserted successfully.")
     
-    def insert_node_by_json(self, table: str, json_file_path: str):
+    def insert_node_by_json(self, table: str, json_file_path: str) -> None:
         with open(json_file_path, "r", encoding="utf-8") as f:
             dataset = json.load(f)
         for idx, node_features in enumerate(dataset):
             self.insert_node(table, node_features)
             print(f"Node with {table} {idx} inserted successfully.")
     
-    def delete_node_by_id(self, table: str, primary_key: dict):
+    def delete_node_by_id(self, table: str, primary_key: dict) -> None | pd.DataFrame:
         if table == "papers":
             try:
                 return self.db.delete_paper_by_id(**primary_key)
@@ -1049,7 +1456,7 @@ class sqlDatabaseConstructor:
             print(f"The table {table} is not exist in this database")
             return None
     
-    def delete_node_by_venue(self, table: str, venue: str):
+    def delete_node_by_venue(self, table: str, venue: str) -> None | pd.DataFrame:
         if table == "papers":
             try:
                 return self.db.delete_papers_by_venue(venue)
@@ -1090,7 +1497,7 @@ class sqlDatabaseConstructor:
             print(f"The table {table} is not exist in this database")
             return None
             
-    def get_node_features_by_id(self, table: str, primary_key: dict):
+    def get_node_features_by_id(self, table: str, primary_key: dict) -> None | pd.DataFrame:
         if table == "papers":
             try:
                 return self.db.get_paper_by_id(**primary_key)
@@ -1136,7 +1543,7 @@ class sqlDatabaseConstructor:
             except: # venue, paper_openreview_id, original_openreview_id, modified_openreview_id, content, time
                 print(f'''The node in 'revisions' table requires the following node features:
 
-                      modified_openreview_id: str, 
+                      revision_openreview_id: str, 
 
                       And the primary key you provided:
                       {primary_key}
@@ -1160,7 +1567,7 @@ class sqlDatabaseConstructor:
             print(f"The table {table} is not exist in this database")
             return None
         
-    def get_node_features_by_venue(self, table: str, venue: str):
+    def get_node_features_by_venue(self, table: str, venue: str) -> None | pd.DataFrame:
         if table == "papers":
             try:
                 return self.db.get_papers_by_venue(venue)
@@ -1210,7 +1617,7 @@ class sqlDatabaseConstructor:
             print(f"The table {table} is not exist in this database")
             return None
     
-    def update_node(self, table: str, node_features: dict):
+    def update_node(self, table: str, node_features: dict) -> None | pd.DataFrame:
         if table == "papers":
             try:
                 return self.db.update_paper(**node_features)
@@ -1289,7 +1696,7 @@ class sqlDatabaseConstructor:
             print(f"The table {table} is not exist in this database")
             return None
             
-    def get_all_node_features(self, table: str):
+    def get_all_node_features(self, table: str) -> None | pd.DataFrame:
         if table == "papers":
             return self.db.get_all_papers(is_all_features=True)
         elif table == "reviews":
@@ -1302,7 +1709,7 @@ class sqlDatabaseConstructor:
             print(f"The table {table} is not exist in this database")
             return None
         
-    def get_all_nodes(self, table: str):
+    def get_all_nodes(self, table: str) -> None | pd.DataFrame:
         if table == "papers":
             return self.db.get_all_papers(is_all_features=False)
         elif table == "reviews":
@@ -1316,7 +1723,7 @@ class sqlDatabaseConstructor:
             return None
     
     # edge
-    def get_edge_features_by_id(self, table: str, primary_key: dict):
+    def get_edge_features_by_id(self, table: str, primary_key: dict) -> None | pd.DataFrame:
         if table == "papers_authors":
             try:
                 return self.db.get_paper_author_by_id(**primary_key)
@@ -1377,7 +1784,7 @@ class sqlDatabaseConstructor:
             print(f"The table {table} is not exist in this database")
             return None
         
-    def get_edge_features_by_venue(self, table: str, venue: str):
+    def get_edge_features_by_venue(self, table: str, venue: str) -> None | pd.DataFrame:
         if table == "papers_authors":
             try:
                 return self.db.get_papers_authors_by_venue(venue)
@@ -1427,7 +1834,7 @@ class sqlDatabaseConstructor:
             print(f"The table {table} is not exist in this database")
             return None
         
-    def get_all_edge_features(self, table: str):
+    def get_all_edge_features(self, table: str) -> None | pd.DataFrame:
         if table == "papers_authors":
             return self.db.get_all_papers_authors()
         elif table == "papers_reviews":
@@ -1440,7 +1847,7 @@ class sqlDatabaseConstructor:
             print(f"The table {table} is not exist in this database")
             return None
         
-    def delete_edge_by_id(self, table: str, primary_key: dict):
+    def delete_edge_by_id(self, table: str, primary_key: dict) -> None | pd.DataFrame:
         if table == "papers_authors":
             try:
                 return self.db.delete_paper_author_by_id(**primary_key)
@@ -1501,7 +1908,7 @@ class sqlDatabaseConstructor:
             print(f"The table {table} is not exist in this database")
             return None
         
-    def delete_edge_by_venue(self, table: str, venue: str):
+    def delete_edge_by_venue(self, table: str, venue: str) -> None | pd.DataFrame:
         if table == "papers_authors":
             try:
                 return self.db.delete_papers_authors_by_venue(venue)
@@ -1542,7 +1949,7 @@ class sqlDatabaseConstructor:
             print(f"The table {table} is not exist in this database")
             return None
         
-    def insert_edge(self, table: str, edge_features: dict):
+    def insert_edge(self, table: str, edge_features: dict) -> None:
         if table == "papers_authors":
             try:
                 self.db.insert_paper_authors(**edge_features)
@@ -1615,21 +2022,21 @@ class sqlDatabaseConstructor:
             print(f"The table {table} is not exist in this database")
             return None
     
-    def insert_edge_by_csv(self, table: str, csv_file_path: str):
+    def insert_edge_by_csv(self, table: str, csv_file_path: str) -> None:
         df = pd.read_csv(csv_file_path)
         for index, row in df.iterrows():
             edge_features = row.to_dict()
             self.insert_edge(table, edge_features)
             print(f"Edge with {table} {index} inserted successfully.")
             
-    def insert_edge_by_json(self, table: str, json_file_path: str):
+    def insert_edge_by_json(self, table: str, json_file_path: str) -> None:
         with open(json_file_path, "r", encoding="utf-8") as f:
             dataset = json.load(f)
         for idx, edge_features in enumerate(dataset):
             self.insert_edge(table, edge_features)
             print(f"Edge with {table} {idx} inserted successfully.")
     
-    def get_neighborhood_by_id(self, table: str, primary_key: dict):
+    def get_neighborhood_by_id(self, table: str, primary_key: dict) -> None | pd.DataFrame:
         if table == "papers_authors":
             try:
                 if "paper_openreview_id" in primary_key:

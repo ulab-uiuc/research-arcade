@@ -8,7 +8,7 @@ from pathlib import Path
 from pdfminer.high_level import extract_text
 
 # get pdf based on openreview_id
-def get_pdf(id, pdf_name):
+def get_pdf(id, pdf_name: str) -> None:
     # pdf url
     pdf_url = "https://openreview.net/notes/edits/attachment?id="+id+"&name=pdf"
     
@@ -24,14 +24,14 @@ def get_pdf(id, pdf_name):
         print("❌ Failure, Status Code: ", response.status_code)
 
 # extract text from pdf
-def extract_text_from_pdf(pdf_path):
+def extract_text_from_pdf(pdf_path: Path) -> str | None:
     if os.path.isfile(pdf_path):
         return extract_text(pdf_path)
     else:
         return None
 
 # compare the differences between two pdfs
-def compare_texts(text1, text2):
+def compare_texts(text1: str, text2: str) -> str:
     diff = difflib.unified_diff(
         text1.splitlines(),
         text2.splitlines(),
@@ -42,7 +42,7 @@ def compare_texts(text1, text2):
     return '\n'.join(diff)
 
 # format the differences
-def parse_diff(diff_text):
+def parse_diff(diff_text: str) -> list[dict[str, str]]:
     lines = diff_text.splitlines()
     
     all_diff = []
@@ -79,7 +79,7 @@ def check_str_regex(s: str) -> bool:
     return (math_count >= 3) and (letter_count < 10)
 
 # primarily format lines into paragraphs
-def preprocess_lines_in_paragraphs(lines: list) -> list:
+def preprocess_lines_in_paragraphs(lines: list[str]) -> list[str]:
     formatted_lines = []
     buffer = []
     for line in lines:
@@ -98,7 +98,7 @@ def preprocess_lines_in_paragraphs(lines: list) -> list:
     return formatted_lines
 
 # finally format pdf into paragraphs
-def extract_paragraphs_from_pdf_new(pdf_path: Path, filter_list: Optional[List[str]] = None):
+def extract_paragraphs_from_pdf_new(pdf_path: Path, filter_list: Optional[List[str]] = None) -> dict[str, list[str]]:
     # extract all the text from pdf
     full_text = extract_text(pdf_path)
     
@@ -233,7 +233,7 @@ def extract_paragraphs_from_pdf_new(pdf_path: Path, filter_list: Optional[List[s
     return structured_content
 
 # connect the differences with the paragraphs
-def connect_diffs_and_paragraphs(original_pdf_path: Path, modified_pdf_path: Path, filter_list: Optional[List[str]] = None):
+def connect_diffs_and_paragraphs(original_pdf_path: Path, modified_pdf_path: Path, filter_list: Optional[List[str]] = None) -> list[dict[str, str]]:
     # extract text
     original_text = extract_text_from_pdf(original_pdf_path)
     if original_text is not None:
