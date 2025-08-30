@@ -250,6 +250,40 @@ class Database:
         res = self.cur.fetchone()
         return res[0] if res else None
     
+    def get_paragraph_by_id(self, paper_openreview_id: str):
+        # Query to select the current record using primary key
+        select_sql = """
+        SELECT * FROM paragraphs WHERE paper_openreview_id = %s;
+        """
+        self.cur.execute(select_sql, (paper_openreview_id,))
+        row = self.cur.fetchone()
+
+        if not row:
+            print(f"No paragraph found with paper_openreview_id {paper_openreview_id}.")
+            return None
+        else:
+            columns = ['venue', 'paper_openreview_id', 'paragraph_idx', 'section', 'content']
+            # original_record = dict(zip(columns, row))
+            paragraph_df = pd.DataFrame(row, columns=columns)
+            return paragraph_df
+    
+    def get_paragraphs_by_venue(self, venue: str):
+        # Query to select all records for a specific venue
+        select_sql = """
+        SELECT * FROM paragraphs WHERE venue = %s;
+        """
+        self.cur.execute(select_sql, (venue,))
+        rows = self.cur.fetchall()
+        
+        if not rows:
+            print(f"No paragraphs found in venue {venue}.")
+            return None
+        else:
+            columns = ['venue', 'paper_openreview_id', 'paragraph_idx', 'section', 'content']
+            # original_record = dict(zip(columns, row))
+            paragraphs_df = pd.DataFrame(rows, columns=columns)
+            return paragraphs_df
+    
     # def delete_paragraph(self, paper_op)
     
     # reviews table
@@ -915,7 +949,7 @@ class Database:
             return None
     
     def delete_paper_author_by_id(self, paper_openreview_id: str, author_openreview_id: str):
-        original_record = self.get_paper_author(paper_openreview_id, author_openreview_id)
+        original_record = self.get_paper_author_by_id(paper_openreview_id, author_openreview_id)
         
         if original_record is not None:
             self.cur.execute("""
@@ -971,7 +1005,7 @@ class Database:
             columns = ['venue', 'paper_openreview_id', 'author_openreview_id']
             # result = dict(zip(columns, result))
             result_df = pd.DataFrame(result, columns=columns)
-        return result_df
+            return result_df
     
     def get_papers_authors_by_venue(self, venue: str):
         self.cur.execute("""
@@ -1082,7 +1116,7 @@ class Database:
             return None
     
     def delete_paper_revision_by_id(self, paper_openreview_id: str, revision_openreview_id: str):
-        original_record = self.get_paper_revision(paper_openreview_id, revision_openreview_id)
+        original_record = self.get_paper_revision_by_id(paper_openreview_id, revision_openreview_id)
         
         if original_record is not None:
             self.cur.execute("""
@@ -1139,7 +1173,7 @@ class Database:
                        'revision_openreview_id', "title", "time"]
             # result = dict(zip(columns, result))
             result_df = pd.DataFrame(result, columns=columns)
-        return result_df
+            return result_df
     
     def get_papers_revisions_by_venue(self, venue: str):
         self.cur.execute("""
@@ -1238,15 +1272,19 @@ class Database:
             # Get the inserted paper's openreview id (if any)
             res = self.cur.fetchone()
             return res[0] if res else None
+        elif self.check_paper_exists(paper_openreview_id) is False:
+            print(f'''
+                The paper {paper_openreview_id} is not exists in this database.
+                ''')
+            return None
         else:
             print(f'''
-                The paper {paper_openreview_id} or the revision {review_openreview_id} 
-                is(are) not exists in this database. Please add them before connect them.
+                The revision {review_openreview_id} is not exists in this database.
                 ''')
             return None
     
     def delete_paper_review_by_id(self, paper_openreview_id: str, review_openreview_id: str):
-        original_record = self.get_paper_review(paper_openreview_id, review_openreview_id)
+        original_record = self.get_paper_review_by_id(paper_openreview_id, review_openreview_id)
         
         if original_record is not None:
             self.cur.execute("""
@@ -1303,7 +1341,7 @@ class Database:
                        'review_openreview_id', "title", "time"]
             # result = dict(zip(columns, result))
             result_df = pd.DataFrame(result, columns=columns)
-        return result_df
+            return result_df
     
     def get_papers_reviews_by_venue(self, venue: str):
         self.cur.execute("""
@@ -1327,11 +1365,11 @@ class Database:
         self.cur.execute(select_query)
             
         # Fetch all the results
-        papers_authors = self.cur.fetchall()
+        papers_reviews = self.cur.fetchall()
         
         # Return the result as a list of tuples (venue, author_openreview_id, author_full_name)
-        authors_df = pd.DataFrame(papers_authors, columns=["venue", "paper_openreview_id", "review_openreview_id", "title", "time"])
-        return authors_df
+        papers_reviews_df = pd.DataFrame(papers_reviews, columns=["venue", "paper_openreview_id", "review_openreview_id", "title", "time"])
+        return papers_reviews_df
     
     def check_paper_review_exists(self, paper_openreview_id: str, review_openreview_id: str) -> bool:
         self.cur.execute("""
@@ -1377,18 +1415,17 @@ class Database:
         create_table_sql = """
         CREATE TABLE IF NOT EXISTS openreview_arxiv (
             venue TEXT,
-            openreview_id VARCHAR(255),
+            paper_openreview_id VARCHAR(255),
             arxiv_id VARCHAR(255),
             title TEXT,
-            author_names TEXT,
-            PRIMARY KEY (venue, openreview_id)
+            PRIMARY KEY (venue, paper_openreview_id)
         );
         """
         # Execute the SQL to create the table
         self.cur.execute(create_table_sql)
         print("Table 'openreview_arxiv' created successfully.")
         
-    def insert_openreview_arxiv(self, openreview_id, arxiv_id, title, author_names):
+    def insert_openreview_arxiv(self, venue, openreview_id, arxiv_id, title):
         """
         Insert a connection between openreview id with arxiv id into the openreview_arxiv table. Returns the inserted openreview id or None if it fails.
         - openreview_id: str, unique identifier for the paper in openreview system(primary key).
@@ -1396,20 +1433,202 @@ class Database:
         - title: str, the title of the paper.
         """
         insert_sql = """
-        INSERT INTO openreview_arxiv (openreview_id, arxiv_id, title, author_names)
+        INSERT INTO openreview_arxiv (venue, paper_openreview_id, arxiv_id, title)
         VALUES (%s, %s, %s, %s)
-        ON CONFLICT (venue, openreview_id) DO NOTHING
-        RETURNING (venue, openreview_id);
+        ON CONFLICT (venue, paper_openreview_id) DO NOTHING
+        RETURNING (venue, paper_openreview_id);
         """
         
         # Execute the insertion query
-        self.cur.execute(insert_sql, (openreview_id, arxiv_id, title, author_names))
+        self.cur.execute(insert_sql, (venue, openreview_id, arxiv_id, title))
         
         # Get the inserted paper's openreview id (if any)
         res = self.cur.fetchone()
         return res[0] if res else None
     
-    # revisions -> papers -> reviews
+    def get_openreview_arxiv_by_venue(self, venue: str):
+        self.cur.execute("""
+        SELECT venue, paper_openreview_id, arxiv_id, title FROM openreview_arxiv
+        WHERE venue = %s;
+        """, (venue,))
+        
+        openreview_arxiv = self.cur.fetchall()
+        
+        if openreview_arxiv is not None:
+            openreview_arxiv_df = pd.DataFrame(openreview_arxiv, columns=["venue", "paper_openreview_id", "arxiv_id", "title"])
+            return openreview_arxiv_df
+        else:
+            return None
+    
+    # revisions -> papers -> reviews = revisions -> reviews
+    def create_revisions_reviews_table(self):
+        create_table_sql = """
+        CREATE TABLE IF NOT EXISTS revisions_reviews (
+            venue TEXT,
+            revision_openreview_id VARCHAR(255),
+            review_openreview_id VARCHAR(255),
+            PRIMARY KEY (venue, revision_openreview_id, review_openreview_id)
+        );
+        """
+        # Execute the SQL to create the table
+        self.cur.execute(create_table_sql)
+        print("Table 'revisions_reviews' created successfully.")
+        
+    def insert_revision_reviews(self, venue: str, revision_openreview_id: str, review_openreview_id: str):
+        if self.check_revision_exists(revision_openreview_id) and self.check_review_exists(review_openreview_id):
+            insert_sql = """
+            INSERT INTO revisions_reviews (venue, revision_openreview_id, review_openreview_id)
+            VALUES (%s, %s, %s)
+            ON CONFLICT (venue, revision_openreview_id, review_openreview_id) DO NOTHING
+            RETURNING (venue, revision_openreview_id, review_openreview_id);
+            """
+            
+            self.cur.execute(insert_sql, (venue, revision_openreview_id, review_openreview_id))
+            
+            # Execute the insertion query
+            self.cur.execute(insert_sql, (venue, revision_openreview_id, review_openreview_id))
+            
+            # Get the inserted paper's openreview id (if any)
+            res = self.cur.fetchone()
+            return res[0] if res else None
+        elif self.check_revision_exists(revision_openreview_id) is False:
+            print(f'''
+                The revision {revision_openreview_id} is not exists in this database.
+                ''')
+            return None
+        elif self.check_review_exists(review_openreview_id) is False:
+            print(f'''
+                The review {review_openreview_id} is not exists in this database.
+                ''')
+            return None
+        
+    def get_revision_review_by_id(self, revision_openreview_id: str, review_openreview_id: str):
+        self.cur.execute("""
+        SELECT venue, revision_openreview_id, review_openreview_id FROM revisions_reviews
+        WHERE revision_openreview_id = %s AND review_openreview_id = %s;
+        """, (revision_openreview_id, review_openreview_id))
+        
+        result = self.cur.fetchone()
+        
+        if result is None:
+            print(f'''
+                The revision {revision_openreview_id} and the review {review_openreview_id} are not connect in this database.
+                ''')
+            return None
+        else:
+            columns = ['venue', 'paper_openreview_id', 'review_openreview_id']
+            # result = dict(zip(columns, result))
+            result_df = pd.DataFrame(result, columns=columns)
+            return result_df
+        
+    def get_revisions_reviews_by_venue(self, venue: str):
+        self.cur.execute("""
+        SELECT venue, revision_openreview_id, review_openreview_id FROM revisions_reviews
+        WHERE venue = %s;
+        """, (venue,))
+        
+        revisions_reviews = self.cur.fetchall()
+        
+        if revisions_reviews is not None:
+            revisions_reviews_df = pd.DataFrame(revisions_reviews, columns=["venue", "revision_openreview_id", "review_openreview_id"])
+            return revisions_reviews_df
+        else:
+            return None
+        
+    def get_all_revisions_reviews(self):
+        select_query = """
+        SELECT venue, revision_openreview_id, review_openreview_id
+        FROM revisions_reviews;
+        """
+        self.cur.execute(select_query)
+            
+        # Fetch all the results
+        revisions_reviews = self.cur.fetchall()
+        
+        # Return the result as a list of tuples (venue, author_openreview_id, author_full_name)
+        revisions_reviews_df = pd.DataFrame(revisions_reviews, columns=["venue", "revision_openreview_id", "review_openreview_id"])
+        return revisions_reviews_df
+        
+    def delete_revision_review_by_id(self, revision_openreview_id: str, review_openreview_id: str):
+        original_record = self.get_revision_review_by_id(revision_openreview_id, review_openreview_id)
+        
+        if original_record is not None:
+            self.cur.execute("""
+            DELETE FROM revisions_reviews
+            WHERE revision_openreview_id = %s AND review_openreview_id = %s;
+            """, (revision_openreview_id, review_openreview_id))
+            
+            self.conn.commit()
+            print(f"The connection between revision {revision_openreview_id} and review {review_openreview_id} is deleted successfully.")
+            return original_record
+        else:
+            return None
+        
+    def delete_revisions_reviews_by_venue(self, venue: str):
+        # search the row based on primary key
+        select_sql = """
+        SELECT venue, revision_openreview_id, review_openreview_id FROM revisions_reviews WHERE venue = %s;
+        """
+        self.cur.execute(select_sql, (venue,))
+        rows = self.cur.fetchall()
+        
+        if rows:
+            columns = ['venue', 'revision_openreview_id', 'review_openreview_id']
+            # papers_reviews_dict = dict(zip(columns, rows))
+            revisions_reviews_df = pd.DataFrame(rows, columns=columns)
+
+            delete_sql = """
+            DELETE FROM revisions_reviews WHERE venue = %s;
+            """
+            self.cur.execute(delete_sql, (venue,))
+            self.conn.commit()
+
+            print(f"All connections in venue {venue} deleted successfully.")
+            return revisions_reviews_df
+        else:
+            print(f"No connections found in venue {venue}.")
+            return None
+        
+    def check_revision_review_exists(self, revision_openreview_id: str, review_openreview_id: str) -> bool:
+        self.cur.execute("""
+        SELECT 1 FROM revisions_reviews
+        WHERE revision_openreview_id = %s AND review_openreview_id = %s 
+        LIMIT 1;
+        """, (revision_openreview_id, review_openreview_id))
+        
+        result = self.cur.fetchone()
+
+        return result is not None
+    
+    def get_revision_neighboring_reviews(self, revision_openreview_id: str):
+        self.cur.execute("""
+        SELECT venue, revision_openreview_id, review_openreview_id FROM revisions_reviews
+        WHERE revision_openreview_id = %s;
+        """, (revision_openreview_id,))
+        
+        revision_neighboring_reviews = self.cur.fetchall()
+        
+        if revision_neighboring_reviews is not None:
+            revision_neighboring_reviews_df = pd.DataFrame(revision_neighboring_reviews, columns=["venue", "revision_openreview_id", "review_openreview_id"])
+            return revision_neighboring_reviews_df
+        else:
+            return None
+        
+    def get_review_neighboring_revisions(self, review_openreview_id: str):
+        self.cur.execute("""
+        SELECT venue, revision_openreview_id, review_openreview_id FROM revisions_reviews
+        WHERE review_openreview_id = %s;
+        """, (review_openreview_id,))
+        
+        review_neighboring_revisions = self.cur.fetchall()
+        
+        if review_neighboring_revisions is not None:
+            review_neighboring_revisions_df = pd.DataFrame(review_neighboring_revisions, columns=["venue", "revision_openreview_id", "review_openreview_id"])
+            return review_neighboring_revisions_df
+        else:
+            return None
+    
+    # 
     def create_papers_revisions_reviews_table(self):
         create_table_sql = """
         CREATE TABLE IF NOT EXISTS papers_revisions_reviews (

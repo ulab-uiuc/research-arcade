@@ -3,6 +3,7 @@ import arxiv
 import os
 import re
 import time
+import json
 from arxiv import UnexpectedEmptyPageError
 import pandas as pd
 from datetime import datetime
@@ -46,7 +47,7 @@ class sqlDatabaseConstructor:
                         # get writer id
                         writer = reply["signatures"][0].split('/')[-1]
                         # get time
-                        time = datetime.fromtimestamp(reply['cdate'] / 1000).strftime("%Y-%m-%d %H:%M:%S")
+                        time = datetime.fromtimestamp(reply['tmdate'] / 1000).strftime("%Y-%m-%d %H:%M:%S")
                         # classify the type of comment
                         if reply["content"].get("summary") is not None: # reviewer initial comment
                             title = "Official Review by " + reply["signatures"][0].split('/')[-1]
@@ -125,16 +126,17 @@ class sqlDatabaseConstructor:
                     # get writer id
                     writer = reply["signatures"][0].split('/')[-1]
                     # get time
-                    time = datetime.fromtimestamp(reply['cdate'] / 1000).strftime("%Y-%m-%d %H:%M:%S")
+                    time = datetime.fromtimestamp(reply['tmdate'] / 1000).strftime("%Y-%m-%d %H:%M:%S")
                     # classify the type of comment
                     if reply["content"].get("summary_of_the_paper") is not None: # reviewer initial comment
                         title = "Official Review by " + reply["signatures"][0].split('/')[-1]
                         content = {
                             "Summary of the Paper": reply["content"]["summary_of_the_paper"],
-                            "Strength and Weaknesses": reply["content"]["strength_and_weaknesses"],
-                            "Clarity, quality, novelty and reproducibility": reply["content"]["clarity,_quality,_novelty_and_reproducibility"],
+                            "Main Review": reply["content"]["main_review"], # 2022
+                            # "Strength and Weaknesses": reply["content"]["strength_and_weaknesses"], # 2023
+                            # "Clarity, quality, novelty and reproducibility": reply["content"]["clarity,_quality,_novelty_and_reproducibility"], # 2023
                             "Summary of the review": reply["content"]["summary_of_the_review"],
-                            "Correctness": reply["content"]["correctness"],
+                            # "Correctness": reply["content"]["correctness"], # 2023
                             "Technical novelty and significance": reply["content"]["technical_novelty_and_significance"],
                             "Empirical novelty and significance": reply["content"]["empirical_novelty_and_significance"],
                             "Recommendation": reply["content"]["recommendation"],
@@ -162,11 +164,13 @@ class sqlDatabaseConstructor:
                         else:
                             title = "Paper Decision"
                         # set content
+                        content = reply["content"]
                         content = {
                             "Decision": reply["content"]["decision"],
-                            "Metareview: summary, strengths and weaknesses": reply["content"]["metareview:_summary,_strengths_and_weaknesses"],
-                            "Justification for why not higher score": reply["content"]["justification_for_why_not_higher_score"],
-                            "Justification for why not lower score": reply["content"]["justification_for_why_not_lower_score"]
+                            "Comment": reply["content"]["comment"], # 2022
+                            # "Metareview: summary, strengths and weaknesses": reply["content"]["metareview:_summary,_strengths_and_weaknesses"], # 2023
+                            # "Justification for why not higher score": reply["content"]["justification_for_why_not_higher_score"], # 2023
+                            # "Justification for why not lower score": reply["content"]["justification_for_why_not_lower_score"] # 2023
                         }
                     self.db.insert_review(venue, reply_id, replyto_id, writer, title, content, time)
                         
@@ -350,7 +354,7 @@ class sqlDatabaseConstructor:
                     # try:
                     #     for note in note_edits:
                     #         revisions[note.id] = {
-                    #             "Time": datetime.fromtimestamp(note.cdate / 1000).strftime("%Y-%m-%d %H:%M:%S"),
+                    #             "Time": datetime.fromtimestamp(note.tmdate / 1000).strftime("%Y-%m-%d %H:%M:%S"),
                     #             "Title": note.invitation.split('/')[-1]
                     #         }
                     # except:
@@ -415,6 +419,7 @@ class sqlDatabaseConstructor:
         # create sql table
         self.db.create_revisions_table()
         self.db.create_paragraphs_table()
+        import time
         if version == "v2":
             # get all submissions
             submissions = self.client_v2.get_all_notes(invitation=f'{venue}/-/Submission')
@@ -430,12 +435,13 @@ class sqlDatabaseConstructor:
                     revisions = {}
                     # all_diffs = []
                     note_edits = self.client_v2.get_note_edits(note_id=paper_id)
+                    time.sleep(1)
                     if len(note_edits) <= 1:
                         continue
                     else:
                         for note in note_edits:
                             revisions[note.id] = {
-                                "Time": datetime.fromtimestamp(note.cdate / 1000).strftime("%Y-%m-%d %H:%M:%S"),
+                                "Time": datetime.fromtimestamp(note.tmdate / 1000).strftime("%Y-%m-%d %H:%M:%S"),
                                 "Title": note.invitation.split('/')[-1]
                             }
                         # sorted by time
@@ -520,93 +526,87 @@ class sqlDatabaseConstructor:
                 revisions = {}
                 # get revisions and their time
                 note_edits = self.client_v1.get_references(referent=paper_id, original=True)
-                if len(note_edits) <= 1:
+                time.sleep(1)
+                
+                filtered_notes = []
+                for note in note_edits:
+                    if "pdf" in note.content:
+                        filtered_notes.append(note)
+                
+                if len(filtered_notes) <= 1:
                     continue
                 else:
-                    filtered_notes = []
-                    for note in note_edits:
-                        if "pdf" in note.content:
-                            filtered_notes.append(note)
-                    if len(filtered_notes) <= 1:
-                        continue
-                    else:
-                        for note in filtered_notes:
-                            revisions[note.id] = {
-                                "Time": datetime.fromtimestamp(note.cdate / 1000).strftime("%Y-%m-%d %H:%M:%S"),
-                                "Title": "Paper Revision"
-                            }
-                        # sorted by time
-                        sorted_revisions = sorted(revisions.items(), key=lambda x: datetime.strptime(x[1]["Time"], "%Y-%m-%d %H:%M:%S"))
-                        num_revision = len(sorted_revisions)
-                        
-                        if num_revision <= 1:
+                    for note in filtered_notes:
+                        revisions[note.id] = {
+                            "Time": datetime.fromtimestamp(note.tmdate / 1000).strftime("%Y-%m-%d %H:%M:%S"),
+                            "Title": "Paper Revision"
+                        }
+                    # sorted by time
+                    sorted_revisions = sorted(revisions.items(), key=lambda x: datetime.strptime(x[1]["Time"], "%Y-%m-%d %H:%M:%S"))
+                    num_revision = len(sorted_revisions)
+                    
+                    original_id = None
+                    modified_id = None
+                    
+                    for idx, revision in enumerate(sorted_revisions):
+                        original_id = modified_id
+                        modified_id = revision[0]
+                        original_pdf = str(pdf_dir)+str(original_id)+".pdf"
+                        modified_pdf = str(pdf_dir)+str(modified_id)+".pdf"
+                        if idx < 1:
                             continue
                         else:
-                            # original_pdf = "original.pdf"
-                            # modified_pdf = "modified.pdf"
-                            original_id = None
-                            modified_id = None
+                            date = revision[1]["Time"]
+                            try:
+                                content = connect_diffs_and_paragraphs(original_pdf, modified_pdf, filter_list)
+                            except:
+                                continue
                             
-                            for idx, revision in enumerate(sorted_revisions):
-
-                                original_id = modified_id
-                                modified_id = revision[0]
-                                original_pdf = str(pdf_dir)+str(original_id)+".pdf"
-                                modified_pdf = str(pdf_dir)+str(modified_id)+".pdf"
-                                if idx > 1:
-                                    time = revision[1]["Time"]
+                            self.db.insert_revision(venue, original_id, modified_id, content, date)
+                            # if original_id != paper_id:
+                            if os.path.exists(original_pdf):
+                                try:
+                                    # insert paragraphs
+                                    structured_content = extract_paragraphs_from_pdf_new(original_pdf, filter_list)
+                
+                                    paragraph_counter = 1
+                                    for section, paragraphs in structured_content.items():
+                                        for paragraph in paragraphs:
+                                            self.db.insert_paragraph(venue, original_id, paragraph_counter, section, paragraph)
+                                            paragraph_counter += 1
                                     
-                                    # get_pdf(original_id, original_pdf)
-                                    # get_pdf(modified_id, modified_pdf)
+                                    # delete the original pdf
+                                    os.remove(original_pdf)
+                                    print(original_pdf+" Deleted")
+                                except:
+                                    with open(log_file, "a") as log:
+                                        log.write(f"{original_pdf}\n")
+                            else:
+                                with open(log_file, "a") as log:
+                                    log.write(f"{original_pdf}\n")
+                                print("File not exist")
+                            if idx == num_revision - 1:
+                                if os.path.exists(modified_pdf):
+                                    # insert paragraphs
                                     try:
-                                        content = connect_diffs_and_paragraphs(original_pdf, modified_pdf, filter_list)
+                                        structured_content = extract_paragraphs_from_pdf_new(modified_pdf, filter_list)
+                    
+                                        paragraph_counter = 1
+                                        for section, paragraphs in structured_content.items():
+                                            for paragraph in paragraphs:
+                                                self.db.insert_paragraph(venue, modified_id, paragraph_counter, section, paragraph)
+                                                paragraph_counter += 1
+                                                
+                                        # delete the modified pdf
+                                        os.remove(modified_pdf)
+                                        print(modified_pdf+" Deleted")
                                     except:
-                                        continue
-                                    
-                                    self.db.insert_revision(venue, original_id, modified_id, content, time)
-                                    if os.path.exists(original_pdf):
-                                        try:
-                                            # insert paragraphs
-                                            structured_content = extract_paragraphs_from_pdf_new(original_pdf, filter_list)
-                        
-                                            paragraph_counter = 1
-                                            for section, paragraphs in structured_content.items():
-                                                for paragraph in paragraphs:
-                                                    self.db.insert_paragraph(venue, original_id, paragraph_counter, section, paragraph)
-                                                    paragraph_counter += 1
-                                            
-                                            # delete the original pdf
-                                            os.remove(original_pdf)
-                                            print(original_pdf+" Deleted")
-                                        except:
-                                            with open(log_file, "a") as log:
-                                                log.write(f"{original_pdf}\n")
-                                    else:
                                         with open(log_file, "a") as log:
-                                            log.write(f"{original_pdf}\n")
-                                        print("File not exist")
-                                    if idx == num_revision - 1:
-                                        if os.path.exists(modified_pdf):
-                                            # insert paragraphs
-                                            try:
-                                                structured_content = extract_paragraphs_from_pdf_new(modified_pdf, filter_list)
-                            
-                                                paragraph_counter = 1
-                                                for section, paragraphs in structured_content.items():
-                                                    for paragraph in paragraphs:
-                                                        self.db.insert_paragraph(venue, modified_id, paragraph_counter, section, paragraph)
-                                                        paragraph_counter += 1
-                                                        
-                                                # delete the modified pdf
-                                                os.remove(modified_pdf)
-                                                print(modified_pdf+" Deleted")
-                                            except:
-                                                with open(log_file, "a") as log:
-                                                    log.write(f"{modified_pdf}\n")
-                                        else:
-                                            with open(log_file, "a") as log:
-                                                log.write(f"{modified_pdf}\n")
-                                            print("File not exist")
+                                            log.write(f"{modified_pdf}\n")
+                                else:
+                                    with open(log_file, "a") as log:
+                                        log.write(f"{modified_pdf}\n")
+                                    print("File not exist")
     
     def construct_papers_authors_table(self, venue, version = "v2"):
         # create sql table
@@ -640,6 +640,7 @@ class sqlDatabaseConstructor:
                 
     def construct_papers_revisions_table(self, venue, version = "v2"):
         # create sql table
+        import time
         self.db.create_papers_revisions_table()
         if version == "v2":
             # get all submissions
@@ -654,14 +655,15 @@ class sqlDatabaseConstructor:
                     paper_id = submission.id
                     # get revisions
                     note_edits = self.client_v2.get_note_edits(note_id=paper_id)
+                    time.sleep(1)
                     if len(note_edits) <= 1:
                         continue
                     else:
                         for note in note_edits:
                             revision_openreview_id = note.id
                             title = note.invitation.split('/')[-1]
-                            time = datetime.fromtimestamp(note.cdate / 1000).strftime("%Y-%m-%d %H:%M:%S")
-                            self.db.insert_paper_revisions(venue, paper_id, revision_openreview_id, title, time)
+                            date = datetime.fromtimestamp(note.tmdate / 1000).strftime("%Y-%m-%d %H:%M:%S")
+                            self.db.insert_paper_revisions(venue, paper_id, revision_openreview_id, title, date)
         elif version == "v1":
             # get all submissions
             submissions = self.client_v1.get_all_notes(invitation=f'{venue}/-/Blind_Submission', details='revisions')
@@ -670,20 +672,21 @@ class sqlDatabaseConstructor:
                 paper_id = submission.id
                 # get revisions
                 revisions = self.client_v1.get_references(referent=paper_id, original=True)
-                if len(revisions) <= 1:
+                time.sleep(1)
+
+                filtered_revisions = []
+                for revision in revisions:
+                    if "pdf" in revision.content:
+                        filtered_revisions.append(revision)
+                
+                if len(filtered_revisions) <= 1:
                     continue
                 else:
-                    filtered_revisions = []
-                    for revision in revisions:
-                        if "pdf" in revision.content:
-                            filtered_revisions.append(revision)
-                    if len(filtered_revisions) <= 1:
-                        continue
-                    else:
+                    for revision in filtered_revisions:
                         revision_openreview_id = revision.id
                         title = "Paper Revision"
-                        time = datetime.fromtimestamp(revision.cdate / 1000).strftime("%Y-%m-%d %H:%M:%S")
-                        self.db.insert_paper_revisions(venue, paper_id, revision_openreview_id, title, time)
+                        date = datetime.fromtimestamp(revision.tmdate / 1000).strftime("%Y-%m-%d %H:%M:%S")
+                        self.db.insert_paper_revisions(venue, paper_id, revision_openreview_id, title, date)
                 
     def construct_papers_reviews_table(self, venue, version = "v2"):
         # create sql table
@@ -705,7 +708,7 @@ class sqlDatabaseConstructor:
                         # get review openreview id
                         reply_id = reply["id"]
                         # get time
-                        time = datetime.fromtimestamp(reply['cdate'] / 1000).strftime("%Y-%m-%d %H:%M:%S")
+                        time = datetime.fromtimestamp(reply['tmdate'] / 1000).strftime("%Y-%m-%d %H:%M:%S")
                         # get writer id
                         writer = reply["signatures"][0].split('/')[-1]
                         if reply["content"].get("summary") is not None: # reviewer initial comment
@@ -737,10 +740,12 @@ class sqlDatabaseConstructor:
                     # get review openreview id
                     reply_id = reply["id"]
                     # get time
-                    time = datetime.fromtimestamp(reply['cdate'] / 1000).strftime("%Y-%m-%d %H:%M:%S")
+                    time = datetime.fromtimestamp(reply['tmdate'] / 1000).strftime("%Y-%m-%d %H:%M:%S")
+                    # get writer id
+                    writer = reply["signatures"][0].split('/')[-1]
                     # classify the type of comment
                     if reply["content"].get("summary_of_the_paper") is not None: # reviewer initial comment
-                        title = "Official Review by " + reply["signatures"][0].split('/')[-1]
+                        title = "Official Review by " + writer
                     elif reply["content"].get("comment") is not None and reply["content"].get("decision") is None: # author to reviewer / reviewer to author / authors initial rebuttal / author revised paper
                         # set title
                         if writer == "Authors":
@@ -754,6 +759,46 @@ class sqlDatabaseConstructor:
                         else:
                             title = "Paper Decision"
                     self.db.insert_paper_reviews(venue, paper_id, reply_id, title, time)
+    
+    def construct_revisions_reviews_table(self, venue):
+        # create sql table
+        self.db.create_revisions_reviews_table()
+        
+        # get related edge
+        papers_reviews_df = self.get_edge_features_by_venue("papers_reviews", venue)
+        papers_revisions_df = self.get_edge_features_by_venue("papers_revisions", venue)
+        
+        # get unique paper ids
+        unique_paper_ids = papers_revisions_df['paper_openreview_id'].unique()
+        
+        for paper_id in tqdm(unique_paper_ids):
+            # get the revision ids
+            paper_revision_edges = papers_revisions_df[papers_revisions_df['paper_openreview_id'] == paper_id].sort_values(by='time', ascending=True)
+            
+            # get the review ids
+            paper_review_edges = papers_reviews_df[papers_reviews_df['paper_openreview_id'] == paper_id].sort_values(by='time', ascending=True)
+            
+            start_idx = 0
+            for revision in paper_revision_edges.itertuples():
+                # get the revision time
+                revision_time = revision.time
+                # get the revision id
+                revision_id = revision.revision_openreview_id
+                
+                # get the review ids
+                for review in paper_review_edges.iloc[start_idx:].itertuples():
+                    # get the review time
+                    review_time = review.time
+                    if review_time > revision_time:
+                        break
+                    
+                    # get the review id
+                    review_id = review.review_openreview_id
+                    
+                    # insert the edge
+                    self.db.insert_revision_reviews(venue, revision_id, review_id)
+                    
+                    start_idx += 1
                     
     def _title_cleaner(self, title: str) -> str:
         """
@@ -814,44 +859,46 @@ class sqlDatabaseConstructor:
                 # insert into openreview_arxiv table
                 self.db.insert_openreview_arxiv(openreview_id, arxiv_id, title, author_names)
     
-    def construct_papers_revisions_reviews_table(self):
-        # create sql table
-        self.db.create_papers_revisions_reviews_table()
+    # def construct_papers_revisions_reviews_table(self, venue):
+    #     # create sql table
+    #     self.db.create_papers_revisions_reviews_table()
         
-        # get reviews
-        papers_reviews_df = self.db.get_all_papers_reviews()
+    #     # get reviews
+    #     # papers_reviews_df = self.db.get_all_papers_reviews()
+    #     papers_reviews_df = self.db.get_papers_reviews_by_venue(venue)
         
-        # get revisions
-        paper_revisions_df = self.db.get_all_papers_revisions()
+    #     # get revisions
+    #     # paper_revisions_df = self.db.get_all_papers_revisions()
+    #     paper_revisions_df = self.db.get_papers_revisions_by_venue(venue)
 
-        # get all unique paper_id in revisions_df
-        unique_paper_ids = paper_revisions_df['paper_openreview_id'].unique()
+    #     # get all unique paper_id in revisions_df
+    #     unique_paper_ids = paper_revisions_df['paper_openreview_id'].unique()
 
-        # match revisions with reviews
-        for paper_id in tqdm(unique_paper_ids):
-            revisions = paper_revisions_df[paper_revisions_df['paper_openreview_id'] == paper_id]
-            revisions_sorted = revisions.sort_values(by='time', ascending=True)
+    #     # match revisions with reviews
+    #     for paper_id in tqdm(unique_paper_ids):
+    #         revisions = paper_revisions_df[paper_revisions_df['paper_openreview_id'] == paper_id]
+    #         revisions_sorted = revisions.sort_values(by='time', ascending=True)
             
-            reviews = papers_reviews_df[papers_reviews_df['paper_openreview_id'] == paper_id]
-            reviews_sorted = reviews.sort_values(by='time', ascending=True)
+    #         reviews = papers_reviews_df[papers_reviews_df['paper_openreview_id'] == paper_id]
+    #         reviews_sorted = reviews.sort_values(by='time', ascending=True)
             
-            start_idx = 0
-            for revision in revisions_sorted.itertuples():
-                venue = revision.venue
+    #         start_idx = 0
+    #         for revision in revisions_sorted.itertuples():
+    #             # venue = revision.venue
                 
-                revision_id = revision.revision_openreview_id
-                revision_time = revision.time
-                _revision_time = datetime.strptime(revision_time, "%Y-%m-%d %H:%M:%S")
-                for review in reviews_sorted.iloc[start_idx:].itertuples():
-                    review_id = review.review_openreview_id
-                    review_time = review.time
-                    _review_time = datetime.strptime(review_time, "%Y-%m-%d %H:%M:%S")
-                    if _review_time <= _revision_time:
-                        self.db.insert_paper_revision_review(venue, paper_id, revision_id, review_id, revision_time, review_time)
-                        # print(venue, paper_id, revision_id, review_id, revision_time, review_time)
-                        start_idx += 1
-                    else:
-                        break
+    #             revision_id = revision.revision_openreview_id
+    #             revision_time = revision.time
+    #             _revision_time = datetime.strptime(revision_time, "%Y-%m-%d %H:%M:%S")
+    #             for review in reviews_sorted.iloc[start_idx:].itertuples():
+    #                 review_id = review.review_openreview_id
+    #                 review_time = review.time
+    #                 _review_time = datetime.strptime(review_time, "%Y-%m-%d %H:%M:%S")
+    #                 if _review_time <= _revision_time:
+    #                     self.db.insert_paper_revision_review(venue, paper_id, revision_id, review_id, revision_time, review_time)
+    #                     # print(venue, paper_id, revision_id, review_id, revision_time, review_time)
+    #                     start_idx += 1
+    #                 else:
+    #                     break
     
     # node          
     def insert_node(self, table: str, node_features: dict):
@@ -930,6 +977,20 @@ class sqlDatabaseConstructor:
                       ''')
         else:
             print(f"The table {table} is not exist in this database")
+    
+    def insert_node_by_csv(self, table: str, csv_file_path: str):
+        df = pd.read_csv(csv_file_path)
+        for index, row in df.iterrows():
+            node_features = row.to_dict()
+            self.insert_node(table, node_features)
+            print(f"Node with {table} {index} inserted successfully.")
+    
+    def insert_node_by_json(self, table: str, json_file_path: str):
+        with open(json_file_path, "r", encoding="utf-8") as f:
+            dataset = json.load(f)
+        for idx, node_features in enumerate(dataset):
+            self.insert_node(table, node_features)
+            print(f"Node with {table} {idx} inserted successfully.")
     
     def delete_node_by_id(self, table: str, primary_key: dict):
         if table == "papers":
@@ -1082,6 +1143,19 @@ class sqlDatabaseConstructor:
                       is not qualified
                       ''')
                 return None
+        elif table == "paragraphs":
+            try:
+                return self.db.get_paragraph_by_id(**primary_key)
+            except: # venue, paper_openreview_id, paragraph_number
+                print(f'''The node in 'paragraphs' table requires the following node features:
+
+                      paper_openreview_id: str,
+
+                      And the primary key you provided:
+                      {primary_key}
+                      is not qualified
+                      ''')
+                return None
         else:
             print(f"The table {table} is not exist in this database")
             return None
@@ -1117,6 +1191,15 @@ class sqlDatabaseConstructor:
         elif table == "revisions":
             try:
                 return self.db.get_revisions_by_venue(venue)
+            except:
+                print(f'''The venue you provided:
+                      {venue}
+                      is not qualified
+                      ''')
+                return None
+        elif table == "paragraphs":
+            try:
+                return self.db.get_paragraphs_by_venue(venue)
             except:
                 print(f'''The venue you provided:
                       {venue}
@@ -1276,6 +1359,20 @@ class sqlDatabaseConstructor:
                       is not qualified
                       ''')
                 return None
+        elif table == "revisions_reviews":
+            try:
+                return self.db.get_revision_review_by_id(**primary_key)
+            except:
+                print(f'''The primary key in 'revisions_reviews' table is
+                      
+                      revision_openreview_id: str,
+                      review_openreview_id: str
+                      
+                      And the primary key you provided:
+                      {primary_key}
+                      is not qualified
+                      ''')
+                return None
         else:
             print(f"The table {table} is not exist in this database")
             return None
@@ -1308,6 +1405,24 @@ class sqlDatabaseConstructor:
                       is not qualified
                       ''')
                 return None
+        elif table == "revisions_reviews":
+            try:
+                return self.db.get_revisions_reviews_by_venue(venue)
+            except:
+                print(f'''The venue you provided:
+                      {venue}
+                      is not qualified
+                      ''')
+                return None
+        elif table == "openreview_arxiv":
+            try:
+                return self.db.get_openreview_arxiv_by_venue(venue)
+            except:
+                print(f'''The venue you provided:
+                      {venue}
+                      is not qualified
+                      ''')
+                return None
         else:
             print(f"The table {table} is not exist in this database")
             return None
@@ -1319,6 +1434,8 @@ class sqlDatabaseConstructor:
             return self.db.get_all_papers_reviews()
         elif table == "papers_revisions":
             return self.db.get_all_papers_revisions()
+        elif table == "revisions_reviews":
+            return self.db.get_all_revisions_reviews()
         else:
             print(f"The table {table} is not exist in this database")
             return None
@@ -1366,6 +1483,20 @@ class sqlDatabaseConstructor:
                       is not qualified
                       ''')
                 return None
+        elif table == "revisions_reviews":
+            try:
+                return self.db.delete_revision_review_by_id(**primary_key)
+            except:
+                print(f'''The primary key in 'revisions_reviews' table is
+                      
+                      revision_openreview_id: str,
+                      review_openreview_id: str
+                      
+                      And the primary key you provided:
+                      {primary_key}
+                      is not qualified
+                      ''')
+                return None
         else:
             print(f"The table {table} is not exist in this database")
             return None
@@ -1392,6 +1523,15 @@ class sqlDatabaseConstructor:
         elif table == "papers_revisions":
             try:
                 return self.db.delete_papers_revisions_by_venue(venue)
+            except:
+                print(f'''The venue you provided:
+                      {venue}
+                      is not qualified
+                      ''')
+                return None
+        elif table == "revisions_reviews":
+            try:
+                return self.db.delete_revisions_reviews_by_venue(venue)
             except:
                 print(f'''The venue you provided:
                       {venue}
@@ -1455,10 +1595,40 @@ class sqlDatabaseConstructor:
                       {edge_features}
                       are not qualified
                       ''')
+        elif table == "revisions_reviews":
+            try:
+                self.db.insert_revision_reviews(**edge_features)
+                revision_openreview_id = edge_features["revision_openreview_id"]
+                review_openreview_id = edge_features["review_openreview_id"]
+                print(f"Revision {revision_openreview_id} and review {review_openreview_id} are connected successfully.")
+            except:
+                print(f'''The edge in 'revisions_reviews' table requires the following edge features:
+                      venue: str,
+                      revision_openreview_id: str,
+                      review_openreview_id: str,
+                      
+                      And the edge features you provided:
+                      {edge_features}
+                      are not qualified
+                      ''')
         else:
             print(f"The table {table} is not exist in this database")
             return None
-        
+    
+    def insert_edge_by_csv(self, table: str, csv_file_path: str):
+        df = pd.read_csv(csv_file_path)
+        for index, row in df.iterrows():
+            edge_features = row.to_dict()
+            self.insert_edge(table, edge_features)
+            print(f"Edge with {table} {index} inserted successfully.")
+            
+    def insert_edge_by_json(self, table: str, json_file_path: str):
+        with open(json_file_path, "r", encoding="utf-8") as f:
+            dataset = json.load(f)
+        for idx, edge_features in enumerate(dataset):
+            self.insert_edge(table, edge_features)
+            print(f"Edge with {table} {idx} inserted successfully.")
+    
     def get_neighborhood_by_id(self, table: str, primary_key: dict):
         if table == "papers_authors":
             try:
@@ -1555,6 +1725,38 @@ class sqlDatabaseConstructor:
                         {primary_key}
                         is not qualified
                         ''')
+                return None
+        elif table == "revisions_reviews":
+            try:
+                if "revision_openreview_id" in primary_key:
+                    return self.db.get_revision_neighboring_reviews(**primary_key)
+                elif "review_openreview_id" in primary_key:
+                    return self.db.get_review_neighboring_revisions(**primary_key)
+                else:
+                    print(f'''To find neighborhood in table 'revisions_reviews',
+                        the primary key should only include
+                        
+                        revision_openreview_id: str
+                        or
+                        review_openreview_id: str
+                        
+                        The primary key you provided
+                        {primary_key}
+                        is not qualified
+                        ''')
+                    return None
+            except:
+                print(f'''To find neighborhood in table 'revisions_reviews',
+                    the primary key should only include
+                    
+                    revision_openreview_id: str
+                    or
+                    review_openreview_id: str
+                    
+                    The primary key you provided
+                    {primary_key}
+                    is not qualified
+                    ''')
                 return None
         else:
             print(f"The table {table} is not exist in this database")
