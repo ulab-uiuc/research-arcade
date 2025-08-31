@@ -21,6 +21,7 @@ import torch
 import json
 from pdf2image import convert_from_path
 
+
 try:
     import fitz  # PyMuPDF for rendering PDFs
     _HAVE_PYMUPDF = True
@@ -97,6 +98,8 @@ def llm_generate(
     gpu_memory_utilization: float = 0.8,
     dtype: str = "bfloat16",
     clear_cuda_cache: bool = False,
+    use_lora: bool = False,
+    lora_path: str | None = None,
 ) -> List[str]:
     """
     Generate completions with vLLM (Python API only).
@@ -158,13 +161,17 @@ def llm_generate(
     model_id = model_name
     _ = AutoTokenizer.from_pretrained(model_id, trust_remote_code=True)  # keep for parity/compat
     llm = LLM(
-        model_id,
+        model="Qwen/Qwen3-8B",
         trust_remote_code=True,
         enforce_eager=True,
-        tensor_parallel_size=tensor_parallel_size,
-        gpu_memory_utilization=gpu_memory_utilization,
-        dtype=dtype,
+        tensor_parallel_size=1,
+        gpu_memory_utilization=0.6,
+        dtype="float16"
     )
+    if use_lora and lora_path:
+        llm.load_lora(lora_path, lora_name="my_adapter")
+        llm.set_active_loras(["my_adapter"])   # activate it
+
 
     sampling = SamplingParams(
         temperature=temperature,
@@ -434,8 +441,6 @@ def _data_extraction_non_vlm(jsonl_file_path, model_name="openai/clip-vit-base-p
             print(f"Image tag list: {image_tag_list}")
 
 
-# def visual_adaptation(image_paths, model_name = "openai/clip-vit-base-patch32", projection_dimension = 4096):
-
             outputs.append({
                 "paragraph_key_id": paragraph_key_id,
                 "paper_arxiv_id": paper_arxiv_id,
@@ -590,7 +595,142 @@ def _format_block(label: str, lines: List[str]) -> str:
     return header + "\n".join(lines)
 
 
+def _sanitize(s: Optional[str], limit: int) -> str:
+    if not s:
+        return ""
+    return s.replace("\n", " ").strip()[:limit]
 
+def build_prompt_contract(
+    k: int,
+    figures: List[Dict],
+    tables: List[Dict],
+    abstracts: List[Tuple[str, str, str]],
+    prev_paras: List[str],
+    next_paras: List[str],
+    paper_section: str,
+    num_char: int,
+    title: str,
+    abstract: str,
+    fig_labels: List[str],
+    table_labels: List[str],
+    bib_keys: List[str],
+    use_figure: bool = True,
+    use_table: bool = True,
+    use_citations: bool = True,
+) -> str:
+    """Capability-contract prompt.
+    - If a capability is False, we DON'T include its requirement line,
+      and we add a negative constraint to forbid it.
+    """
+
+    # Prune sources by capability
+    if not use_figure:
+        figures, fig_labels = [], []
+    if not use_table:
+        tables, table_labels = [], []
+    if not use_citations:
+        abstracts, bib_keys = [], []
+
+    # Build descriptive blocks
+    fig_lines = [
+        f"- label: {f.get('label','')}; caption: {_sanitize(f.get('caption'), 240)}"
+        for f in figures if f.get("label")
+    ]
+    tab_lines = [
+        f"- label: {t.get('label','')}; text: {_sanitize(t.get('text'), 240)}"
+        for t in tables if t.get("label")
+    ]
+    abs_lines = []
+    for bk, t, a in abstracts:
+        abs_lines.append(f"- [{bk}] {_sanitize(t,180)}: {_sanitize(a,600)}")
+
+    def block(title: str, lines: List[str]) -> str:
+        if not lines:
+            return "(none)"
+        return f"{title}:\n" + "\n".join(lines)
+
+    # Context block
+    adj = []
+    if prev_paras:
+        adj.append("Previous:")
+        adj += [f"{i}. {p}" for i, p in enumerate(prev_paras, 1)]
+    if next_paras:
+        adj.append("Next:")
+        adj += [f"{i}. {p}" for i, p in enumerate(next_paras, 1)]
+    adjacent = "\n".join(adj) if adj else "(none)"
+
+    # Capability flags (drive requirements)
+    can_fig = bool(fig_labels)
+    can_tab = bool(table_labels)
+    can_cite = bool(bib_keys)
+
+    reqs = []
+    bans = []
+
+    if can_fig:
+        reqs.append('Include each figure label exactly once via \\ref{<label>}.')
+    else:
+        bans.append('Do not include any \\ref{...} to figures.')
+
+    if can_tab:
+        reqs.append('Include each table label exactly once via \\ref{<label>}.')
+    else:
+        bans.append('Do not include any \\ref{...} to tables.')
+
+    if can_cite:
+        reqs.append('Cite all bib_keys using a single \\cite{...} or multiple as needed.')
+    else:
+        bans.append('Do not include any \\cite{...}.')
+
+    # Ordering rule only when applicable
+    ordering = []
+    if can_fig:
+        ordering.append('- Follow the order in fig_labels when referring to figures.')
+    if can_tab:
+        ordering.append('- Follow the order in table_labels when referring to tables.')
+
+    # Compose prompt
+    prompt = f"""You are reconstructing one missing LaTeX paragraph in a research paper.
+
+Title: {title}
+Abstract: {_sanitize(abstract, 1200)}
+Section name: {paper_section}
+
+{block("Figure block (optional)", fig_lines)}
+{block("Table block (optional)", tab_lines)}
+{block("Cited paper titles/abstracts (optional)", abs_lines)}
+
+k-most adjacent paragraphs (context):
+{adjacent}
+
+Target length (characters): ~{num_char} (±15%)
+
+# Canonicalized metadata
+fig_labels = {fig_labels}
+table_labels = {table_labels}
+bib_keys = {bib_keys}
+
+# Task
+Write exactly one LaTeX-formatted paragraph that naturally fits between the adjacent paragraphs.
+
+# HARD REQUIREMENTS
+- Maintain objective, concise academic tone; ensure logical continuity with context.
+- Output exactly one paragraph (no lists/headers/environments, no blank lines).
+{"".join(f"- {r}\n" for r in reqs)}{"".join(f"- {b}\n" for b in bans)}
+
+# ORDERING
+{("\n".join(ordering) if ordering else "(no ordering constraints)")}
+
+# SILENT SELF-CHECK (do not print this checklist)
+- If any fig_labels/table_labels exist: verify each appears exactly once as "\\ref{{<label>}}".
+- If any bib_keys exist: verify they appear in "\\cite{{...}}".
+- If none exist: verify the paragraph contains NO "\\ref{{...}}" and NO "\\cite{{...}}".
+- Verify single paragraph and length within tolerance.
+
+# Output
+Return only the LaTeX paragraph text (no extra lines, no explanations).
+""".strip()
+    return prompt
 
 
 def _build_prompt(
@@ -606,8 +746,23 @@ def _build_prompt(
     abstract: str,
     fig_labels: List[str],
     table_labels: List[str],
-    bib_keys: List[str]
+    bib_keys: List[str],
+    use_figure: bool = True,
+    use_table: bool = True,
 ) -> str:
+
+    # If we don't use figures, we mask them out
+    # If we don't use tables, we mask them out
+
+    if not use_figure:
+        figures = []
+        fig_labels = []
+    
+    if not use_table:
+        tables = []
+        table_labels = []
+
+    
 
     paper_title = title
     # Figure block

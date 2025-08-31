@@ -30,8 +30,8 @@ def main():
 
     
     print(f"Papers from file {source_path}: {len(ids_raw)} found")
-
-    # Initialize tasks
+    
+    # Initialize tasks  
     init_res = cj.initialize_paper_tasks(arxiv_ids=ids_raw, category=None)
     if isinstance(init_res, dict):
         ids_to_process = init_res.get("added", []) or init_res.get("ids", [])

@@ -16,7 +16,7 @@ RESULT_PATH = "./task_result/paragraph_generation_result2.csv"
 
 
 def main():
-    
+
     paragraph_ids = ["21829759", "21831811", "21854471", "56348", "2848716", "21846899"]
 
     jsonl_file_path = "./jsonl/paragraph_generation2.jsonl"
@@ -28,7 +28,7 @@ def main():
     else:
         paragraph_datas = _data_extraction_non_vlm(jsonl_file_path=jsonl_file_path, model_name=MODEL_NAME)
 
-
+    
 
     # Then pass the data to LLM for tasks
     original_contents = []
@@ -145,7 +145,7 @@ def main():
             writer.writerow(row)
 
     print(f"Saved results to {RESULT_PATH}")
-    
+
 
 
 

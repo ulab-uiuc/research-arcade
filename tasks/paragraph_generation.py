@@ -200,7 +200,7 @@ def _data_fetching(paragraph_key_ids, data_path, k_neighbour):
             cited_triples = []
             for (bib_key, bib_title, _arx), abs_txt in zip(title_id_pairs, cited_abstracts):
                 cited_triples.append((bib_key, bib_title, abs_txt or ""))
-
+        
             # 9) Paper title/abstract
             paper_title, paper_abs = _fetch_paper_title_abstract(cur=cur, arxiv_id=paper_arxiv_id) or ("", "")
 
