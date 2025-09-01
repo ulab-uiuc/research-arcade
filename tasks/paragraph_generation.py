@@ -89,7 +89,7 @@ def _derived_bib_key(title: str) -> str:
 
 
 
-def _data_fetching(paragraph_key_ids, data_path, k_neighbour):
+def _data_fetching(paragraph_key_ids, data_path, k_neighbour=5):
     """
     Given paragraph primary-key IDs (from table `paragraphs.id`), fetch and serialize,
     for each paragraph, the following into a JSONL at `data_path`:

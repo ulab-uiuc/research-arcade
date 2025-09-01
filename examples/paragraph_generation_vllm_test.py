@@ -12,7 +12,7 @@ import csv
 VLM = False
 MODEL_NAME = "nvidia/Llama-3.1-Nemotron-Nano-VL-8B-V1"
 MODEL_NAME = "Qwen/Qwen3-8B"
-RESULT_PATH = "./task_result/paragraph_generation_result2.csv"
+RESULT_PATH = "./task_result/paragraph_generation_result3.csv"
 
 
 def main():
@@ -72,6 +72,7 @@ def main():
             return
     else:
         image_tag_lists = []
+        image_projection_lists = []
         for paragraph_data in paragraph_datas:
             paragraph_datas = _data_extraction_vlm(jsonl_file_path)
             # This serves for ground truth
@@ -85,18 +86,20 @@ def main():
             # TODO ensure that the paragraph_data each line includes the 
 
             image_tag_list = paragraph_data["image_tag_list"]
-
+            image_projection_list = paragraph_data["image_projections"]
             prompts.append(prompt)
             image_tag_lists.append(image_tag_list)
+            image_projection_lists.append(image_projection_list)
 
             # Send the prompt to the vllm for evaluation
         print(f"Prompt list: {prompts}")
         print(f"Number of prompts: {len(prompts)}")
         print(f"Image tag lists: {image_tag_lists}")
         print(f"Number of Image tag lists: {len(image_tag_lists)}")
+        print(f"Number of Image projection lists: {len(image_projection_lists)}")
         
 
-        generated_paragraphs = llm_generate(prompts = prompts, model_name = MODEL_NAME, is_vlm = VLM, image_labels = image_tag_lists)
+        generated_paragraphs = llm_generate(prompts = prompts, model_name = MODEL_NAME, is_vlm = VLM, image_labels = image_tag_lists, image_projections=image_projection_lists)
 
         # Send the answer list for evaluation
         # Before that, we first check length consistency

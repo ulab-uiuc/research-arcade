@@ -20,7 +20,9 @@ from vllm import LLM, SamplingParams
 import torch
 import json
 from pdf2image import convert_from_path
+import numpy as np
 
+SOFT_TOKENS = int(os.getenv("SOFT_TOKENS", "16")) 
 
 try:
     import fitz  # PyMuPDF for rendering PDFs
@@ -32,20 +34,6 @@ except Exception:
  
 
 load_dotenv()
-
-CANDIDATE_TAGS = [
-    "diagram", "graph", "map", "network", "bridges", "math figure",
-    "printed text", "table", "chart", "equation", "flowchart",
-    "scatter plot", "bar chart", "ROC curve", "heatmap", "topology",
-]
-
-TAG_TEMPLATES = [
-    "a diagram of {}",
-    "a figure showing {}",
-    "a technical illustration of {}",
-    "contains {}",
-    "a chart about {}",
-]
 
 TOPK_TAGS = 1
 """
@@ -89,8 +77,9 @@ def llm_generate(
     prompts: List[str],
     model_name: str,
     is_vlm: bool,
-    image_embeddings: Optional[List[List[str]]] = None,  # kept for API parity; not used with Python vLLM API
+    image_embeddings: Optional[List[List[str]]] = None,
     image_labels: Optional[List[List[str]]] = None,
+    image_projections: Optional[List[List[str]]] = None,
     temperature: float = 0.7,
     top_p: float = 0.95,
     max_tokens: int = 1024,
@@ -99,6 +88,7 @@ def llm_generate(
     dtype: str = "bfloat16",
     clear_cuda_cache: bool = False,
     use_lora: bool = False,
+    use_image_projection: bool = True,
     lora_path: str | None = None,
 ) -> List[str]:
     """
@@ -125,20 +115,29 @@ def llm_generate(
                 "note: image embeddings are not consumed by the vLLM Python API."
             )
     else:
-        if image_labels is None:
-            image_labels = [[] for _ in range(n)]
-        if len(image_labels) != n:
-            raise ValueError("len(image_labels) must match len(prompts) when is_vlm=False.")
+        # Here, we try something else: we use image projection
+
+        if use_image_projection:
+            if image_projections is None:
+                image_projections = [[] for _ in range(n)]
+            if len(image_projections) != n:
+                raise ValueError("len(image_projections) must match len(prompts) when is_vlm=False.")
+
+        else:
+            if image_labels is None:
+                image_labels = [[] for _ in range(n)]
+            if len(image_labels) != n:
+                raise ValueError("len(image_labels) must match len(prompts) when is_vlm=False.")
 
     # --------- Build augmented prompts ----------
     augmented_prompts: List[str] = []
     for i in range(n):
         p = prompts[i]
         labels = image_labels[i] if image_labels else []
+        projections = image_projections[i] if image_projections else []
         prefix_lines = []
 
-        if labels:
-            # Keep short to avoid blowing up prompt length
+        if labels and not use_image_projection:
             label_text = ", ".join([str(x) for x in labels[:32]])
             prefix_lines.append(
                 "You may use the following image tag summary as auxiliary context:\n"
@@ -146,11 +145,89 @@ def llm_generate(
             )
 
         if is_vlm and image_embeddings and image_embeddings[i]:
-            # Let future devs know what's happening
             prefix_lines.append(
                 "(Note: Images were provided externally, but this Python vLLM API path "
                 "does not accept image tensors; proceeding with textual tags only.)"
             )
+
+        if not is_vlm and use_image_projection and projections:
+            # try pure Python vLLM embeddings prompt first
+            used_python_embeds = False
+            try:
+                # vLLM versions differ; EmbedsPrompt/EmbeddingPrompt/Prompt may exist under vllm.inputs
+                from vllm.inputs import EmbedsPrompt  # type: ignore
+                # Combine all image soft payloads for this sample along token axis
+                soft_list = []
+                for payload in projections:
+                    try:
+                        soft_np = _decode_prompt_embeds_payload(payload)  # [T,4096]
+                        if soft_np.shape[-1] != 4096:
+                            print(f"[WARN] soft token width != 4096: {soft_np.shape}")
+                        soft_list.append(soft_np)
+                    except Exception as e:
+                        print(f"[WARN] bad prompt_embeds payload: {e}")
+                if soft_list:
+                    # combined = np.concatenate(soft_list, axis=0)  # [sum_T, 4096]
+                    combined = np.concatenate(soft_list, axis=0).astype(np.float32, copy=False)
+                    # embs = torch.from_numpy(combined).to(dtype=torch.float32, device="cpu").contiguous()
+                    embs = torch.from_numpy(combined.astype(np.float32, copy=False)).to("cpu").contiguous()
+
+
+                    # supply text after the soft tokens so the model has lexical context
+                    # p = EmbedsPrompt(prompt_embeds=combined, prompt=str(p))
+                    if embs.ndim != 2 or embs.shape[1] != 4096:
+                        raise ValueError(f"soft-token shape must be [T,4096], got {tuple(embs.shape)}")
+
+                    p = EmbedsPrompt(prompt_embeds=embs, prompt=str(p))
+
+                    used_python_embeds = True
+            except Exception as _e_embeds_prompt:
+                used_python_embeds = False  # silently fall through
+
+            # If python path unavailable, try OpenAI-compatible HTTP with prompt_embeds
+            if not used_python_embeds:
+                vllm_base = os.getenv("VLLM_OPENAI_BASE")
+                api_key = os.getenv("API_KEY") or "EMPTY"
+                if vllm_base:
+                    try:
+                        http_client = OpenAI(base_url=vllm_base, api_key=api_key)
+                        # pack multiple image projections into one contiguous soft prefix
+                        soft_list = []
+                        for payload in projections:
+                            try:
+                                soft_np = _decode_prompt_embeds_payload(payload)  # [T,4096]
+                                soft_list.append(soft_np)
+                            except Exception as e:
+                                print(f"[WARN] HTTP path: bad payload: {e}")
+                        combined = np.concatenate(soft_list, axis=0) if soft_list else None
+
+                        if combined is not None:
+                            payload = _to_prompt_embeds_payload(combined.astype(np.float32))
+                            # Fire one-off request now and short-circuit this item
+                            resp = http_client.completions.create(
+                                model=model_name,
+                                prompt_embeds=payload,
+                                prompt=str(p),  # appended after soft tokens
+                                max_tokens=max_tokens,
+                                temperature=temperature,
+                                top_p=top_p,
+                            )
+                            # stash answer for this index and mark with sentinel
+                            text = (resp.choices[0].text or "").strip()
+                            augmented_prompts.append(text)  # sentinel: final text already
+                            continue  # skip to next i; no local generation needed
+                    except Exception as e_http:
+                        # fall back to textual injection if HTTP fails
+                        prefix_lines.append(
+                            "(Soft-token projection available but HTTP prompt_embeds failed; "
+                            "falling back to textual-only context.)"
+                        )
+                else:
+                    # No HTTP endpoint configured; fall back gracefully
+                    prefix_lines.append(
+                        "(Soft-token projection available but no EmbedsPrompt/HTTP path; "
+                        "falling back to textual-only context.)"
+                    )
 
         if prefix_lines:
             p = "\n".join(prefix_lines) + "\n\n" + p
@@ -160,18 +237,20 @@ def llm_generate(
     # --------- Initialize tokenizer & model (your pattern) ----------
     model_id = model_name
     _ = AutoTokenizer.from_pretrained(model_id, trust_remote_code=True)  # keep for parity/compat
+
     llm = LLM(
         model="Qwen/Qwen3-8B",
         trust_remote_code=True,
         enforce_eager=True,
         tensor_parallel_size=1,
         gpu_memory_utilization=0.6,
-        dtype="float16"
+        dtype="float16",
+        enable_prompt_embeds=True,   # <-- add this line
     )
+
     if use_lora and lora_path:
         llm.load_lora(lora_path, lora_name="my_adapter")
-        llm.set_active_loras(["my_adapter"])   # activate it
-
+        llm.set_active_loras(["my_adapter"])
 
     sampling = SamplingParams(
         temperature=temperature,
@@ -180,7 +259,43 @@ def llm_generate(
     )
 
     # --------- Batch generate ----------
-    outs = llm.generate(augmented_prompts, sampling)
+    # outs = llm.generate(augmented_prompts, sampling)
+
+    def _is_embeds_prompt_obj(x):
+    # Prefer exact type when available
+        try:
+            from vllm.inputs import EmbedsPrompt
+            if isinstance(x, EmbedsPrompt):
+                return True
+        except Exception:
+            pass
+        # Duck-typing fallback across vLLM versions
+        return hasattr(x, "prompt_embeds")
+    
+    outs: List[Any] = [None] * len(augmented_prompts)
+
+    embed_pairs = [(i, p) for i, p in enumerate(augmented_prompts) if _is_embeds_prompt_obj(p)]
+    text_pairs  = [(i, p) for i, p in enumerate(augmented_prompts) if not _is_embeds_prompt_obj(p)]
+
+    if embed_pairs:
+        e_idx, e_prompts = zip(*embed_pairs)
+        e_outs = llm.generate(list(e_prompts), sampling)
+        for i, o in zip(e_idx, e_outs):
+            outs[i] = o
+
+    if text_pairs:
+        t_idx, t_prompts = zip(*text_pairs)
+
+        # >>> ADDED: wrap text-only prompts as EmbedsPrompt with empty soft-prefix
+        from vllm.inputs import EmbedsPrompt
+        empty = torch.empty((0, 4096), dtype=torch.float32, device="cpu")
+        t_prompts_wrapped = [EmbedsPrompt(prompt_embeds=empty, prompt=str(tp)) for tp in t_prompts]
+        # <<<
+
+        t_outs = llm.generate(list(t_prompts_wrapped), sampling)
+        for i, o in zip(t_idx, t_outs):
+            outs[i] = o
+
 
     # --------- Collect texts ----------
     answers: List[str] = []
@@ -188,15 +303,19 @@ def llm_generate(
         if out.outputs:
             answers.append(out.outputs[0].text.strip())
         else:
-            answers.append("")
+            # ADDED: if we inlined a ready-made HTTP completion earlier, it's already text
+            if isinstance(out.prompt, str) and out.prompt and "\n" not in out.prompt and out.outputs == []:
+                answers.append(out.prompt.strip())
+            else:
+                answers.append("")
+
     if clear_cuda_cache:
         torch.cuda.empty_cache()
 
     return answers
 
 
-
-def _data_extraction_vlm(jsonl_file_path, model_name="nvidia/Llama-3.1-Nemotron-Nano-VL-8B-V1"):
+def _data_extraction_vlm(jsonl_file_path, use_figure=True, use_table=True, model_name="nvidia/Llama-3.1-Nemotron-Nano-VL-8B-V1", ):
     """
     Read a JSONL file created by `_data_fetching` and return a list of dicts
     ready to use for LLM generation.
@@ -272,7 +391,7 @@ def _data_extraction_vlm(jsonl_file_path, model_name="nvidia/Llama-3.1-Nemotron-
             k = max(k_prev, k_next) if (k_prev or k_next) else 2
 
             # Build prompt using your existing helper
-            prompt = _build_prompt(
+            prompt = _build_prompt_contract(
                 k=k,
                 figures=figures,
                 tables=tables,
@@ -286,6 +405,8 @@ def _data_extraction_vlm(jsonl_file_path, model_name="nvidia/Llama-3.1-Nemotron-
                 fig_labels=fig_labels,
                 table_labels=table_labels,
                 bib_keys=bib_keys,
+                use_figure=use_figure,
+                use_table=use_table,
             )
 
             # Turn figure latex paths into absolute paths and then into base64 embeddings
@@ -333,12 +454,9 @@ def _data_extraction_vlm(jsonl_file_path, model_name="nvidia/Llama-3.1-Nemotron-
 
     return outputs
 
-# Instead of generate the embedding, we generate the top labels of images
-def _data_extraction_non_vlm(jsonl_file_path, model_name="openai/clip-vit-base-patch32"):
 
-
+def _data_extraction_non_vlm(jsonl_file_path, use_figure=True, use_table=True, model_name="openai/clip-vit-base-patch32"):
     outputs: List[Dict[str, Any]] = []
-    # Use the same default download path as in Args
     download_path = "./download"
 
     with open(jsonl_file_path, "r", encoding="utf-8") as fp:
@@ -346,14 +464,12 @@ def _data_extraction_non_vlm(jsonl_file_path, model_name="openai/clip-vit-base-p
             line = line.strip()
             if not line:
                 continue
-
             try:
                 rec = json.loads(line)
             except Exception as e:
                 print(f"[WARN] Skipping line {line_no}: invalid JSON ({e})")
                 continue
 
-            # Required core fields with safe fallbacks
             paragraph_key_id = rec.get("paragraph_key_id")
             paper_arxiv_id   = rec.get("paper_arxiv_id", "")
             paper_section    = rec.get("paper_section", "")
@@ -371,10 +487,8 @@ def _data_extraction_non_vlm(jsonl_file_path, model_name="openai/clip-vit-base-p
             bib_keys         = rec.get("bib_keys", []) or []
             cited_triples    = rec.get("cited_triples", []) or []
 
-            # Normalize abstracts triples to (bib_key, title, abstract) tuples
             abstracts_norm = []
             for t in cited_triples:
-                # tolerate list/tuple/dict
                 if isinstance(t, dict):
                     abstracts_norm.append((
                         t.get("0") or t.get("bib_key") or "",
@@ -387,16 +501,13 @@ def _data_extraction_non_vlm(jsonl_file_path, model_name="openai/clip-vit-base-p
                     abs_ = t[2] if len(t) > 2 else ""
                     abstracts_norm.append((bk or "", ttl or "", abs_ or ""))
                 else:
-                    # unknown shape; skip
                     continue
 
-            # k inferred from how many neighbours were saved (fallback 2)
             k_prev = len(prev_paras)
             k_next = len(next_paras)
             k = max(k_prev, k_next) if (k_prev or k_next) else 2
 
-            # Build prompt using your existing helper
-            prompt = _build_prompt(
+            prompt = _build_prompt_contract(
                 k=k,
                 figures=figures,
                 tables=tables,
@@ -410,9 +521,10 @@ def _data_extraction_non_vlm(jsonl_file_path, model_name="openai/clip-vit-base-p
                 fig_labels=fig_labels,
                 table_labels=table_labels,
                 bib_keys=bib_keys,
+                use_figure=use_figure,
+                use_table=use_table,
             )
 
-            # Turn figure latex paths into absolute paths and then into base64 embeddings
             figure_paths = []
             for f in figures:
                 latex_path = (f.get("path") or "").strip()
@@ -429,17 +541,23 @@ def _data_extraction_non_vlm(jsonl_file_path, model_name="openai/clip-vit-base-p
                     print(f"[WARN] Failed to resolve figure path '{latex_path}' "
                           f"for {paper_arxiv_id}: {e}")
 
-            # image_embeddings = _figure_paths_to_embeddings(figure_paths=figure_paths, model_path=model_name)
+            # === ORIGINAL: infer tags via CLIP; ADDED: also keep soft-token payloads ===
+            image_tags_projections = visual_adaptation(image_paths=figure_paths)
 
-            image_tags_projections = visual_adaptation(image_paths = figure_paths)
+            image_tag_list: List[List[str]] = []
+            image_projection_payloads: List[Dict[str, Any]] = []   # ADDED
 
-            # Extract the tags
-            image_tag_list = []
             for tag, projection in image_tags_projections:
                 image_tag_list.append(tag)
+                # ADDED: when a projection exists (shape [1,4096]), create [T,4096] soft tokens and payload
+                if projection is not None:
+                    try:
+                        soft = _repeat_to_soft_tokens(projection, T=SOFT_TOKENS)   # [T,4096] float32
+                        image_projection_payloads.append(_to_prompt_embeds_payload(soft))
+                    except Exception as e:
+                        print(f"[WARN] Failed to build soft tokens: {e}")
 
             print(f"Image tag list: {image_tag_list}")
-
 
             outputs.append({
                 "paragraph_key_id": paragraph_key_id,
@@ -447,6 +565,8 @@ def _data_extraction_non_vlm(jsonl_file_path, model_name="openai/clip-vit-base-p
                 "prompt": prompt,
                 "original_content": original_content,
                 "image_tag_list": image_tag_list,
+                # === ADDED: provide to llm_generate when use_image_projection=True ===
+                "image_projections": image_projection_payloads,
                 "fig_labels": fig_labels,
                 "table_labels": table_labels,
                 "bib_keys": bib_keys,
@@ -463,15 +583,19 @@ def _data_extraction_non_vlm(jsonl_file_path, model_name="openai/clip-vit-base-p
                     "tables": tables,
                     "cited_triples": abstracts_norm,
                     "figure_paths": figure_paths,
+                    # ADDED: debugging
+                    "soft_tokens_T": SOFT_TOKENS,
                 }
             })
 
     return outputs
 
+
 def load_model(model_name):
     clip_model = CLIPModel.from_pretrained(model_name)
     clip_processor = CLIPProcessor.from_pretrained(model_name)
     return clip_model, clip_processor
+
 
 @torch.no_grad()
 def clip_image_features(clip_model: CLIPModel, clip_processor: CLIPProcessor, image: Image.Image) -> torch.Tensor:
@@ -510,12 +634,12 @@ def clip_rank_tags(
     return [tag_templates[best_tpl_idx[i]].format(candidates[i]) for i in tag_order]
 
 
-
 def project_to_embedding_space(img_feats: torch.Tensor, target_dim: int = 4096) -> torch.Tensor:
     projector = torch.nn.Linear(img_feats.shape[-1], target_dim, bias=True)
     with torch.no_grad():
         img_token = projector(img_feats)   # [1, target_dim]
     return img_token
+
 
 def _as_rgb_image(path: Path) -> Optional[Image.Image]:
     """
@@ -578,6 +702,30 @@ def visual_adaptation(image_paths, model_name = "openai/clip-vit-base-patch32", 
     return pairs
 
 
+def _repeat_to_soft_tokens(proj_1xH: torch.Tensor, T: int = SOFT_TOKENS) -> np.ndarray:
+    """
+    proj_1xH: torch.Tensor of shape [1, 4096] (Qwen3 hidden dim)
+    returns np.ndarray [T, 4096] float32 (tiled)
+    """
+    if proj_1xH.ndim != 2 or proj_1xH.shape[0] != 1:
+        raise ValueError(f"expected [1, H], got {tuple(proj_1xH.shape)}")
+    soft = proj_1xH.repeat(T, 1).contiguous().detach().cpu().numpy().astype(np.float32)  # [T, 4096]
+    return soft
+
+
+def _to_prompt_embeds_payload(soft_np: np.ndarray) -> Dict[str, Any]:
+    """
+    Encodes soft tokens for engines that accept OpenAI-compatible prompt_embeds payload.
+    """
+    payload = base64.b64encode(soft_np.tobytes()).decode("utf-8")
+    return {"data": payload, "dtype": "float32", "shape": list(soft_np.shape)}  # [T, 4096]
+
+
+def _decode_prompt_embeds_payload(p: Dict[str, Any]) -> np.ndarray:
+    raw = base64.b64decode(p["data"])
+    arr = np.frombuffer(raw, dtype=np.float32)
+    return arr.reshape(p["shape"])
+
 
 def pdf_first_page_to_image(pdf_path: str, dpi: int = 200, save_jpg_path: str = None) -> Image.Image:
     pages = convert_from_path(pdf_path, dpi=dpi)   # requires poppler
@@ -587,6 +735,7 @@ def pdf_first_page_to_image(pdf_path: str, dpi: int = 200, save_jpg_path: str = 
     if save_jpg_path:
         img.save(save_jpg_path, "JPEG")
     return img
+
 
 def _format_block(label: str, lines: List[str]) -> str:
     if not lines:
@@ -600,7 +749,8 @@ def _sanitize(s: Optional[str], limit: int) -> str:
         return ""
     return s.replace("\n", " ").strip()[:limit]
 
-def build_prompt_contract(
+
+def _build_prompt_contract(
     k: int,
     figures: List[Dict],
     tables: List[Dict],
@@ -762,7 +912,6 @@ def _build_prompt(
         tables = []
         table_labels = []
 
-    
 
     paper_title = title
     # Figure block
@@ -771,7 +920,7 @@ def _build_prompt(
         key_detail = f["caption"][:240].replace("\n", " ").strip() if f["caption"] else ""
         fig_lines.append(f"- label: {f['label']}; caption: {key_detail}")
     figure_block = _format_block("Figure (optional)", fig_lines).strip()
-    
+
     # Table block
     tab_lines = []
     for t in tables:
@@ -797,7 +946,7 @@ def _build_prompt(
         for i, p in enumerate(next_paras, 1):
             adj_lines.append(f"{i}. {p}")
     adjacent_paragraphs_block = "\n".join(adj_lines).strip()
-    
+
     # prompt = "Describe the provided images senquentially."
     print(f"figure_block: {figure_block}")
     print(f"Collected fig_labels: {fig_labels}")
@@ -814,7 +963,7 @@ def _build_prompt(
 
     k-most adjacent paragraphs (context): {adjacent_paragraphs_block}
     Target length (characters): {num_char}
-    
+
     # Canonicalized metadata for enforcement (already cleaned)
     fig_labels = {fig_labels}          # e.g., ["fig:framework","fig:sd_latents"]; [] if none
     table_labels = {table_labels}      # e.g., ["tab:results"]; [] if none
