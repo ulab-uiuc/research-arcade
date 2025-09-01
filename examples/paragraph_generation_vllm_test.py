@@ -2,138 +2,124 @@ import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-
 from tasks.paragraph_generation_local_vllm import Args, llm_generate, _data_extraction_vlm, _data_extraction_non_vlm
-
 from tasks.generated_paragraph_evaluation import answer_evaluation
-
 import csv
 
-VLM = False
-MODEL_NAME = "nvidia/Llama-3.1-Nemotron-Nano-VL-8B-V1"
-MODEL_NAME = "Qwen/Qwen3-8B"
+# Configuration - ensure these match
+VLM = False  # Set to True if using VLM model
+MODEL_NAME = "Qwen/Qwen2.5-7B-Instruct"  # Use appropriate model for VLM setting
 RESULT_PATH = "./task_result/paragraph_generation_result3.csv"
 
-
 def main():
-
     paragraph_ids = ["21829759", "21831811", "21854471", "56348", "2848716", "21846899"]
-
     jsonl_file_path = "./jsonl/paragraph_generation2.jsonl"
 
-    # First load the data
-
+    # Load data once, outside the loop
+    print(f"Loading data with VLM={VLM}, MODEL={MODEL_NAME}")
     if VLM:
         paragraph_datas = _data_extraction_vlm(jsonl_file_path=jsonl_file_path, model_name=MODEL_NAME)
     else:
         paragraph_datas = _data_extraction_non_vlm(jsonl_file_path=jsonl_file_path, model_name=MODEL_NAME)
 
+    print(f"Loaded {len(paragraph_datas)} paragraph data entries")
     
+    # Ensure we have the right number of entries
+    if len(paragraph_datas) != len(paragraph_ids):
+        print(f"Warning: Number of data entries ({len(paragraph_datas)}) doesn't match paragraph IDs ({len(paragraph_ids)})")
 
-    # Then pass the data to LLM for tasks
+    # Process the data
     original_contents = []
     generated_paragraphs = []
     prompts = []
+    
     if VLM:
         image_embeddings_list = []
         for paragraph_data in paragraph_datas:
-            paragraph_datas = _data_extraction_vlm(jsonl_file_path)
-            # This serves for ground truth
-            original_content = paragraph_data["original_content"]
+            # DON'T reload data here - just use what we already have
+            original_content = paragraph_data.get("original_content", "")
             original_contents.append(original_content)
-
-            # We also need to build figure blocks
-            # We need caption and labels
-            prompt = paragraph_data["prompt"]
-            image_embeddings = paragraph_data["image_embeddings"]
-
+            
+            prompt = paragraph_data.get("prompt", "")
+            image_embeddings = paragraph_data.get("image_embeddings", [])
+            
             prompts.append(prompt)
             image_embeddings_list.append(image_embeddings)
-
-            # Send the prompt to the vllm for evaluation
-        print(f"Prompt list: {prompts}")
-        print(f"Number of prompts: {len(prompts)}")
-        print(f"Image embedding list: {image_embeddings}")
-        print(f"Number of Image embeddings: {len(image_embeddings)}")
         
-        # TODO REMOVE IT
-        # sys.exit()
-
-        generated_paragraphs = llm_generate(prompts = prompts, model_name = MODEL_NAME, is_vlm = VLM, image_embeddings = image_embeddings_list)
-
-        # Send the answer list for evaluation
-        # Before that, we first check length consistency
-
-        if len(generated_paragraphs) != len(original_contents):
-            print("Number of generated paragraphs does not match that of original contents")
-            print(f"Number of generated paragraphs: {generated_paragraphs}")
-            print(f"Number of original contents: {original_contents}")
-
-            return
+        print(f"Prepared {len(prompts)} prompts with {len(image_embeddings_list)} image embeddings")
+        
+        # Generate paragraphs with VLM
+        generated_paragraphs = llm_generate(
+            prompts=prompts, 
+            model_name=MODEL_NAME, 
+            is_vlm=VLM, 
+            image_embeddings=image_embeddings_list,
+            tensor_parallel_size=2
+        )
+    
     else:
         image_tag_lists = []
         image_projection_lists = []
         for paragraph_data in paragraph_datas:
-            paragraph_datas = _data_extraction_vlm(jsonl_file_path)
-            # This serves for ground truth
-            original_content = paragraph_data["original_content"]
+            # DON'T reload data here - just use what we already have
+            original_content = paragraph_data.get("original_content", "")
             original_contents.append(original_content)
-
-            # We also need to build figure blocks
-            # We need caption and labels
-            prompt = paragraph_data["prompt"]
             
-            # TODO ensure that the paragraph_data each line includes the 
-
-            image_tag_list = paragraph_data["image_tag_list"]
-            image_projection_list = paragraph_data["image_projections"]
+            prompt = paragraph_data.get("prompt", "")
+            image_tag_list = paragraph_data.get("image_tag_list", [])
+            image_projection_list = paragraph_data.get("image_projections", [])
+            
             prompts.append(prompt)
             image_tag_lists.append(image_tag_list)
             image_projection_lists.append(image_projection_list)
-
-            # Send the prompt to the vllm for evaluation
-        print(f"Prompt list: {prompts}")
-        print(f"Number of prompts: {len(prompts)}")
-        print(f"Image tag lists: {image_tag_lists}")
-        print(f"Number of Image tag lists: {len(image_tag_lists)}")
-        print(f"Number of Image projection lists: {len(image_projection_lists)}")
         
-
-        generated_paragraphs = llm_generate(prompts = prompts, model_name = MODEL_NAME, is_vlm = VLM, image_labels = image_tag_lists, image_projections=image_projection_lists)
-
-        # Send the answer list for evaluation
-        # Before that, we first check length consistency
-
-        if len(generated_paragraphs) != len(original_contents):
-            print("Number of generated paragraphs does not match that of original contents")
-            print(f"Number of generated paragraphs: {generated_paragraphs}")
-            print(f"Number of original contents: {original_contents}")
-
-
-
-        # Save all the data into a csv file
-
+        print(f"Prepared {len(prompts)} prompts")
+        print(f"Image tag lists: {len(image_tag_lists)}")
+        print(f"Image projection lists: {len(image_projection_lists)}")
+        
+        # Generate paragraphs without VLM
+        generated_paragraphs = llm_generate(
+            prompts=prompts, 
+            model_name=MODEL_NAME, 
+            is_vlm=VLM,
+            image_labels=image_tag_lists, 
+            image_projections=image_projection_lists
+        )
+    
+    # Validate results
+    if len(generated_paragraphs) != len(original_contents):
+        print(f"Warning: Generated {len(generated_paragraphs)} paragraphs but have {len(original_contents)} original contents")
+        # Adjust to match sizes if needed
+        min_len = min(len(generated_paragraphs), len(original_contents), len(paragraph_ids))
+        generated_paragraphs = generated_paragraphs[:min_len]
+        original_contents = original_contents[:min_len]
+        paragraph_ids = paragraph_ids[:min_len]
+        prompts = prompts[:min_len]
+    
+    # Evaluate results
+    print("Evaluating generated paragraphs...")
     evals = answer_evaluation(generated_paragraphs, original_contents)
-
-    # 5) Save results CSV
+    
+    # Save results to CSV
     os.makedirs(os.path.dirname(RESULT_PATH), exist_ok=True)
     fieldnames = [
         "paragraph_id",
         "prompt",
         "original_content",
         "generated_paragraph",
-        # Dynamic eval keys added below
     ]
-    # union of all eval keys
+    
+    # Add dynamic eval keys
     eval_keys = set()
     for e in evals:
         if isinstance(e, dict):
             eval_keys.update(e.keys())
     fieldnames.extend(sorted(eval_keys))
-
+    
     with open(RESULT_PATH, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
+        
         for pid, pr, orig, gen, ev in zip(
             paragraph_ids, prompts, original_contents, generated_paragraphs, evals
         ):
@@ -146,11 +132,8 @@ def main():
             if isinstance(ev, dict):
                 row.update(ev)
             writer.writerow(row)
-
+    
     print(f"Saved results to {RESULT_PATH}")
 
-
-
-
-if __name__ == '__main__':    
+if __name__ == '__main__':
     main()

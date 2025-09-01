@@ -15,12 +15,17 @@ import fitz
 import io
 from openai import OpenAI
 from pathlib import Path
-from transformers import CLIPProcessor, CLIPModel, AutoImageProcessor, AutoModel, AutoTokenizer, AutoProcessor
+from transformers import AutoImageProcessor, AutoModel, AutoTokenizer, AutoProcessor
+
 from vllm import LLM, SamplingParams
 import torch
 import json
 from pdf2image import convert_from_path
 import numpy as np
+from typing import Any, cast
+from typing_extensions import TypeGuard
+from collections.abc import Mapping
+
 
 SOFT_TOKENS = int(os.getenv("SOFT_TOKENS", "16")) 
 
@@ -30,8 +35,8 @@ try:
 except Exception:
     _HAVE_PYMUPDF = False
 
+_GLOBAL_LLM = None
 
- 
 
 load_dotenv()
 
@@ -46,9 +51,6 @@ Secondly, as the name suggests, the language model is deployed locally, using th
 Thirdly, we assume that it works on non visual language model, where the language model only takes textual information as input. Therefore, an adaptor is required.
 """
 
-# ---------- Config ----------
-PASSWORD = os.getenv("PGPASSWORD", "REPLACE_ME")
-API_KEY = os.getenv("API_KEY")
 
 @dataclass
 class Args:
@@ -60,18 +62,50 @@ class Args:
     download_path: str = "./download"
 
 
-from typing import List, Optional
-import os
+# ---------- Config ----------
+PASSWORD = os.getenv("PGPASSWORD", "REPLACE_ME")
+API_KEY = os.getenv("API_KEY")
 
-from transformers import AutoTokenizer
-from vllm import LLM, SamplingParams
-from openai import OpenAI
-
-
-from typing import List, Optional
-from transformers import AutoTokenizer
-from vllm import LLM, SamplingParams
-import torch
+def get_or_create_llm(
+    model_name: str,
+    tensor_parallel_size: int = 1,
+    gpu_memory_utilization: float = 0.8,
+    dtype: str = "float16",
+    enable_prompt_embeds: bool = False,
+):
+    """Get or create a singleton LLM instance"""
+    global _GLOBAL_LLM
+    
+    if _GLOBAL_LLM is None:
+        print(f"Initializing LLM with model: {model_name}")
+        
+        # Determine if we should enable prompt embeds based on model capabilities
+        try:
+            # Try to import EmbedsPrompt to check if vLLM supports it
+            from vllm.inputs import EmbedsPrompt
+            can_use_embeds = enable_prompt_embeds
+        except ImportError:
+            can_use_embeds = False
+            if enable_prompt_embeds:
+                print("[WARN] vLLM version doesn't support EmbedsPrompt, falling back to text-only")
+        
+        llm_kwargs = {
+            "model": model_name,
+            "trust_remote_code": True,
+            "enforce_eager": True,
+            "tensor_parallel_size": tensor_parallel_size,
+            "gpu_memory_utilization": gpu_memory_utilization,
+            "dtype": dtype,
+            "enforce_eager": True,
+        }
+        
+        # Only add enable_prompt_embeds if the vLLM version supports it
+        if can_use_embeds:
+            llm_kwargs["enable_prompt_embeds"] = True
+            
+        _GLOBAL_LLM = LLM(**llm_kwargs)
+    
+    return _GLOBAL_LLM
 
 def llm_generate(
     prompts: List[str],
@@ -83,9 +117,9 @@ def llm_generate(
     temperature: float = 0.7,
     top_p: float = 0.95,
     max_tokens: int = 1024,
-    tensor_parallel_size: int = 1,
-    gpu_memory_utilization: float = 0.8,
-    dtype: str = "bfloat16",
+    tensor_parallel_size: int = 1, # TODO adjust it dynamically
+    gpu_memory_utilization: float = 0.99,
+    dtype: str = "float16",
     clear_cuda_cache: bool = False,
     use_lora: bool = False,
     use_image_projection: bool = True,
@@ -93,164 +127,47 @@ def llm_generate(
 ) -> List[str]:
     """
     Generate completions with vLLM (Python API only).
-    - If is_vlm == True, we *inline* per-image labels as textual hints because the Python API
-      doesn't take image tensors/blobs. (image_embeddings are ignored here.)
-    - If is_vlm == False, image_labels (if provided) are also inlined as textual context.
-
-    Returns: List[str] of model outputs aligned with `prompts`.
     """
-
     # --------- Validate shapes ----------
     n = len(prompts)
     if is_vlm:
-        # Ensure lists are aligned; we'll ignore embeddings but keep shape checks
         if image_labels is None:
             image_labels = [[] for _ in range(n)]
         if len(image_labels) != n:
             raise ValueError("len(image_labels) must match len(prompts) when is_vlm=True.")
-        if image_embeddings is not None and len(image_embeddings) != n:
-            # Clarify that embeddings aren't used in this pathway
-            raise ValueError(
-                "len(image_embeddings) must match len(prompts) if provided; "
-                "note: image embeddings are not consumed by the vLLM Python API."
-            )
     else:
-        # Here, we try something else: we use image projection
-
-        if use_image_projection:
-            if image_projections is None:
-                image_projections = [[] for _ in range(n)]
-            if len(image_projections) != n:
-                raise ValueError("len(image_projections) must match len(prompts) when is_vlm=False.")
-
-        else:
-            if image_labels is None:
-                image_labels = [[] for _ in range(n)]
-            if len(image_labels) != n:
-                raise ValueError("len(image_labels) must match len(prompts) when is_vlm=False.")
+        if image_labels is None:
+            image_labels = [[] for _ in range(n)]
+        if len(image_labels) != n:
+            raise ValueError("len(image_labels) must match len(prompts) when not using projections.")
 
     # --------- Build augmented prompts ----------
-    augmented_prompts: List[str] = []
+    augmented_prompts: List[Any] = []
     for i in range(n):
         p = prompts[i]
         labels = image_labels[i] if image_labels else []
-        projections = image_projections[i] if image_projections else []
-        prefix_lines = []
 
-        if labels and not use_image_projection:
+        # Text-only mode with optional labels
+        if labels:
             label_text = ", ".join([str(x) for x in labels[:32]])
-            prefix_lines.append(
-                "You may use the following image tag summary as auxiliary context:\n"
-                f"[Image tags]: {label_text}"
-            )
-
-        if is_vlm and image_embeddings and image_embeddings[i]:
-            prefix_lines.append(
-                "(Note: Images were provided externally, but this Python vLLM API path "
-                "does not accept image tensors; proceeding with textual tags only.)"
-            )
-
-        if not is_vlm and use_image_projection and projections:
-            # try pure Python vLLM embeddings prompt first
-            used_python_embeds = False
-            try:
-                # vLLM versions differ; EmbedsPrompt/EmbeddingPrompt/Prompt may exist under vllm.inputs
-                from vllm.inputs import EmbedsPrompt  # type: ignore
-                # Combine all image soft payloads for this sample along token axis
-                soft_list = []
-                for payload in projections:
-                    try:
-                        soft_np = _decode_prompt_embeds_payload(payload)  # [T,4096]
-                        if soft_np.shape[-1] != 4096:
-                            print(f"[WARN] soft token width != 4096: {soft_np.shape}")
-                        soft_list.append(soft_np)
-                    except Exception as e:
-                        print(f"[WARN] bad prompt_embeds payload: {e}")
-                if soft_list:
-                    # combined = np.concatenate(soft_list, axis=0)  # [sum_T, 4096]
-                    combined = np.concatenate(soft_list, axis=0).astype(np.float32, copy=False)
-                    # embs = torch.from_numpy(combined).to(dtype=torch.float32, device="cpu").contiguous()
-                    embs = torch.from_numpy(combined.astype(np.float32, copy=False)).to("cpu").contiguous()
-
-
-                    # supply text after the soft tokens so the model has lexical context
-                    # p = EmbedsPrompt(prompt_embeds=combined, prompt=str(p))
-                    if embs.ndim != 2 or embs.shape[1] != 4096:
-                        raise ValueError(f"soft-token shape must be [T,4096], got {tuple(embs.shape)}")
-
-                    p = EmbedsPrompt(prompt_embeds=embs, prompt=str(p))
-
-                    used_python_embeds = True
-            except Exception as _e_embeds_prompt:
-                used_python_embeds = False  # silently fall through
-
-            # If python path unavailable, try OpenAI-compatible HTTP with prompt_embeds
-            if not used_python_embeds:
-                vllm_base = os.getenv("VLLM_OPENAI_BASE")
-                api_key = os.getenv("API_KEY") or "EMPTY"
-                if vllm_base:
-                    try:
-                        http_client = OpenAI(base_url=vllm_base, api_key=api_key)
-                        # pack multiple image projections into one contiguous soft prefix
-                        soft_list = []
-                        for payload in projections:
-                            try:
-                                soft_np = _decode_prompt_embeds_payload(payload)  # [T,4096]
-                                soft_list.append(soft_np)
-                            except Exception as e:
-                                print(f"[WARN] HTTP path: bad payload: {e}")
-                        combined = np.concatenate(soft_list, axis=0) if soft_list else None
-
-                        if combined is not None:
-                            payload = _to_prompt_embeds_payload(combined.astype(np.float32))
-                            # Fire one-off request now and short-circuit this item
-                            resp = http_client.completions.create(
-                                model=model_name,
-                                prompt_embeds=payload,
-                                prompt=str(p),  # appended after soft tokens
-                                max_tokens=max_tokens,
-                                temperature=temperature,
-                                top_p=top_p,
-                            )
-                            # stash answer for this index and mark with sentinel
-                            text = (resp.choices[0].text or "").strip()
-                            augmented_prompts.append(text)  # sentinel: final text already
-                            continue  # skip to next i; no local generation needed
-                    except Exception as e_http:
-                        # fall back to textual injection if HTTP fails
-                        prefix_lines.append(
-                            "(Soft-token projection available but HTTP prompt_embeds failed; "
-                            "falling back to textual-only context.)"
-                        )
-                else:
-                    # No HTTP endpoint configured; fall back gracefully
-                    prefix_lines.append(
-                        "(Soft-token projection available but no EmbedsPrompt/HTTP path; "
-                        "falling back to textual-only context.)"
-                    )
-
-        if prefix_lines:
-            p = "\n".join(prefix_lines) + "\n\n" + p
-
+            p = f"[Image tags]: {label_text}\n\n{p}"
         augmented_prompts.append(p)
 
-    # --------- Initialize tokenizer & model (your pattern) ----------
-    model_id = model_name
-    _ = AutoTokenizer.from_pretrained(model_id, trust_remote_code=True)  # keep for parity/compat
-
-    llm = LLM(
-        model="Qwen/Qwen3-8B",
-        trust_remote_code=True,
-        enforce_eager=True,
-        tensor_parallel_size=1,
-        gpu_memory_utilization=0.6,
-        dtype="float16",
-        enable_prompt_embeds=True,   # <-- add this line
+    # --------- Initialize model ----------
+    llm = get_or_create_llm(
+        model_name=model_name,
+        tensor_parallel_size=tensor_parallel_size,
+        gpu_memory_utilization=gpu_memory_utilization,
+        dtype=dtype,
+        enable_prompt_embeds=False  # projections removed
     )
 
     if use_lora and lora_path:
-        llm.load_lora(lora_path, lora_name="my_adapter")
-        llm.set_active_loras(["my_adapter"])
+        try:
+            llm.load_lora(lora_path, lora_name="my_adapter")
+            llm.set_active_loras(["my_adapter"])
+        except Exception as e:
+            print(f"[WARN] Failed to load LoRA: {e}")
 
     sampling = SamplingParams(
         temperature=temperature,
@@ -259,81 +176,71 @@ def llm_generate(
     )
 
     # --------- Batch generate ----------
-    # outs = llm.generate(augmented_prompts, sampling)
-
-    def _is_embeds_prompt_obj(x):
-    # Prefer exact type when available
-        try:
-            from vllm.inputs import EmbedsPrompt
-            if isinstance(x, EmbedsPrompt):
-                return True
-        except Exception:
-            pass
-        # Duck-typing fallback across vLLM versions
-        return hasattr(x, "prompt_embeds")
-    
-    outs: List[Any] = [None] * len(augmented_prompts)
-
-    embed_pairs = [(i, p) for i, p in enumerate(augmented_prompts) if _is_embeds_prompt_obj(p)]
-    text_pairs  = [(i, p) for i, p in enumerate(augmented_prompts) if not _is_embeds_prompt_obj(p)]
-
-    if embed_pairs:
-        e_idx, e_prompts = zip(*embed_pairs)
-        e_outs = llm.generate(list(e_prompts), sampling)
-        for i, o in zip(e_idx, e_outs):
-            outs[i] = o
-
-    if text_pairs:
-        t_idx, t_prompts = zip(*text_pairs)
-
-        # >>> ADDED: wrap text-only prompts as EmbedsPrompt with empty soft-prefix
-        from vllm.inputs import EmbedsPrompt
-        empty = torch.empty((0, 4096), dtype=torch.float32, device="cpu")
-        t_prompts_wrapped = [EmbedsPrompt(prompt_embeds=empty, prompt=str(tp)) for tp in t_prompts]
-        # <<<
-
-        t_outs = llm.generate(list(t_prompts_wrapped), sampling)
-        for i, o in zip(t_idx, t_outs):
-            outs[i] = o
-
+    outs = llm.generate(augmented_prompts, sampling)
 
     # --------- Collect texts ----------
     answers: List[str] = []
     for out in outs:
-        if out.outputs:
+        if out and out.outputs:
             answers.append(out.outputs[0].text.strip())
         else:
-            # ADDED: if we inlined a ready-made HTTP completion earlier, it's already text
-            if isinstance(out.prompt, str) and out.prompt and "\n" not in out.prompt and out.outputs == []:
-                answers.append(out.prompt.strip())
-            else:
-                answers.append("")
+            answers.append("")
 
     if clear_cuda_cache:
         torch.cuda.empty_cache()
 
     return answers
 
+def _is_embeds_prompt(x) -> TypeGuard["EmbedsPrompt"]:
+    # pick the minimal set of keys that identifies your EmbedsPrompt at runtime
+    if not isinstance(x, Mapping):
+        return False
+    # Adjust the keys below to match your TypedDict fields:
+    required_keys = {"text", "soft_tokens"}   # OR {"prompt", "embeds"} etc.
+    return required_keys.issubset(x.keys())
 
-def _data_extraction_vlm(jsonl_file_path, use_figure=True, use_table=True, model_name="nvidia/Llama-3.1-Nemotron-Nano-VL-8B-V1", ):
-    """
-    Read a JSONL file created by `_data_fetching` and return a list of dicts
-    ready to use for LLM generation.
+def _decode_prompt_embeds_payload(p: Dict[str, Any]) -> np.ndarray:
+    """Decode base64 prompt embeddings payload"""
+    raw = base64.b64decode(p["data"])
+    arr = np.frombuffer(raw, dtype=np.float32)
+    return arr.reshape(p["shape"])
 
-    Each returned dict contains:
-      - paragraph_key_id (int)
-      - paper_arxiv_id (str)
-      - prompt (str)                          # built via _build_prompt(...)
-      - original_content (str)                # ground truth paragraph
-      - image_embeddings (List[str])          # base64 images for figures (PDF pages expanded)
-      - fig_labels (List[str])
-      - table_labels (List[str])
-      - bib_keys (List[str])
-      - k (int)                               # we infer from context length; defaults to 2
-      - meta (Dict[str, Any])                 # everything else from the record for debugging
+def _to_prompt_embeds_payload(soft_np: np.ndarray) -> Dict[str, Any]:
+    """Encode soft tokens for engines that accept OpenAI-compatible prompt_embeds payload."""
+    payload = base64.b64encode(soft_np.tobytes()).decode("utf-8")
+    return {"data": payload, "dtype": "float32", "shape": list(soft_np.shape)}
+
+
+
+def _decode_prompt_embeds_payload(p: Dict[str, Any]) -> np.ndarray:
+    """Decode base64 prompt embeddings payload"""
+    raw = base64.b64decode(p["data"])
+    arr = np.frombuffer(raw, dtype=np.float32)
+    return arr.reshape(p["shape"])
+
+def _to_prompt_embeds_payload(soft_np: np.ndarray) -> Dict[str, Any]:
+    """Encode soft tokens for engines that accept OpenAI-compatible prompt_embeds payload."""
+    payload = base64.b64encode(soft_np.tobytes()).decode("utf-8")
+    return {"data": payload, "dtype": "float32", "shape": list(soft_np.shape)}
+
+
+
+def _repeat_to_soft_tokens(proj_1xH: torch.Tensor, T: int = SOFT_TOKENS) -> np.ndarray:
     """
+    proj_1xH: torch.Tensor of shape [1, 4096] (Qwen3 hidden dim)
+    returns np.ndarray [T, 4096] float32 (tiled)
+    """
+    if proj_1xH.ndim != 2 or proj_1xH.shape[0] != 1:
+        raise ValueError(f"expected [1, H], got {tuple(proj_1xH.shape)}")
+    soft = proj_1xH.repeat(T, 1).contiguous().detach().cpu().numpy().astype(np.float32)
+    return soft
+
+
+
+
+def _data_extraction_vlm(jsonl_file_path, use_figure=True, use_table=True, model_name="nvidia/Llama-3.1-Nemotron-Nano-VL-8B-V1"):
+    """Read a JSONL file and return a list of dicts ready for LLM generation."""
     outputs: List[Dict[str, Any]] = []
-    # Use the same default download path as in Args
     download_path = "./download"
 
     with open(jsonl_file_path, "r", encoding="utf-8") as fp:
@@ -348,49 +255,41 @@ def _data_extraction_vlm(jsonl_file_path, use_figure=True, use_table=True, model
                 print(f"[WARN] Skipping line {line_no}: invalid JSON ({e})")
                 continue
 
-            # Required core fields with safe fallbacks
+            # Extract fields with safe fallbacks
             paragraph_key_id = rec.get("paragraph_key_id")
-            paper_arxiv_id   = rec.get("paper_arxiv_id", "")
-            paper_section    = rec.get("paper_section", "")
+            paper_arxiv_id = rec.get("paper_arxiv_id", "")
+            paper_section = rec.get("paper_section", "")
             paragraph_id_loc = rec.get("paragraph_id_local")
             original_content = rec.get("original_content", "") or ""
-            num_char         = int(rec.get("num_char") or len(original_content))
-            title            = rec.get("title", "") or ""
-            abstract         = rec.get("abstract", "") or ""
-            prev_paras       = rec.get("prev_paras", []) or []
-            next_paras       = rec.get("next_paras", []) or []
-            figures          = rec.get("figures", []) or []
-            tables           = rec.get("tables", []) or []
-            fig_labels       = rec.get("fig_labels", []) or []
-            table_labels     = rec.get("table_labels", []) or []
-            bib_keys         = rec.get("bib_keys", []) or []
-            cited_triples    = rec.get("cited_triples", []) or []
+            num_char = int(rec.get("num_char") or len(original_content))
+            title = rec.get("title", "") or ""
+            abstract = rec.get("abstract", "") or ""
+            prev_paras = rec.get("prev_paras", []) or []
+            next_paras = rec.get("next_paras", []) or []
+            figures = rec.get("figures", []) or []
+            tables = rec.get("tables", []) or []
+            fig_labels = rec.get("fig_labels", []) or []
+            table_labels = rec.get("table_labels", []) or []
+            bib_keys = rec.get("bib_keys", []) or []
+            cited_triples = rec.get("cited_triples", []) or []
 
-            # Normalize abstracts triples to (bib_key, title, abstract) tuples
+            # Normalize abstracts
             abstracts_norm = []
             for t in cited_triples:
-                # tolerate list/tuple/dict
                 if isinstance(t, dict):
                     abstracts_norm.append((
                         t.get("0") or t.get("bib_key") or "",
-                        t.get("1") or t.get("title")   or "",
+                        t.get("1") or t.get("title") or "",
                         t.get("2") or t.get("abstract") or "",
                     ))
                 elif isinstance(t, (list, tuple)):
-                    bk  = t[0] if len(t) > 0 else ""
+                    bk = t[0] if len(t) > 0 else ""
                     ttl = t[1] if len(t) > 1 else ""
                     abs_ = t[2] if len(t) > 2 else ""
                     abstracts_norm.append((bk or "", ttl or "", abs_ or ""))
-                else:
-                    # unknown shape; skip
-                    continue
 
-            # k inferred from how many neighbours were saved (fallback 2)
-            k_prev = len(prev_paras)
-            k_next = len(next_paras)
-            k = max(k_prev, k_next) if (k_prev or k_next) else 2
+            k = max(len(prev_paras), len(next_paras)) if (prev_paras or next_paras) else 2
 
-            # Build prompt using your existing helper
             prompt = _build_prompt_contract(
                 k=k,
                 figures=figures,
@@ -409,7 +308,7 @@ def _data_extraction_vlm(jsonl_file_path, use_figure=True, use_table=True, model
                 use_table=use_table,
             )
 
-            # Turn figure latex paths into absolute paths and then into base64 embeddings
+            # Process figures
             figure_paths = []
             for f in figures:
                 latex_path = (f.get("path") or "").strip()
@@ -423,10 +322,10 @@ def _data_extraction_vlm(jsonl_file_path, use_figure=True, use_table=True, model
                     )
                     figure_paths.append(abs_path)
                 except Exception as e:
-                    print(f"[WARN] Failed to resolve figure path '{latex_path}' "
-                          f"for {paper_arxiv_id}: {e}")
+                    print(f"[WARN] Failed to resolve figure path '{latex_path}': {e}")
 
             image_embeddings = _figure_paths_to_embeddings(figure_paths=figure_paths, model_path=model_name)
+            
             outputs.append({
                 "paragraph_key_id": paragraph_key_id,
                 "paper_arxiv_id": paper_arxiv_id,
@@ -456,6 +355,7 @@ def _data_extraction_vlm(jsonl_file_path, use_figure=True, use_table=True, model
 
 
 def _data_extraction_non_vlm(jsonl_file_path, use_figure=True, use_table=True, model_name="openai/clip-vit-base-patch32"):
+    """Extract data for non-VLM models with visual adaptation"""
     outputs: List[Dict[str, Any]] = []
     download_path = "./download"
 
@@ -464,48 +364,47 @@ def _data_extraction_non_vlm(jsonl_file_path, use_figure=True, use_table=True, m
             line = line.strip()
             if not line:
                 continue
+                
             try:
                 rec = json.loads(line)
             except Exception as e:
                 print(f"[WARN] Skipping line {line_no}: invalid JSON ({e})")
                 continue
 
+            # Extract all fields (same as VLM version)
             paragraph_key_id = rec.get("paragraph_key_id")
-            paper_arxiv_id   = rec.get("paper_arxiv_id", "")
-            paper_section    = rec.get("paper_section", "")
+            paper_arxiv_id = rec.get("paper_arxiv_id", "")
+            paper_section = rec.get("paper_section", "")
             paragraph_id_loc = rec.get("paragraph_id_local")
             original_content = rec.get("original_content", "") or ""
-            num_char         = int(rec.get("num_char") or len(original_content))
-            title            = rec.get("title", "") or ""
-            abstract         = rec.get("abstract", "") or ""
-            prev_paras       = rec.get("prev_paras", []) or []
-            next_paras       = rec.get("next_paras", []) or []
-            figures          = rec.get("figures", []) or []
-            tables           = rec.get("tables", []) or []
-            fig_labels       = rec.get("fig_labels", []) or []
-            table_labels     = rec.get("table_labels", []) or []
-            bib_keys         = rec.get("bib_keys", []) or []
-            cited_triples    = rec.get("cited_triples", []) or []
+            num_char = int(rec.get("num_char") or len(original_content))
+            title = rec.get("title", "") or ""
+            abstract = rec.get("abstract", "") or ""
+            prev_paras = rec.get("prev_paras", []) or []
+            next_paras = rec.get("next_paras", []) or []
+            figures = rec.get("figures", []) or []
+            tables = rec.get("tables", []) or []
+            fig_labels = rec.get("fig_labels", []) or []
+            table_labels = rec.get("table_labels", []) or []
+            bib_keys = rec.get("bib_keys", []) or []
+            cited_triples = rec.get("cited_triples", []) or []
 
+            # Normalize abstracts
             abstracts_norm = []
             for t in cited_triples:
                 if isinstance(t, dict):
                     abstracts_norm.append((
                         t.get("0") or t.get("bib_key") or "",
-                        t.get("1") or t.get("title")   or "",
+                        t.get("1") or t.get("title") or "",
                         t.get("2") or t.get("abstract") or "",
                     ))
                 elif isinstance(t, (list, tuple)):
-                    bk  = t[0] if len(t) > 0 else ""
+                    bk = t[0] if len(t) > 0 else ""
                     ttl = t[1] if len(t) > 1 else ""
                     abs_ = t[2] if len(t) > 2 else ""
                     abstracts_norm.append((bk or "", ttl or "", abs_ or ""))
-                else:
-                    continue
 
-            k_prev = len(prev_paras)
-            k_next = len(next_paras)
-            k = max(k_prev, k_next) if (k_prev or k_next) else 2
+            k = max(len(prev_paras), len(next_paras)) if (prev_paras or next_paras) else 2
 
             prompt = _build_prompt_contract(
                 k=k,
@@ -525,6 +424,7 @@ def _data_extraction_non_vlm(jsonl_file_path, use_figure=True, use_table=True, m
                 use_table=use_table,
             )
 
+            # Process figure paths
             figure_paths = []
             for f in figures:
                 latex_path = (f.get("path") or "").strip()
@@ -538,26 +438,22 @@ def _data_extraction_non_vlm(jsonl_file_path, use_figure=True, use_table=True, m
                     )
                     figure_paths.append(abs_path)
                 except Exception as e:
-                    print(f"[WARN] Failed to resolve figure path '{latex_path}' "
-                          f"for {paper_arxiv_id}: {e}")
+                    print(f"[WARN] Failed to resolve figure path '{latex_path}': {e}")
 
-            # === ORIGINAL: infer tags via CLIP; ADDED: also keep soft-token payloads ===
+            # Get visual adaptations (tags and projections)
             image_tags_projections = visual_adaptation(image_paths=figure_paths)
-
+            
             image_tag_list: List[List[str]] = []
-            image_projection_payloads: List[Dict[str, Any]] = []   # ADDED
+            image_projection_payloads: List[Dict[str, Any]] = []
 
             for tag, projection in image_tags_projections:
-                image_tag_list.append(tag)
-                # ADDED: when a projection exists (shape [1,4096]), create [T,4096] soft tokens and payload
+                image_tag_list.append(tag if tag else [])
                 if projection is not None:
                     try:
-                        soft = _repeat_to_soft_tokens(projection, T=SOFT_TOKENS)   # [T,4096] float32
+                        soft = _repeat_to_soft_tokens(projection, T=SOFT_TOKENS)
                         image_projection_payloads.append(_to_prompt_embeds_payload(soft))
                     except Exception as e:
                         print(f"[WARN] Failed to build soft tokens: {e}")
-
-            print(f"Image tag list: {image_tag_list}")
 
             outputs.append({
                 "paragraph_key_id": paragraph_key_id,
@@ -565,7 +461,6 @@ def _data_extraction_non_vlm(jsonl_file_path, use_figure=True, use_table=True, m
                 "prompt": prompt,
                 "original_content": original_content,
                 "image_tag_list": image_tag_list,
-                # === ADDED: provide to llm_generate when use_image_projection=True ===
                 "image_projections": image_projection_payloads,
                 "fig_labels": fig_labels,
                 "table_labels": table_labels,
@@ -583,7 +478,6 @@ def _data_extraction_non_vlm(jsonl_file_path, use_figure=True, use_table=True, m
                     "tables": tables,
                     "cited_triples": abstracts_norm,
                     "figure_paths": figure_paths,
-                    # ADDED: debugging
                     "soft_tokens_T": SOFT_TOKENS,
                 }
             })
@@ -591,47 +485,47 @@ def _data_extraction_non_vlm(jsonl_file_path, use_figure=True, use_table=True, m
     return outputs
 
 
-def load_model(model_name):
-    clip_model = CLIPModel.from_pretrained(model_name)
-    clip_processor = CLIPProcessor.from_pretrained(model_name)
-    return clip_model, clip_processor
+# def load_model(model_name):
+#     clip_model = CLIPModel.from_pretrained(model_name)
+#     clip_processor = CLIPProcessor.from_pretrained(model_name)
+#     return clip_model, clip_processor
 
 
-@torch.no_grad()
-def clip_image_features(clip_model: CLIPModel, clip_processor: CLIPProcessor, image: Image.Image) -> torch.Tensor:
-    inputs = clip_processor(images=image, return_tensors="pt")
-    feats = clip_model.get_image_features(**inputs)         # [1, D]
-    feats = feats / feats.norm(dim=-1, keepdim=True)        # cosine norm
-    return feats
+# @torch.no_grad()
+# def clip_image_features(clip_model: CLIPModel, clip_processor: CLIPProcessor, image: Image.Image) -> torch.Tensor:
+#     inputs = clip_processor(images=image, return_tensors="pt")
+#     feats = clip_model.get_image_features(**inputs)         # [1, D]
+#     feats = feats / feats.norm(dim=-1, keepdim=True)        # cosine norm
+#     return feats
 
 
 
 
-@torch.no_grad()
-def clip_rank_tags(
-    clip_model: CLIPModel,
-    clip_processor: CLIPProcessor,
-    image_feats: torch.Tensor, 
-    candidates: Sequence[str],
-    tag_templates: Sequence[str],
-    topk: int = 5,
-) -> List[str]:
-    texts = [tpl.format(tag) for tag in candidates for tpl in tag_templates]
-    if not texts:
-        return []
-    inputs = clip_processor(text=texts, padding=True, return_tensors="pt")
-    text_feats = clip_model.get_text_features(**inputs)
-    text_feats = text_feats / text_feats.norm(dim=-1, keepdim=True)
-    sims = (image_feats @ text_feats.T).squeeze(0)               # [len(cands)*len(tpls)]
+# @torch.no_grad()
+# def clip_rank_tags(
+#     clip_model: CLIPModel,
+#     clip_processor: CLIPProcessor,
+#     image_feats: torch.Tensor, 
+#     candidates: Sequence[str],
+#     tag_templates: Sequence[str],
+#     topk: int = 5,
+# ) -> List[str]:
+#     texts = [tpl.format(tag) for tag in candidates for tpl in tag_templates]
+#     if not texts:
+#         return []
+#     inputs = clip_processor(text=texts, padding=True, return_tensors="pt")
+#     text_feats = clip_model.get_text_features(**inputs)
+#     text_feats = text_feats / text_feats.norm(dim=-1, keepdim=True)
+#     sims = (image_feats @ text_feats.T).squeeze(0)               # [len(cands)*len(tpls)]
 
-    T = len(tag_templates)
-    sims_by_tag = sims.view(len(candidates), T)
-    # pick best template for each tag
-    best_vals, best_tpl_idx = sims_by_tag.max(dim=1)             # [len(candidates)]
-    # rank tags by their best template
-    k = min(topk, len(candidates))
-    tag_order = torch.topk(best_vals, k=k).indices.tolist()
-    return [tag_templates[best_tpl_idx[i]].format(candidates[i]) for i in tag_order]
+#     T = len(tag_templates)
+#     sims_by_tag = sims.view(len(candidates), T)
+#     # pick best template for each tag
+#     best_vals, best_tpl_idx = sims_by_tag.max(dim=1)             # [len(candidates)]
+#     # rank tags by their best template
+#     k = min(topk, len(candidates))
+#     tag_order = torch.topk(best_vals, k=k).indices.tolist()
+#     return [tag_templates[best_tpl_idx[i]].format(candidates[i]) for i in tag_order]
 
 
 def project_to_embedding_space(img_feats: torch.Tensor, target_dim: int = 4096) -> torch.Tensor:
@@ -653,17 +547,19 @@ def _as_rgb_image(path: Path) -> Optional[Image.Image]:
         print(f"[WARN] Failed to open image '{path}': {e}")
         return None
 
-
-def visual_adaptation(image_paths, model_name = "openai/clip-vit-base-patch32", projection_dimension = 4096):
-
+def visual_adaptation(image_paths, model_name="llava-hf/llava-1.5-7b-hf", projection_dimension=4096):
+    """
+    Updated visual_adaptation function that uses LLaVA for image description instead of CLIP tags.
+    Returns pairs of [description_list, projection] where description_list contains the LLaVA description.
+    """
     pairs = []
     images = []
 
+    # First, load all images
     for p in image_paths:
         path = Path(p)
         if not path.exists():
             print(f"[WARN] Path not found: {path}")
-            # resolved.append(None)
             images.append(None)
             continue
 
@@ -676,31 +572,147 @@ def visual_adaptation(image_paths, model_name = "openai/clip-vit-base-patch32", 
             print(f"[WARN] Unsupported extension '{ext}' for {path}; skipping.")
             img = None
 
-        # resolved.append(path if img is not None else None)
         images.append(img)
 
-
+    # Load LLaVA model once for all images
+    llava_model, llava_processor = None, None
+    if any(img is not None for img in images):
+        try:
+            from transformers import LlavaProcessor, LlavaForConditionalGeneration
+            
+            llava_processor = LlavaProcessor.from_pretrained(model_name)
+            llava_model = LlavaForConditionalGeneration.from_pretrained(
+                model_name,
+                torch_dtype=torch.float16,
+                device_map="auto",
+                low_cpu_mem_usage=True,
+                trust_remote_code=True
+            ).eval()
+            print(f"Loaded LLaVA model: {model_name}")
+        except Exception as e:
+            print(f"[ERROR] Failed to load LLaVA model: {e}")
+            # Fallback to CLIP if LLaVA fails
+            # return _visual_adaptation_clip_fallback(image_paths, projection_dimension)
+            return []
+        
+    # Process each image
     for image in images:
-        # If the image does not exists, simply append [None, None]
-
         if not image:
             pairs.append([None, None])
             continue
 
-        # Load the model 
-        clip_model, clip_processor = load_model(model_name)
-        img_feats = clip_image_features(clip_model, clip_processor, image)
-        print("CLIP image features:", tuple(img_feats.shape))
-        top_tags = clip_rank_tags(clip_model=clip_model, clip_processor=clip_processor, image_feats=img_feats, candidates=CANDIDATE_TAGS, tag_templates=TAG_TEMPLATES, topk=TOPK_TAGS)
-        print("Top CLIP tags:", top_tags)
-        
-        projected = None
-        if projection_dimension:
-            projected = project_to_embedding_space(img_feats, target_dim=4096)
-        pairs.append([top_tags, projected])
+        try:
+            # Generate description with LLaVA
+            description = _generate_llava_description(llava_model, llava_processor, image)
+            print(f"LLaVA description: {description[:100]}...")  # Show first 100 chars
+            
+            # Create projection if needed
+            projected = None
+            # if projection_dimension:
+                # For projection, we still need CLIP features as LLaVA doesn't directly provide embeddings
+                # Load CLIP for projection only
+                # clip_model, clip_processor = load_model("openai/clip-vit-base-patch32")
+                # img_feats = clip_image_features(clip_model, clip_processor, image)
+                # projected = project_to_embedding_space(img_feats, target_dim=projection_dimension)
+            
+            # Return description as a list (to maintain compatibility with existing code structure)
+            pairs.append([[description], projected])
+            
+        except Exception as e:
+            print(f"[ERROR] Failed to process image with LLaVA: {e}")
+            pairs.append([None, None])
 
     return pairs
 
+
+def _generate_llava_description(model, processor, image: Image.Image) -> str:
+    """Generate description using LLaVA model"""
+    try:
+        # Create prompt for academic/technical image description
+        prompt = "A chat between a curious human and an artificial intelligence assistant. The assistant gives helpful, detailed, and polite answers to the human's questions. USER: <image>\nDescribe this image in detail, focusing on its structure, content, and any technical or scientific elements you can identify. ASSISTANT:"
+        
+        # Process inputs
+        inputs = processor(text=prompt, images=image, return_tensors="pt")
+        
+        # Move to device
+        device = next(model.parameters()).device
+        inputs = {k: v.to(device) if isinstance(v, torch.Tensor) else v for k, v in inputs.items()}
+        
+        # Generate response
+        with torch.no_grad():
+            output_ids = model.generate(
+                **inputs,
+                max_new_tokens=200,
+                temperature=0.1,
+                do_sample=False,
+                pad_token_id=processor.tokenizer.eos_token_id,
+                use_cache=True
+            )
+        
+        # Decode response
+        input_token_len = inputs["input_ids"].shape[1]
+        generated_tokens = output_ids[0][input_token_len:]
+        description = processor.decode(generated_tokens, skip_special_tokens=True)
+        
+        return description.strip()
+        
+    except Exception as e:
+        print(f"[ERROR] LLaVA description generation failed: {e}")
+        return "Image description unavailable"
+
+
+# def _visual_adaptation_clip_fallback(image_paths, projection_dimension=4096):
+    """
+    # Fallback to original CLIP-based visual adaptation if LLaVA fails
+    # """
+    # pairs = []
+    # images = []
+
+    # for p in image_paths:
+    #     path = Path(p)
+    #     if not path.exists():
+    #         print(f"[WARN] Path not found: {path}")
+    #         images.append(None)
+    #         continue
+
+    #     ext = path.suffix.lower()
+    #     if ext == ".pdf":
+    #         img = pdf_first_page_to_image(path)
+    #     elif ext in {".jpg", ".jpeg", ".png"}:
+    #         img = _as_rgb_image(path)
+    #     else:
+    #         print(f"[WARN] Unsupported extension '{ext}' for {path}; skipping.")
+    #         img = None
+
+    #     images.append(img)
+
+    # for image in images:
+    #     if not image:
+    #         pairs.append([None, None])
+    #         continue
+
+        # Load CLIP model
+        # clip_model, clip_processor = load_model("openai/clip-vit-base-patch32")
+        # img_feats = clip_image_features(clip_model, clip_processor, image)
+        # print("CLIP image features:", tuple(img_feats.shape))
+        
+        # Use CLIP tags as fallback
+        # top_tags = clip_rank_tags(
+        #     clip_model=clip_model, 
+        #     clip_processor=clip_processor, 
+        #     image_feats=img_feats, 
+        #     candidates=CANDIDATE_TAGS, 
+        #     tag_templates=TAG_TEMPLATES, 
+        #     topk=TOPK_TAGS
+        # )
+    #     print("Top CLIP tags (fallback):", top_tags)
+        
+    #     projected = None
+    #     if projection_dimension:
+    #         projected = project_to_embedding_space(img_feats, target_dim=projection_dimension)
+    #     pairs.append([top_tags, projected])
+
+    # return pairs
 
 def _repeat_to_soft_tokens(proj_1xH: torch.Tensor, T: int = SOFT_TOKENS) -> np.ndarray:
     """
