@@ -16,7 +16,7 @@ import io
 from openai import OpenAI
 from pathlib import Path
 from transformers import AutoImageProcessor, AutoModel, AutoTokenizer, AutoProcessor
-
+import csv
 from vllm import LLM, SamplingParams
 import torch
 import json
@@ -25,6 +25,10 @@ import numpy as np
 from typing import Any, cast
 from typing_extensions import TypeGuard
 from collections.abc import Mapping
+from tasks.generated_paragraph_evaluation import answer_evaluation, answer_evaluation_batch
+from evaluate import load as hf_load
+from sentence_transformers import SentenceTransformer, util
+from nltk.translate.bleu_score import sentence_bleu, SmoothingFunction
 
 
 SOFT_TOKENS = int(os.getenv("SOFT_TOKENS", "16")) 
@@ -89,6 +93,16 @@ def get_or_create_llm(
             if enable_prompt_embeds:
                 print("[WARN] vLLM version doesn't support EmbedsPrompt, falling back to text-only")
         
+        if not isinstance(tensor_parallel_size, int):
+            # common bug: someone passed 0.8 or a str; coerce but keep it >=1
+            try:
+                tensor_parallel_size = int(tensor_parallel_size)
+            except Exception as e:
+                raise ValueError(f"tensor_parallel_size must be int, got {tensor_parallel_size!r}") from e
+        if tensor_parallel_size < 1:
+            tensor_parallel_size = 1
+
+
         llm_kwargs = {
             "model": model_name,
             "trust_remote_code": True,
@@ -104,8 +118,261 @@ def get_or_create_llm(
             llm_kwargs["enable_prompt_embeds"] = True
             
         _GLOBAL_LLM = LLM(**llm_kwargs)
-    
+        
     return _GLOBAL_LLM
+
+
+
+
+
+def _data_extraction_non_vlm_save(jsonl_file_path, file_save_path, use_figure=True, use_table=True, start_from_prev_stop = False):
+    """Extract and save data for non-VLM models with visual adaptation"""
+    outputs: List[Dict[str, Any]] = []
+    download_path = "./download"
+    written = 0
+
+    count = 0  # Initialize count
+
+    if start_from_prev_stop:
+        # Count the number of lines that are not empty. Take it as the number of paragraphs that are processed. 
+        # Assume that the processed paragraphs are ordered in the same way as they were in the source file. 
+        # Then start processing from the first unprocessed paragraph.
+        if os.path.exists(file_save_path):
+            with open(file_save_path, "r", encoding="utf-8") as fp_count:
+                for line in fp_count:
+                    line = line.strip()
+                    if line:
+                        count += 1
+
+    file_mode = "a" if start_from_prev_stop else "w"
+    
+    with open(jsonl_file_path, "r", encoding="utf-8") as fp, open(file_save_path, file_mode, encoding="utf-8") as fp_out:
+        for line_no, line in enumerate(fp, 1):
+            line = line.strip()
+            if not line:
+                continue
+            
+            if start_from_prev_stop and line_no <= count:
+                continue
+
+            try:
+                rec = json.loads(line)
+            except Exception as e:
+                print(f"[WARN] Skipping line {line_no}: invalid JSON ({e})")
+                continue
+            
+
+            # Extract all fields (same as VLM version)
+            paragraph_key_id = rec.get("paragraph_key_id")
+            paper_arxiv_id = rec.get("paper_arxiv_id", "")
+            paper_section = rec.get("paper_section", "")
+            paragraph_id_loc = rec.get("paragraph_id_local")
+            original_content = rec.get("original_content", "") or ""
+            num_char = int(rec.get("num_char") or len(original_content))
+            title = rec.get("title", "") or ""
+            abstract = rec.get("abstract", "") or ""
+            prev_paras = rec.get("prev_paras", []) or []
+            next_paras = rec.get("next_paras", []) or []
+            figures = rec.get("figures", []) or []
+            tables = rec.get("tables", []) or []
+            fig_labels = rec.get("fig_labels", []) or []
+            table_labels = rec.get("table_labels", []) or []
+            bib_keys = rec.get("bib_keys", []) or []
+            cited_triples = rec.get("cited_triples", []) or []
+
+            # Normalize abstracts
+            abstracts_norm = []
+            for t in cited_triples:
+                if isinstance(t, dict):
+                    abstracts_norm.append((
+                        t.get("0") or t.get("bib_key") or "",
+                        t.get("1") or t.get("title") or "",
+                        t.get("2") or t.get("abstract") or "",
+                    ))
+                elif isinstance(t, (list, tuple)):
+                    bk = t[0] if len(t) > 0 else ""
+                    ttl = t[1] if len(t) > 1 else ""
+                    abs_ = t[2] if len(t) > 2 else ""
+                    abstracts_norm.append((bk or "", ttl or "", abs_ or ""))
+
+            k = max(len(prev_paras), len(next_paras)) if (prev_paras or next_paras) else 2
+
+            prompt = _build_prompt_contract(
+                k=k,
+                figures=figures,
+                tables=tables,
+                abstracts=abstracts_norm,
+                prev_paras=prev_paras,
+                next_paras=next_paras,
+                paper_section=paper_section,
+                num_char=num_char,
+                title=title,
+                abstract=abstract,
+                fig_labels=fig_labels,
+                table_labels=table_labels,
+                bib_keys=bib_keys,
+                use_figure=use_figure,
+                use_table=use_table,
+            )
+
+            # Process figure paths
+            figure_paths = []
+            for f in figures:
+                latex_path = (f.get("path") or "").strip()
+                if not latex_path:
+                    continue
+                try:
+                    abs_path = figure_latex_path_to_path(
+                        path=download_path,
+                        arxiv_id=paper_arxiv_id,
+                        latex_path=latex_path,
+                    )
+                    figure_paths.append(abs_path)
+                except Exception as e:
+                    print(f"[WARN] Failed to resolve figure path '{latex_path}': {e}")
+
+            # Get visual adaptations (tags and projections)
+            image_tags_projections = visual_adaptation(image_paths=figure_paths)
+            
+            image_tag_list: List[List[str]] = []
+            image_projection_payloads: List[Dict[str, Any]] = []
+
+            for tag, _ in image_tags_projections:
+                image_tag_list.append(tag if tag else [])
+
+            record ={
+                "paragraph_key_id": paragraph_key_id,
+                "paper_arxiv_id": paper_arxiv_id,
+                "prompt": prompt,
+                "original_content": original_content,
+                "image_tag_list": image_tag_list,
+                "fig_labels": fig_labels,
+                "table_labels": table_labels,
+                "bib_keys": bib_keys,
+                "k": k,
+                "meta": {
+                    "paper_section": paper_section,
+                    "paragraph_id_local": paragraph_id_loc,
+                    "title": title,
+                    "abstract": abstract,
+                    "num_char": num_char,
+                    "prev_paras": prev_paras,
+                    "next_paras": next_paras,
+                    "figures": figures,
+                    "tables": tables,
+                    "cited_triples": abstracts_norm,
+                    "figure_paths": figure_paths,
+                    "soft_tokens_T": SOFT_TOKENS,
+                }
+            }
+
+            # Save the record
+            fp_out.write(json.dumps(record, ensure_ascii=False) + "\n")
+            written += 1
+
+    
+    return written
+    
+    
+
+def llm_generate_evaluate_from_preprocessed_jsonl(
+    jsonl_path: str,
+    result_path: str,
+    model_name: str,
+    is_vlm: bool = False, # Since we are primarily using Qwen3, we will not be using vlm's
+    temperature: float = 0.7,
+    top_p: float = 0.95,
+    max_tokens: int = 1024,
+    tensor_parallel_size: int = 1, # TODO adjust it as needed
+    gpu_memory_utilization: float = 0.8,
+    dtype: str = "float16",
+    clear_cuda_cache: bool = False,
+    use_lora: bool = False,
+    use_image_projection: bool = True,
+    lora_path: str | None = None,
+) -> List[str]:
+
+    if is_vlm:
+        # Let's skip the VLM part first
+        return None
+    
+    # Load the jsonl file first
+    prompts = []
+    image_labels = [] #  List[List[str]]
+    original_contents = [] # List[str]
+    paragraph_ids = []
+
+    with open(jsonl_path, 'r', encoding='utf-8') as jsonl_file:
+        for line_no, line in enumerate(jsonl_file, 1):
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                rec = json.loads(line) 
+
+            except json.JSONDecodeError as e:
+                print(f"[WARN] Skipping line {line_no}: invalid JSON ({e})")
+                continue
+
+            prompts.append(rec.get("prompt", ""))
+            image_labels.append(rec.get("image_tag_list", []))
+            paragraph_ids.append(rec.get("paragraph_key_id", ""))
+            original_contents.append(rec.get("original_content", ""))
+
+
+    generated_paragraphs = llm_generate(prompts=prompts, model_name=model_name, image_labels=image_labels, is_vlm = False, temperature=temperature, top_p=top_p, max_tokens=max_tokens, tensor_parallel_size=tensor_parallel_size, gpu_memory_utilization=gpu_memory_utilization, dtype=dtype, clear_cuda_cache=clear_cuda_cache, use_lora=use_lora, use_image_projection=use_image_projection, lora_path=lora_path)
+
+    # Pass the generated answers for evaluation
+
+    if len(generated_paragraphs) != len(original_contents):
+        print(f"Warning: Generated {len(generated_paragraphs)} paragraphs but have {len(original_contents)} original contents")
+        min_len = min(len(generated_paragraphs), len(original_contents), len(paragraph_ids))
+        generated_paragraphs = generated_paragraphs[:min_len]
+        original_contents = original_contents[:min_len]
+        paragraph_ids = paragraph_ids[:min_len]
+        prompts = prompts[:min_len]
+    
+    rouge_metric = hf_load("rouge")
+    sbert_model = SentenceTransformer("sentence-transformers/all-mpnet-base-v2")
+
+    # evals = answer_evaluation(generated_paragraphs, original_contents)
+    evals = answer_evaluation_batch(generated_paragraphs, original_contents, model=sbert_model, rouge_metric=rouge_metric)
+
+    os.makedirs(os.path.dirname(result_path), exist_ok=True)
+    fieldnames = [
+        "paragraph_id",
+        "prompt",
+        "original_content",
+        "generated_paragraph",
+    ]
+    eval_keys = set()
+    for e in evals:
+        if isinstance(e, dict):
+            eval_keys.update(e.keys())
+    fieldnames.extend(sorted(eval_keys))
+
+    with open(result_path, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        
+        for pid, pr, orig, gen, ev in zip(
+            paragraph_ids, prompts, original_contents, generated_paragraphs, evals
+        ):
+            row = {
+                "paragraph_id": pid,
+                "prompt": pr,
+                "original_content": orig,
+                "generated_paragraph": gen,
+            }
+            if isinstance(ev, dict):
+                row.update(ev)
+            writer.writerow(row)
+    
+    print(f"Saved results to {result_path}")
+
+
+
+
 
 def llm_generate(
     prompts: List[str],
@@ -114,11 +381,12 @@ def llm_generate(
     image_embeddings: Optional[List[List[str]]] = None,
     image_labels: Optional[List[List[str]]] = None,
     image_projections: Optional[List[List[str]]] = None,
-    temperature: float = 0.7,
+    temperature: float = 0.2,
     top_p: float = 0.95,
     max_tokens: int = 1024,
-    tensor_parallel_size: int = 1, # TODO adjust it dynamically
-    gpu_memory_utilization: float = 0.99,
+    tensor_parallel_size: int = 1, # TODO adjust it as needed
+    gpu_memory_utilization: float = 0.8,
+    repetition_penalty=1.1,
     dtype: str = "float16",
     clear_cuda_cache: bool = False,
     use_lora: bool = False,
@@ -173,6 +441,7 @@ def llm_generate(
         temperature=temperature,
         top_p=top_p,
         max_tokens=max_tokens,
+        repetition_penalty=repetition_penalty,   # reduces loops
     )
 
     # --------- Batch generate ----------
@@ -242,8 +511,8 @@ def _data_extraction_vlm(jsonl_file_path, use_figure=True, use_table=True, model
     """Read a JSONL file and return a list of dicts ready for LLM generation."""
     outputs: List[Dict[str, Any]] = []
     download_path = "./download"
-
-    with open(jsonl_file_path, "r", encoding="utf-8") as fp:
+    written = 0
+    with open(jsonl_file_path, "r", encoding="utf-8") as fp_in, open(file_save_path, "w", encoding="utf-8") as fp_out:
         for line_no, line in enumerate(fp, 1):
             line = line.strip()
             if not line:
@@ -326,7 +595,7 @@ def _data_extraction_vlm(jsonl_file_path, use_figure=True, use_table=True, model
 
             image_embeddings = _figure_paths_to_embeddings(figure_paths=figure_paths, model_path=model_name)
             
-            outputs.append({
+            record = {
                 "paragraph_key_id": paragraph_key_id,
                 "paper_arxiv_id": paper_arxiv_id,
                 "prompt": prompt,
@@ -349,9 +618,14 @@ def _data_extraction_vlm(jsonl_file_path, use_figure=True, use_table=True, model
                     "cited_triples": abstracts_norm,
                     "figure_paths": figure_paths,
                 }
-            })
+            }
 
-    return outputs
+            fp_out.write(json.dumps(record, ensure_ascii=False) + "\n")
+
+            written += 1
+
+
+    return written
 
 
 def _data_extraction_non_vlm(jsonl_file_path, use_figure=True, use_table=True, model_name="openai/clip-vit-base-patch32"):
@@ -364,7 +638,7 @@ def _data_extraction_non_vlm(jsonl_file_path, use_figure=True, use_table=True, m
             line = line.strip()
             if not line:
                 continue
-                
+            
             try:
                 rec = json.loads(line)
             except Exception as e:
@@ -485,6 +759,8 @@ def _data_extraction_non_vlm(jsonl_file_path, use_figure=True, use_table=True, m
     return outputs
 
 
+
+
 # def load_model(model_name):
 #     clip_model = CLIPModel.from_pretrained(model_name)
 #     clip_processor = CLIPProcessor.from_pretrained(model_name)
@@ -547,36 +823,65 @@ def _as_rgb_image(path: Path) -> Optional[Image.Image]:
         print(f"[WARN] Failed to open image '{path}': {e}")
         return None
 
+
 def visual_adaptation(image_paths, model_name="llava-hf/llava-1.5-7b-hf", projection_dimension=4096):
     """
     Updated visual_adaptation function that uses LLaVA for image description instead of CLIP tags.
     Returns pairs of [description_list, projection] where description_list contains the LLaVA description.
+    
+    This version includes comprehensive error handling to prevent crashes when individual images fail to load.
     """
     pairs = []
     images = []
+    successful_image_count = 0
 
-    # First, load all images
-    for p in image_paths:
-        path = Path(p)
-        if not path.exists():
-            print(f"[WARN] Path not found: {path}")
-            images.append(None)
-            continue
+    # First, load all images with error handling
+    for i, p in enumerate(image_paths):
+        try:
+            path = Path(p)
+            if not path.exists():
+                print(f"[WARN] Path not found: {path}")
+                images.append(None)
+                continue
 
-        ext = path.suffix.lower()
-        if ext == ".pdf":
-            img = pdf_first_page_to_image(path)
-        elif ext in {".jpg", ".jpeg", ".png"}:
-            img = _as_rgb_image(path)
-        else:
-            print(f"[WARN] Unsupported extension '{ext}' for {path}; skipping.")
+            ext = path.suffix.lower()
             img = None
+            
+            if ext == ".pdf":
+                try:
+                    img = pdf_first_page_to_image(path)
+                    print(f"[INFO] Successfully converted PDF to image: {path}")
+                except Exception as pdf_error:
+                    print(f"[ERROR] Failed to convert PDF to image '{path}': {pdf_error}")
+                    img = None
+                    
+            elif ext in {".jpg", ".jpeg", ".png"}:
+                try:
+                    img = _as_rgb_image(path)
+                    if img:
+                        print(f"[INFO] Successfully loaded image: {path}")
+                    else:
+                        print(f"[WARN] Failed to load image (returned None): {path}")
+                except Exception as img_error:
+                    print(f"[ERROR] Failed to load image '{path}': {img_error}")
+                    img = None
+            else:
+                print(f"[WARN] Unsupported extension '{ext}' for {path}; skipping.")
+                img = None
 
-        images.append(img)
+            images.append(img)
+            if img is not None:
+                successful_image_count += 1
+                
+        except Exception as general_error:
+            print(f"[ERROR] Unexpected error processing path '{p}': {general_error}")
+            images.append(None)
 
-    # Load LLaVA model once for all images
+    print(f"[INFO] Successfully loaded {successful_image_count} out of {len(image_paths)} images")
+
+    # Load LLaVA model only if we have at least one successful image
     llava_model, llava_processor = None, None
-    if any(img is not None for img in images):
+    if successful_image_count > 0:
         try:
             from transformers import LlavaProcessor, LlavaForConditionalGeneration
             
@@ -588,78 +893,112 @@ def visual_adaptation(image_paths, model_name="llava-hf/llava-1.5-7b-hf", projec
                 low_cpu_mem_usage=True,
                 trust_remote_code=True
             ).eval()
-            print(f"Loaded LLaVA model: {model_name}")
-        except Exception as e:
-            print(f"[ERROR] Failed to load LLaVA model: {e}")
-            # Fallback to CLIP if LLaVA fails
-            # return _visual_adaptation_clip_fallback(image_paths, projection_dimension)
-            return []
+            print(f"[INFO] Loaded LLaVA model: {model_name}")
+            
+        except ImportError as import_error:
+            print(f"[ERROR] Failed to import LLaVA components: {import_error}")
+            print("[INFO] Falling back to None descriptions for all images")
+            llava_model, llava_processor = None, None
+            
+        except Exception as model_error:
+            print(f"[ERROR] Failed to load LLaVA model: {model_error}")
+            print("[INFO] Falling back to None descriptions for all images")
+            llava_model, llava_processor = None, None
+    else:
+        print("[INFO] No images loaded successfully, skipping model loading")
         
-    # Process each image
-    for image in images:
-        if not image:
+    # Process each image with individual error handling
+    for i, image in enumerate(images):
+        if image is None:
+            print(f"[INFO] Skipping image {i+1}/{len(images)} (failed to load)")
             pairs.append([None, None])
             continue
 
         try:
             # Generate description with LLaVA
-            description = _generate_llava_description(llava_model, llava_processor, image)
-            print(f"LLaVA description: {description[:100]}...")  # Show first 100 chars
+            if llava_model is not None and llava_processor is not None:
+                try:
+                    description = _generate_llava_description(llava_model, llava_processor, image)
+                    print(f"[INFO] Generated description for image {i+1}: {description[:100]}...")
+                except Exception as desc_error:
+                    print(f"[ERROR] Failed to generate LLaVA description for image {i+1}: {desc_error}")
+                    description = "Image description unavailable due to processing error"
+            else:
+                description = "Image description unavailable - model not loaded"
             
-            # Create projection if needed
+            # Create projection if needed (currently disabled as noted in original code)
             projected = None
+            # Note: Projection code is commented out in the original implementation
             # if projection_dimension:
-                # For projection, we still need CLIP features as LLaVA doesn't directly provide embeddings
-                # Load CLIP for projection only
-                # clip_model, clip_processor = load_model("openai/clip-vit-base-patch32")
-                # img_feats = clip_image_features(clip_model, clip_processor, image)
-                # projected = project_to_embedding_space(img_feats, target_dim=projection_dimension)
+            #     # For projection, we still need CLIP features as LLaVA doesn't directly provide embeddings
+            #     # Load CLIP for projection only
+            #     clip_model, clip_processor = load_model("openai/clip-vit-base-patch32")
+            #     img_feats = clip_image_features(clip_model, clip_processor, image)
+            #     projected = project_to_embedding_space(img_feats, target_dim=projection_dimension)
             
             # Return description as a list (to maintain compatibility with existing code structure)
-            pairs.append([[description], projected])
+            pairs.append([description, projected])
+            print(f"[INFO] Successfully processed image {i+1}/{len(images)}")
             
-        except Exception as e:
-            print(f"[ERROR] Failed to process image with LLaVA: {e}")
+        except Exception as processing_error:
+            print(f"[ERROR] Failed to process image {i+1} during description/projection: {processing_error}")
             pairs.append([None, None])
 
+    print(f"[INFO] visual_adaptation completed: processed {len(pairs)} images, "
+          f"{sum(1 for p in pairs if p[0] is not None)} successful descriptions")
+    
     return pairs
 
 
 def _generate_llava_description(model, processor, image: Image.Image) -> str:
-    """Generate description using LLaVA model"""
+    """Generate description using LLaVA model with error handling"""
     try:
         # Create prompt for academic/technical image description
         prompt = "A chat between a curious human and an artificial intelligence assistant. The assistant gives helpful, detailed, and polite answers to the human's questions. USER: <image>\nDescribe this image in detail, focusing on its structure, content, and any technical or scientific elements you can identify. ASSISTANT:"
         
-        # Process inputs
-        inputs = processor(text=prompt, images=image, return_tensors="pt")
+        # Process inputs with error handling
+        try:
+            inputs = processor(text=prompt, images=image, return_tensors="pt")
+        except Exception as input_error:
+            print(f"[ERROR] Failed to process inputs for LLaVA: {input_error}")
+            return "Image description unavailable - input processing failed"
         
         # Move to device
-        device = next(model.parameters()).device
-        inputs = {k: v.to(device) if isinstance(v, torch.Tensor) else v for k, v in inputs.items()}
+        try:
+            device = next(model.parameters()).device
+            inputs = {k: v.to(device) if isinstance(v, torch.Tensor) else v for k, v in inputs.items()}
+        except Exception as device_error:
+            print(f"[ERROR] Failed to move inputs to device: {device_error}")
+            return "Image description unavailable - device transfer failed"
         
-        # Generate response
-        with torch.no_grad():
-            output_ids = model.generate(
-                **inputs,
-                max_new_tokens=200,
-                temperature=0.1,
-                do_sample=False,
-                pad_token_id=processor.tokenizer.eos_token_id,
-                use_cache=True
-            )
+        # Generate response with error handling
+        try:
+            with torch.no_grad():
+                output_ids = model.generate(
+                    **inputs,
+                    max_new_tokens=200,
+                    temperature=0.1,
+                    do_sample=False,
+                    pad_token_id=processor.tokenizer.eos_token_id,
+                    use_cache=True
+                )
+        except Exception as generation_error:
+            print(f"[ERROR] Failed during model generation: {generation_error}")
+            return "Image description unavailable - generation failed"
         
-        # Decode response
-        input_token_len = inputs["input_ids"].shape[1]
-        generated_tokens = output_ids[0][input_token_len:]
-        description = processor.decode(generated_tokens, skip_special_tokens=True)
-        
-        return description.strip()
+        # Decode response with error handling
+        try:
+            input_token_len = inputs["input_ids"].shape[1]
+            generated_tokens = output_ids[0][input_token_len:]
+            description = processor.decode(generated_tokens, skip_special_tokens=True)
+            return description.strip()
+        except Exception as decode_error:
+            print(f"[ERROR] Failed to decode generated tokens: {decode_error}")
+            return "Image description unavailable - decoding failed"
         
     except Exception as e:
-        print(f"[ERROR] LLaVA description generation failed: {e}")
-        return "Image description unavailable"
-
+        print(f"[ERROR] LLaVA description generation failed with unexpected error: {e}")
+        return "Image description unavailable due to unexpected error"
 
 # def _visual_adaptation_clip_fallback(image_paths, projection_dimension=4096):
     """
@@ -889,8 +1228,14 @@ Write exactly one LaTeX-formatted paragraph that naturally fits between the adja
 - If none exist: verify the paragraph contains NO "\\ref{{...}}" and NO "\\cite{{...}}".
 - Verify single paragraph and length within tolerance.
 
-# Output
-Return only the LaTeX paragraph text (no extra lines, no explanations).
+# OUTPUT FORMAT (strict)
+- Print **only** the single LaTeX paragraph between markers (no extra lines, no explanations).
+- Do **not** include analysis, steps, or explanations.
+- Do **not** include code fences, headers, or extra lines.
+
+<<<FINAL>>>
+{{Your single LaTeX paragraph goes here. No blank lines before/after.}}
+<<<END>>>
 """.strip()
     return prompt
 

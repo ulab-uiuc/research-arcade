@@ -132,7 +132,7 @@ def main():
             if isinstance(ev, dict):
                 row.update(ev)
             writer.writerow(row)
-    
+
     print(f"Saved results to {RESULT_PATH}")
 
 if __name__ == '__main__':
