@@ -145,7 +145,7 @@ def _data_extraction_non_vlm_save(jsonl_file_path, file_save_path, use_figure=Tr
                         count += 1
 
     file_mode = "a" if start_from_prev_stop else "w"
-    
+
     with open(jsonl_file_path, "r", encoding="utf-8") as fp, open(file_save_path, file_mode, encoding="utf-8") as fp_out:
         for line_no, line in enumerate(fp, 1):
             line = line.strip()
@@ -420,7 +420,7 @@ def llm_generate(
             label_text = ", ".join([str(x) for x in labels[:32]])
             p = f"[Image tags]: {label_text}\n\n{p}"
         augmented_prompts.append(p)
-
+    
     # --------- Initialize model ----------
     llm = get_or_create_llm(
         model_name=model_name,

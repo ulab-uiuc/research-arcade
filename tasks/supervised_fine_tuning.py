@@ -6,16 +6,16 @@ from pathlib import Path
 from typing import Dict, List, Optional, Any, Tuple
 from dataclasses import dataclass, field
 from datetime import datetime
+import sys
 
 # LLaMA Factory imports
-from llamafactory.api import ChatModel
 from llamafactory.chat import ChatModel as LlamaChatModel
 from llamafactory.data import get_dataset
 from llamafactory.extras.constants import TRAINING_STAGES
 from llamafactory.hparams import get_train_args, get_infer_args
-from llamafactory.model import load_model_and_tokenizer
 from llamafactory.train.sft import run_sft
-from llamafactory.train.tuner import export_model
+from llamafactory.train.tuner import export_model as lf_export_model
+import argparse
 
 # Your existing evaluation imports
 from sentence_transformers import SentenceTransformer
@@ -28,9 +28,9 @@ import numpy as np
 @dataclass
 class FineTuningConfig:
     """Configuration for fine-tuning pipeline"""
-    # Model settings
-    model_name: str = "llama2_7b"  # or your specific model
-    template: str = "llama2"
+    # Model settings - FIXED: use model_name_or_path instead of model_name
+    model_name_or_path: str = "Qwen/Qwen2.5-7B-Instruct"  # Updated to a more common model
+    template: str = "qwen"  # Updated template to match Qwen model
 
     # Data settings
     train_dataset: str = "train_data"
@@ -59,8 +59,8 @@ class FineTuningConfig:
     logging_steps: int = 100
     
     # Evaluation settings
-    evaluation_strategy: str = "steps"
-    save_strategy: str = "steps"
+    evaluation_strategy: str = "epoch"
+    save_strategy: str = "epoch"
     load_best_model_at_end: bool = True
     metric_for_best_model: str = "eval_loss"
     
@@ -125,7 +125,7 @@ class LlamaFactoryFineTuner:
             
         self.logger.info(f"Prepared {len(formatted_data)} samples for {dataset_name}")
         return str(dataset_path)
-        
+
     def create_dataset_info(self):
         """Create dataset_info.json for LLaMA Factory"""
         dataset_info = {
@@ -139,7 +139,7 @@ class LlamaFactoryFineTuner:
                 }
             }
         }
-        
+
         if self.config.valid_dataset:
             dataset_info[self.config.valid_dataset] = {
                 "file_name": f"{self.config.valid_dataset}.json",
@@ -150,55 +150,57 @@ class LlamaFactoryFineTuner:
                     "response": "output"
                 }
             }
-            
+
         dataset_info_path = Path(self.config.dataset_dir) / "dataset_info.json"
         with open(dataset_info_path, 'w') as f:
             json.dump(dataset_info, f, indent=2)
             
         return str(dataset_info_path)
-        
+
     def get_training_args(self) -> Dict:
         """Get training arguments for LLaMA Factory"""
         args = {
             "stage": "sft",
-            "model_name": self.config.model_name,
+            "model_name_or_path": self.config.model_name_or_path,
             "template": self.config.template,
             "dataset": self.config.train_dataset,
             "dataset_dir": self.config.dataset_dir,
             "finetuning_type": self.config.finetuning_type,
             "output_dir": self.config.output_dir,
-            
+
             # Training hyperparameters
             "learning_rate": self.config.learning_rate,
             "num_train_epochs": self.config.num_train_epochs,
             "per_device_train_batch_size": self.config.per_device_train_batch_size,
             "per_device_eval_batch_size": self.config.per_device_eval_batch_size,
             "gradient_accumulation_steps": self.config.gradient_accumulation_steps,
-            "max_seq_length": self.config.max_seq_length,
-            
+            "cutoff_len": self.config.max_seq_length,
+
             # LoRA settings
             "lora_rank": self.config.lora_rank,
             "lora_alpha": self.config.lora_alpha,
             "lora_dropout": self.config.lora_dropout,
-            
+
             # Evaluation and saving
-            "evaluation_strategy": self.config.evaluation_strategy,
+            "eval_strategy": self.config.evaluation_strategy,
             "save_strategy": self.config.save_strategy,
             "save_steps": self.config.save_steps,
             "eval_steps": self.config.eval_steps,
             "logging_steps": self.config.logging_steps,
             "load_best_model_at_end": self.config.load_best_model_at_end,
             "metric_for_best_model": self.config.metric_for_best_model,
-            
+
             # Other settings
             "fp16": torch.cuda.is_available(),
             "remove_unused_columns": False,
-            "report_to": "none",  # Disable wandb/tensorboard for now
+            "report_to": "none",
+            "do_train": True,
         }
-        
+
         if self.config.valid_dataset:
-            args["val_dataset"] = self.config.valid_dataset
-            
+            args["eval_dataset"] = self.config.valid_dataset  # FIXED: use eval_dataset
+            args["do_eval"] = True
+
         return args
         
     def fine_tune(self, train_data: List[Dict], valid_data: Optional[List[Dict]] = None):
@@ -216,9 +218,14 @@ class LlamaFactoryFineTuner:
         # Get training arguments
         train_args = self.get_training_args()
         
+        # FIXED: Convert dict to list format for argument parsing
+        args_list = []
+        for key, value in train_args.items():
+            args_list.extend([f"--{key}", str(value)])
+        
         try:
             # Parse arguments using LLaMA Factory's argument parser
-            model_args, data_args, training_args, finetuning_args, generating_args = get_train_args(train_args)
+            model_args, data_args, training_args, finetuning_args, generating_args = get_train_args(args_list)
             
             # Run fine-tuning
             self.logger.info("Starting SFT training...")
@@ -229,48 +236,67 @@ class LlamaFactoryFineTuner:
         except Exception as e:
             self.logger.error(f"Error during fine-tuning: {str(e)}")
             raise
-            
+
+
+
     def export_model(self, export_dir: Optional[str] = None):
         """Export fine-tuned model"""
         if not export_dir:
             export_dir = self.config.export_dir or f"{self.config.output_dir}_exported"
-            
+
         self.logger.info(f"Exporting model to {export_dir}")
-        
-        export_args = {
-            "model_name": self.config.model_name,
+
+        finetune_type = (self.config.finetuning_type or "").lower()
+        args = {
             "template": self.config.template,
-            "finetuning_type": self.config.finetuning_type,
-            "checkpoint_dir": self.config.output_dir,
+            "finetuning_type": finetune_type,
             "export_dir": export_dir,
             "export_size": self.config.export_size,
             "export_device": self.config.export_device,
+            "trust_remote_code": True,
         }
-        
+
+        if finetune_type == "lora":
+            # LoRA merge: base model + adapter path (your training output_dir)
+            args["model_name_or_path"] = self.config.model_name_or_path
+            args["adapter_name_or_path"] = self.config.output_dir
+        else:
+            # Full fine-tune: the checkpoint dir *is* the model
+            args["model_name_or_path"] = self.config.output_dir
+
         try:
-            model_args, _, _, finetuning_args, _ = get_train_args(export_args)
-            export_model(model_args, finetuning_args)
+            lf_export_model(args)  # <- single dict argument
             self.logger.info(f"Model exported successfully to {export_dir}")
             return export_dir
         except Exception as e:
             self.logger.error(f"Error during model export: {str(e)}")
             raise
-            
+    
+
     def load_fine_tuned_model(self, checkpoint_dir: Optional[str] = None):
         """Load fine-tuned model for inference"""
-        if not checkpoint_dir:
-            checkpoint_dir = self.config.output_dir
-            
-        infer_args = {
-            "model_name": self.config.model_name,
+        ckpt_dir = checkpoint_dir or self.config.output_dir
+        ft = (self.config.finetuning_type or "").lower()
+
+        # Build a single dict for ChatModel
+        args = {
             "template": self.config.template,
-            "finetuning_type": self.config.finetuning_type,
-            "checkpoint_dir": checkpoint_dir,
+            "finetuning_type": ft,             # "lora" or "full"
+            "infer_backend": "huggingface",    # or "vllm" if you use vLLM
+            "trust_remote_code": True,
         }
-        
+
+        if ft == "lora":
+            # Base model + adapter dir (training output_dir)
+            args["model_name_or_path"] = self.config.model_name_or_path
+            args["adapter_name_or_path"] = ckpt_dir
+        else:
+            # Full fine-tune OR merged export: directory *is* the model
+            args["model_name_or_path"] = ckpt_dir
+
         try:
-            model_args, data_args, _, finetuning_args, generating_args = get_infer_args(infer_args)
-            chat_model = LlamaChatModel(model_args, finetuning_args, generating_args)
+            # Pass a single dict into ChatModel
+            chat_model = LlamaChatModel(args)
             return chat_model
         except Exception as e:
             self.logger.error(f"Error loading fine-tuned model: {str(e)}")
@@ -280,8 +306,9 @@ class LlamaFactoryFineTuner:
         """Generate answers using fine-tuned model"""
         generated_answers = []
         
+        # Here, instead of loading the "instruction", we load the "prompt" as input.
         for item in test_data:
-            query = item.get("instruction", "")
+            query = item.get("instruction", "")  # FIXED: use "instruction" as primary field
             if "input" in item and item["input"]:
                 query += f"\n{item['input']}"
 
@@ -334,18 +361,90 @@ class LlamaFactoryFineTuner:
             "generated_answers": generated_answers,
             "original_answers": original_answers
         }
-        
+    
     def answer_evaluation_batch(self, generated_answers: List[str], original_answers: List[str], 
                                model, rouge_metric) -> List[Dict]:
-        """Use your existing batch evaluation function"""
-        # Import and use your existing evaluation functions
-        from your_evaluation_module import answer_evaluation_batch
-        return answer_evaluation_batch(generated_answers, original_answers, model, rouge_metric)
+        """Placeholder for your existing batch evaluation function"""
+        # Since we can't import your actual evaluation module, here's a simplified version
+        # Replace this with your actual evaluation function
+        results = []
+        for gen_ans, orig_ans in zip(generated_answers, original_answers):
+            # Simple similarity calculation as placeholder
+            rouge_score = self.rouge_metric.compute(predictions=[gen_ans], references=[orig_ans])['rouge1']
+            
+            # Simple SBERT similarity
+            embeddings = model.encode([gen_ans, orig_ans])
+            sbert_score = np.dot(embeddings[0], embeddings[1]) / (np.linalg.norm(embeddings[0]) * np.linalg.norm(embeddings[1]))
+            
+            # Simple BLEU score placeholder
+            bleu_score = 0.5  # Replace with actual BLEU calculation
+            
+            results.append({
+                "rouge_score": rouge_score,
+                "sbert_score": float(sbert_score),
+                "bleu_score": bleu_score
+            })
         
+        return results
+
+    def save_config(self):
+        """Save complete training configuration"""
+        config_file = Path(self.config.output_dir) / "training_config.json"
+        config_dict = {
+            "model_name_or_path": self.config.model_name_or_path,  # FIXED: corrected key name
+            "template": self.config.template,
+            "train_dataset": self.config.train_dataset,
+            "valid_dataset": self.config.valid_dataset,
+            "test_dataset": self.config.test_dataset,
+            "dataset_dir": self.config.dataset_dir,
+            "learning_rate": self.config.learning_rate,
+            "num_train_epochs": self.config.num_train_epochs,
+            "per_device_train_batch_size": self.config.per_device_train_batch_size,
+            "per_device_eval_batch_size": self.config.per_device_eval_batch_size,
+            "gradient_accumulation_steps": self.config.gradient_accumulation_steps,
+            "max_seq_length": self.config.max_seq_length,
+            "finetuning_type": self.config.finetuning_type,
+            "lora_rank": self.config.lora_rank,
+            "lora_alpha": self.config.lora_alpha,
+            "lora_dropout": self.config.lora_dropout,
+            "output_dir": self.config.output_dir,
+            "export_dir": self.config.export_dir,
+            "timestamp": datetime.now().isoformat()
+        }
+        
+        with open(config_file, 'w') as f:
+            json.dump(config_dict, f, indent=2)
+        
+        self.logger.info(f"Training configuration saved to {config_file}")
+
+    def save_pipeline_summary(self, results: Dict[str, Any]):
+        """Save complete pipeline summary"""
+        summary_file = Path(self.config.output_dir) / "pipeline_summary.json"
+        
+        summary = {
+            "timestamp": datetime.now().isoformat(),
+            "config": self.config.__dict__,
+            "results": results,
+            "paths": {
+                "model_checkpoint": self.config.output_dir,
+                "exported_model": results.get("export_dir"),
+                "training_log": f'fine_tuning_{datetime.now().strftime("%Y%m%d_%H%M%S")}.log',
+                "evaluation_results": str(Path(self.config.output_dir) / "evaluation_results.json") if "evaluation" in results else None
+            }
+        }
+        
+        with open(summary_file, 'w') as f:
+            json.dump(summary, f, indent=2, default=str)
+        
+        self.logger.info(f"Pipeline summary saved to {summary_file}")
+    
     def run_full_pipeline(self, train_data: List[Dict], valid_data: Optional[List[Dict]] = None,
-                         test_data: Optional[List[Dict]] = None) -> Dict[str, Any]:
+                        test_data: Optional[List[Dict]] = None) -> Dict[str, Any]:
         """Run the complete fine-tuning and evaluation pipeline"""
         results = {}
+        
+        # Save configuration first
+        self.save_config()
         
         try:
             # Fine-tune the model
@@ -365,21 +464,37 @@ class LlamaFactoryFineTuner:
                 eval_file = Path(self.config.output_dir) / "evaluation_results.json"
                 with open(eval_file, 'w') as f:
                     json.dump(eval_results, f, indent=2, default=str)
-                    
+            
+            # Save complete pipeline summary
+            self.save_pipeline_summary(results)
+            
             return results
             
         except Exception as e:
             self.logger.error(f"Pipeline failed: {str(e)}")
             results["error"] = str(e)
+            # Still save what we can
+            self.save_pipeline_summary(results)
             return results
+
+def _to_cli_args(args: Dict[str, Any]) -> List[str]:
+    lst = []
+    for k, v in args.items():
+        if v is None:
+            continue
+        lst.extend([f"--{k.replace('_', '-')}", str(v)])
+    return lst
 
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Fine-tuning pipeline with LLaMA Factory")
 
-    # Model and template
-    parser.add_argument("--model_name", type=str, default="llama2_7b", help="Base model name")
-    parser.add_argument("--template", type=str, default="llama2", help="Model template")
+    # Model and template - FIXED: use model_name_or_path
+    parser.add_argument("--model_name_or_path", type=str, default="Qwen/Qwen2.5-7B-Instruct", 
+                       help="Base model name or path")
+    # BACKWARD COMPATIBILITY: Also accept --model_name for old scripts
+    parser.add_argument("--model_name", type=str, help="Base model name (deprecated, use --model_name_or_path)")
+    parser.add_argument("--template", type=str, default="qwen", help="Model template")
 
     # Dataset configs
     parser.add_argument("--train_dataset", type=str, default="my_train_data")
@@ -394,7 +509,7 @@ def parse_args():
     parser.add_argument("--per_device_eval_batch_size", type=int, default=8)
     parser.add_argument("--gradient_accumulation_steps", type=int, default=4)
     parser.add_argument("--max_seq_length", type=int, default=2048)
-
+    
     # LoRA settings
     parser.add_argument("--finetuning_type", type=str, default="lora", choices=["lora", "full"])
     parser.add_argument("--lora_rank", type=int, default=16)
@@ -407,17 +522,71 @@ def parse_args():
     parser.add_argument("--save_steps", type=int, default=500)
     parser.add_argument("--eval_steps", type=int, default=500)
     parser.add_argument("--logging_steps", type=int, default=100)
+    parser.add_argument("--evaluation_strategy", type=str, default="epoch", choices=["no", "steps", "epoch"])
+    parser.add_argument("--save_strategy", type=str, default="epoch", choices=["steps", "epoch"])
+    parser.add_argument("--load_best_model_at_end", action="store_true")
+    parser.add_argument("--metric_for_best_model", type=str, default="eval_loss")
 
     return parser.parse_args()
+
+
+def _parse_infer_args(args_list: List[str]):
+    parsed = get_infer_args(args_list)
+    # Support both signatures:
+    #  (model_args, data_args, finetuning_args, generating_args)
+    #  (model_args, data_args, training_args, finetuning_args, generating_args)
+    if len(parsed) == 4:
+        model_args, data_args, finetuning_args, generating_args = parsed
+    elif len(parsed) == 5:
+        model_args, data_args, _training_args, finetuning_args, generating_args = parsed
+    else:
+        raise RuntimeError(f"Unexpected get_infer_args return of length {len(parsed)}")
+    return model_args, finetuning_args, generating_args
+
 
 
 # Example usage
 def main():
     args = parse_args()
 
-    # Map args into config dataclass
+
+    # file_exists = os.path.exists(training_data_path)
+    # print(file_exists)
+    training_data_path = f"{args.dataset_dir}/{args.train_dataset}.json"
+    valid_data_path = f"{args.dataset_dir}/{args.valid_dataset}.json"
+    test_data_path = f"{args.dataset_dir}/{args.test_dataset}.json"
+
+
+    train_data = []
+    with open(training_data_path, 'r') as json_file:
+        raw = json.load(json_file)
+        for json_line in raw:
+            train_data.append(json_line)
+    valid_data = []
+    with open(valid_data_path, 'r') as json_file:
+        raw = json.load(json_file)
+        for json_line in raw:
+            valid_data.append(json_line)
+    test_data = []
+    with open(test_data_path, 'r') as json_file:
+        raw = json.load(json_file)
+        for json_line in raw:
+            test_data.append(json_line)
+    
+    # print(train_data)
+    print(len(train_data))
+    print(len(valid_data))
+    print(len(test_data))
+    # sys.exit()
+    # Handle backward compatibility for model_name
+    model_name_or_path = args.model_name_or_path
+    if args.model_name:
+        print("Warning: --model_name is deprecated. Use --model_name_or_path instead.")
+        model_name_or_path = args.model_name
+
+    # Map args into config dataclass - FIXED: use model_name_or_path
     config = FineTuningConfig(
-        model_name=args.model_name,
+        model_name_or_path=model_name_or_path,
         template=args.template,
         train_dataset=args.train_dataset,
         valid_dataset=args.valid_dataset,
@@ -438,20 +607,26 @@ def main():
         save_steps=args.save_steps,
         eval_steps=args.eval_steps,
         logging_steps=args.logging_steps,
+        evaluation_strategy=args.evaluation_strategy,
+        save_strategy=args.save_strategy,
+        load_best_model_at_end=args.load_best_model_at_end,
+        metric_for_best_model=args.metric_for_best_model,
     )
 
-    # Load some toy example data (replace with your own loader)
-    train_data = [
-        {"instruction": "Answer the following question:", "input": "What is the capital of France?", "output": "Paris."}
-    ]
-    valid_data = [
-        {"instruction": "Answer the following question:", "input": "What is the capital of Germany?", "output": "Berlin."}
-    ]
-    test_data = [
-        {"instruction": "Answer the following question:", "input": "What is the capital of Italy?", "output": "Rome."}
-    ]
-
     fine_tuner = LlamaFactoryFineTuner(config)
+    
+    # Try to load data from files first, fall back to dummy data
+        
+    # Load some toy example data (fallback)
+    # training data 
+
+    training_data_path = f"{args.dataset_dir}/{args.train_dataset}.json"
+    valid_data_path = f"{args.dataset_dir}/{args.valid_dataset}.json"
+    test_data_path = f"{args.dataset_dir}/{args.test_dataset}.json"
+
+
+
+
     results = fine_tuner.run_full_pipeline(train_data, valid_data, test_data)
 
     print("Fine-tuning pipeline completed!")

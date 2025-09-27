@@ -25,7 +25,7 @@ class TaskDatabase:
         )
         self.conn.autocommit = True
         self.cur = self.conn.cursor()
-
+    
     def create_paper_task_table(self):
         """
         Records the tasks of papers.

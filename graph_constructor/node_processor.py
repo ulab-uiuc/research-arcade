@@ -405,7 +405,7 @@ class NodeConstructor:
                 elif is_table:
                     ref_type = 'table'
 
-
+                
                 self.db.insert_paragraph_reference(paragraph_id=id_zero_based, paper_section=paper_section, paper_arxiv_id=paper_arxiv_id, reference_label=ref_label, reference_type=ref_type)
 
 
@@ -517,7 +517,7 @@ class NodeConstructor:
         except Exception as e:
             print(f"Paper with arxiv id {base_arxiv_id} not found on semantic scholar: {e}")
             return False
-
+            
 
         # Add authors into database if not exist
         author_order = 0
@@ -527,7 +527,7 @@ class NodeConstructor:
                 author_order += 1
                 # Add paper-author edge as follows
                 self.db.insert_paper_author(paper_arxiv_id=arxiv_id, author_id=author.authorId, author_sequence=author_order)
-
+        
         return True
 
 

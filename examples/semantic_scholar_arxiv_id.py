@@ -15,6 +15,11 @@ arxiv_id1 = "2011.08843v2"
 arxiv_id2 = "2011.08843"
 
 sch = SemanticScholar()
+# paper_sch = sch.get_paper(f"ARXIV:{arxiv_id1}")
+
+# print(authors)
+
 paper_sch = sch.get_paper(f"ARXIV:{arxiv_id2}")
 authors = paper_sch.authors
+
 print(authors)

@@ -3,6 +3,8 @@ import csv
 from io import StringIO
 import psycopg2
 
+
+
 class DatabaseSerializer:
     """
     A versatile serializer that connects to a PostgreSQL database,
@@ -26,15 +28,15 @@ class DatabaseSerializer:
         self.conn.autocommit = True
         self.cur = self.conn.cursor()
 
-    def _fetch_records(self, query):
+    def _fetch_records(self, query, parameters=None):
         """
         Helper to execute a query and return a list of dict records.
         """
-        self.cur.execute(query)
+        self.cur.execute(query, parameters)
         columns = [desc[0] for desc in self.cur.description]
         return [dict(zip(columns, row)) for row in self.cur.fetchall()]
 
-    def query_to_json_file(self, query, output_path, indent=2):
+    def query_to_json_file(self, query, output_path, parameters=None, indent=2):
         """
         Execute a SQL query and write the result as a JSON file.
         
@@ -43,12 +45,12 @@ class DatabaseSerializer:
         :param indent: Pretty-print indentation (None for compact).
         :return: The output path.
         """
-        records = self._fetch_records(query)
+        records = self._fetch_records(query, parameters)
         with open(output_path, 'w', encoding='utf-8') as f:
             json.dump(records, f, indent=indent)
         return output_path
         
-    def query_to_csv_file(self, query, output_path, delimiter=',', include_header=True):
+    def query_to_csv_file(self, query, output_path, parameters=None, delimiter=',', include_header=True):
         """
         Execute a SQL query and write the result as a CSV file.
 
@@ -58,7 +60,7 @@ class DatabaseSerializer:
         :param include_header: Whether to write column headers.
         :return: The output path.
         """
-        records = self._fetch_records(query)
+        records = self._fetch_records(query, parameters)
         # if not records:
         #     # create empty file
         #     open(output_path, 'w').close()

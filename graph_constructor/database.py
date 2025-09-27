@@ -4,7 +4,6 @@ import json
 
 # Store the pwd of db server in the env or here as a global variable
 # PASSWORD =
-PASSWORD = "Lcs20031121!"
 
 class Database:
 

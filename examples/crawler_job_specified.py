@@ -37,7 +37,6 @@ arxiv_ids = cj.select_unproceeded_task(task_type="paragraph", max_results=1000)
 print(f"arxiv ids: {arxiv_ids}")
 cj.process_paper_paragraphs(arxiv_ids=arxiv_ids)
 
-
 # cj.process_paper_authors(arxiv_ids=arxiv_ids)
 
 arxiv_ids = cj.select_unproceeded_task(task_type="citation", max_results=1000)

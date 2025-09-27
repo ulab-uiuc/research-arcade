@@ -21,8 +21,10 @@ def select_papers_with_criteria(
     Adjust column/table names if yours differ.
     """
     conn = psycopg2.connect(
-            host="localhost", dbname="postgres",
-            user="postgres", password=PASSWORD, port="5432"
+            host="localhost",
+            port="5433",
+            dbname="postgres",
+            user="cl195"
     )
     try:
         conditions = []
@@ -128,6 +130,9 @@ def paragraph_ref_to_global_ref(arxiv_id, paragraph_id, paper_section, ref_type)
     from (paper_arxiv_id, reference_label) to the global ID in the corresponding
     table ('figures' or 'tables').
     """
+    print(arxiv_id)
+    print(paragraph_id)
+    print(paper_section)
     if ref_type not in {"figure", "table"}:
         raise ValueError(f"Unsupported reference type: {ref_type}")
 
@@ -135,11 +140,10 @@ def paragraph_ref_to_global_ref(arxiv_id, paragraph_id, paper_section, ref_type)
     table_name = table_map[ref_type]
 
     conn = psycopg2.connect(
-        host="localhost",
-        dbname="postgres",
-        user="cl195",
-        password=PASSWORD,
-        port="5433",
+            host="localhost",
+            port="5433",
+            dbname="postgres",
+            user="cl195"
     )
 
     ref_id_mapping = {}
@@ -199,11 +203,10 @@ def paragraph_ref_id_to_global_ref(paragraph_ref_id, ref_type):
     table_name = {"figure": "figures", "table": "tables"}[ref_type]
 
     conn = psycopg2.connect(
-        host="localhost",
-        dbname="postgres",
-        user="postgres",
-        password=PASSWORD,
-        port="5432"
+            host="localhost",
+            port="5433",
+            dbname="postgres",
+            user="cl195"
     )
 
     try:
@@ -247,11 +250,10 @@ def paragraph_to_global_citation(paragraph_id):
     for all citations referenced by the given paragraph_id.
     """
     conn = psycopg2.connect(
-        host="localhost",
-        dbname="postgres",
-        user="postgres",
-        password=PASSWORD,
-        port="5432",
+            host="localhost",
+            port="5433",
+            dbname="postgres",
+            user="cl195"
     )
 
     try:

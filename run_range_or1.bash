@@ -7,8 +7,8 @@ SCRIPT="examples/openreview_list_crawling.py"
 mkdir -p "$DEST" ./openreview_log
 
 for i in {1..2}; do
-  SRC="./json/arxiv_id_openreview_${i}.json"
-  LOG="./openreview_log/arxiv_id_openreview${i}.log"
+  SRC="./json/arxiv_id_missing_${i}.json"
+  LOG="./openreview_log/arxiv_id_missing${i}.log"
   DONE="${LOG}.done"
   
   echo "=== Processing $SRC ==="

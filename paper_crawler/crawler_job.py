@@ -42,7 +42,7 @@ class CrawlerJob:
         self.md = MultiDownload()
         self.pgp = PaperGraphProcessor(data_dir=data_dir_path, figures_dir=figures_dir_path, output_dir=output_dir_path)
         self.dest_dir = dest_dir
-
+        
         print(self.dest_dir)
     
     def create_task_database(self):
@@ -267,6 +267,7 @@ class CrawlerJob:
         # This avoids different papers using the same dir with some arxiv id (possible the id of the very first paper)
         
         for arxiv_id in arxiv_ids:
+                    
             try:
                 self.md.build_paper_graph(
                     input=arxiv_id,
@@ -304,6 +305,7 @@ class CrawlerJob:
         # Build the paragraphs json files later?
         # Use the node processor function in knowledge debugger
 
+
     def process_paper_paragraphs(self, arxiv_ids=None):
         """
         Convert the existing paper's paper graph json file into a collection of multiple jsons, including paragraph files.
@@ -320,7 +322,7 @@ class CrawlerJob:
                 paper_paths.append(f"{self.dest_dir}/output/{arxiv_id}.json")
             print(paper_paths)
             self.pgp.process_papers(paper_paths)
-        
+
         self.nc.process_paragraphs(dir_path=self.dest_dir)
 
         for arxiv_id in arxiv_ids:
@@ -388,7 +390,7 @@ class CrawlerJob:
         citation_added_paper_ids = []
         for arxiv_id in arxiv_ids:
             # Go to citation table in the database
-
+            
             added = self.nc.citation_processor(arxiv_id=arxiv_id)
 
             if added:
@@ -409,6 +411,6 @@ class CrawlerJob:
             if added:
                 self.tdb.set_states(paper_arxiv_id=arxiv_id, semantic_scholar=added)
                 author_added_paper_ids.append(arxiv_id)
-
+        
         return author_added_paper_ids
 

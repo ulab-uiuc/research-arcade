@@ -5,7 +5,7 @@ __pycache__/
 
 # C extensions
 *.so
-
+!./data/openreview/figures.csv
 # Distribution / packaging
 .Python
 build/
@@ -129,7 +129,6 @@ celerybeat.pid
 
 # SageMath parsed files
 *.sage.py
-
 # Environments
 .env
 .venv
@@ -170,3 +169,14 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 *.csv
+
+experiment_output/
+final_paragraph_generation_model/
+jingjun/
+data/
+json/
+paragraph_generation_models/
+paragraph_generation_models/*
+token_embedding_cache/
+wandb/
+*.json

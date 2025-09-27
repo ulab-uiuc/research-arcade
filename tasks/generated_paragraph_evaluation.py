@@ -83,12 +83,12 @@ def answer_evaluation_batch(
       }
     """
     assert len(generated_answers) == len(original_answers), "Lists must be same length."
-
+    
     # Reuse a single rouge metric instance if provided
     rouge_scores = rouge_similarity_batch(generated_answers, original_answers, rouge_metric, "rougeL")
     sbert_scores = sbert_similarity_batch(model, generated_answers, original_answers)
     bleu_scores  = bleu_similarity_batch(generated_answers, original_answers)
-
+    
     per_item = [
         {"rouge_score": r, "sbert_score": s, "bleu_score": b}
         for r, s, b in zip(rouge_scores, sbert_scores, bleu_scores)
