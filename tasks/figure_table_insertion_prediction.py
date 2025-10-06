@@ -67,6 +67,11 @@ project_root/
 
 Replace all `pass` and `raise NotImplementedError` with your logic.
 """
+
+
+"""
+TODO: We did not really use this program. We can simply delete it.
+"""
 from __future__ import annotations
 
 from dataclasses import dataclass, field
