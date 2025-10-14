@@ -141,7 +141,7 @@ def extract_paragraphs_from_pdf_new(pdf_path: Path, filter_list: Optional[List[s
     is_chapter = False
     num_paragraph = 0
     num_image_table = 0
-    for line in tqdm(formatted_lines[start:end]):
+    for line in formatted_lines[start:end]:
         if check_str_regex(line): # no more than 3 digits or at least 10 characters
             continue
         

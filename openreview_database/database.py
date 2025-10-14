@@ -9,8 +9,8 @@ import pandas as pd
 import openreview
 import arxiv
 from arxiv import UnexpectedEmptyPageError
-from .sqlDatabase import sqlDatabase
-from .pdf_utils import connect_diffs_and_paragraphs, extract_paragraphs_from_pdf_new
+from sqlDatabase import sqlDatabase
+from pdf_utils import connect_diffs_and_paragraphs, extract_paragraphs_from_pdf_new
 
 class Database:
     def __init__(self, host: str = "localhost", dbname: str = "iclr_openreview_database", user: str = "jingjunx", password: str = "", port: str = "5432") -> None:
@@ -27,7 +27,7 @@ class Database:
     def construct_review_table(self, venue: str) -> None:
         # create sql table
         self.db.create_review_table()
-        if "2025" or "2024" in venue:
+        if "2025" in venue or "2024" in venue:
             # get all reviews
             reviews = self.client_v2.get_all_notes(invitation=f'{venue}/-/Submission', details='replies')
             # remove withdrawn papers
@@ -110,11 +110,11 @@ class Database:
                                 "Comment": comment,
                             }
                         self.db.insert_review(venue, reply_id, replyto_id, writer, title, content, time)
-        elif "2023" or "2022" or "2021" or "2020" or "2019" or "2018" or "2017" or "2014" or "2013" in venue:
+        elif "2023" in venue or "2022" in venue or "2021" in venue or "2020" in venue or "2019" in venue or "2018" in venue or "2017" in venue or "2014" in venue or "2013" in venue:
             # get all reviews
-            if "2023" or "2022" or "2021" or "2020" or "2019" or "2018" in venue:
+            if "2023" in venue or "2022" in venue or "2021" in venue or "2020" in venue or "2019" in venue or "2018" in venue:
                 reviews = self.client_v1.get_all_notes(invitation=f'{venue}/-/Blind_Submission', details='replies')
-            elif "2017" or "2014" or "2013" in venue:
+            elif "2017" in venue or "2014" in venue or "2013" in venue:
                 reviews = self.client_v1.get_all_notes(invitation=f'{venue}/-/submission', details='replies')
             # remove withdrawn papers
             for review in tqdm(reviews):
@@ -182,7 +182,7 @@ class Database:
         # create sql table
         self.db.create_author_table()
         
-        if "2025" or "2024" in venue:
+        if "2025" in venue or "2024" in venue:
             author_set = set()
             # retrieve all the authors in this venue, skip the authors in the withdrawn submissions
             submissions = self.client_v2.get_all_notes(invitation=f'{venue}/-/Submission')
@@ -248,12 +248,12 @@ class Database:
                     dblp = ""
                 # add to author table
                 self.db.insert_author(venue, author_id, fullname, email, affiliation, homepage, dblp)
-        elif "2023" or "2022" or "2021" or "2020" or "2019" or "2018" or "2017" or "2014" or "2013" in venue:
+        elif "2023" in venue or "2022" in venue or "2021" in venue or "2020" in venue or "2019" in venue or "2018" in venue or "2017" in venue or "2014" in venue or "2013" in venue:
             author_set = set()
             # retrieve all the authors in this venue, skip the authors in the withdrawn submissions
-            if "2023" or "2022" or "2021" or "2020" or "2019" or "2018" in venue:
+            if "2023" in venue or "2022" in venue or "2021" in venue or "2020" in venue or "2019" in venue or "2018" in venue:
                 submissions = self.client_v1.get_all_notes(invitation=f'{venue}/-/Blind_Submission')
-            elif "2017" or "2014" or "2013" in venue:
+            elif "2017" in venue or "2014" in venue or "2013" in venue:
                 submissions = self.client_v1.get_all_notes(invitation=f'{venue}/-/submission')
             for submission in tqdm(submissions):
                 # get author openreview ids
@@ -320,7 +320,7 @@ class Database:
         if with_pdf:
             self.db.create_paragraphs_table()
         
-        if "2025" or "2024" in venue:
+        if "2025" in venue or "2024" in venue:
             # get all submissions
             submissions = self.client_v2.get_all_notes(invitation=f'{venue}/-/Submission')
             for submission in tqdm(submissions):
@@ -380,11 +380,11 @@ class Database:
                     pdf = submission.content["pdf"]["value"]
                     # add to paper table
                     self.db.insert_paper(venue, paper_id, title, abstract, decision, pdf)
-        elif "2023" or "2022" or "2021" or "2020" or "2019" or "2018" or "2017" or "2014" or "2013" in venue:
+        elif "2023" in venue or "2022" in venue or "2021" in venue or "2020" in venue or "2019" in venue or "2018" in venue or "2017" in venue or "2014" in venue or "2013" in venue:
             # get all submissions
-            if "2023" or "2022" or "2021" or "2020" or "2019" or "2018" in venue:
+            if "2023" in venue or "2022" in venue or "2021" in venue or "2020" in venue or "2019" in venue or "2018" in venue:
                 submissions = self.client_v1.get_all_notes(invitation=f'{venue}/-/Blind_Submission')
-            elif "2017" or "2014" or "2013" in venue:
+            elif "2017" in venue or "2014" in venue or "2013" in venue:
                 submissions = self.client_v1.get_all_notes(invitation=f'{venue}/-/submission')
             for submission in tqdm(submissions):
                 # get paper decision and remove withdrawn papers
@@ -397,28 +397,29 @@ class Database:
                 paper_id = submission.id
                 
                 # insert paragraphs
-                pdf_path = str(pdf_dir)+str(paper_id)+".pdf"
-                if os.path.exists(pdf_path):
-                    try:
-                        structured_content = extract_paragraphs_from_pdf_new(pdf_path, filter_list)
-                        
-                        paragraph_counter = 1
-                        for section, paragraphs in structured_content.items():
-                            for paragraph in paragraphs:
-                                self.db.insert_paragraph(venue, paper_id, paragraph_counter, section, paragraph)
-                                paragraph_counter += 1
-                        
-                        # delete the original pdf
-                        os.remove(pdf_path)
-                        print(pdf_path+" Deleted")
-                    except:
+                if with_pdf:
+                    pdf_path = str(pdf_dir)+str(paper_id)+".pdf"
+                    if os.path.exists(pdf_path):
+                        try:
+                            structured_content = extract_paragraphs_from_pdf_new(pdf_path, filter_list)
+                            
+                            paragraph_counter = 1
+                            for section, paragraphs in structured_content.items():
+                                for paragraph in paragraphs:
+                                    self.db.insert_paragraph(venue, paper_id, paragraph_counter, section, paragraph)
+                                    paragraph_counter += 1
+                            
+                            # delete the original pdf
+                            os.remove(pdf_path)
+                            print(pdf_path+" Deleted")
+                        except:
+                            with open(log_file, "a") as log:
+                                log.write(f"{pdf_path}\n")
+                    else:
                         with open(log_file, "a") as log:
                             log.write(f"{pdf_path}\n")
-                else:
-                    with open(log_file, "a") as log:
-                        log.write(f"{pdf_path}\n")
                 
-                 # get title
+                # get title
                 title = submission.content["title"]
                 # get abstract
                 abstract = submission.content["abstract"]
@@ -432,7 +433,7 @@ class Database:
         self.db.create_revisions_table()
         self.db.create_paragraphs_table()
         import time
-        if "2025" or "2024" in venue:
+        if "2025" in venue or "2024" in venue:
             # get all submissions
             submissions = self.client_v2.get_all_notes(invitation=f'{venue}/-/Submission')
             for submission in tqdm(submissions):
@@ -528,11 +529,11 @@ class Database:
                                             with open(log_file, "a") as log:
                                                 log.write(f"{modified_pdf}\n")
                                             print("File not exist")
-        elif "2023" or "2022" or "2021" or "2020" or "2019" or "2018" or "2017" or "2014" or "2013" in venue:
+        elif "2023" in venue or "2022" in venue or "2021" in venue or "2020" in venue or "2019" in venue or "2018" in venue or "2017" in venue or "2014" in venue or "2013" in venue:
             # get all submissions
-            if "2023" or "2022" or "2021" or "2020" or "2019" or "2018" in venue:
+            if "2023" in venue or "2022" in venue or "2021" in venue or "2020" in venue or "2019" in venue or "2018" in venue:
                 submissions = self.client_v1.get_all_notes(invitation=f'{venue}/-/Blind_Submission', details='revisions')
-            elif "2017" or "2014" or "2013" in venue:
+            elif "2017" in venue or "2014" in venue or "2013" in venue:
                 submissions = self.client_v1.get_all_notes(invitation=f'{venue}/-/submission', details='revisions')
             for submission in tqdm(submissions):
                 # get paper openreview id
@@ -626,7 +627,7 @@ class Database:
     def construct_papers_authors_table(self, venue: str) -> None:
         # create sql table
         self.db.create_papers_authors_table()
-        if "2025" or "2024" in venue:
+        if "2025" in venue or "2024" in venue:
             # get all submissions
             submissions = self.client_v2.get_all_notes(invitation=f'{venue}/-/Submission')
             for submission in tqdm(submissions):
@@ -642,11 +643,11 @@ class Database:
                     # add to papers authors table
                     for author_id in author_ids:
                         self.db.insert_paper_authors(venue, paper_id, author_id)
-        elif "2023" or "2022" or "2021" or "2020" or "2019" or "2018" or "2017" or "2014" or "2013" in venue:
+        elif "2023" in venue or "2022" in venue or "2021" in venue or "2020" in venue or "2019" in venue or "2018" in venue or "2017" in venue or "2014" in venue or "2013" in venue:
             # get all submissions
-            if "2023" or "2022" or "2021" or "2020" or "2019" or "2018" in venue:
+            if "2023" in venue or "2022" in venue or "2021" in venue or "2020" in venue or "2019" in venue or "2018" in venue:
                 submissions = self.client_v1.get_all_notes(invitation=f'{venue}/-/Blind_Submission')
-            elif "2017" or "2014" or "2013" in venue:
+            elif "2017" in venue or "2014" in venue or "2013" in venue:
                 submissions = self.client_v1.get_all_notes(invitation=f'{venue}/-/submission')
             for submission in tqdm(submissions):
                 paper_id = submission.id
@@ -660,7 +661,7 @@ class Database:
         # create sql table
         import time
         self.db.create_papers_revisions_table()
-        if "2025" or "2024" in venue:
+        if "2025" in venue or "2024" in venue:
             # get all submissions
             submissions = self.client_v2.get_all_notes(invitation=f'{venue}/-/Submission')
             for submission in tqdm(submissions):
@@ -682,11 +683,11 @@ class Database:
                             title = note.invitation.split('/')[-1]
                             date = datetime.fromtimestamp(note.tmdate / 1000).strftime("%Y-%m-%d %H:%M:%S")
                             self.db.insert_paper_revisions(venue, paper_id, revision_openreview_id, title, date)
-        elif "2023" or "2022" or "2021" or "2020" or "2019" or "2018" or "2017" or "2014" or "2013" in venue:
+        elif "2023" in venue or "2022" in venue or "2021" in venue or "2020" in venue or "2019" in venue or "2018" in venue or "2017" in venue or "2014" in venue or "2013" in venue:
             # get all submissions
-            if "2023" or "2022" or "2021" or "2020" or "2019" or "2018" in venue:
+            if "2023" in venue or "2022" in venue or "2021" in venue or "2020" in venue or "2019" in venue or "2018" in venue:
                 submissions = self.client_v1.get_all_notes(invitation=f'{venue}/-/Blind_Submission', details='revisions')
-            elif "2017" or "2014" or "2013" in venue:
+            elif "2017" in venue or "2014" in venue or "2013" in venue:
                 submissions = self.client_v1.get_all_notes(invitation=f'{venue}/-/submission', details='revisions')
             for submission in tqdm(submissions):
                 # get paper openreview id
@@ -712,7 +713,7 @@ class Database:
     def construct_papers_reviews_table(self, venue: str) -> None:
         # create sql table
         self.db.create_papers_reviews_table()
-        if "2025" or "2024" in venue:
+        if "2025" in venue or "2024" in venue:
             # get all submissions with reviews
             submissions = self.client_v2.get_all_notes(invitation=f'{venue}/-/Submission', details='replies')
             # remove withdrawn papers
@@ -749,11 +750,11 @@ class Database:
                             else:
                                 title = "Paper Decision"
                         self.db.insert_paper_reviews(venue, paper_id, reply_id, title, time)
-        elif "2023" or "2022" or "2021" or "2020" or "2019" or "2018" or "2017" or "2014" or "2013" in venue:
+        elif "2023" in venue or "2022" in venue or "2021" in venue or "2020" in venue or "2019" in venue or "2018" in venue or "2017" in venue or "2014" in venue or "2013" in venue:
             # get all reviews
-            if "2023" or "2022" or "2021" or "2020" or "2019" or "2018" in venue:
+            if "2023" in venue or "2022" in venue or "2021" in venue or "2020" in venue or "2019" in venue or "2018" in venue:
                 reviews = self.client_v1.get_all_notes(invitation=f'{venue}/-/Blind_Submission', details='replies')
-            elif "2017" or "2014" or "2013" in venue:
+            elif "2017" in venue or "2014" in venue or "2013" in venue:
                 reviews = self.client_v1.get_all_notes(invitation=f'{venue}/-/submission', details='replies')
             # remove withdrawn papers
             for review in tqdm(reviews):
@@ -883,6 +884,21 @@ class Database:
                 # insert into openreview_arxiv table
                 self.db.insert_openreview_arxiv(openreview_id, arxiv_id, title, author_names)
     
+    def construct_arxiv_papers_table_by_csv(self, csv_file_path: str) -> None:
+        # create sql table
+        self.db.create_arxiv_papers_table()
+        
+        # read csv file
+        columns = pd.read_csv(csv_file_path, nrows=0).columns
+        df = pd.read_csv(csv_file_path, usecols=columns[1:])
+        
+        # insert into arxiv_papers table
+        for index, row in df.iterrows():
+            row.to_dict()
+            row["metadata"] = ast.literal_eval(row["metadata"])
+            self.db.insert_arxiv_paper(**row)
+        print("Arxiv papers table constructed successfully")
+    
     def construct_paper_table_by_csv(self, csv_file_path: str, with_pdf: bool = True, filter_list: list = [], pdf_dir: str = "./", log_file: str = "not_found_papers.txt") -> None:
         # create sql table
         self.db.create_papers_table()
@@ -897,9 +913,9 @@ class Database:
             row.to_dict()
             self.db.insert_paper(**row)
             
-            venue = row['venue']
-            paper_id = row['paper_openreview_id']
             if with_pdf:
+                venue = row['venue']
+                paper_id = row['paper_openreview_id']
                 pdf_path = str(pdf_dir)+str(paper_id)+".pdf"
                 if os.path.exists(pdf_path):
                     try:
@@ -934,7 +950,6 @@ class Database:
         for index, row in df.iterrows():
             row.to_dict()
             row["content"] = ast.literal_eval(row["content"])
-            print(row)
             self.db.insert_revision(**row)
             
             venue = row['venue']
@@ -1452,6 +1467,19 @@ class Database:
                       are not qualified
                       ''')
                 return None
+        elif table == "arxiv_papers":
+            try:
+                return self.db.delete_arxiv_paper_by_id(**primary_key)
+            except: # arxiv_id, base_arxiv_id, version, title, abstract, submit_date, metadata
+                print(f'''The node in 'arxiv_papers' table requires the following node features:
+
+                      arxiv_id: str,
+
+                      And the primary key you provided:
+                      {primary_key}
+                      are not qualified
+                      ''')
+                return None
         else:
             print(f"The table {table} is not exist in this database")
             return None
@@ -1557,6 +1585,19 @@ class Database:
                 print(f'''The node in 'paragraphs' table requires the following node features:
 
                       paper_openreview_id: str,
+
+                      And the primary key you provided:
+                      {primary_key}
+                      is not qualified
+                      ''')
+                return None
+        elif table == "arxiv_papers":
+            try:
+                return self.db.get_arxiv_paper_by_id(**primary_key)
+            except: # arxiv_id, base_arxiv_id, version, title, abstract, submit_date, metadata
+                print(f'''The node in 'arxiv_papers' table requires the following node features:
+
+                      arxiv_id: str,
 
                       And the primary key you provided:
                       {primary_key}
@@ -1692,6 +1733,17 @@ class Database:
                       are not qualified
                       ''')
                 return None
+        elif table == "arxiv_papers":
+            try:
+                return self.db.update_arxiv_paper(**node_features)
+            except: # arxiv_id, base_arxiv_id, version, title, abstract, submit_date, metadata
+                print(f'''The node in 'arxiv_papers' table requires the following node features:
+                      arxiv_id: str,
+                      And the node features you provided:
+                      {node_features}
+                      are not qualified
+                      ''')
+                return None
         else:
             print(f"The table {table} is not exist in this database")
             return None
@@ -1705,6 +1757,8 @@ class Database:
             return self.db.get_all_authors(is_all_features=True)
         elif table == "revisions":
             return self.db.get_all_revisions(is_all_features=True)
+        elif table == "arxiv_papers":
+            return self.db.get_all_arxiv_papers(is_all_features=True)
         else:
             print(f"The table {table} is not exist in this database")
             return None
@@ -1718,6 +1772,8 @@ class Database:
             return self.db.get_all_authors(is_all_features=False)
         elif table == "revisions":
             return self.db.get_all_revisions(is_all_features=False)
+        elif table == "arxiv_papers":
+            return self.db.get_all_arxiv_papers(is_all_features=False)
         else:
             print(f"The table {table} is not exist in this database")
             return None
