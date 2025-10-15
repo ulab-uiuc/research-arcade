@@ -100,6 +100,13 @@ class ResearchArcade:
             return self.openreview_papers_authors.insert_paper_authors(**edge_features)
         elif table == "openreview_papers_reviews":
             return self.openreview_papers_reviews.insert_paper_reviews(**edge_features)
+        elif table == "openreview_papers_revisions":
+            return self.openreview_papers_revisions.insert_paper_revisions(**edge_features)
+        elif table == "openreview_revisions_reviews":
+            return self.openreview_revisions_reviews.insert_revision_reviews(**edge_features)
+        else:
+            print(f"Table {table} not found.")
+            return None
     
     def delete_edge_by_id(self, table: str, primary_key: dict):
         if table == 'openreview_arxiv':
@@ -131,6 +138,26 @@ class ResearchArcade:
                 return self.openreview_papers_reviews.delete_paper_review_by_review_id(**primary_key)
             else:
                 print("For openreview_papers_reviews table, the primary key should be 'paper_openreview_id' or 'review_openreview_id'.")
+                return None
+        elif table == "openreview_papers_revisions":
+            if "paper_openreview_id" in primary_key and "revision_openreview_id" in primary_key:
+                return self.openreview_papers_revisions.delete_paper_revision_by_id(**primary_key)
+            elif "paper_openreview_id" in primary_key:
+                return self.openreview_papers_revisions.delete_paper_revision_by_paper_id(**primary_key)
+            elif "revision_openreview_id" in primary_key:
+                return self.openreview_papers_revisions.delete_paper_revision_by_revision_id(**primary_key)
+            else:
+                print("For openreview_papers_revisions table, the primary key should be 'paper_openreview_id' or 'revision_openreview_id'.")
+                return None
+        elif table == "openreview_revisions_reviews":
+            if "revision_openreview_id" in primary_key and "review_openreview_id" in primary_key:
+                return self.openreview_revisions_reviews.delete_revision_review_by_id(**primary_key)
+            elif "revision_openreview_id" in primary_key:
+                return self.openreview_revisions_reviews.delete_revision_review_by_revision_id(**primary_key)
+            elif "review_openreview_id" in primary_key:
+                return self.openreview_revisions_reviews.delete_revision_review_by_review_id(**primary_key)
+            else:
+                print("For openreview_revisions_reviews table, the primary key should be 'revision_openreview_id' or 'review_openreview_id'.")
                 return None
     
     def get_all_edge_features(self, table: str):
@@ -174,9 +201,21 @@ class ResearchArcade:
                 print("For openreview_papers_reviews table, the primary key should be either 'paper_openreview_id' or 'review_openreview_id'.")
                 return None
         elif table == 'openreview_papers_revisions':
-            return self.openreview_papers_revisions.get_all_papers_revisions()
+            if "paper_openreview_id" in primary_key:
+                return self.openreview_papers_revisions.get_paper_neighboring_revisions(**primary_key)
+            elif "revision_openreview_id" in primary_key:
+                return self.openreview_papers_revisions.get_revision_neighboring_papers(**primary_key)
+            else:
+                print("For openreview_papers_revisions table, the primary key should be either 'paper_openreview_id' or 'revision_openreview_id'.")
+                return None
         elif table == 'openreview_revisions_reviews':
-            return self.openreview_revisions_reviews.get_all_revisions_reviews()
+            if "revision_openreview_id" in primary_key:
+                return self.openreview_revisions_reviews.get_revision_neighboring_reviews(**primary_key)
+            elif "review_openreview_id" in primary_key:
+                return self.openreview_revisions_reviews.get_review_neighboring_revisions(**primary_key)
+            else:
+                print("For openreview_revisions_reviews table, the primary key should be either 'revision_openreview_id' or 'review_openreview_id'.")
+                return None
         else:
             print(f"Table {table} not found.")
             return None

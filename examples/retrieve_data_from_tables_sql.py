@@ -324,6 +324,77 @@ research_arcade = ResearchArcade(db_type=db_type, config=config)
 #     research_arcade.insert_edge("openreview_papers_reviews", item)
 
 ########## openreview_papers_revisions ##########
+# get_all_edge_features
+# openreview_papers_revisions = research_arcade.get_all_edge_features("openreview_papers_revisions")
+# print(len(openreview_papers_revisions))
 
+# get_neighborhood
+# paper_id = {"paper_openreview_id": "00SnKBGTsz"}
+# paper_revision = research_arcade.get_neighborhood("openreview_papers_revisions", paper_id)
+# print(paper_revision.to_dict(orient="records"))
+# revision_id = {"revision_openreview_id": "dzL3IRBnE4"}
+# paper_revision = research_arcade.get_neighborhood("openreview_papers_revisions", revision_id)
+# print(paper_revision.to_dict(orient="records"))
+
+# delete_edge
+# paper_revision_id = {"paper_openreview_id": "00SnKBGTsz", "revision_openreview_id": "dzL3IRBnE4"}
+# paper_revision = research_arcade.delete_edge_by_id("openreview_papers_revisions", paper_revision_id)
+# print(paper_revision.to_dict(orient="records"))
+# revision_id = {"revision_openreview_id": "dzL3IRBnE4"}
+# paper_revision = research_arcade.delete_edge_by_id("openreview_papers_revisions", revision_id)
+# print(paper_revision.to_dict(orient="records"))
+# paper_id = {"paper_openreview_id": "00SnKBGTsz"}
+# paper_revision = research_arcade.delete_edge_by_id("openreview_papers_revisions", paper_id)
+# print(paper_revision.to_dict(orient="records"))
+
+# insert_edge
+# paper_revision = {'venue': 'ICLR.cc/2025/Conference', 'paper_openreview_id': '00SnKBGTsz', 'revision_openreview_id': 'dzL3IRBnE4', 'title': 'Camera_Ready_Revision', 'time': '2025-03-01 03:36:55'}
+# research_arcade.insert_edge("openreview_papers_revisions", paper_revision)
+# paper_revisions = [{'venue': 'ICLR.cc/2025/Conference', 'paper_openreview_id': '00SnKBGTsz', 'revision_openreview_id': 'oT4N28siLO', 'title': 'Camera_Ready_Revision', 'time': '2025-03-02 01:35:16'}, 
+#                    {'venue': 'ICLR.cc/2025/Conference', 'paper_openreview_id': '00SnKBGTsz', 'revision_openreview_id': 'dzL3IRBnE4', 'title': 'Camera_Ready_Revision', 'time': '2025-03-01 03:36:55'}]
+# for item in paper_revisions:
+#     research_arcade.insert_edge("openreview_papers_revisions", item)
 
 ########## openreview_revisions_reviews ##########
+# get_all_edge_features
+# openreview_revisions_reviews = research_arcade.get_all_edge_features("openreview_revisions_reviews")
+# print(len(openreview_revisions_reviews))
+
+# get_neighborhood
+# revision_id = {'revision_openreview_id': 'cX02yuzwWI'}
+# revision_review = research_arcade.get_neighborhood("openreview_revisions_reviews", revision_id)
+# print(revision_review.to_dict(orient="records"))
+# review_id = {'review_openreview_id': 'wumckDPIQ3'}
+# revision_review = research_arcade.get_neighborhood("openreview_revisions_reviews", review_id)
+# print(revision_review.to_dict(orient="records"))
+
+# delete_edge
+# revision_review_id = {'revision_openreview_id': 'cX02yuzwWI', 'review_openreview_id': 'wumckDPIQ3'}
+# revision_review = research_arcade.delete_edge_by_id("openreview_revisions_reviews", revision_review_id)
+# print(revision_review.to_dict(orient="records"))
+# review_id = {'review_openreview_id': 'wumckDPIQ3'}
+# revision_review = research_arcade.delete_edge_by_id("openreview_revisions_reviews", review_id)
+# print(revision_review.to_dict(orient="records"))
+# paper_id = {'revision_openreview_id': 'cX02yuzwWI'}
+# revision_review = research_arcade.delete_edge_by_id("openreview_revisions_reviews", paper_id)
+# print(revision_review.to_dict(orient="records"))
+
+# insert_edge
+# revision_review = {'venue': 'ICLR.cc/2025/Conference', 'revision_openreview_id': 'cX02yuzwWI', 'review_openreview_id': 'wumckDPIQ3'}
+# research_arcade.insert_edge("openreview_revisions_reviews", revision_review)
+# revision_reviews = [{'venue': 'ICLR.cc/2025/Conference', 'revision_openreview_id': 'cX02yuzwWI', 'review_openreview_id': 'wumckDPIQ3'}, 
+#                     {'venue': 'ICLR.cc/2025/Conference', 'revision_openreview_id': 'cX02yuzwWI', 'review_openreview_id': '138cOdBpgA'}, 
+#                     {'venue': 'ICLR.cc/2025/Conference', 'revision_openreview_id': 'cX02yuzwWI', 'review_openreview_id': 'yKh1fQYnUZ'}, 
+#                     {'venue': 'ICLR.cc/2025/Conference', 'revision_openreview_id': 'cX02yuzwWI', 'review_openreview_id': 'Pvt0OjNSp2'}, 
+#                     {'venue': 'ICLR.cc/2025/Conference', 'revision_openreview_id': 'cX02yuzwWI', 'review_openreview_id': 'MUhlEYyBD9'}, 
+#                     {'venue': 'ICLR.cc/2025/Conference', 'revision_openreview_id': 'cX02yuzwWI', 'review_openreview_id': '2mqiS3J8wC'}, 
+#                     {'venue': 'ICLR.cc/2025/Conference', 'revision_openreview_id': 'cX02yuzwWI', 'review_openreview_id': 'Er8QTorcyr'}, 
+#                     {'venue': 'ICLR.cc/2025/Conference', 'revision_openreview_id': 'cX02yuzwWI', 'review_openreview_id': 'AvtD9uxRtX'}, 
+#                     {'venue': 'ICLR.cc/2025/Conference', 'revision_openreview_id': 'cX02yuzwWI', 'review_openreview_id': '2tgxTGynNm'}, 
+#                     {'venue': 'ICLR.cc/2025/Conference', 'revision_openreview_id': 'cX02yuzwWI', 'review_openreview_id': '5MKJE3sFsd'}, 
+#                     {'venue': 'ICLR.cc/2025/Conference', 'revision_openreview_id': 'cX02yuzwWI', 'review_openreview_id': 'wViZ0H4ErF'}, 
+#                     {'venue': 'ICLR.cc/2025/Conference', 'revision_openreview_id': 'cX02yuzwWI', 'review_openreview_id': '0c1It75dTb'}, 
+#                     {'venue': 'ICLR.cc/2025/Conference', 'revision_openreview_id': 'cX02yuzwWI', 'review_openreview_id': 'PFwia9lcjP'}, 
+#                     {'venue': 'ICLR.cc/2025/Conference', 'revision_openreview_id': 'cX02yuzwWI', 'review_openreview_id': 'ygCqaGNPee'}]
+# for item in revision_reviews:
+#     research_arcade.insert_edge("openreview_revisions_reviews", item)
