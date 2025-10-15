@@ -20,7 +20,7 @@ class SQLOpenReviewRevisions:
     
     def create_revisions_table(self):
         create_table_sql = """
-        CREATE TABLE IF NOT EXISTS revisions (
+        CREATE TABLE IF NOT EXISTS openreview_revisions (
             id SERIAL UNIQUE,
             venue TEXT,
             original_openreview_id VARCHAR(255),
@@ -31,12 +31,12 @@ class SQLOpenReviewRevisions:
         );
         """
         self.cur.execute(create_table_sql)
-        print("Table 'revisions' created successfully.")
+        print("Table 'openreview_revisions' created successfully.")
     
     def insert_revision(self, venue: str, original_openreview_id: str, 
                         revision_openreview_id: str, content: dict, time: str) -> None | tuple:
         insert_sql = """
-        INSERT INTO revisions (venue, original_openreview_id, revision_openreview_id, content, time)
+        INSERT INTO openreview_revisions (venue, original_openreview_id, revision_openreview_id, content, time)
         VALUES (%s, %s, %s, %s, %s)
         ON CONFLICT (venue, revision_openreview_id) DO NOTHING
         RETURNING (venue, revision_openreview_id);
@@ -59,7 +59,7 @@ class SQLOpenReviewRevisions:
         # search for the row based on primary key
         select_sql = """
         SELECT venue, original_openreview_id, revision_openreview_id, content, time
-        FROM revisions WHERE revision_openreview_id = %s;
+        FROM openreview_revisions WHERE revision_openreview_id = %s;
         """
         self.cur.execute(select_sql, (revision_openreview_id,))
         row = self.cur.fetchall()
@@ -71,7 +71,7 @@ class SQLOpenReviewRevisions:
             revision_df = pd.DataFrame(row, columns=columns)
 
             delete_sql = """
-            DELETE FROM revisions WHERE revision_openreview_id = %s;
+            DELETE FROM openreview_revisions WHERE revision_openreview_id = %s;
             """
             self.cur.execute(delete_sql, (revision_openreview_id,))
             self.conn.commit()
@@ -86,7 +86,7 @@ class SQLOpenReviewRevisions:
         # search for the row based on primary key
         select_sql = """
         SELECT venue, original_openreview_id, revision_openreview_id, content, time
-        FROM revisions WHERE venue = %s;
+        FROM openreview_revisions WHERE venue = %s;
         """
         self.cur.execute(select_sql, (venue,))
         row = self.cur.fetchall()
@@ -98,15 +98,15 @@ class SQLOpenReviewRevisions:
             revision_df = pd.DataFrame(row, columns=columns)
 
             delete_sql = """
-            DELETE FROM revisions WHERE venue = %s;
+            DELETE FROM openreview_revisions WHERE venue = %s;
             """
             self.cur.execute(delete_sql, (venue,))
             self.conn.commit()
 
-            print(f"All revisions in venue {venue} deleted successfully.")
+            print(f"All openreview_revisions in venue {venue} deleted successfully.")
             return revision_df
         else:
-            print(f"No revisions found in venue {venue}.")
+            print(f"No openreview_revisions found in venue {venue}.")
             return None
         
     def update_revision(self, venue: str, original_openreview_id: str, 
@@ -114,7 +114,7 @@ class SQLOpenReviewRevisions:
         # Query to select the current record using primary key
         select_sql = """
         SELECT venue, original_openreview_id, revision_openreview_id, content, time
-        FROM revisions WHERE revision_openreview_id = %s AND venue = %s;
+        FROM openreview_revisions WHERE revision_openreview_id = %s AND venue = %s;
         """
         self.cur.execute(select_sql, (revision_openreview_id, venue,))
         row = self.cur.fetchone()
@@ -127,11 +127,11 @@ class SQLOpenReviewRevisions:
             columns = ['venue', 'original_openreview_id', 
                        'revision_openreview_id', 'content', 'time']
             # original_record = dict(zip(columns, row))
-            revision_df = pd.DataFrame(row, columns=columns)
+            revision_df = pd.DataFrame([row], columns=columns)
             
             # SQL query to update the record
             update_sql = """
-            UPDATE revisions
+            UPDATE openreview_revisions
             SET venue = %s,
                 original_openreview_id = %s,
                 content = %s,
@@ -155,7 +155,7 @@ class SQLOpenReviewRevisions:
     def get_revision_by_id(self, revision_openreview_id: str) -> None | pd.DataFrame:
         # Query to select the current record using primary key
         select_sql = """
-        SELECT * FROM revisions WHERE revision_openreview_id = %s;
+        SELECT * FROM openreview_revisions WHERE revision_openreview_id = %s;
         """
         self.cur.execute(select_sql, (revision_openreview_id,))
         row = self.cur.fetchone()
@@ -178,13 +178,13 @@ class SQLOpenReviewRevisions:
         # Query to select all records for a specific venue
         select_sql = """
         SELECT venue, original_openreview_id, revision_openreview_id, content, time
-        FROM revisions WHERE venue = %s;
+        FROM openreview_revisions WHERE venue = %s;
         """
         self.cur.execute(select_sql, (venue,))
         rows = self.cur.fetchall()
         
         if not rows:
-            print(f"No revisions found in venue {venue}.")
+            print(f"No openreview_revisions found in venue {venue}.")
             return None
         else:
             columns = ['venue', 'original_openreview_id', 
@@ -205,7 +205,7 @@ class SQLOpenReviewRevisions:
         if is_all_features:
             select_query = """
             SELECT venue, original_openreview_id, revision_openreview_id, content, time
-            FROM revisions ORDER BY id ASC
+            FROM openreview_revisions ORDER BY id ASC
             """
             self.cur.execute(select_query)
             
@@ -215,7 +215,7 @@ class SQLOpenReviewRevisions:
             # 处理所有行的content字段，如果是dict则转换为JSON字符串
             processed_revisions = []
             for row in revisions:
-                row_list = list(row[1:])
+                row_list = list(row)
                 if isinstance(row_list[3], dict):
                     row_list[3] = json.dumps(row_list[3])
                 processed_revisions.append(row_list)
@@ -226,7 +226,7 @@ class SQLOpenReviewRevisions:
         else:
             select_query = """
             SELECT venue, original_openreview_id, revision_openreview_id, time
-            FROM revisions ORDER BY id ASC
+            FROM openreview_revisions ORDER BY id ASC
             """
             self.cur.execute(select_query)
             
@@ -238,7 +238,7 @@ class SQLOpenReviewRevisions:
             return revisions_df
         
     def check_revision_exists(self, revision_openreview_id: str) -> bool | None:
-        self.cur.execute("SELECT 1 FROM revisions WHERE revision_openreview_id = %s LIMIT 1;", (revision_openreview_id,))
+        self.cur.execute("SELECT 1 FROM openreview_revisions WHERE revision_openreview_id = %s LIMIT 1;", (revision_openreview_id,))
         result = self.cur.fetchone()
 
         return result is not None
@@ -248,7 +248,7 @@ class SQLOpenReviewRevisions:
         print("Crawling revision data from OpenReview API...")
         revision_data = self.openreview_crawler.crawl_revision_data_from_api(venue, filter_list, pdf_dir, log_file)
         
-        # insert data into revisions table
+        # insert data into openreview_revisions table
         if len(revision_data) > 0:
             print("Inserting data into 'papers' table...")
             for data in tqdm(revision_data):
@@ -262,7 +262,7 @@ class SQLOpenReviewRevisions:
     
     def construct_revisions_table_from_csv(self, csv_file: str):
         # read revision data from csv file
-        print(f"Reading revisions data from {csv_file}...")
+        print(f"Reading openreview_revisions data from {csv_file}...")
         revision_data = pd.read_csv(csv_file).to_dict(orient='records')
         
         # insert data into papers table
@@ -276,7 +276,7 @@ class SQLOpenReviewRevisions:
             
     def construct_revisions_table_from_json(self, json_file: str):
         # read revision data from json file
-        print(f"Reading revisions data from {json_file}...")
+        print(f"Reading openreview_revisions data from {json_file}...")
         with open(json_file, 'r', encoding='utf-8') as f:
             revision_data = json.load(f)
         

@@ -143,7 +143,7 @@ class SQLOpenReviewReviews:
             columns = ['venue', 'review_openreview_id', 'replyto_openreview_id', 
                     'writer', 'title', 'content', 'time']
             # original_record = dict(zip(columns, row))
-            review_df = pd.DataFrame(row, columns=columns)
+            review_df = pd.DataFrame([row], columns=columns)
             
             # SQL query to update the record
             update_sql = """

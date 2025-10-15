@@ -32,7 +32,7 @@ class SQLOpenReviewArxiv:
         self.cur.execute(create_table_sql)
         print("Table 'openreview_arxiv' created successfully.")
     
-    def insert_openreview_arxiv(self, venue, openreview_id, arxiv_id, title) -> None | tuple:
+    def insert_openreview_arxiv(self, venue, paper_openreview_id, arxiv_id, title) -> None | tuple:
         insert_sql = """
         INSERT INTO openreview_arxiv (venue, paper_openreview_id, arxiv_id, title)
         VALUES (%s, %s, %s, %s)
@@ -41,23 +41,23 @@ class SQLOpenReviewArxiv:
         """
         
         venue = self._clean_string(venue)
-        openreview_id = self._clean_string(openreview_id)
+        paper_openreview_id = self._clean_string(paper_openreview_id)
         arxiv_id = self._clean_string(arxiv_id)
         title = self._clean_string(title)
         
         # Execute the insertion query
-        self.cur.execute(insert_sql, (venue, openreview_id, arxiv_id, title))
+        self.cur.execute(insert_sql, (venue, paper_openreview_id, arxiv_id, title))
         
         # Get the inserted paper's openreview id (if any)
         res = self.cur.fetchone()
         return res[0] if res else None
     
-    def delete_openreview_arxiv_by_id(self, openreview_id: str) -> None:
-        # search for records with the given openreview_id and delete them
+    def delete_openreview_arxiv_by_openreview_id(self, paper_openreview_id: str) -> None:
+        # search for records with the given paper_openreview_id and delete them
         select_sql = """
         SELECT * FROM openreview_arxiv WHERE paper_openreview_id = %s;
         """
-        self.cur.execute(select_sql, (openreview_id,))
+        self.cur.execute(select_sql, (paper_openreview_id,))
         records = self.cur.fetchall()
         
         if records:
@@ -67,13 +67,61 @@ class SQLOpenReviewArxiv:
             delete_sql = """
             DELETE FROM openreview_arxiv WHERE paper_openreview_id = %s;
             """
-            self.cur.execute(delete_sql, (openreview_id,))
+            self.cur.execute(delete_sql, (paper_openreview_id,))
             self.conn.commit()
             
-            print(f"Deleted {len(records)} records from 'openreview_arxiv' with paper_openreview_id = {openreview_id}.")
+            print(f"Deleted {len(records)} records from 'openreview_arxiv' with paper_openreview_id = {paper_openreview_id}.")
             return records_df
         else:
-            print(f"No records found in 'openreview_arxiv' with paper_openreview_id = {openreview_id}.")
+            print(f"No records found in 'openreview_arxiv' with paper_openreview_id = {paper_openreview_id}.")
+            return None
+        
+    def delete_openreview_arxiv_by_id(self, paper_openreview_id: str, arxiv_id: str) -> None:
+        # search for records with the given paper_openreview_id and delete them
+        select_sql = """
+        SELECT * FROM openreview_arxiv WHERE paper_openreview_id = %s AND arxiv_id = %s;
+        """
+        self.cur.execute(select_sql, (paper_openreview_id, arxiv_id))
+        records = self.cur.fetchall()
+        
+        if records:
+            columns=["venue", "paper_openreview_id", "arxiv_id", "title"]
+            records_df = pd.DataFrame(records, columns=columns)
+            
+            delete_sql = """
+            DELETE FROM openreview_arxiv WHERE paper_openreview_id = %s AND arxiv_id = %s;
+            """
+            self.cur.execute(delete_sql, (paper_openreview_id, arxiv_id))
+            self.conn.commit()
+            
+            print(f"Deleted {len(records)} records from 'openreview_arxiv' with paper_openreview_id = {paper_openreview_id} and arxiv_id = {arxiv_id}.")
+            return records_df
+        else:
+            print(f"No records found in 'openreview_arxiv' with paper_openreview_id = {paper_openreview_id} and arxiv_id = {arxiv_id}.")
+            return None
+        
+    def delete_openreview_arxiv_by_arxiv_id(self, arxiv_id: str) -> None:
+        # search for records with the given arxiv_id and delete them
+        select_sql = """
+        SELECT * FROM openreview_arxiv WHERE arxiv_id = %s;
+        """
+        self.cur.execute(select_sql, (arxiv_id,))
+        records = self.cur.fetchall()
+        
+        if records:
+            columns=["venue", "paper_openreview_id", "arxiv_id", "title"]
+            records_df = pd.DataFrame(records, columns=columns)
+            
+            delete_sql = """
+            DELETE FROM openreview_arxiv WHERE arxiv_id = %s;
+            """
+            self.cur.execute(delete_sql, (arxiv_id,))
+            self.conn.commit()
+            
+            print(f"Deleted {len(records)} records from 'openreview_arxiv' with arxiv_id = {arxiv_id}.")
+            return records_df
+        else:
+            print(f"No records found in 'openreview_arxiv' with arxiv_id = {arxiv_id}.")
             return None
     
     def delete_openreview_arxiv_by_venue(self, venue: str) -> None:
@@ -100,11 +148,11 @@ class SQLOpenReviewArxiv:
             print(f"No records found in 'openreview_arxiv' for venue = {venue}.")
             return None
     
-    def get_openreview_neighboring_arxivs(self, openreview_id: str) -> None | pd.DataFrame:
+    def get_openreview_neighboring_arxivs(self, paper_openreview_id: str) -> None | pd.DataFrame:
         self.cur.execute("""
         SELECT venue, paper_openreview_id, arxiv_id, title FROM openreview_arxiv
         WHERE paper_openreview_id = %s;
-        """, (openreview_id,))
+        """, (paper_openreview_id,))
         
         openreview_arxiv = self.cur.fetchall()
         
@@ -155,11 +203,11 @@ class SQLOpenReviewArxiv:
         else:
             return None
         
-    def check_openreview_arxiv_exists(self, venue: str, openreview_id: str) -> bool:
+    def check_openreview_arxiv_exists(self, venue: str, paper_openreview_id: str) -> bool:
         self.cur.execute("""
         SELECT 1 FROM openreview_arxiv
         WHERE venue = %s AND paper_openreview_id = %s;
-        """, (venue, openreview_id))
+        """, (venue, paper_openreview_id))
         
         return self.cur.fetchone() is not None
     
