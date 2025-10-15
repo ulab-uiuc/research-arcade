@@ -14,13 +14,14 @@ class SQLOpenReviewPapers:
             password=password,
             port=port
         )
-        self.cursor = self.conn.cursor()
+        self.conn.autocommit = True
+        self.cur = self.conn.cursor()
         self.openreview_crawler = OpenReviewCrawler()
         self.create_papers_table()
         
     def create_papers_table(self) -> None:
         create_table_sql = """
-        CREATE TABLE IF NOT EXISTS papers (
+        CREATE TABLE IF NOT EXISTS openreview_papers (
             venue TEXT,
             paper_openreview_id VARCHAR(255),
             title TEXT,
@@ -31,19 +32,26 @@ class SQLOpenReviewPapers:
         );
         """
         self.cur.execute(create_table_sql)
-        print("Table 'papers' created successfully.")
+        print("Table 'openreview_papers' created successfully.")
         
     def insert_paper(self, venue: str, paper_openreview_id: str, title: str, abstract: str,
                     paper_decision: str, paper_pdf_link: str) -> None | tuple:
         insert_sql = """
-        INSERT INTO papers (venue, paper_openreview_id, title, abstract, paper_decision, paper_pdf_link)
+        INSERT INTO openreview_papers (venue, paper_openreview_id, title, abstract, paper_decision, paper_pdf_link)
         VALUES (%s, %s, %s, %s, %s, %s)
         ON CONFLICT (venue, paper_openreview_id) DO NOTHING
         RETURNING (venue, paper_openreview_id);
         """
+        
+        venue = self._clean_string(venue)
+        paper_openreview_id = self._clean_string(paper_openreview_id)
+        title = self._clean_string(title)
+        abstract = self._clean_string(abstract)
+        paper_decision = self._clean_string(paper_decision)
+        paper_pdf_link = self._clean_string(paper_pdf_link)
 
         # Execute the insertion query
-        self.cur.execute(insert_sql, (self._clean_string(venue), self._clean_string(paper_openreview_id), self._clean_string(title), self._clean_string(abstract), self._clean_string(paper_decision), self._clean_string(paper_pdf_link)))
+        self.cur.execute(insert_sql, (venue, paper_openreview_id, title, abstract, paper_decision, paper_pdf_link))
         
         # Get the inserted paper id (if any)
         res = self.cur.fetchone()
@@ -52,7 +60,7 @@ class SQLOpenReviewPapers:
     def delete_paper_by_id(self, paper_openreview_id: str) -> None | pd.DataFrame:
         # search for the row based on primary key
         select_sql = """
-        SELECT * FROM papers WHERE paper_openreview_id = %s;
+        SELECT * FROM openreview_papers WHERE paper_openreview_id = %s;
         """
         self.cur.execute(select_sql, (paper_openreview_id,))
         row = self.cur.fetchall()
@@ -64,7 +72,7 @@ class SQLOpenReviewPapers:
             paper_df = pd.DataFrame(row, columns=columns)
 
             delete_sql = """
-            DELETE FROM papers WHERE paper_openreview_id = %s;
+            DELETE FROM openreview_papers WHERE paper_openreview_id = %s;
             """
             self.cur.execute(delete_sql, (paper_openreview_id,))
             self.conn.commit()
@@ -78,7 +86,7 @@ class SQLOpenReviewPapers:
     def delete_papers_by_venue(self, venue: str) -> None | pd.DataFrame:
         # search for the row based on primary key
         select_sql = """
-        SELECT * FROM papers WHERE venue = %s;
+        SELECT * FROM openreview_papers WHERE venue = %s;
         """
         self.cur.execute(select_sql, (venue,))
         row = self.cur.fetchall()
@@ -90,22 +98,22 @@ class SQLOpenReviewPapers:
             paper_df = pd.DataFrame(row, columns=columns)
 
             delete_sql = """
-            DELETE FROM papers WHERE venue = %s;
+            DELETE FROM openreview_papers WHERE venue = %s;
             """
             self.cur.execute(delete_sql, (venue,))
             self.conn.commit()
 
-            print(f"All papers in venue {venue} deleted successfully.")
+            print(f"All openreview_papers in venue {venue} deleted successfully.")
             return paper_df
         else:
-            print(f"No papers found in venue {venue}.")
+            print(f"No openreview_papers found in venue {venue}.")
             return None
         
     def update_paper(self, venue: str, paper_openreview_id: str, title: str, abstract: str,
                     paper_decision: str, paper_pdf_link: str) -> None | pd.DataFrame:
         # Query to select the current record using primary key
         select_sql = """
-        SELECT * FROM papers WHERE paper_openreview_id = %s AND venue = %s;
+        SELECT * FROM openreview_papers WHERE paper_openreview_id = %s AND venue = %s;
         """
         # find the row in the table
         self.cur.execute(select_sql, (paper_openreview_id, venue,))
@@ -118,17 +126,24 @@ class SQLOpenReviewPapers:
             columns = ['venue', 'paper_openreview_id', 'title', 'abstract',
                     'paper_decision', 'paper_pdf_link']
             # original_record = dict(zip(columns, row))
-            paper_df = pd.DataFrame(row, columns=columns)
+            paper_df = pd.DataFrame([row], columns=columns)
             
             update_sql = """
-            UPDATE papers
+            UPDATE openreview_papers
             SET venue = %s,
                 title = %s,
                 abstract = %s,
                 paper_decision = %s,
-                paper_pdf_link = %s,
+                paper_pdf_link = %s
             WHERE paper_openreview_id = %s;
             """
+            
+            venue = self._clean_string(venue)
+            paper_openreview_id = self._clean_string(paper_openreview_id)
+            title = self._clean_string(title)
+            abstract = self._clean_string(abstract)
+            paper_decision = self._clean_string(paper_decision)
+            paper_pdf_link = self._clean_string(paper_pdf_link)
             
             self.cur.execute(update_sql, (venue, title, abstract, paper_decision,
                                         paper_pdf_link, paper_openreview_id))
@@ -141,7 +156,7 @@ class SQLOpenReviewPapers:
     def get_paper_by_id(self, paper_openreview_id: str) -> None | pd.DataFrame:
         # Query to select the current record using primary key
         select_sql = """
-        SELECT * FROM papers WHERE paper_openreview_id = %s;
+        SELECT * FROM openreview_papers WHERE paper_openreview_id = %s;
         """
         # find the row in the table
         self.cur.execute(select_sql, (paper_openreview_id,))
@@ -160,13 +175,13 @@ class SQLOpenReviewPapers:
     def get_papers_by_venue(self, venue: str) -> None | pd.DataFrame:
         # Query to select all records for a specific venue
         select_sql = """
-        SELECT * FROM papers WHERE venue = %s;
+        SELECT * FROM openreview_papers WHERE venue = %s;
         """
         self.cur.execute(select_sql, (venue,))
         rows = self.cur.fetchall()
         
         if not rows:
-            print(f"No papers found in venue {venue}.")
+            print(f"No openreview_papers found in venue {venue}.")
             return None
         else:
             columns = ['venue', 'paper_openreview_id', 'title', 'abstract',
@@ -180,7 +195,7 @@ class SQLOpenReviewPapers:
             # Select query to get paper_openreview_id, title, and author_full_names
             select_query = """
             SELECT venue, paper_openreview_id, title, abstract, paper_decision, paper_pdf_link
-            FROM papers;
+            FROM openreview_papers;
             """
             self.cur.execute(select_query)
             
@@ -194,7 +209,7 @@ class SQLOpenReviewPapers:
             # Select query to get paper_openreview_id, title, and author_full_names
             select_query = """
             SELECT venue, paper_openreview_id, title
-            FROM papers;
+            FROM openreview_papers;
             """
             self.cur.execute(select_query)
             
@@ -206,7 +221,7 @@ class SQLOpenReviewPapers:
             return papers_df
     
     def check_paper_exists(self, paper_openreview_id: str) -> bool | None:
-        self.cur.execute("SELECT 1 FROM papers WHERE paper_openreview_id = %s LIMIT 1;", (paper_openreview_id,))
+        self.cur.execute("SELECT 1 FROM openreview_papers WHERE paper_openreview_id = %s LIMIT 1;", (paper_openreview_id,))
         result = self.cur.fetchone()
 
         return result is not None
@@ -216,9 +231,9 @@ class SQLOpenReviewPapers:
         print("Crawling paper data from OpenReview API...")
         paper_data = self.openreview_crawler.crawl_paper_data_from_api(venue)
         
-        # insert data into papers table
+        # insert data into openreview_papers table
         if len(paper_data) > 0:
-            print("Inserting data into 'papers' table...")
+            print("Inserting data into 'openreview_papers' table...")
             for data in tqdm(paper_data):
                 self.insert_paper(**data)
         else:
@@ -229,9 +244,9 @@ class SQLOpenReviewPapers:
         print(f"Reading paper data from {csv_file}...")
         paper_data = pd.read_csv(csv_file).to_dict(orient='records')
         
-        # insert data into papers table
+        # insert data into openreview_papers table
         if len(paper_data) > 0:
-            print("Inserting data into 'papers' table...")
+            print("Inserting data into 'openreview_papers' table...")
             for data in tqdm(paper_data):
                 self.insert_paper(**data)
         else:
@@ -243,10 +258,15 @@ class SQLOpenReviewPapers:
         with open(json_file, 'r', encoding='utf-8') as f:
             paper_data = json.load(f)
         
-        # insert data into papers table
+        # insert data into openreview_papers table
         if len(paper_data) > 0:
-            print("Inserting data into 'papers' table...")
+            print("Inserting data into 'openreview_papers' table...")
             for data in tqdm(paper_data):
                 self.insert_paper(**data)
         else:
             print("No new paper data to insert.")
+            
+    def _clean_string(self, s: str) -> str:
+        if isinstance(s, str):
+            return s.replace('\x00', '')
+        return s

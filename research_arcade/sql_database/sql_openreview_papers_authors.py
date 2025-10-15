@@ -39,6 +39,10 @@ class SQLOpenReviewPapersAuthors:
             RETURNING (venue, paper_openreview_id, author_openreview_id);
             """
             
+            venue = self._clean_string(venue)
+            paper_openreview_id = self._clean_string(paper_openreview_id)
+            author_openreview_id = self._clean_string(author_openreview_id)
+            
             # Execute the insertion query
             self.cur.execute(insert_sql, (venue, paper_openreview_id, author_openreview_id))
             
@@ -197,3 +201,8 @@ class SQLOpenReviewPapersAuthors:
                 self.insert_paper_authors(**data)
         else:
             print(f"No papers-authors data found in {json_file}.")
+            
+    def _clean_string(self, s: str) -> str:
+        if isinstance(s, str):
+            return s.replace('\x00', '')
+        return s

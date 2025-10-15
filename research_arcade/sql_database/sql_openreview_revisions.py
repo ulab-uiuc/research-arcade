@@ -43,6 +43,10 @@ class SQLOpenReviewRevisions:
         """
         # clean revisions
         cleaned_revision_content = self._clean_json_content(content)
+        venue = self._clean_string(venue)
+        original_openreview_id = self._clean_string(original_openreview_id)
+        revision_openreview_id = self._clean_string(revision_openreview_id)
+        time = self._clean_string(time)
 
         # Execute the insertion query
         self.cur.execute(insert_sql, (venue, original_openreview_id, revision_openreview_id, Json(cleaned_revision_content), time))
@@ -136,6 +140,10 @@ class SQLOpenReviewRevisions:
             """
 
             cleaned_content = self._clean_json_content(content)
+            venue = self._clean_string(venue)
+            original_openreview_id = self._clean_string(original_openreview_id)
+            revision_openreview_id = self._clean_string(revision_openreview_id)
+            time = self._clean_string(time)
 
             self.cur.execute(update_sql, (venue, original_openreview_id, 
                                         Json(cleaned_content), time, revision_openreview_id))
@@ -292,3 +300,8 @@ class SQLOpenReviewRevisions:
             return [self._clean_json_content(item) for item in content]
         else:
             return content
+        
+    def _clean_string(self, s: str) -> str:
+        if isinstance(s, str):
+            return s.replace('\x00', '')
+        return s

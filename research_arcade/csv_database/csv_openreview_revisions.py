@@ -234,5 +234,5 @@ class CSVOpenReviewRevisions:
         
     def _clean_string(self, s: str) -> str:
         if isinstance(s, str):
-            return re.sub(r'[\x00-\x1F\x7F]', '', s)
+            return s.replace('\x00', '')
         return s

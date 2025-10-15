@@ -41,6 +41,12 @@ class SQLOpenReviewPapersReviews:
             RETURNING (venue, paper_openreview_id, review_openreview_id);
             """
             
+            venue = self._clean_string(venue)
+            paper_openreview_id = self._clean_string(paper_openreview_id)
+            review_openreview_id = self._clean_string(review_openreview_id)
+            title = self._clean_string(title)
+            time = self._clean_string(time)
+            
             # Execute the insertion query
             self.cur.execute(insert_sql, (venue, paper_openreview_id, review_openreview_id, title, time))
             
@@ -203,3 +209,8 @@ class SQLOpenReviewPapersReviews:
                 self.insert_paper_reviews(**data)
         else:
             print("No new paper-review connection data to insert.")
+            
+    def _clean_string(self, s: str) -> str:
+        if isinstance(s, str):
+            return s.replace('\x00', '')
+        return s

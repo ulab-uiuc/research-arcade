@@ -40,7 +40,9 @@ class SQLOpenReviewRevisionsReviews:
             RETURNING (venue, revision_openreview_id, review_openreview_id);
             """
             
-            self.cur.execute(insert_sql, (venue, revision_openreview_id, review_openreview_id))
+            venue = self._clean_string(venue)
+            revision_openreview_id = self._clean_string(revision_openreview_id)
+            review_openreview_id = self._clean_string(review_openreview_id)
             
             # Execute the insertion query
             self.cur.execute(insert_sql, (venue, revision_openreview_id, review_openreview_id))
@@ -227,3 +229,8 @@ class SQLOpenReviewRevisionsReviews:
                 self.insert_revision_reviews(**data)
         else:
             print(f"No revisions-reviews data found in {json_file}.")
+            
+    def _clean_string(self, s: str) -> str:
+        if isinstance(s, str):
+            return s.replace('\x00', '')
+        return s

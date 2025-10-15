@@ -29,7 +29,7 @@ class CSVOpenReviewRevisionsReviews:
             df = pd.read_csv(self.csv_path)
             return df
     
-    def _save_data(self, df: pd.DataFrame):"
+    def _save_data(self, df: pd.DataFrame):
         df.to_csv(self.csv_path, index=False)
     
     def check_revision_exists(self, revision_openreview_id: str) -> bool:
@@ -233,5 +233,5 @@ class CSVOpenReviewRevisionsReviews:
             
     def _clean_string(self, s: str) -> str:
         if isinstance(s, str):
-            return re.sub(r'[\x00-\x1F\x7F]', '', s)
+            return s.replace('\x00', '')
         return s

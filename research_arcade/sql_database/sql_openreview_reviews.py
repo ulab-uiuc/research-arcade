@@ -14,13 +14,14 @@ class SQLOpenReviewReviews:
             password=password,
             port=port
         )
-        self.cursor = self.conn.cursor()
+        self.conn.autocommit = True
+        self.cur = self.conn.cursor()
         self.crawler = OpenReviewCrawler()
         self.create_reviews_table()
         
     def create_reviews_table(self):
         create_table_sql = """
-        CREATE TABLE IF NOT EXISTS reviews (
+        CREATE TABLE IF NOT EXISTS openreview_reviews  (
             id SERIAL UNIQUE,
             venue TEXT,
             review_openreview_id VARCHAR(255),
@@ -34,12 +35,12 @@ class SQLOpenReviewReviews:
         """
         # Execute the SQL to create the table
         self.cur.execute(create_table_sql)
-        print("Table 'reviews' created successfully.")
+        print("Table 'openreview_reviews' created successfully.")
         
     def insert_review(self, venue: str, review_openreview_id: str, replyto_openreview_id: str, 
                       title: str, writer: str, content: dict, time: str) -> None | tuple:
         """
-        Insert a review into the reviews table. Returns the inserted review id or None if it fails.
+        Insert a review into the openreview_reviews  table. Returns the inserted review id or None if it fails.
         - venue: str, the venue where the paper was submitted.
         - review_openreview_id: str, unique ID for the review (primary key).
         - replyto_openreview_id: str or None, ID for a reply (optional).
@@ -49,7 +50,7 @@ class SQLOpenReviewReviews:
         - time
         """
         insert_sql = """
-        INSERT INTO reviews (venue, review_openreview_id, replyto_openreview_id, writer, title, content, time)
+        INSERT INTO openreview_reviews  (venue, review_openreview_id, replyto_openreview_id, writer, title, content, time)
         VALUES (%s, %s, %s, %s, %s, %s, %s)
         ON CONFLICT (venue, review_openreview_id) DO NOTHING
         RETURNING (venue, review_openreview_id);
@@ -57,6 +58,12 @@ class SQLOpenReviewReviews:
         
         # clean content
         cleaned_content = self._clean_json_content(content)
+        venue = self._clean_string(venue)
+        review_openreview_id = self._clean_string(review_openreview_id)
+        replyto_openreview_id = self._clean_string(replyto_openreview_id)
+        writer = self._clean_string(writer)
+        title = self._clean_string(title)
+        time = self._clean_string(time)
         
         # Execute the insertion query
         self.cur.execute(insert_sql, (venue, review_openreview_id, replyto_openreview_id, writer, title, Json(cleaned_content), time))
@@ -69,7 +76,7 @@ class SQLOpenReviewReviews:
         # search for the row based on primary key
         select_sql = """
         SELECT venue, review_openreview_id, replyto_openreview_id, writer, title, content, time 
-        FROM reviews WHERE review_openreview_id = %s;
+        FROM openreview_reviews  WHERE review_openreview_id = %s;
         """
         self.cur.execute(select_sql, (review_openreview_id,))
         row = self.cur.fetchall()
@@ -81,7 +88,7 @@ class SQLOpenReviewReviews:
             review_df = pd.DataFrame(row, columns=columns)
 
             delete_sql = """
-            DELETE FROM reviews WHERE review_openreview_id = %s;
+            DELETE FROM openreview_reviews  WHERE review_openreview_id = %s;
             """
             self.cur.execute(delete_sql, (review_openreview_id,))
             self.conn.commit()
@@ -96,7 +103,7 @@ class SQLOpenReviewReviews:
         # search for the row based on primary key
         select_sql = """
         SELECT venue, review_openreview_id, replyto_openreview_id, writer, title, content, time 
-        FROM reviews WHERE venue = %s;
+        FROM openreview_reviews  WHERE venue = %s;
         """
         self.cur.execute(select_sql, (venue,))
         row = self.cur.fetchall()
@@ -108,15 +115,15 @@ class SQLOpenReviewReviews:
             review_df = pd.DataFrame(row, columns=columns)
 
             delete_sql = """
-            DELETE FROM reviews WHERE venue = %s;
+            DELETE FROM openreview_reviews  WHERE venue = %s;
             """
             self.cur.execute(delete_sql, (venue,))
             self.conn.commit()
 
-            print(f"All reviews in venue {venue} deleted successfully.")
+            print(f"All openreview_reviews  in venue {venue} deleted successfully.")
             return review_df
         else:
-            print(f"No reviews found in venue {venue}.")
+            print(f"No openreview_reviews  found in venue {venue}.")
             return None
         
     def update_review(self, venue: str, review_openreview_id: str, replyto_openreview_id: str, 
@@ -124,7 +131,7 @@ class SQLOpenReviewReviews:
         # Query to select the current record using primary key
         select_sql = """
         SELECT venue, review_openreview_id, replyto_openreview_id, writer, title, content, time 
-        FROM reviews WHERE review_openreview_id = %s AND venue = %s;
+        FROM openreview_reviews  WHERE review_openreview_id = %s AND venue = %s;
         """
         self.cur.execute(select_sql, (review_openreview_id, venue,))
         row = self.cur.fetchone()
@@ -140,7 +147,7 @@ class SQLOpenReviewReviews:
             
             # SQL query to update the record
             update_sql = """
-            UPDATE reviews
+            UPDATE openreview_reviews
             SET venue = %s,
                 replyto_openreview_id = %s,
                 writer = %s,
@@ -149,6 +156,13 @@ class SQLOpenReviewReviews:
                 time = %s
             WHERE review_openreview_id = %s;
             """
+            
+            venue = self._clean_string(venue)
+            review_openreview_id = self._clean_string(review_openreview_id)
+            replyto_openreview_id = self._clean_string(replyto_openreview_id)
+            writer = self._clean_string(writer)
+            title = self._clean_string(title)
+            time = self._clean_string(time)
             
             cleaned_content = self._clean_json_content(content)
 
@@ -163,7 +177,7 @@ class SQLOpenReviewReviews:
         # Query to select the current record using primary key
         select_sql = """
         SELECT venue, review_openreview_id, replyto_openreview_id, writer, title, content, time 
-        FROM reviews WHERE review_openreview_id = %s;
+        FROM openreview_reviews  WHERE review_openreview_id = %s;
         """
         self.cur.execute(select_sql, (review_openreview_id,))
         row = self.cur.fetchone()
@@ -180,20 +194,20 @@ class SQLOpenReviewReviews:
                 row_list[5] = json.dumps(row_list[5])
             # original_record = dict(zip(columns, row))
             review_df = pd.DataFrame([row_list], columns=columns)
-            print("here")
+
             return review_df
         
     def get_reviews_by_venue(self, venue: str) -> None | pd.DataFrame:
         # Query to select all records for a specific venue
         select_sql = """
         SELECT venue, review_openreview_id, replyto_openreview_id, writer, title, content, time 
-        FROM reviews WHERE venue = %s;
+        FROM openreview_reviews  WHERE venue = %s;
         """
         self.cur.execute(select_sql, (venue,))
         rows = self.cur.fetchall()
         
         if not rows:
-            print(f"No reviews found in venue {venue}.")
+            print(f"No openreview_reviews  found in venue {venue}.")
             return None
         else:
             columns = ['venue', 'review_openreview_id', 'replyto_openreview_id', 
@@ -212,13 +226,13 @@ class SQLOpenReviewReviews:
         if is_all_features:
             select_query = """
             SELECT venue, review_openreview_id, replyto_openreview_id, writer, title, content, time 
-            FROM reviews ORDER BY id ASC
+            FROM openreview_reviews  ORDER BY id ASC
             """
             self.cur.execute(select_query)
             
             # Fetch all the results
-            reviews = self.cur.fetchall()
-            processed_reviews = []
+            reviews= self.cur.fetchall()
+            processed_reviews= []
             for row in reviews:
                 row_list = list(row)
                 if isinstance(row_list[5], dict):
@@ -231,19 +245,19 @@ class SQLOpenReviewReviews:
         else:
             select_query = """
             SELECT venue, review_openreview_id, replyto_openreview_id, title, time 
-            FROM reviews ORDER BY id ASC
+            FROM openreview_reviews  ORDER BY id ASC
             """
             self.cur.execute(select_query)
             
             # Fetch all the results
-            reviews = self.cur.fetchall()
+            reviews= self.cur.fetchall()
             
             # Return the result as a list of tuples (paper_openreview_id, title, author_full_names)
             reviews_df = pd.DataFrame(reviews, columns=["venue", "review_openreview_id", "replyto_openreview_id", "title", "time"])
             return reviews_df
         
     def check_review_exists(self, review_openreview_id: str) -> bool | None:
-        self.cur.execute("SELECT 1 FROM reviews WHERE review_openreview_id = %s LIMIT 1;", (review_openreview_id,))
+        self.cur.execute("SELECT 1 FROM openreview_reviews  WHERE review_openreview_id = %s LIMIT 1;", (review_openreview_id,))
         result = self.cur.fetchone()
 
         return result is not None
@@ -253,9 +267,9 @@ class SQLOpenReviewReviews:
         print("Crawling review data from OpenReview API...")
         review_data = self.crawler.crawl_review_data_from_api(venue)
         
-        # insert data into reviews table
+        # insert data into openreview_reviews  table
         if len(review_data) > 0:
-            print("Inserting data into 'reviews' table...")
+            print("Inserting data into 'openreview_reviews' table...")
             for data in tqdm(review_data):
                 self.insert_review(**data)
         else:
@@ -266,9 +280,9 @@ class SQLOpenReviewReviews:
         print(f"Reading review data from {csv_path}...")
         review_data = pd.read_csv(csv_path).to_dict(orient='records')
         
-        # insert data into reviews table
+        # insert data into openreview_reviews  table
         if len(review_data) > 0:
-            print("Inserting data into 'reviews' table...")
+            print("Inserting data into 'openreview_reviews' table...")
             for data in tqdm(review_data):
                 data["content"] = ast.literal_eval(data["content"])
                 self.insert_review(**data)
@@ -281,9 +295,9 @@ class SQLOpenReviewReviews:
         with open(json_path, 'r') as f:
             review_data = json.load(f)
         
-        # insert data into reviews table
+        # insert data into openreview_reviews  table
         if len(review_data) > 0:
-            print("Inserting data into 'reviews' table...")
+            print("Inserting data into 'openreview_reviews' table...")
             for data in tqdm(review_data):
                 self.insert_review(**data)
         else:
@@ -300,4 +314,9 @@ class SQLOpenReviewReviews:
             # Clean all elements in the list
             return [self._clean_json_content(item) for item in content]
         else:
-            return content 
+            return content
+        
+    def _clean_string(self, s: str) -> str:
+        if isinstance(s, str):
+            return s.replace('\x00', '')
+        return s

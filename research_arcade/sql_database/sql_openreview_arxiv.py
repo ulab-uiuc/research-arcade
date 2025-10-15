@@ -40,6 +40,11 @@ class SQLOpenReviewArxiv:
         RETURNING (venue, paper_openreview_id);
         """
         
+        venue = self._clean_string(venue)
+        openreview_id = self._clean_string(openreview_id)
+        arxiv_id = self._clean_string(arxiv_id)
+        title = self._clean_string(title)
+        
         # Execute the insertion query
         self.cur.execute(insert_sql, (venue, openreview_id, arxiv_id, title))
         
@@ -197,3 +202,8 @@ class SQLOpenReviewArxiv:
                 self.insert_openreview_arxiv(**data)
         else:
             print("No new openreview arxiv data to insert.")
+            
+    def _clean_string(self, s: str) -> str:
+        if isinstance(s, str):
+            return s.replace('\x00', '')
+        return s
