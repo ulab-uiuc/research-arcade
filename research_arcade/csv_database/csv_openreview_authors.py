@@ -6,12 +6,12 @@ import os
 from typing import Optional
 
 class CSVOpenReviewAuthors:
-    def __init__(self, csv_path: str = "authors.csv"):
-        self.csv_path = csv_path
+    def __init__(self, csv_dir: str = "./"):
+        self.csv_path = csv_dir + "openreview_authors.csv"
         self.openreview_crawler = OpenReviewCrawler()
         
         # 如果CSV文件不存在，创建空的DataFrame
-        if not os.path.exists(csv_path):
+        if not os.path.exists(self.csv_path):
             self.create_author_table()
     
     def create_author_table(self):

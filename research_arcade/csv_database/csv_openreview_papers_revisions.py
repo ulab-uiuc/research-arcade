@@ -6,16 +6,12 @@ import os
 from typing import Optional
 
 class CSVOpenReviewPapersRevisions:
-    def __init__(self, csv_path: str = "papers_revisions.csv", 
-                 papers_csv: Optional[str] = "papers.csv", 
-                 revisions_csv: Optional[str] = "revisions.csv"):
-        self.csv_path = csv_path
-        self.papers_csv = papers_csv
-        self.revisions_csv = revisions_csv
+    def __init__(self, csv_dir: str = "./"):
+        self.csv_path = csv_dir + "openreview_papers_revisions.csv"
         self.openreview_crawler = OpenReviewCrawler()
         
         # 如果CSV文件不存在，创建空的DataFrame
-        if not os.path.exists(csv_path):
+        if not os.path.exists(self.csv_path):
             self.create_papers_revisions_table()
     
     def create_papers_revisions_table(self):
@@ -34,35 +30,9 @@ class CSVOpenReviewPapersRevisions:
         """将DataFrame保存到CSV文件"""
         df.to_csv(self.csv_path, index=False)
     
-    def check_paper_exists(self, paper_openreview_id: str) -> bool:
-        if self.papers_csv is None or not os.path.exists(self.papers_csv):
-            # 如果没有指定论文表，跳过验证
-            return False
-        
-        papers_df = pd.read_csv(self.papers_csv)
-        return (papers_df['paper_openreview_id'] == paper_openreview_id).any()
-    
-    def check_revision_exists(self, revision_openreview_id: str) -> bool:
-        """检查修订是否存在于修订表中"""
-        if self.revisions_csv is None or not os.path.exists(self.revisions_csv):
-            # 如果没有指定修订表，跳过验证
-            return False
-        
-        revisions_df = pd.read_csv(self.revisions_csv)
-        return (revisions_df['revision_openreview_id'] == revision_openreview_id).any()
-    
     def insert_paper_revisions(self, venue: str, paper_openreview_id: str, 
                               revision_openreview_id: str, title: str, 
                               time: str) -> Optional[tuple]:
-        # 验证论文和修订是否存在
-        if not self.check_paper_exists(paper_openreview_id):
-            print(f"The paper {paper_openreview_id} does not exist in the database.")
-            return None
-        
-        if not self.check_revision_exists(revision_openreview_id):
-            print(f"The revision {revision_openreview_id} does not exist in the database.")
-            return None
-        
         df = self._load_data()
         
         # 检查是否已存在（基于三个字段的组合键）
@@ -106,6 +76,42 @@ class CSVOpenReviewPapersRevisions:
         self._save_data(df)
         
         print(f"The connection between paper {paper_openreview_id} and revision {revision_openreview_id} is deleted successfully.")
+        return deleted_rows
+    
+    def delete_paper_revision_by_paper_id(self, paper_openreview_id: str) -> Optional[pd.DataFrame]:
+        df = self._load_data()
+        
+        # 查找要删除的行
+        mask = df['paper_openreview_id'] == paper_openreview_id
+        deleted_rows = df[mask].copy()
+        
+        if deleted_rows.empty:
+            print(f"No connection found for paper {paper_openreview_id}.")
+            return None
+        
+        # 删除行
+        df = df[~mask]
+        self._save_data(df)
+        
+        print(f"The connection for paper {paper_openreview_id} is deleted successfully.")
+        return deleted_rows
+    
+    def delete_paper_revision_by_revision_id(self, revision_openreview_id: str) -> Optional[pd.DataFrame]:
+        df = self._load_data()
+        
+        # 查找要删除的行
+        mask = df['revision_openreview_id'] == revision_openreview_id
+        deleted_rows = df[mask].copy()
+        
+        if deleted_rows.empty:
+            print(f"No connection found for revision {revision_openreview_id}.")
+            return None
+        
+        # 删除行
+        df = df[~mask]
+        self._save_data(df)
+        
+        print(f"The connection for revision {revision_openreview_id} is deleted successfully.")
         return deleted_rows
     
     def delete_papers_revisions_by_venue(self, venue: str) -> Optional[pd.DataFrame]:

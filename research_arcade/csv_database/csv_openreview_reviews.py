@@ -7,11 +7,11 @@ from pathlib import Path
 from typing import Optional
 
 class CSVOpenReviewReviews:
-    def __init__(self, csv_path: str = "reviews.csv"):
-        self.csv_path = csv_path
+    def __init__(self, csv_dir: str = "./"):
+        self.csv_path = csv_dir + "openreview_reviews.csv"
         self.crawler = OpenReviewCrawler()
         
-        if not os.path.exists(csv_path):
+        if not os.path.exists(self.csv_path):
             self.create_reviews_table()
         
     def create_reviews_table(self):
@@ -128,7 +128,7 @@ class CSVOpenReviewReviews:
         original_record = df[mask].copy()
         
         # 更新记录
-        cleaned_content = self._clean_json_content(content)
+        cleaned_content = json.dumps(self._clean_json_content(content))
         df.loc[mask, 'replyto_openreview_id'] = self._clean_string(replyto_openreview_id)
         df.loc[mask, 'writer'] = self._clean_string(writer)
         df.loc[mask, 'title'] = self._clean_string(title)

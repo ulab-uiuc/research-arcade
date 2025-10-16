@@ -3,15 +3,16 @@ from tqdm import tqdm
 import pandas as pd
 import json
 import os
+import ast
 from typing import Optional
 
 class CSVOpenReviewRevisions:
-    def __init__(self, csv_path: str = "revisions.csv"):
-        self.csv_path = csv_path
+    def __init__(self, csv_dir: str = "./"):
+        self.csv_path = csv_dir + "openreview_revisions.csv"
         self.openreview_crawler = OpenReviewCrawler()
         
         # 如果CSV文件不存在，创建空的DataFrame
-        if not os.path.exists(csv_path):
+        if not os.path.exists(self.csv_path):
             self.create_revisions_table()
     
     def create_revisions_table(self):
@@ -27,7 +28,7 @@ class CSVOpenReviewRevisions:
             # 将content列从JSON字符串转换为字典
             if not df.empty:
                 df['content'] = df['content'].apply(
-                    lambda x: json.loads(x) if pd.notna(x) and x != '' else {}
+                    lambda x: ast.literal_eval(x) if pd.notna(x) and x != '' else []
                 )
             return df
     
@@ -128,7 +129,7 @@ class CSVOpenReviewRevisions:
         # 更新记录
         cleaned_content = self._clean_json_content(content)
         df.loc[mask, 'original_openreview_id'] = self._clean_string(original_openreview_id)
-        df.loc[mask, 'content'] = cleaned_content
+        df.loc[mask, 'content'] = str(cleaned_content)
         df.loc[mask, 'time'] = self._clean_string(time)
         
         self._save_data(df)

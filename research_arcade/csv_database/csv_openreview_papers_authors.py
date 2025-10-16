@@ -6,16 +6,12 @@ import os
 from typing import Optional
 
 class CSVOpenReviewPapersAuthors:
-    def __init__(self, csv_path: str = "papers_authors.csv", 
-                 papers_csv: Optional[str] = "papers.csv", 
-                 authors_csv: Optional[str] = "authors.csv"):
-        self.csv_path = csv_path
-        self.papers_csv = papers_csv
-        self.authors_csv = authors_csv
+    def __init__(self, csv_dir: str = "./"):
+        self.csv_path = csv_dir + "openreview_papers_authors.csv"
         self.openreview_crawler = OpenReviewCrawler()
         
         # 如果CSV文件不存在，创建空的DataFrame
-        if not os.path.exists(csv_path):
+        if not os.path.exists(self.csv_path):
             self.create_papers_authors_table()
     
     def create_papers_authors_table(self):
@@ -32,31 +28,8 @@ class CSVOpenReviewPapersAuthors:
     def _save_data(self, df: pd.DataFrame):
         df.to_csv(self.csv_path, index=False)
     
-    def check_paper_exists(self, paper_openreview_id: str) -> bool:
-        if self.papers_csv is None or not os.path.exists(self.papers_csv):
-            return False
-        
-        papers_df = pd.read_csv(self.papers_csv)
-        return (papers_df['paper_openreview_id'] == paper_openreview_id).any()
-    
-    def check_author_exists(self, author_openreview_id: str) -> bool:
-        if self.authors_csv is None or not os.path.exists(self.authors_csv):
-            return False
-        
-        authors_df = pd.read_csv(self.authors_csv)
-        return (authors_df['author_openreview_id'] == author_openreview_id).any()
-    
     def insert_paper_authors(self, venue: str, paper_openreview_id: str, 
                             author_openreview_id: str) -> Optional[tuple]:
-        # 验证论文和作者是否存在
-        if not self.check_paper_exists(paper_openreview_id):
-            print(f"The paper {paper_openreview_id} does not exist in the database.")
-            return None
-        
-        if not self.check_author_exists(author_openreview_id):
-            print(f"The author {author_openreview_id} does not exist in the database.")
-            return None
-        
         df = self._load_data()
         
         # 检查是否已存在（基于三个字段的组合键）
@@ -98,6 +71,42 @@ class CSVOpenReviewPapersAuthors:
         self._save_data(df)
         
         print(f"The connection between paper {paper_openreview_id} and author {author_openreview_id} is deleted successfully.")
+        return deleted_rows
+    
+    def delete_paper_author_by_paper_id(self, paper_openreview_id: str) -> Optional[pd.DataFrame]:
+        df = self._load_data()
+        
+        # 查找要删除的行
+        mask = df['paper_openreview_id'] == paper_openreview_id
+        deleted_rows = df[mask].copy()
+        
+        if deleted_rows.empty:
+            print(f"No connection found for paper {paper_openreview_id}.")
+            return None
+        
+        # 删除行
+        df = df[~mask]
+        self._save_data(df)
+        
+        print(f"The connection for paper {paper_openreview_id} is deleted successfully.")
+        return deleted_rows
+    
+    def delete_paper_author_by_author_id(self, author_openreview_id: str) -> Optional[pd.DataFrame]:
+        df = self._load_data()
+        
+        # 查找要删除的行
+        mask = df['author_openreview_id'] == author_openreview_id
+        deleted_rows = df[mask].copy()
+        
+        if deleted_rows.empty:
+            print(f"No connection found for author {author_openreview_id}.")
+            return None
+        
+        # 删除行
+        df = df[~mask]
+        self._save_data(df)
+        
+        print(f"The connection for author {author_openreview_id} is deleted successfully.")
         return deleted_rows
     
     def delete_papers_authors_by_venue(self, venue: str) -> Optional[pd.DataFrame]:
