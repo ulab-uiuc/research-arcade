@@ -11,34 +11,25 @@ from ..data import *
 
 
 class ArxivCSVDataset:
-    """
-    CSV-based implementation of the Arxiv database.
-    File paths follow the format: {csv_directory}/{table_name}.csv
-    """
     
     def __init__(self, csv_directory):
         self.csv_directory = csv_directory
-        # Set up the target directory
         Path(csv_directory).mkdir(parents=True, exist_ok=True)
 
     def _get_path(self, table_name):
-        """Get the file path for a given table."""
         return os.path.join(self.csv_directory, f"{table_name}.csv")
     
     def _load_table(self, table_name):
-        """Load a table as a DataFrame. Returns empty DataFrame if file doesn't exist."""
         path = self._get_path(table_name)
         if os.path.exists(path):
             return pd.read_csv(path)
         return pd.DataFrame()
     
     def _save_table(self, table_name, df):
-        """Save a DataFrame to CSV."""
         path = self._get_path(table_name)
         df.to_csv(path, index=False)
 
     def create_papers_table(self):
-        """Create papers CSV with appropriate columns."""
         if not os.path.exists(self._get_path("papers")):
             df = pd.DataFrame(columns=[
                 'id', 'arxiv_id', 'base_arxiv_id', 'version', 
@@ -170,7 +161,6 @@ class ArxivCSVDataset:
         self.create_citation_sch_table()
 
     def insert_paper(self, arxiv_id, base_arxiv_id, version, title, abstract=None, submit_date=None, metadata=None):
-        """Insert a paper. Returns the generated paper id."""
         df = self._load_table("papers")
         
         # Check for conflict
