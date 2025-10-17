@@ -19,7 +19,7 @@ ResearchArcade is a graph interface for academic tasks. It utilizes a coherent m
 
 ### Data Illustration
 
-![data_description](./assets/gnn_llm.png)
+![data_description](./assets/research_arcade.png)
 
 Tables are classified into **node tables** (colored) or **edge tables** (black and white). The blue (denoting the OpenReview part) or red (denoting the ArXiv part) columns represent the unique identification of each node or edge, and the remaining columns represent the features of the nodes or edges. The conversion from the multiple tables to heterogeneous graphs is straightforward.
 
