@@ -246,6 +246,7 @@ class SQLOpenReviewRevisionsReviews:
             
             start_idx = 0
             for revision in paper_revision_edges.itertuples():
+                venue = revision.venue
                 # get the revision time
                 revision_time = revision.time
                 # get the revision id
@@ -262,7 +263,7 @@ class SQLOpenReviewRevisionsReviews:
                     review_id = review.review_openreview_id
                     
                     # insert the edge
-                    self.db.insert_revision_reviews(venue, revision_id, review_id)
+                    self.insert_revision_reviews(venue, revision_id, review_id)
                     
                     start_idx += 1
                     
@@ -274,7 +275,7 @@ class SQLOpenReviewRevisionsReviews:
         if len(revisions_reviews_data) > 0:
             print(f"Inserting revisions-reviews data from {csv_file}...")
             for data in tqdm(revisions_reviews_data):
-                self.insert_revision_reviews(venue, revision_openreview_id, review_openreview_id)
+                self.insert_revision_reviews(**data)
         else:
             print(f"No revisions-reviews data found in {csv_file}.")
             

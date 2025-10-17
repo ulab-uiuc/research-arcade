@@ -2,6 +2,7 @@ from ..openreview_utils.openreview_crawler import OpenReviewCrawler
 from tqdm import tqdm
 import pandas as pd
 import json
+import ast
 import psycopg2
 from psycopg2.extras import Json
 

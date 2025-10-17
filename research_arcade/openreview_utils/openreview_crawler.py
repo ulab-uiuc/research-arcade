@@ -9,7 +9,7 @@ import json
 import pandas as pd
 from tqdm import tqdm
 from datetime import datetime
-from .pdf_utils import extract_paragraphs_from_pdf_new
+from .pdf_utils import extract_paragraphs_from_pdf_new, connect_diffs_and_paragraphs
 
 class OpenReviewCrawler:
     def __init__(self):
@@ -400,6 +400,19 @@ class OpenReviewCrawler:
                                 modified_id = revision[0]
                                 original_pdf = str(pdf_dir)+str(original_id)+".pdf"
                                 modified_pdf = str(pdf_dir)+str(modified_id)+".pdf"
+                                
+                                if not os.path.exists(original_pdf):
+                                    with open(log_file, "a") as log:
+                                        log.write(f"{original_id} Failed\n")
+                                    if not os.path.exists(modified_pdf):
+                                        with open(log_file, "a") as log:
+                                            log.write(f"{modified_id} Failed\n")
+                                    continue
+                                elif not os.path.exists(modified_pdf):
+                                    with open(log_file, "a") as log:
+                                        log.write(f"{modified_id} Failed\n")
+                                    continue
+                                    
                                 if idx < 1:
                                     continue
                                 else:
@@ -415,9 +428,6 @@ class OpenReviewCrawler:
                                             })
                                     except:
                                         continue
-                                    self.crawl_paragraph_data_from_pdf(original_pdf, filter_list, log_file, is_pdf_delete=True)
-                                    if idx == num_revision - 1:
-                                        self.crawl_paragraph_data_from_pdf(modified_pdf, filter_list, log_file, is_pdf_delete=True) 
                 return revision_data
         else:
             submissions = self.client_v2.get_all_notes(invitation=f'{venue}/-/Submission', details='revisions')
@@ -458,11 +468,23 @@ class OpenReviewCrawler:
                                 modified_id = None
                                 
                                 for idx, revision in enumerate(sorted_revisions):
-
                                     original_id = modified_id
                                     modified_id = revision[0]
                                     original_pdf = str(pdf_dir)+str(original_id)+".pdf"
                                     modified_pdf = str(pdf_dir)+str(modified_id)+".pdf"
+                                    
+                                    if not os.path.exists(original_pdf):
+                                        with open(log_file, "a") as log:
+                                            log.write(f"{original_id} Failed\n")
+                                        if not os.path.exists(modified_pdf):
+                                            with open(log_file, "a") as log:
+                                                log.write(f"{modified_id} Failed\n")
+                                        continue
+                                    elif not os.path.exists(modified_pdf):
+                                        with open(log_file, "a") as log:
+                                            log.write(f"{modified_id} Failed\n")
+                                        continue
+                                    
                                     if idx > 1:
                                         time = revision[1]["Time"]
                                         try:
@@ -474,11 +496,8 @@ class OpenReviewCrawler:
                                             "original_openreview_id": original_id,
                                             "revision_openreview_id": modified_id,
                                             "content": content,
-                                            "time": date
+                                            "time": time
                                             })
-                                        self.crawl_paragraph_data_from_pdf(original_pdf, filter_list, log_file, is_pdf_delete=True)
-                                    if idx == num_revision - 1:
-                                        self.crawl_paragraph_data_from_pdf(modified_pdf, filter_list, log_file, is_pdf_delete=True)
                 return revision_data
     
     def crawl_paragraph_data_from_pdf(self, pdf_path: str, filter_list: list, log_file: str, is_pdf_delete: bool = True):
@@ -525,13 +544,14 @@ class OpenReviewCrawler:
                     # get paper openreview id
                     paper_id = submission.id
                     # get author openreview ids
-                    author_ids = set(submission.content["authorids"])
-                    for author_id in author_ids:
-                        papers_authors_data.append({
-                            "venue": venue,
-                            "paper_openreview_id": paper_id,
-                            "author_openreview_id": author_id
-                        })
+                    if "authorids" in submission.content:
+                        author_ids = set(submission.content["authorids"])
+                        for author_id in author_ids:
+                            papers_authors_data.append({
+                                "venue": venue,
+                                "paper_openreview_id": paper_id,
+                                "author_openreview_id": author_id
+                            })
                 return papers_authors_data
         else:
             submissions = self.client_v2.get_all_notes(invitation=f'{venue}/-/Submission')
@@ -540,7 +560,7 @@ class OpenReviewCrawler:
                     # get paper openreview id
                     paper_id = submission.id
                     # get author openreview ids
-                    author_ids = set(submission.content["authorids"])
+                    author_ids = set(submission.content["authorids"]["value"])
                     for author_id in author_ids:
                         papers_authors_data.append({
                             "venue": venue,
@@ -581,7 +601,7 @@ class OpenReviewCrawler:
                     if len(filtered_notes) <= 1:
                         continue
                     else:
-                        for note in filtered_notes:
+                        for revision in filtered_notes:
                             revision_openreview_id = revision.id
                             title = "Paper Revision"
                             date = datetime.fromtimestamp(revision.tmdate / 1000).strftime("%Y-%m-%d %H:%M:%S")
@@ -590,7 +610,7 @@ class OpenReviewCrawler:
                                 "paper_openreview_id": paper_id,
                                 "revision_openreview_id": revision_openreview_id,
                                 "title": title,
-                                "date": date
+                                "time": date
                             })
                 return papers_revisions_data
         else:
@@ -625,7 +645,7 @@ class OpenReviewCrawler:
                                     "paper_openreview_id": paper_id,
                                     "revision_openreview_id": revision_openreview_id,
                                     "title": title,
-                                    "date": date
+                                    "time": date
                                 })
                 return papers_revisions_data
 
@@ -639,11 +659,12 @@ class OpenReviewCrawler:
             else:
                 for submission in tqdm(submissions):
                     reviews = submission.details["replies"]
+                    paper_id = submission.id
                     for review in reviews:
                         # get review openreview id
                         reply_id = review["id"]
-                        # get replyto openreview id
-                        replyto_id = review["replyto"]
+                        # get time
+                        time = datetime.fromtimestamp(review['tmdate'] / 1000).strftime("%Y-%m-%d %H:%M:%S")
                         # get writer id
                         writer = review["signatures"][0].split('/')[-1]
                         # get title
@@ -658,10 +679,10 @@ class OpenReviewCrawler:
                                 title = "Response by Authors"
                         papers_reviews_data.append({
                             "venue": venue,
+                            "paper_openreview_id": paper_id,
                             "review_openreview_id": reply_id,
-                            "replyto_openreview_id": replyto_id,
                             "title": title,
-                            "content": content
+                            "time": time
                         })
                 return papers_reviews_data
         elif "2017" in venue or "2014" in venue or "2013" in venue:
@@ -672,11 +693,10 @@ class OpenReviewCrawler:
             else:
                 for submission in tqdm(submissions):
                     reviews = submission.details["replies"]
+                    paper_id = submission.id
                     for review in reviews:
                         # get review openreview id
                         reply_id = review["id"]
-                        # get replyto openreview id
-                        replyto_id = review["replyto"]
                         # get time
                         time = datetime.fromtimestamp(review['tmdate'] / 1000).strftime("%Y-%m-%d %H:%M:%S")
                         # get writer id
@@ -693,8 +713,8 @@ class OpenReviewCrawler:
                                 title = "Response by Authors"
                         papers_reviews_data.append({
                             "venue": venue,
+                            "paper_openreview_id": paper_id,
                             "review_openreview_id": reply_id,
-                            "replyto_openreview_id": replyto_id,
                             "title": title,
                             "time": time
                         }) 
@@ -706,15 +726,14 @@ class OpenReviewCrawler:
                 return []
             else:
                 for submission in tqdm(submissions):
-                    if review.content["venueid"]["value"].split('/')[-1] == "Withdrawn_Submission":
+                    if submission.content["venueid"]["value"].split('/')[-1] == "Withdrawn_Submission":
                         continue
                     else:
                         reviews = submission.details["replies"]
+                        paper_id = submission.id
                         for review in reviews:
                             # get review openreview id
                             reply_id = review["id"]
-                            # get replyto openreview id
-                            replyto_id = review["replyto"]
                             # get time
                             time = datetime.fromtimestamp(review['tmdate'] / 1000).strftime("%Y-%m-%d %H:%M:%S")
                             # get writer id
@@ -733,8 +752,8 @@ class OpenReviewCrawler:
                                     title = "Response by Authors"
                             papers_reviews_data.append({
                                 "venue": venue,
+                                "paper_openreview_id": paper_id,
                                 "review_openreview_id": reply_id,
-                                "replyto_openreview_id": replyto_id,
                                 "title": title,
                                 "time": time
                             })
@@ -804,6 +823,13 @@ class OpenReviewCrawler:
         cleaned = re.sub(r'\s+', ' ', cleaned).strip()
         return cleaned.strip().lower()
     
+    def _title_cleaner(self, title: str) -> str:
+        # Remove anything that isn't a letter, number, or whitespace
+        cleaned = re.sub(r'[^A-Za-z0-9\s]', '', title)
+        # Collapse multiple spaces and strip leading/trailing spaces
+        cleaned = re.sub(r'\s+', ' ', cleaned).strip()
+        return cleaned.strip().lower()
+    
     def _search_title_with_name(self, title, max_result=5):
         query = f"ti:{title}"
         search = arxiv.Search(
@@ -814,7 +840,7 @@ class OpenReviewCrawler:
 
         try:
             for result in search.results():
-                if (title_cleaner(result.title) == title_cleaner(title)):
+                if (self._title_cleaner(result.title) == self._title_cleaner(title)):
                     return result.entry_id
         except UnexpectedEmptyPageError:
             return None

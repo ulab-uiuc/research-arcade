@@ -8,7 +8,7 @@ from pathlib import Path
 from pdfminer.high_level import extract_text
 
 # get pdf based on openreview_id
-def get_pdf(id, pdf_name: str) -> None:
+def get_pdf_by_id(id, pdf_name):
     # pdf url
     pdf_url = "https://openreview.net/notes/edits/attachment?id="+id+"&name=pdf"
     
@@ -24,14 +24,14 @@ def get_pdf(id, pdf_name: str) -> None:
         print("❌ Failure, Status Code: ", response.status_code)
 
 # extract text from pdf
-def extract_text_from_pdf(pdf_path: Path) -> str | None:
+def extract_text_from_pdf(pdf_path):
     if os.path.isfile(pdf_path):
         return extract_text(pdf_path)
     else:
         return None
 
 # compare the differences between two pdfs
-def compare_texts(text1: str, text2: str) -> str:
+def compare_texts(text1, text2):
     diff = difflib.unified_diff(
         text1.splitlines(),
         text2.splitlines(),
@@ -42,7 +42,7 @@ def compare_texts(text1: str, text2: str) -> str:
     return '\n'.join(diff)
 
 # format the differences
-def parse_diff(diff_text: str) -> list[dict[str, str]]:
+def parse_diff(diff_text):
     lines = diff_text.splitlines()
     
     all_diff = []
@@ -79,7 +79,7 @@ def check_str_regex(s: str) -> bool:
     return (math_count >= 3) and (letter_count < 10)
 
 # primarily format lines into paragraphs
-def preprocess_lines_in_paragraphs(lines: list[str]) -> list[str]:
+def preprocess_lines_in_paragraphs(lines: list) -> list:
     formatted_lines = []
     buffer = []
     for line in lines:
@@ -98,7 +98,7 @@ def preprocess_lines_in_paragraphs(lines: list[str]) -> list[str]:
     return formatted_lines
 
 # finally format pdf into paragraphs
-def extract_paragraphs_from_pdf_new(pdf_path: Path, filter_list: Optional[List[str]] = None) -> dict[str, list[str]]:
+def extract_paragraphs_from_pdf_new(pdf_path: Path, filter_list: Optional[List[str]] = None):
     # extract all the text from pdf
     full_text = extract_text(pdf_path)
     
@@ -124,7 +124,7 @@ def extract_paragraphs_from_pdf_new(pdf_path: Path, filter_list: Optional[List[s
         try:
             end = formatted_lines.index("REFERENCES")
         except:
-            print("can not find appendix")
+            print("can not find reference")
 
     # the structured content and insert the title
     structured_content = {
@@ -142,6 +142,8 @@ def extract_paragraphs_from_pdf_new(pdf_path: Path, filter_list: Optional[List[s
     num_paragraph = 0
     num_image_table = 0
     for line in formatted_lines[start:end]:
+        if line == "":
+            continue
         if check_str_regex(line): # no more than 3 digits or at least 10 characters
             continue
         
@@ -233,7 +235,7 @@ def extract_paragraphs_from_pdf_new(pdf_path: Path, filter_list: Optional[List[s
     return structured_content
 
 # connect the differences with the paragraphs
-def connect_diffs_and_paragraphs(original_pdf_path: Path, modified_pdf_path: Path, filter_list: Optional[List[str]] = None) -> list[dict[str, str]]:
+def connect_diffs_and_paragraphs(original_pdf_path: Path, modified_pdf_path: Path, filter_list: Optional[List[str]] = None):
     # extract text
     original_text = extract_text_from_pdf(original_pdf_path)
     if original_text is not None:
