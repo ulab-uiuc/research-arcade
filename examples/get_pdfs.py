@@ -53,9 +53,9 @@ def get_revision_pdf(venue, id, pdf_path, log_file):
 if __name__ == "__main__":
     client_v1 = openreview.Client(baseurl='https://api.openreview.net')
     client_v2 = openreview.api.OpenReviewClient(baseurl='https://api2.openreview.net')
-    venue = 'ICLR.cc/2025/Conference'
-    pdf_dir = "/data/jingjunx/openreview_pdfs_2025/"
-    log_file = "failed_ids_revisions_2025.txt"
+    venue = 'ICLR.cc/2017/conference'
+    pdf_dir = "/data/jingjunx/openreview_pdfs_2017/"
+    log_file = "./download_failed_ids_revisions_2017.txt"
     start_idx = 0
     end_idx = 5
     
@@ -71,6 +71,14 @@ if __name__ == "__main__":
             for submission in tqdm(submissions[start_idx:end_idx]):
                 # get paper openreview id
                 paper_id = submission.id
+                if "pdf" in submission.content:
+                    pdf_link = submission.content["pdf"]
+                    pdf_path = str(pdf_dir)+str(paper_id)+".pdf"
+                    if os.path.isfile(pdf_path):
+                        continue
+                    else:
+                        get_paper_pdf(pdf_link, pdf_path, log_file)
+                
                 revisions = client_v1.get_references(referent=paper_id, original=True)
                 time.sleep(1)
                 
@@ -101,6 +109,14 @@ if __name__ == "__main__":
                 else:
                     # get paper openreview id
                     paper_id = submission.id
+                    if "pdf" in submission.content:
+                        pdf_link = submission.content["pdf"]["value"]
+                        pdf_path = str(pdf_dir)+str(paper_id)+".pdf"
+                        if os.path.isfile(pdf_path):
+                            continue
+                        else:
+                            get_paper_pdf(pdf_link, pdf_path, log_file)
+                            
                     revisions = client_v2.get_note_edits(note_id=paper_id)
                     if len(revisions) <= 1:
                         continue

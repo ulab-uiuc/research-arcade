@@ -13,13 +13,13 @@ def rename_table():
     
     try:
         # 重命名表
-        cur.execute("ALTER TABLE revisions_reviews RENAME TO openreview_revisions_reviews;")
-        print("✓ 表已重命名: revisions_reviews → openreview_revisions_reviews")
+        cur.execute("ALTER TABLE paragraphs RENAME TO openreview_paragraphs;")
+        print("✓ 表已重命名: paragraphs → openreview_paragraphs")
         
         # 重命名相关对象（如果存在）
         try:
-            cur.execute("ALTER INDEX IF EXISTS revisions_reviews_pkey RENAME TO openreview_revisions_reviews_pkey;")
-            cur.execute("ALTER SEQUENCE IF EXISTS revisions_reviews_id_seq RENAME TO openreview_revisions_reviews_id_seq;")
+            cur.execute("ALTER INDEX IF EXISTS paragraphs_pkey RENAME TO openreview_paragraphs_pkey;")
+            cur.execute("ALTER SEQUENCE IF EXISTS paragraphs_id_seq RENAME TO openreview_paragraphs_id_seq;")
             print("✓ 索引和序列也已重命名")
         except:
             pass

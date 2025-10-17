@@ -363,7 +363,7 @@ class OpenReviewCrawler:
                 print(f"No submissions found for venue: {venue}")
                 return []
             else:
-                for submission in tqdm(submissions[0:5]):
+                for submission in tqdm(submissions):
                     # get paper openreview id
                     paper_id = submission.id
                     # get revisions and their time
@@ -403,14 +403,14 @@ class OpenReviewCrawler:
                                 
                                 if not os.path.exists(original_pdf):
                                     with open(log_file, "a") as log:
-                                        log.write(f"{original_id} Failed\n")
+                                        log.write(f"Revision {original_id} Failed\n")
                                     if not os.path.exists(modified_pdf):
                                         with open(log_file, "a") as log:
-                                            log.write(f"{modified_id} Failed\n")
+                                            log.write(f"Revision {modified_id} Failed\n")
                                     continue
                                 elif not os.path.exists(modified_pdf):
                                     with open(log_file, "a") as log:
-                                        log.write(f"{modified_id} Failed\n")
+                                        log.write(f"Revision {modified_id} Failed\n")
                                     continue
                                     
                                 if idx < 1:
@@ -435,7 +435,7 @@ class OpenReviewCrawler:
                 print(f"No submissions found for venue: {venue}")
                 return []
             else:
-                for submission in tqdm(submissions[0:5]):
+                for submission in tqdm(submissions):
                     # get paper decision and remove withdrawn papers
                     decision = submission.content["venueid"]["value"].split('/')[-1]
                     if decision == "Withdrawn_Submission":
@@ -475,14 +475,14 @@ class OpenReviewCrawler:
                                     
                                     if not os.path.exists(original_pdf):
                                         with open(log_file, "a") as log:
-                                            log.write(f"{original_id} Failed\n")
+                                            log.write(f"Revision {original_id} Failed\n")
                                         if not os.path.exists(modified_pdf):
                                             with open(log_file, "a") as log:
-                                                log.write(f"{modified_id} Failed\n")
+                                                log.write(f"Revision {modified_id} Failed\n")
                                         continue
                                     elif not os.path.exists(modified_pdf):
                                         with open(log_file, "a") as log:
-                                            log.write(f"{modified_id} Failed\n")
+                                            log.write(f"Revision {modified_id} Failed\n")
                                         continue
                                     
                                     if idx > 1:
@@ -500,34 +500,261 @@ class OpenReviewCrawler:
                                             })
                 return revision_data
     
-    def crawl_paragraph_data_from_pdf(self, pdf_path: str, filter_list: list, log_file: str, is_pdf_delete: bool = True):
+    def crawl_paragraph_data_from_api(self, venue: str, pdf_dir: str, filter_list: list, log_file: str, 
+                                      is_paper = True, is_revision = True, is_pdf_delete: bool = True):
         paragraph_data = []
-        if os.path.exists(pdf_path):
-            try:
-                structured_content = extract_paragraphs_from_pdf_new(pdf_path, filter_list)    
-                paragraph_counter = 1
-                for section, paragraphs in structured_content.items():
-                    for paragraph in paragraphs:
-                        paragraph_data.append({
-                            "section": section,
-                            "paragraph_idx": paragraph_counter,
-                            "content": paragraph
-                        })
-                        paragraph_counter += 1
-                if is_pdf_delete:
-                    os.remove(pdf_path)
-                    print(f"Deleted PDF file: {pdf_path}")
-                return paragraph_data
-            except:
-                with open(log_file, "a") as log:
-                    log.write(f"{pdf_path} Failed\n")
-                print(f"Failed to extract content from PDF: {pdf_path}")
+        if "2023" in venue or "2022" in venue or "2021" in venue or "2020" in venue or "2019" in venue or "2018" in venue or "2017" in venue or "2014" in venue or "2013" in venue:
+            if "2023" in venue or "2022" in venue or "2021" in venue or "2020" in venue or "2019" in venue or "2018" in venue:
+                submissions = self.client_v1.get_all_notes(invitation=f'{venue}/-/Blind_Submission', details='revisions')
+            elif "2017" in venue or "2014" in venue or "2013" in venue:
+                submissions = self.client_v1.get_all_notes(invitation=f'{venue}/-/submission', details='revisions')
+            if submissions is None:
+                print(f"No submissions found for venue: {venue}")
                 return []
+            else:
+                for submission in tqdm(submissions[0:5]):
+                    # get paper openreview id
+                    paper_id = submission.id
+                    if is_paper:
+                        paper_pdf = str(pdf_dir)+str(paper_id)+".pdf"
+                        if not os.path.exists(paper_pdf):
+                            with open(log_file, "a") as log:
+                                log.write(f"Paper {original_id} Failed\n")
+                        else:
+                            try:
+                                structured_content = extract_paragraphs_from_pdf_new(paper_pdf, filter_list)    
+                                paragraph_counter = 1
+                                for section, paragraphs in structured_content.items():
+                                    for paragraph in paragraphs:
+                                        paragraph_data.append({
+                                            "venue": venue,
+                                            "paper_openreview_id": paper_id,
+                                            "paragraph_idx": paragraph_counter,
+                                            "section": section,
+                                            "content": paragraph
+                                        })
+                                        paragraph_counter += 1
+                                if is_pdf_delete:
+                                    os.remove(pdf_path)
+                                    print(f"Deleted PDF file: {pdf_path}")
+                            except:
+                                with open(log_file, "a") as log:
+                                    log.write(f"PDF {pdf_path} Failed\n")
+                    if is_revision:
+                        # get revisions and their time
+                        revisions = {}
+                        # get revisions and their time
+                        note_edits = self.client_v1.get_references(referent=paper_id, original=True)
+                        time.sleep(1)
+                        
+                        filtered_notes = []
+                        for note in note_edits:
+                            if "pdf" in note.content:
+                                filtered_notes.append(note)
+                                
+                        if len(filtered_notes) <= 1:
+                            continue
+                        else:
+                            for note in filtered_notes:
+                                revisions[note.id] = {
+                                    "Time": datetime.fromtimestamp(note.tmdate / 1000).strftime("%Y-%m-%d %H:%M:%S"),
+                                    "Title": "Paper Revision"
+                                }
+                            # sorted by time
+                            sorted_revisions = sorted(revisions.items(), key=lambda x: datetime.strptime(x[1]["Time"], "%Y-%m-%d %H:%M:%S"))
+                            num_revision = len(sorted_revisions)
+                            
+                            if num_revision <= 1:
+                                continue
+                            else:
+                                original_id = None
+                                modified_id = None
+                                
+                                for idx, revision in enumerate(sorted_revisions):
+                                    original_id = modified_id
+                                    modified_id = revision[0]
+                                    original_pdf = str(pdf_dir)+str(original_id)+".pdf"
+                                    modified_pdf = str(pdf_dir)+str(modified_id)+".pdf"
+                                    
+                                    if not os.path.exists(original_pdf):
+                                        with open(log_file, "a") as log:
+                                            log.write(f"Revision {original_id} Failed\n")
+                                        if not os.path.exists(modified_pdf):
+                                            with open(log_file, "a") as log:
+                                                log.write(f"Revision {modified_id} Failed\n")
+                                        continue
+                                    elif not os.path.exists(modified_pdf):
+                                        with open(log_file, "a") as log:
+                                            log.write(f"Revision {modified_id} Failed\n")
+                                        continue
+                                        
+                                    if idx < 1:
+                                        continue
+                                    else:
+                                        try:
+                                            structured_content = extract_paragraphs_from_pdf_new(original_pdf, filter_list)    
+                                            paragraph_counter = 1
+                                            for section, paragraphs in structured_content.items():
+                                                for paragraph in paragraphs:
+                                                    paragraph_data.append({
+                                                        "venue": venue,
+                                                        "paper_openreview_id": original_id,
+                                                        "paragraph_idx": paragraph_counter,
+                                                        "section": section,
+                                                        "content": paragraph
+                                                    })
+                                                    paragraph_counter += 1
+                                            if is_pdf_delete:
+                                                os.remove(pdf_path)
+                                                print(f"Deleted PDF file: {pdf_path}")
+                                        except:
+                                            with open(log_file, "a") as log:
+                                                log.write(f"PDF {pdf_path} Failed\n")
+                                        if idx == num_revision - 1:
+                                            try:
+                                                structured_content = extract_paragraphs_from_pdf_new(modified_pdf, filter_list)    
+                                                paragraph_counter = 1
+                                                for section, paragraphs in structured_content.items():
+                                                    for paragraph in paragraphs:
+                                                        paragraph_data.append({
+                                                            "venue": venue,
+                                                            "paper_openreview_id": modified_id,
+                                                            "paragraph_idx": paragraph_counter,
+                                                            "section": section,
+                                                            "content": paragraph
+                                                        })
+                                                        paragraph_counter += 1
+                                                if is_pdf_delete:
+                                                    os.remove(pdf_path)
+                                                    print(f"Deleted PDF file: {pdf_path}")
+                                            except:
+                                                with open(log_file, "a") as log:
+                                                    log.write(f"PDF {pdf_path} Failed\n")
+                return paragraph_data
         else:
-            with open(log_file, "a") as log:
-                log.write(f"{pdf_path} Missing\n")
-            print(f"PDF file does not exist: {pdf_path}")
-            return []
+            submissions = self.client_v2.get_all_notes(invitation=f'{venue}/-/Submission', details='revisions')
+            if submissions is None:
+                print(f"No submissions found for venue: {venue}")
+                return []
+            else:
+                for submission in tqdm(submissions[0:5]):
+                    # get paper decision and remove withdrawn papers
+                    decision = submission.content["venueid"]["value"].split('/')[-1]
+                    if decision == "Withdrawn_Submission":
+                        continue
+                    else:
+                        # get paper openreview id
+                        paper_id = submission.id
+                        if is_paper:
+                            paper_pdf = str(pdf_dir)+str(paper_id)+".pdf"
+                            if not os.path.exists(paper_pdf):
+                                with open(log_file, "a") as log:
+                                    log.write(f"Paper {original_id} Failed\n")
+                            else:
+                                try:
+                                    structured_content = extract_paragraphs_from_pdf_new(paper_pdf, filter_list)    
+                                    paragraph_counter = 1
+                                    for section, paragraphs in structured_content.items():
+                                        for paragraph in paragraphs:
+                                            paragraph_data.append({
+                                                "venue": venue,
+                                                "paper_openreview_id": paper_id,
+                                                "paragraph_idx": paragraph_counter,
+                                                "section": section,
+                                                "content": paragraph
+                                            })
+                                            paragraph_counter += 1
+                                    if is_pdf_delete:
+                                        os.remove(pdf_path)
+                                        print(f"Deleted PDF file: {pdf_path}")
+                                except:
+                                    with open(log_file, "a") as log:
+                                        log.write(f"PDF {pdf_path} Failed\n")
+                        
+                        if is_revision:
+                            # get revisions and their time
+                            revisions = {}
+                            # all_diffs = []
+                            note_edits = self.client_v2.get_note_edits(note_id=paper_id)
+                            time.sleep(1)
+                            
+                            if len(note_edits) <= 1:
+                                continue
+                            else:
+                                for note in note_edits:
+                                    revisions[note.id] = {
+                                        "Time": datetime.fromtimestamp(note.tmdate / 1000).strftime("%Y-%m-%d %H:%M:%S"),
+                                        "Title": note.invitation.split('/')[-1]
+                                    }
+                                # sorted by time
+                                sorted_revisions = sorted(revisions.items(), key=lambda x: datetime.strptime(x[1]["Time"], "%Y-%m-%d %H:%M:%S"))
+                                num_revision = len(sorted_revisions)
+                                
+                                if num_revision <= 1:
+                                    continue
+                                else:
+                                    original_id = None
+                                    modified_id = None
+                                    
+                                    for idx, revision in enumerate(sorted_revisions):
+                                        original_id = modified_id
+                                        modified_id = revision[0]
+                                        original_pdf = str(pdf_dir)+str(original_id)+".pdf"
+                                        modified_pdf = str(pdf_dir)+str(modified_id)+".pdf"
+                                        
+                                        if not os.path.exists(original_pdf):
+                                            with open(log_file, "a") as log:
+                                                log.write(f"Revision {original_id} Failed\n")
+                                            if not os.path.exists(modified_pdf):
+                                                with open(log_file, "a") as log:
+                                                    log.write(f"Revision {modified_id} Failed\n")
+                                            continue
+                                        elif not os.path.exists(modified_pdf):
+                                            with open(log_file, "a") as log:
+                                                log.write(f"Revision {modified_id} Failed\n")
+                                            continue
+                                        
+                                        if idx > 1:
+                                            try:
+                                                structured_content = extract_paragraphs_from_pdf_new(original_pdf, filter_list)    
+                                                paragraph_counter = 1
+                                                for section, paragraphs in structured_content.items():
+                                                    for paragraph in paragraphs:
+                                                        paragraph_data.append({
+                                                            "venue": venue,
+                                                            "paper_openreview_id": original_id,
+                                                            "paragraph_idx": paragraph_counter,
+                                                            "section": section,
+                                                            "content": paragraph
+                                                        })
+                                                        paragraph_counter += 1
+                                                if is_pdf_delete:
+                                                    os.remove(pdf_path)
+                                                    print(f"Deleted PDF file: {pdf_path}")
+                                            except:
+                                                with open(log_file, "a") as log:
+                                                    log.write(f"PDF {pdf_path} Failed\n")
+                                            if idx == num_revision - 1:
+                                                try:
+                                                    structured_content = extract_paragraphs_from_pdf_new(modified_pdf, filter_list)    
+                                                    paragraph_counter = 1
+                                                    for section, paragraphs in structured_content.items():
+                                                        for paragraph in paragraphs:
+                                                            paragraph_data.append({
+                                                                "venue": venue,
+                                                                "paper_openreview_id": modified_id,
+                                                                "paragraph_idx": paragraph_counter,
+                                                                "section": section,
+                                                                "content": paragraph
+                                                            })
+                                                            paragraph_counter += 1
+                                                    if is_pdf_delete:
+                                                        os.remove(pdf_path)
+                                                        print(f"Deleted PDF file: {pdf_path}")
+                                                except:
+                                                    with open(log_file, "a") as log:
+                                                        log.write(f"PDF {pdf_path} Failed\n")
+                return paragraph_data
         
     def crawl_papers_authors_data_from_api(self, venue: str):
         papers_authors_data = []

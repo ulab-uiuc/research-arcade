@@ -29,7 +29,6 @@ class SQLOpenReviewRevisionsReviews:
         """
         # Execute the SQL to create the table
         self.cur.execute(create_table_sql)
-        print("Table 'openreview_revisions_reviews' created successfully.")
         
     def insert_revision_reviews(self, venue: str, revision_openreview_id: str, review_openreview_id: str) -> None | tuple:
         insert_sql = """

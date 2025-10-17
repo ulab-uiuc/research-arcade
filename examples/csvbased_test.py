@@ -250,6 +250,55 @@ research_arcade = ResearchArcade(db_type=db_type, config=config)
 # revision_feature = research_arcade.get_node_features_by_id("openreview_revisions", revision_id)
 # print(revision_feature.to_dict(orient="records")[0])
 
+########## openreview_paragraphs ##########
+# construct_from_api
+# venue = "ICLR.cc/2025/Conference"
+# filter_list = ["Under review as a conference paper at ICLR 2025", "Published as a conference paper at ICLR 2025"]
+# pdf_dir = "/data/jingjunx/openreview_pdfs_2025/"
+# log_file = "./log/failed_ids_revisions_2025.txt"
+# venue = "ICLR.cc/2023/Conference"
+# filter_list = ["Under review as a conference paper at ICLR 2023", "Published as a conference paper at ICLR 2023"]
+# pdf_dir = "/data/jingjunx/openreview_pdfs_2023/"
+# log_file = "./log/failed_ids_revisions_2023.txt"
+# config = {"venue": venue, "filter_list": filter_list, "pdf_dir": pdf_dir, "log_file": log_file}
+# venue = "ICLR.cc/2017/conference"
+# filter_list = ["Under review as a conference paper at ICLR 2017", "Published as a conference paper at ICLR 2017"]
+# pdf_dir = "/data/jingjunx/openreview_pdfs_2017/"
+# log_file = "./log/failed_ids_revisions_2017.txt"
+# config = {"venue": venue, "filter_list": filter_list, "pdf_dir": pdf_dir, "log_file": log_file, "is_paper": True, "is_revision": True, "is_pdf_delete": False}
+# research_arcade.construct_table_from_api("openreview_paragraphs", config)
+
+# construct_from_csv
+# config = {"csv_file": "/home/jingjunx/openreview_benchmark/Code/paper-crawler/examples/csv_data/csv_openreview_paragraphs_example.csv"}
+# research_arcade.construct_table_from_csv("openreview_paragraphs", config)
+
+# construct_from_json
+# config = {"json_file": "/home/jingjunx/openreview_benchmark/Code/paper-crawler/examples/json_data/json_openreview_paragraphs_example.json"}
+# research_arcade.construct_table_from_json("openreview_paragraphs", config)
+
+# get_all_node_features
+# openreview_paragraphs_df = research_arcade.get_all_node_features("openreview_paragraphs")
+# print(len(openreview_paragraphs_df))
+
+# get_node_features_by_id
+# paper_id = {"paper_openreview_id": "ryxB0Rtxx"}
+# paragraph_feature = research_arcade.get_node_features_by_id("openreview_paragraphs", paper_id)
+# print(paragraph_feature.to_dict(orient="records")[0])
+
+# insert_node
+# paragraph_feature = {'venue': 'xujj_test', 
+#                     'paper_openreview_id': 'xujj_test', 
+#                     'paragraph_idx': 1, 
+#                     'section': "xujj_test", 
+#                     'content': "xujj_test"}
+# research_arcade.insert_node("openreview_paragraphs", node_features=paragraph_feature)
+
+# delete_node
+# paper_id = {"paper_openreview_id": "xujj_test"}
+# paragraph_feature = research_arcade.delete_node_by_id("openreview_paragraphs", paper_id)
+# print(len(paragraph_feature))
+# print(paragraph_feature.to_dict(orient="records")[0])
+
 ########## openreview_arxiv ##########
 # construct_from_api
 # config = {"venue": "ICLR.cc/2017/conference"}

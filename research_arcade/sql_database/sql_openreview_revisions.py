@@ -32,7 +32,6 @@ class SQLOpenReviewRevisions:
         );
         """
         self.cur.execute(create_table_sql)
-        print("Table 'openreview_revisions' created successfully.")
     
     def insert_revision(self, venue: str, original_openreview_id: str, 
                         revision_openreview_id: str, content: dict, time: str) -> None | tuple:

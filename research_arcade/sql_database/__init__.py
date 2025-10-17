@@ -7,6 +7,7 @@ from .sql_openreview_papers import SQLOpenReviewPapers
 from .sql_openreview_reviews import SQLOpenReviewReviews
 from .sql_openreview_revisions_reviews import SQLOpenReviewRevisionsReviews
 from .sql_openreview_revisions import SQLOpenReviewRevisions
+from .sql_openreview_paragraphs import SQLOpenReviewParagraphs
 
 __all__ = [
     'SQLOpenReviewArxiv',
@@ -18,4 +19,5 @@ __all__ = [
     'SQLOpenReviewReviews',
     'SQLOpenReviewRevisionsReviews',
     'SQLOpenReviewRevisions',
+    'SQLOpenReviewParagraphs'
 ]

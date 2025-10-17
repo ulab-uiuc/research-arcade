@@ -30,7 +30,6 @@ class SQLOpenReviewArxiv:
         """
         # Execute the SQL to create the table
         self.cur.execute(create_table_sql)
-        print("Table 'openreview_arxiv' created successfully.")
     
     def insert_openreview_arxiv(self, venue, paper_openreview_id, arxiv_id, title) -> None | tuple:
         insert_sql = """

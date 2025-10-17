@@ -1,9 +1,9 @@
 from .csv_database import CSVOpenReviewArxiv, CSVOpenReviewAuthors, CSVOpenReviewPapersAuthors, \
     CSVOpenReviewPapersReviews, CSVOpenReviewPapersRevisions, CSVOpenReviewPapers, CSVOpenReviewReviews, \
-    CSVOpenReviewRevisionsReviews, CSVOpenReviewRevisions
+    CSVOpenReviewRevisionsReviews, CSVOpenReviewRevisions, CSVOpenReviewParagraphs
 from .sql_database import SQLOpenReviewArxiv, SQLOpenReviewAuthors, SQLOpenReviewPapersAuthors, \
     SQLOpenReviewPapersReviews, SQLOpenReviewPapersRevisions, SQLOpenReviewPapers, SQLOpenReviewReviews, \
-    SQLOpenReviewRevisionsReviews, SQLOpenReviewRevisions
+    SQLOpenReviewRevisionsReviews, SQLOpenReviewRevisions, SQLOpenReviewParagraphs
     
 class ResearchArcade:
     def __init__(self, db_type: str, config: dict):
@@ -17,6 +17,7 @@ class ResearchArcade:
             self.openreview_reviews = CSVOpenReviewReviews(**config)
             self.openreview_revisions_reviews = CSVOpenReviewRevisionsReviews(**config)
             self.openreview_revisions = CSVOpenReviewRevisions(**config)
+            self.openreview_paragraphs = CSVOpenReviewParagraphs(**config)
         elif db_type == 'sql':
             self.openreview_arxiv = SQLOpenReviewArxiv(**config)
             self.openreview_authors = SQLOpenReviewAuthors(**config)
@@ -27,6 +28,7 @@ class ResearchArcade:
             self.openreview_reviews = SQLOpenReviewReviews(**config)
             self.openreview_revisions_reviews = SQLOpenReviewRevisionsReviews(**config)
             self.openreview_revisions = SQLOpenReviewRevisions(**config)
+            self.openreview_paragraphs = SQLOpenReviewParagraphs(**config)
     
     def insert_node(self, table: str, node_features: dict):
         if table == 'openreview_authors':
@@ -37,6 +39,8 @@ class ResearchArcade:
             return self.openreview_reviews.insert_review(**node_features)
         elif table == 'openreview_revisions':
             return self.openreview_revisions.insert_revision(**node_features)
+        elif table == 'openreview_paragraphs':
+            return self.openreview_paragraphs.insert_paragraph(**node_features)
         else:
             print(f"Table {table} not found.")
             return None
@@ -50,6 +54,8 @@ class ResearchArcade:
             return self.openreview_reviews.delete_review_by_id(**primary_key)
         elif table == 'openreview_revisions':
             return self.openreview_revisions.delete_revision_by_id(**primary_key)
+        elif table == 'openreview_paragraphs':
+            return self.openreview_paragraphs.delete_paragraphs_by_paper_id(**primary_key)
         else:
             print(f"Table {table} not found.")
             return None
@@ -76,6 +82,8 @@ class ResearchArcade:
             return self.openreview_reviews.get_review_by_id(**primary_key)
         elif table == 'openreview_revisions':
             return self.openreview_revisions.get_revision_by_id(**primary_key)
+        elif table == 'openreview_paragraphs':
+            return self.openreview_paragraphs.get_paragraphs_by_paper_id(**primary_key)
         else:
             print(f"Table {table} not found.")
             return None
@@ -89,6 +97,8 @@ class ResearchArcade:
             return self.openreview_reviews.get_all_reviews(is_all_features=True)
         elif table == 'openreview_revisions':
             return self.openreview_revisions.get_all_revisions(is_all_features=True)
+        elif table == 'openreview_paragraphs':
+            return self.openreview_paragraphs.get_all_paragraphs(is_all_features=True)
         else:
             print(f"Table {table} not found.")
             return None
@@ -239,6 +249,10 @@ class ResearchArcade:
             self.openreview_revisions_reviews.construct_revisions_reviews_table(**config)
         elif table == "openreview_arxiv":
             self.openreview_arxiv.construct_openreview_arxiv_table_from_api(**config)
+        elif table == "openreview_paragraphs":
+            self.openreview_paragraphs.construct_paragraphs_table_from_api(**config)
+        else:
+            print(f"Table {table} does not support construction from API")
             
     def construct_table_from_csv(self, table: str, config: dict):
         if table == "openreview_papers":
@@ -259,6 +273,10 @@ class ResearchArcade:
             self.openreview_revisions_reviews.construct_revisions_reviews_table_from_csv(**config)
         elif table == "openreview_arxiv":
             self.openreview_arxiv.construct_openreview_arxiv_table_from_csv(**config)
+        elif table == "openreview_paragraphs":
+            self.openreview_paragraphs.construct_paragraphs_table_from_csv(**config)
+        else:
+            print(f"Table {table} does not support construction from CSV")
             
     def construct_table_from_json(self, table: str, config: dict):
         if table == "openreview_papers":
@@ -278,4 +296,8 @@ class ResearchArcade:
         elif table == "openreview_revisions_reviews":
             self.openreview_revisions_reviews.construct_revisions_reviews_table_from_json(**config)
         elif table == "openreview_arxiv":
-            self.openreview_arxiv.construct_openreview_arxiv_table_from_json(**config)         
+            self.openreview_arxiv.construct_openreview_arxiv_table_from_json(**config)
+        elif table == "openreview_paragraphs":
+            self.openreview_paragraphs.construct_paragraphs_table_from_json(**config)
+        else:
+            print(f"Table {table} does not support construction from JSON")       

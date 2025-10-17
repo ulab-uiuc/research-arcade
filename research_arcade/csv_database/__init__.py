@@ -7,6 +7,7 @@ from .csv_openreview_papers import CSVOpenReviewPapers
 from .csv_openreview_reviews import CSVOpenReviewReviews
 from .csv_openreview_revisions_reviews import CSVOpenReviewRevisionsReviews
 from .csv_openreview_revisions import CSVOpenReviewRevisions
+from .csv_openreview_paragraphs import CSVOpenReviewParagraphs
 
 __all__ = [
     'CSVOpenReviewArxiv',
@@ -18,4 +19,5 @@ __all__ = [
     'CSVOpenReviewReviews',
     'CSVOpenReviewRevisionsReviews',
     'CSVOpenReviewRevisions',
+    'CSVOpenReviewParagraphs'
 ]
