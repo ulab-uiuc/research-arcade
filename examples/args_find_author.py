@@ -3,7 +3,6 @@ import os
 import json  # Added missing json import
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-
 from paper_crawler.crawler_job import CrawlerJob
 
 import argparse
@@ -17,7 +16,7 @@ def parse_args():
                        help='File ID for input JSON file (default: 1)')
     
     return parser.parse_args()
-
+    
 
 
 def main():

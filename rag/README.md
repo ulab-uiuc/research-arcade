@@ -1,1 +1,0 @@
-This directory stores rag as a SOTA for comparison with our system.

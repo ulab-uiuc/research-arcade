@@ -2,7 +2,7 @@ import sys
 import os
 import json
 import argparse
-    
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from paper_crawler.crawler_job import CrawlerJob
@@ -12,7 +12,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--file_path", required=True, help="Path to JSON file with arxiv IDs")
     args = parser.parse_args()
-
+    
     cj = CrawlerJob(dest_dir="download")
 
     # Load JSON file properly

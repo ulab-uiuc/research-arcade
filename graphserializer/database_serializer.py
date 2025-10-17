@@ -35,7 +35,7 @@ class DatabaseSerializer:
         self.cur.execute(query, parameters)
         columns = [desc[0] for desc in self.cur.description]
         return [dict(zip(columns, row)) for row in self.cur.fetchall()]
-
+        
     def query_to_json_file(self, query, output_path, parameters=None, indent=2):
         """
         Execute a SQL query and write the result as a JSON file.
