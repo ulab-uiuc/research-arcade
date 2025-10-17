@@ -37,6 +37,17 @@ Tables are classified into **node tables** (colored) or **edge tables** (black a
     - **ArXiv**: citationship (paper-paper), authorship (paper-author), paragraph-of-paper (paper-paragraph), figure-of-paper (paper-figure), table-of-paper (paper-table), etc.
 - **CRUD Operations**: Full support for Create, Read, Update, and Delete operations on all entities
 
+### Environment Setup
+
+```python
+# create a new environment
+conda create -n research_arcade python=3.12
+conda activate research_arcade
+
+# install related libraries
+pip install -r requirements.txt
+```
+
 ### Quick Start
 
 #### Initialize with CSV Backend
