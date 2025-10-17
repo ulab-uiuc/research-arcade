@@ -48,7 +48,7 @@ conda activate research_arcade
 pip install -r requirements.txt
 ```
 
-### Quick Start
+### Backend Selection
 
 #### Initialize with CSV Backend
 
