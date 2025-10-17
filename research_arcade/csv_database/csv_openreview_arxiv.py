@@ -185,7 +185,7 @@ class CSVOpenReviewArxiv:
         else:
             print("No new openreview arxiv data to insert.")
     
-    def construct_openreview_arxiv_table_from_csv(self, venue: str, csv_file: str):
+    def construct_openreview_arxiv_table_from_csv(self, csv_file: str):
         print(f"Reading openreview arxiv data from {csv_file}...")
         import_df = pd.read_csv(csv_file)
         openreview_arxiv_data = import_df.to_dict(orient='records')
@@ -197,7 +197,7 @@ class CSVOpenReviewArxiv:
         else:
             print("No new openreview arxiv data to insert.")
     
-    def construct_openreview_arxiv_table_from_json(self, venue: str, json_file: str):
+    def construct_openreview_arxiv_table_from_json(self, json_file: str):
         print(f"Reading openreview arxiv data from {json_file}...")
         with open(json_file, 'r', encoding='utf-8') as f:
             openreview_arxiv_data = json.load(f)

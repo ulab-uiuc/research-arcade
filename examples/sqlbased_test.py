@@ -16,15 +16,15 @@ config = {
 research_arcade = ResearchArcade(db_type=db_type, config=config)
 
 ########## openreview_authors ##########
-# # construct_from_api
+# construct_from_api
 # config = {"venue": "ICLR.cc/2025/Conference"}
 # research_arcade.construct_table_from_api("openreview_authors", config)
 
-# # construct_from_csv
+# construct_from_csv
 # config = {"csv_file": "/home/jingjunx/openreview_benchmark/Code/paper-crawler/examples/csv_data/csv_openreview_author_example.csv"}
 # research_arcade.construct_table_from_csv("openreview_authors", config)
 
-# # construct_from_json
+# construct_from_json
 # config = {"json_file": "/home/jingjunx/openreview_benchmark/Code/paper-crawler/examples/json_data/json_openreview_author_example.json"}
 # research_arcade.construct_table_from_json("openreview_authors", config)
 

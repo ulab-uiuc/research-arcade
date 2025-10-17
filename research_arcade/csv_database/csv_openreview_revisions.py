@@ -28,7 +28,7 @@ class CSVOpenReviewRevisions:
             # 将content列从JSON字符串转换为字典
             if not df.empty:
                 df['content'] = df['content'].apply(
-                    lambda x: ast.literal_eval(x) if pd.notna(x) and x != '' else []
+                    lambda x: ast.literal_eval(str(x)) if pd.notna(x) and x != '' else []
                 )
             return df
     
@@ -204,7 +204,7 @@ class CSVOpenReviewRevisions:
             for data in tqdm(revision_data):
                 # 确保content是字典类型
                 if isinstance(data.get('content'), str):
-                    data['content'] = json.loads(data['content'])
+                    data['content'] = ast.literal_eval(data['content'])
                 self.insert_revision(**data)
         else:
             print("No new revision data to insert.")

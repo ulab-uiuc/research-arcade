@@ -363,7 +363,7 @@ class OpenReviewCrawler:
                 print(f"No submissions found for venue: {venue}")
                 return []
             else:
-                for submission in tqdm(submissions):
+                for submission in tqdm(submissions[0:5]):
                     # get paper openreview id
                     paper_id = submission.id
                     # get revisions and their time
@@ -435,7 +435,7 @@ class OpenReviewCrawler:
                 print(f"No submissions found for venue: {venue}")
                 return []
             else:
-                for submission in tqdm(submissions):
+                for submission in tqdm(submissions[0:5]):
                     # get paper decision and remove withdrawn papers
                     decision = submission.content["venueid"]["value"].split('/')[-1]
                     if decision == "Withdrawn_Submission":

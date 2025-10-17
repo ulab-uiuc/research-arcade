@@ -2,6 +2,7 @@ from ..openreview_utils.openreview_crawler import OpenReviewCrawler
 from tqdm import tqdm
 import pandas as pd
 import json
+import ast
 import os
 from pathlib import Path
 from typing import Optional
@@ -194,9 +195,9 @@ class CSVOpenReviewReviews:
         else:
             print("No new review data to insert.")
     
-    def construct_reviews_table_from_csv(self, csv_path: str):
-        print(f"Reading review data from {csv_path}...")
-        import_df = pd.read_csv(csv_path)
+    def construct_reviews_table_from_csv(self, csv_file: str):
+        print(f"Reading review data from {csv_file}...")
+        import_df = pd.read_csv(csv_file)
         review_data = import_df.to_dict(orient='records')
         
         if len(review_data) > 0:
@@ -204,14 +205,14 @@ class CSVOpenReviewReviews:
             for data in tqdm(review_data):
                 # 确保content是字典类型
                 if isinstance(data.get('content'), str):
-                    data['content'] = json.loads(data['content'])
+                    data['content'] = ast.literal_eval(data['content'])
                 self.insert_review(**data)
         else:
             print("No new review data to insert.")
     
-    def construct_reviews_table_from_json(self, json_path: str):
-        print(f"Reading review data from {json_path}...")
-        with open(json_path, 'r') as f:
+    def construct_reviews_table_from_json(self, json_file: str):
+        print(f"Reading review data from {json_file}...")
+        with open(json_file, 'r') as f:
             review_data = json.load(f)
         
         if len(review_data) > 0:

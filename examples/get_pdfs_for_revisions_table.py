@@ -53,9 +53,9 @@ def get_revision_pdf(venue, id, pdf_path, log_file):
 if __name__ == "__main__":
     client_v1 = openreview.Client(baseurl='https://api.openreview.net')
     client_v2 = openreview.api.OpenReviewClient(baseurl='https://api2.openreview.net')
-    venue = 'ICLR.cc/2017/conference'
-    pdf_dir = "/data/jingjunx/openreview_pdfs_2017/"
-    log_file = "failed_ids_revisions_2017.txt"
+    venue = 'ICLR.cc/2025/Conference'
+    pdf_dir = "/data/jingjunx/openreview_pdfs_2025/"
+    log_file = "failed_ids_revisions_2025.txt"
     start_idx = 0
     end_idx = 5
     

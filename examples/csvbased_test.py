@@ -13,6 +13,18 @@ config = {
 research_arcade = ResearchArcade(db_type=db_type, config=config)
 
 ########## openreview_authors ##########
+# construct_from_api
+# config = {"venue": "ICLR.cc/2025/Conference"}
+# research_arcade.construct_table_from_api("openreview_authors", config)
+
+# construct_from_csv
+# config = {"csv_file": "/home/jingjunx/openreview_benchmark/Code/paper-crawler/examples/csv_data/csv_openreview_author_example.csv"}
+# research_arcade.construct_table_from_csv("openreview_authors", config)
+
+# construct_from_json
+# config = {"json_file": "/home/jingjunx/openreview_benchmark/Code/paper-crawler/examples/json_data/json_openreview_author_example.json"}
+# research_arcade.construct_table_from_json("openreview_authors", config)
+
 # get_all_node_features
 # openreview_authors_df = research_arcade.get_all_node_features("openreview_authors")
 # print(len(openreview_authors_df))
@@ -59,11 +71,11 @@ research_arcade = ResearchArcade(db_type=db_type, config=config)
 # research_arcade.construct_table_from_api("openreview_papers", config)
 
 # construct_from_csv
-# config = {"csv_file": "/home/jingjunx/openreview_benchmark/Code/paper-crawler/examples/csv_data/csv_paper_example.csv"}
+# config = {"csv_file": "/home/jingjunx/openreview_benchmark/Code/paper-crawler/examples/csv_data/csv_openreview_paper_example.csv"}
 # research_arcade.construct_table_from_csv("openreview_papers", config)
 
 # construct_from_json
-# config = {"json_file": "/home/jingjunx/openreview_benchmark/Code/paper-crawler/examples/json_data/json_paper_example.json"}
+# config = {"json_file": "/home/jingjunx/openreview_benchmark/Code/paper-crawler/examples/json_data/json_openreview_paper_example.json"}
 # research_arcade.construct_table_from_json("openreview_papers", config)
 
 # get_all_node_features
@@ -105,6 +117,18 @@ research_arcade = ResearchArcade(db_type=db_type, config=config)
 # print(paper_features.to_dict(orient="records")[0])
 
 ########## openreview_reviews ##########
+# construct_from_api
+# config = {"venue": "ICLR.cc/2013/conference"}
+# research_arcade.construct_table_from_api("openreview_reviews", config)
+
+# construct_from_csv
+# config = {"csv_file": "/home/jingjunx/openreview_benchmark/Code/paper-crawler/examples/csv_data/csv_openreview_review_example.csv"}
+# research_arcade.construct_table_from_csv("openreview_reviews", config)
+
+# construct_from_json
+# config = {"json_file": "/home/jingjunx/openreview_benchmark/Code/paper-crawler/examples/json_data/json_openreview_review_example.json"}
+# research_arcade.construct_table_from_json("openreview_reviews", config)
+
 # get_all_node_features
 # openreview_reviews_df = research_arcade.get_all_node_features("openreview_reviews")
 # print(len(openreview_reviews_df))
@@ -148,6 +172,30 @@ research_arcade = ResearchArcade(db_type=db_type, config=config)
 # print(review_features.to_dict(orient="records")[0])
 
 ########## openreview_revisions ##########
+# construct_from_api
+# venue = "ICLR.cc/2025/Conference"
+# filter_list = ["Under review as a conference paper at ICLR 2025", "Published as a conference paper at ICLR 2025"]
+# pdf_dir = "/data/jingjunx/openreview_pdfs_2025/"
+# log_file = "./log/failed_ids_revisions_2025.txt"
+# venue = "ICLR.cc/2023/Conference"
+# filter_list = ["Under review as a conference paper at ICLR 2023", "Published as a conference paper at ICLR 2023"]
+# pdf_dir = "/data/jingjunx/openreview_pdfs_2023/"
+# log_file = "./log/failed_ids_revisions_2023.txt"
+# venue = "ICLR.cc/2017/conference"
+# filter_list = ["Under review as a conference paper at ICLR 2017", "Published as a conference paper at ICLR 2017"]
+# pdf_dir = "/data/jingjunx/openreview_pdfs_2017/"
+# log_file = "./log/failed_ids_revisions_2017.txt"
+# config = {"venue": venue, "filter_list": filter_list, "pdf_dir": pdf_dir, "log_file": log_file}
+# research_arcade.construct_table_from_api("openreview_revisions", config)
+
+# construct_from_csv
+# config = {"csv_file": "/home/jingjunx/openreview_benchmark/Code/paper-crawler/examples/csv_data/csv_openreview_revision_example.csv"}
+# research_arcade.construct_table_from_csv("openreview_revisions", config)
+
+# construct_from_json
+# config = {"json_file": "/home/jingjunx/openreview_benchmark/Code/paper-crawler/examples/json_data/json_openreview_revision_example.json"}
+# research_arcade.construct_table_from_json("openreview_revisions", config)
+
 # get_all_node_features
 # openreview_revisions_df = research_arcade.get_all_node_features("openreview_revisions")
 # print(len(openreview_revisions_df))
@@ -203,6 +251,22 @@ research_arcade = ResearchArcade(db_type=db_type, config=config)
 # print(revision_feature.to_dict(orient="records")[0])
 
 ########## openreview_arxiv ##########
+# construct_from_api
+# config = {"venue": "ICLR.cc/2017/conference"}
+# research_arcade.construct_table_from_api("openreview_arxiv", config)
+
+# construct_from_csv
+# config = {"csv_file": "/home/jingjunx/openreview_benchmark/Code/paper-crawler/examples/csv_data/csv_openreview_arxiv_example.csv"}
+# research_arcade.construct_table_from_csv("openreview_arxiv", config)
+
+# construct_from_json
+# config = {"json_file": "/home/jingjunx/openreview_benchmark/Code/paper-crawler/examples/json_data/json_openreview_arxiv_example.json"}
+# research_arcade.construct_table_from_json("openreview_arxiv", config)
+
+# get_all_edge_features
+# openreview_arxiv_df = research_arcade.get_all_edge_features("openreview_arxiv")
+# print(len(openreview_arxiv_df))
+
 # get_all_edge_features
 # openreview_arxiv_df = research_arcade.get_all_edge_features("openreview_arxiv")
 # print(len(openreview_arxiv_df))
@@ -235,6 +299,18 @@ research_arcade = ResearchArcade(db_type=db_type, config=config)
 # research_arcade.insert_edge("openreview_arxiv", openreview_arxiv)
 
 ########## openreview_papers_authors ##########
+# construct_from_api
+# config = {"venue": "ICLR.cc/2025/Conference"}
+# research_arcade.construct_table_from_api("openreview_papers_authors", config)
+
+# construct_from_csv
+# config = {"csv_file": "/home/jingjunx/openreview_benchmark/Code/paper-crawler/examples/csv_data/csv_openreview_papers_authors_example.csv"}
+# research_arcade.construct_table_from_csv("openreview_papers_authors", config)
+
+# construct_from_json
+# config = {"json_file": "/home/jingjunx/openreview_benchmark/Code/paper-crawler/examples/json_data/json_openreview_papers_authors_example.json"}
+# research_arcade.construct_table_from_json("openreview_papers_authors", config)
+
 # get_all_edge_features
 # openreview_papers_authors = research_arcade.get_all_edge_features("openreview_papers_authors")
 # print(len(openreview_papers_authors))
@@ -279,6 +355,18 @@ research_arcade = ResearchArcade(db_type=db_type, config=config)
 #     research_arcade.insert_edge("openreview_papers_authors", item)
 
 ########## openreview_papers_reviews ##########
+# construct_from_api
+# config = {"venue": "ICLR.cc/2017/conference"}
+# research_arcade.construct_table_from_api("openreview_papers_reviews", config)
+
+# construct_from_csv
+# config = {"csv_file": "/home/jingjunx/openreview_benchmark/Code/paper-crawler/examples/csv_data/csv_openreview_papers_reviews_example.csv"}
+# research_arcade.construct_table_from_csv("openreview_papers_reviews", config)
+
+# construct_from_json
+# config = {"json_file": "/home/jingjunx/openreview_benchmark/Code/paper-crawler/examples/json_data/json_openreview_papers_reviews_example.json"}
+# research_arcade.construct_table_from_json("openreview_papers_reviews", config)
+
 # get_all_edge_features
 # openreview_papers_reviews = research_arcade.get_all_edge_features("openreview_papers_reviews")
 # print(len(openreview_papers_reviews))
@@ -338,6 +426,18 @@ research_arcade = ResearchArcade(db_type=db_type, config=config)
 #     research_arcade.insert_edge("openreview_papers_reviews", item)
 
 ########## openreview_papers_revisions ##########
+# construct_from_api
+# config = {"venue": "ICLR.cc/2025/Conference"}
+# research_arcade.construct_table_from_api("openreview_papers_revisions", config)
+
+# construct_from_csv
+# config = {"csv_file": "/home/jingjunx/openreview_benchmark/Code/paper-crawler/examples/csv_data/csv_openreview_papers_revisions_example.csv"}
+# research_arcade.construct_table_from_csv("openreview_papers_revisions", config)
+
+# construct_from_json
+# config = {"json_file": "/home/jingjunx/openreview_benchmark/Code/paper-crawler/examples/json_data/json_openreview_papers_revisions_example.json"}
+# research_arcade.construct_table_from_json("openreview_papers_revisions", config)
+
 # get_all_edge_features
 # openreview_papers_revisions = research_arcade.get_all_edge_features("openreview_papers_revisions")
 # print(len(openreview_papers_revisions))
@@ -370,6 +470,22 @@ research_arcade = ResearchArcade(db_type=db_type, config=config)
 #     research_arcade.insert_edge("openreview_papers_revisions", item)
 
 ########## openreview_revisions_reviews ##########
+# construct_based_on_existing_tables
+# papers_reviews_df = research_arcade.get_all_edge_features("openreview_papers_reviews")
+# print(len(papers_reviews_df))
+# papers_revisions_df = research_arcade.get_all_edge_features("openreview_papers_revisions")
+# print(len(papers_revisions_df))
+# config = {"papers_reviews_df": papers_reviews_df, "papers_revisions_df": papers_revisions_df}
+# research_arcade.construct_table_from_api("openreview_revisions_reviews", config)
+
+# construct_from_csv
+# config = {"csv_file": "/home/jingjunx/openreview_benchmark/Code/paper-crawler/examples/csv_data/csv_openreview_revisions_reviews_example.csv"}
+# research_arcade.construct_table_from_csv("openreview_revisions_reviews", config)
+
+# construct_from_json
+# config = {"json_file": "/home/jingjunx/openreview_benchmark/Code/paper-crawler/examples/json_data/json_openreview_revisions_reviews_example.json"}
+# research_arcade.construct_table_from_json("openreview_revisions_reviews", config)
+
 # get_all_edge_features
 # openreview_revisions_reviews = research_arcade.get_all_edge_features("openreview_revisions_reviews")
 # print(len(openreview_revisions_reviews))
