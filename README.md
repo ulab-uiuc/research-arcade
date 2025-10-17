@@ -69,7 +69,7 @@ research_arcade = ResearchArcade(
 
 ### Core Operations
 
-The following examples demonstrate the core operations available in ResearchArcade. For comprehensive examples covering all supported tables and operations, please refer to the `examples` directory in the repository.
+The following examples demonstrate the core operations available in ResearchArcade. For comprehensive examples covering all supported tables and operations, please refer to the `examples/tutorials.ipynb` file in the repository.
 
 #### Table Construction
 
