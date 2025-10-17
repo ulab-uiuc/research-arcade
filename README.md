@@ -1,170 +1,149 @@
-# Open-Source Research Project in Python: A Template
+<h1 align="center">ResearchArcade: Graph Interface for Academic Tasks</h1>
 
-[![Python 3.10](https://img.shields.io/badge/python-3.10-blue.svg)](https://www.python.org/downloads/release/python-3109/)
-[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://pre-commit.com/)
-<a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
-[![Checked with mypy](https://www.mypy-lang.org/static/mypy_badge.svg)](https://mypy-lang.org/)
-[![bear-ified](https://raw.githubusercontent.com/beartype/beartype-assets/main/badge/bear-ified.svg)](https://beartype.readthedocs.io)
-[![Github Action](https://github.com/lwaekfjlk/python-project-template/actions/workflows/pytest.yml/badge.svg?branch=main)]()
+<div align="center">
 
-> [!NOTE]
-> This repo is continuously updating with more tools. Any contribution is welcome.
+</div>
 
-## ✨ Motivation
+# News
 
-To ensure high standards in engineering projects, we offer a standardized template specifically designed for open-source Python research projects. This template is an excellent choice if you:
+# Introduction
 
-1. Want to facilitate seamless collaboration and extension of your project by other researchers.
-2. Aim to bridge communication gaps among collaborators effectively.
-3. Seek to make rapid iterations with assurance that small code modifications won’t disrupt the overall project.
-4. Wish to reduce the frequency of frustrating runtime errors during experiments.
+ResearchArcade is a graph interface for academic tasks. It utilizes a coherent multi-table format with graph structures to organize data from different sources and multiple modalities. And it preserves temporal evolution at both the manuscript and community levels.
 
-## 🔨 Continuous Integration (CI) Workflow
+### Core Features
 
-Here's a clearer and more straightforward guideline of the steps for working with your codebase. If working in a small group or working on a simple project, some of the steps can be skipped.
+- **Multi-Source**: ArXiv (Academic Corpora) & OpenReview (Peer Reviews and Manuscript Revisions)
+- **Multi-Modal**: Figures and Tables in Academic Corpora
+- **Highly Structural and Heterogeneous**: Data can be intuitively viewed as heterogeneous graphs with multi-table format
+- **Dynamically Evolving**: Manuscript (Intra-paper) Level (e.g., Paper Revision) & Community (Inter-paper) Level (e.g., Paper Citation with Timestamp)
 
-1. **Create Issue**
+### Data Illustration
 
-   Before starting, open a new issue in the repository detailing what you plan to implement. Assign the issue to yourself.
+![data_description](./assets/gnn_llm.png)
 
-2. **Sync Repo**
+Tables are classified into **node tables** (colored) or **edge tables** (black and white). The blue (denoting the OpenReview part) or red (denoting the ArXiv part) columns represent the unique identification of each node or edge, and the remaining columns represent the features of the nodes or edges. The conversion from the multiple tables to heterogeneous graphs is straightforward.
 
-   Update your local repository to match the latest version of the remote repository.
+# Get started
 
-3. **Create Branch**
+### Supported Features
 
-   Create a new branch for your task. Name it appropriately based on the type of task, such as `feature/feature-name`, `bug/bug-name`, or `exp/exp-name`.
+- **Dual Backend Support**: CSV backend & PostgreSQL backend
+- **Comprehensive Data**
+    - **OpenReview**: Support for papers, authors, reviews, revisions, paragraphs, and their interconnections
+    - **ArXiv**: Support for papers, authors, paragraphs, sections, figures, tables and their interconnections
+- **Flexible Data Import**: Load data from OpenReview API, Arxiv API, CSV files, or JSON files
+- **Graph-like Operations**: Navigate relationships between entities
+    - **OpenReview**: authorship (paper-author), comment-under-paper (paper-review), revision-of-paper (paper-revision), revision-caused-by-review (revision-review), etc.
+    - **ArXiv**: citationship (paper-paper), authorship (paper-author), paragraph-of-paper (paper-paragraph), figure-of-paper (paper-figure), table-of-paper (paper-table), etc.
+- **CRUD Operations**: Full support for Create, Read, Update, and Delete operations on all entities
 
-4. **Implement Code**
+### Quick Start
 
-   Work on your task and make necessary changes to the codebase.
+#### Initialize with CSV Backend
 
-5. **Test Locally**
+```python
+from research_arcade import ResearchArcade
 
-   Run tests using tools like mypy, pytest, and pre-commit. Ensure all tests pass before proceeding.
-
-6. **Change Commit**
-
-   Add and commit your changes to the branch, then push the branch to the repository.
-
-7. **Create PR**
-
-   Open a Pull Request (PR) for the branch you've pushed.
-
-8. **Link PR to Issue**
-
-   In your PR, include "Closes #ISSUE_NUM" to link it to the original issue.
-
-9. **Pass Continuous Integration**
-
-   Ensure all GitHub Actions checks pass. If they fail, revise your code based on the errors reported.
-
-10. **Review PR Checklist**
-
-    Verify that all items in the PR checklist are completed, such as updating documentation or adding package requirements.
-
-11. **Ask for Code Review**
-
-    Invite a colleague to review your PR. One approved, Use the "Squash and Merge" option to merge your PR, ensuring a clean commit history.
-
-12. **Troubleshooting**
-
-    If you break down the commit history or main branch, contact the repository owner for assistance with `rebase` or other needed actions.
-
-## 💼 Template Structure
-
-The current project template supports the final package release of our codebase.
-
-```
-Template/
-│
-├── .github/                  # Contains GitHub related files like workflows
-├── docs/                     # Documentation for the project
-├── src/                      # Main package directory
-├── stubs/                    # Type stubs for static typing (for mypy strict mode)
-├── tests/                    # Test scripts and resources
-│
-├── .gitignore                # Specifies untracked files to ignore
-├── .pre-commit-config.yaml   # Configurations for pre-commit hooks
-├── poetry.lock               # Lock file generated by poetry for dependencies
-├── pyproject.toml            # Project metadata and tool configurations
+research_arcade = ResearchArcade(
+    db_type="csv",
+    config={"csv_dir": "/path/to/csv/data/"}
+)
 ```
 
-## ❓ Issue & Pull Request
+#### Initialize with SQL Backend
 
-An issue typically describes a new feature (`feature`), fixing an old bug (`bug`), launching a group of experiments (`exp`), or refactoring part of the code (`refactor`). Using different issue templates for different issues.
+```python
+from research_arcade import ResearchArcade
 
-A PR typically implements the content mentioned in one issue.
+research_arcade = ResearchArcade(
+    db_type="sql",
+    config={
+        "host": "localhost",
+        "dbname": "conference_db",
+        "user": "username",
+        "password": "password",
+        "port": "5432"
+    }
+)
+```
 
-Notice about the development:
+### Core Operations
 
-1. When creating an issue, assign the responsible member for fixing that if possible
-2. When creating a PR, make sure you uses `feature/feature-name`, `bug/bug-name`, `exp/exp-name` for its branch
-3. When finishing one PR, make sure all the github action is passed and all the checks are done.
-4. When merging one PR, make sure using `squash and merge` instead of `merge a pull request`.
-5. Avoid making any direct commit to the `main` branch and try to avoid any `--force` push to any branch unless you are pretty sure about that.
+The following examples demonstrate the core operations available in ResearchArcade. For comprehensive examples covering all supported tables and operations, please refer to the `examples` directory in the repository.
 
-## 👷 Type Checking
+#### Table Construction
 
-- Tools
+```python
+# From API
+config = {"venue": "ICLR.cc/2025/Conference"}
+research_arcade.construct_table_from_api("openreview_papers", config)
 
-  - static type checking (`mypy`)
+# From CSV file
+config = {"csv_file": "/path/to/papers.csv"}
+research_arcade.construct_table_from_csv("openreview_papers", config)
 
-  - dynamic type checking (`beartype`)
+# From JSON file
+config = {"json_file": "/path/to/papers.json"}
+research_arcade.construct_table_from_json("openreview_papers", config)
+```
 
-- Guidelines
-  - Run `mypy --strict ./` under the root of the current repo to test the static type.
+#### Query Operations
 
-## 🏅️ Unit Testing
+```python
+# Get all entities
+papers_df = research_arcade.get_all_node_features("openreview_papers")
 
-- Tools
+# Get specific entity by ID
+paper_id = {"paper_openreview_id": "zGej22CBnS"}
+paper = research_arcade.get_node_features_by_id("openreview_papers", paper_id)
 
-  - testing code components based on testing function (`pytest`)
+# Get relationships
+paper_authors = research_arcade.get_neighborhood("openreview_papers_authors", paper_id)
+```
 
-- Guidelines
-  - Run `pytest` under the root of the current repo to check unit test results.
+#### Node Manipulation
 
-## 🧐 Code Spell Checking
+```python
+# Insert new node
+new_author = {
+    'venue': 'ICLR.cc/2025/Conference',
+    'author_openreview_id': '~john_doe1',
+    'author_full_name': 'John Doe',
+    'email': 'john@university.edu',
+    'affiliation': 'University Name'
+}
+research_arcade.insert_node("openreview_authors", node_features=new_author)
 
-- Tools
+# Update existing node
+updated_paper = {
+    'paper_openreview_id': 'paper123',
+    'title': 'Updated Title',
+    # ... other fields
+}
+research_arcade.update_node("openreview_papers", node_features=updated_paper)
 
-  - code spell checking (`codespell`)
+# Delete a node
+review_id = {"review_openreview_id": "review456"}
+research_arcade.delete_node_by_id("openreview_reviews", review_id)
+```
 
-- Guidelines
-  - Commonly need to ignore part of the files in the repository like `/data`.
+#### Edge Manipulation
 
-## 🪝 Pre-commit Hook
+```python
+# Create an edge
+paper_author_edge = {
+    'venue': 'ICLR.cc/2025/Conference',
+    'paper_openreview_id': 'paper123',
+    'author_openreview_id': '~john_doe1'
+}
+research_arcade.insert_edge("openreview_papers_authors", paper_author_edge)
 
-- Tools
+# Delete an edge
+research_arcade.delete_edge_by_id("openreview_papers_authors", paper_author_edge)
+```
 
-  - code formatting (`prettier`)
+# Contribution
 
-  - import package sorting (`isort`)
+We’re working on extending support for data and operations. Contributions welcome!
 
-  - ipynb output clear (`nbstripout`)
-
-  - code bug checking (`ruff`)
-
-- Guidelines
-
-  - Run `python -m pip install pre-commit` to install `pre-commit`
-
-  - Run `pre-commit install` to allow hooking pre-commit with any `git commit` commands.
-
-## 🧑‍💼 Dependency Management
-
-- Tools
-
-  - We utilize `poetry` to support the dependency requirements. Dependency for different usage of the repo can be defined separately in `pyproject.toml`.
-
-- Guidelines
-
-  - Run `pip install poetry` to finish the installation of poetry.
-
-  - Create `conda environment` with a specified Python version
-
-  - Run `poetry install` to install required dependencies.
-
-## ❤️ Contribution
-
-I welcome all kinds of contributions, e.g. adding more tools, better practices, and discussion on trade-offs.
+# Citation
