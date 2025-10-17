@@ -2,6 +2,7 @@ from ..openreview_utils.openreview_crawler import OpenReviewCrawler
 from tqdm import tqdm
 import pandas as pd
 import json
+import os
 import psycopg2
 from psycopg2.extras import Json
 
@@ -32,7 +33,6 @@ class SQLOpenReviewPapers:
         );
         """
         self.cur.execute(create_table_sql)
-        print("Table 'openreview_papers' created successfully.")
         
     def insert_paper(self, venue: str, paper_openreview_id: str, title: str, abstract: str,
                     paper_decision: str, paper_pdf_link: str) -> None | tuple:
@@ -240,6 +240,9 @@ class SQLOpenReviewPapers:
             print("No new paper data to insert.")
             
     def construct_papers_table_from_csv(self, csv_file: str):
+        if not os.path.exists(csv_file):
+            print(f"File {csv_file} not exists")
+            return False
         # read paper data from csv file
         print(f"Reading paper data from {csv_file}...")
         paper_data = pd.read_csv(csv_file).to_dict(orient='records')
@@ -249,10 +252,15 @@ class SQLOpenReviewPapers:
             print("Inserting data into 'openreview_papers' table...")
             for data in tqdm(paper_data):
                 self.insert_paper(**data)
+            return True
         else:
             print("No new paper data to insert.")
+            return False
             
     def construct_papers_table_from_json(self, json_file: str):
+        if not os.path.exists(json_file):
+            print(f"File {json_file} not exists")
+            return False
         # read paper data from json file
         print(f"Reading paper data from {json_file}...")
         with open(json_file, 'r', encoding='utf-8') as f:
@@ -263,8 +271,10 @@ class SQLOpenReviewPapers:
             print("Inserting data into 'openreview_papers' table...")
             for data in tqdm(paper_data):
                 self.insert_paper(**data)
+            return True
         else:
             print("No new paper data to insert.")
+            return False
             
     def _clean_string(self, s: str) -> str:
         if isinstance(s, str):

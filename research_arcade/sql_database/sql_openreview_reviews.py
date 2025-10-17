@@ -2,6 +2,7 @@ from ..openreview_utils.openreview_crawler import OpenReviewCrawler
 from tqdm import tqdm
 import pandas as pd
 import json
+import ast
 import psycopg2
 from psycopg2.extras import Json
 
@@ -275,10 +276,10 @@ class SQLOpenReviewReviews:
         else:
             print("No new review data to insert.")
             
-    def construct_reviews_table_from_csv(self, csv_path: str):
+    def construct_reviews_table_from_csv(self, csv_file: str):
         # read review data from csv
-        print(f"Reading review data from {csv_path}...")
-        review_data = pd.read_csv(csv_path).to_dict(orient='records')
+        print(f"Reading review data from {csv_file}...")
+        review_data = pd.read_csv(csv_file).to_dict(orient='records')
         
         # insert data into openreview_reviews  table
         if len(review_data) > 0:
@@ -289,10 +290,10 @@ class SQLOpenReviewReviews:
         else:
             print("No new review data to insert.")
             
-    def construct_reviews_table_from_json(self, json_path: str):
+    def construct_reviews_table_from_json(self, json_file: str):
         # read review data from json
-        print(f"Reading review data from {json_path}...")
-        with open(json_path, 'r') as f:
+        print(f"Reading review data from {json_file}...")
+        with open(json_file, 'r') as f:
             review_data = json.load(f)
         
         # insert data into openreview_reviews  table

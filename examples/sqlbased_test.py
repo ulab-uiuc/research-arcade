@@ -1,6 +1,5 @@
 import sys
 from pathlib import Path
-# 添加项目根目录到路径
 project_root = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(project_root))
 from research_arcade import ResearchArcade 
@@ -17,6 +16,18 @@ config = {
 research_arcade = ResearchArcade(db_type=db_type, config=config)
 
 ########## openreview_authors ##########
+# # construct_from_api
+# config = {"venue": "ICLR.cc/2025/Conference"}
+# research_arcade.construct_table_from_api("openreview_authors", config)
+
+# # construct_from_csv
+# config = {"csv_file": "/home/jingjunx/openreview_benchmark/Code/paper-crawler/examples/csv_data/csv_author_example.csv"}
+# research_arcade.construct_table_from_csv("openreview_authors", config)
+
+# # construct_from_json
+# config = {"json_file": "/home/jingjunx/openreview_benchmark/Code/paper-crawler/examples/json_data/json_author_example.json"}
+# research_arcade.construct_table_from_json("openreview_authors", config)
+
 # get_all_node_features
 # openreview_authors_df = research_arcade.get_all_node_features("openreview_authors")
 # print(len(openreview_authors_df))
@@ -58,6 +69,18 @@ research_arcade = ResearchArcade(db_type=db_type, config=config)
 # print(author_features.to_dict(orient="records")[0])
 
 ########## openreview_papers ##########
+# construct_from_api
+# config = {"venue": "ICLR.cc/2025/Conference"}
+# research_arcade.construct_table_from_api("openreview_papers", config)
+
+# construct_from_csv
+# config = {"csv_file": "/home/jingjunx/openreview_benchmark/Code/paper-crawler/examples/csv_data/csv_paper_example.csv"}
+# research_arcade.construct_table_from_csv("openreview_papers", config)
+
+# construct_from_json
+# config = {"json_file": "/home/jingjunx/openreview_benchmark/Code/paper-crawler/examples/json_data/json_paper_example.json"}
+# research_arcade.construct_table_from_json("openreview_papers", config)
+
 # get_all_node_features
 # openreview_papers_df = research_arcade.get_all_node_features("openreview_papers")
 # print(len(openreview_papers_df))
@@ -97,6 +120,18 @@ research_arcade = ResearchArcade(db_type=db_type, config=config)
 # print(paper_features.to_dict(orient="records")[0])
 
 ########## openreview_reviews ##########
+# construct_from_api
+# config = {"venue": "ICLR.cc/2013/conference"}
+# research_arcade.construct_table_from_api("openreview_reviews", config)
+
+# construct_from_csv
+# config = {"csv_file": "/home/jingjunx/openreview_benchmark/Code/paper-crawler/examples/csv_data/csv_review_example.csv"}
+# research_arcade.construct_table_from_csv("openreview_reviews", config)
+
+# construct_from_json
+# config = {"json_file": "/home/jingjunx/openreview_benchmark/Code/paper-crawler/examples/json_data/json_review_example.json"}
+# research_arcade.construct_table_from_json("openreview_reviews", config)
+
 # get_all_node_features
 # openreview_reviews_df = research_arcade.get_all_node_features("openreview_reviews")
 # print(len(openreview_reviews_df))

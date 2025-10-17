@@ -219,3 +219,63 @@ class ResearchArcade:
         else:
             print(f"Table {table} not found.")
             return None
+        
+    def construct_table_from_api(self, table: str, config: dict):
+        if table == "openreview_papers":
+            self.openreview_papers.construct_papers_table_from_api(**config)
+        elif table == "openreview_authors":
+            self.openreview_authors.construct_authors_table_from_api(**config)
+        elif table == "openreview_reviews":
+            self.openreview_reviews.construct_reviews_table_from_api(**config)
+        elif table == "openreview_revisions":
+            self.openreview_revisions.construct_revisions_table_from_api(**config)
+        elif table == "openreview_papers_authors":
+            self.openreview_papers_authors.construct_papers_authors_table_from_api(**config)
+        elif table == "openreview_papers_reviews":
+            self.openreview_papers_reviews.construct_papers_reviews_table_from_api(**config)
+        elif table == "openreview_papers_revisions":
+            self.openreview_papers_revisions.construct_papers_revisions_table_from_api(**config)
+        elif table == "openreview_revisions_reviews":
+            self.openreview_revisions_reviews.construct_revisions_reviews_table(**config)
+        elif table == "openreview_arxiv":
+            self.openreview_arxiv.construct_openreview_arxiv_table_from_api(**config)
+            
+    def construct_table_from_csv(self, table: str, config: dict):
+        if table == "openreview_papers":
+            self.openreview_papers.construct_papers_table_from_csv(**config)
+        elif table == "openreview_authors":
+            self.openreview_authors.construct_authors_table_from_csv(**config)
+        elif table == "openreview_reviews":
+            self.openreview_reviews.construct_reviews_table_from_csv(**config)
+        elif table == "openreview_revisions":
+            self.openreview_revisions.construct_revisions_table_from_csv(**config)
+        elif table == "openreview_papers_authors":
+            self.openreview_papers_authors.construct_papers_authors_table_from_csv(**config)
+        elif table == "openreview_papers_reviews":
+            self.openreview_papers_reviews.construct_papers_reviews_table_from_csv(**config)
+        elif table == "openreview_papers_revisions":
+            self.openreview_papers_revisions.construct_papers_revisions_table_from_csv(**config)
+        elif table == "openreview_revisions_reviews":
+            self.openreview_revisions_reviews.construct_revisions_reviews_table_from_csv(**config)
+        elif table == "openreview_arxiv":
+            self.openreview_arxiv.construct_openreview_arxiv_table_from_csv(**config)
+            
+    def construct_table_from_json(self, table: str, config: dict):
+        if table == "openreview_papers":
+            self.openreview_papers.construct_papers_table_from_json(**config)
+        elif table == "openreview_authors":
+            self.openreview_authors.construct_authors_table_from_json(**config)
+        elif table == "openreview_reviews":
+            self.openreview_reviews.construct_reviews_table_from_json(**config)
+        elif table == "openreview_revisions":
+            self.openreview_revisions.construct_revisions_table_from_json(**config)
+        elif table == "openreview_papers_authors":
+            self.openreview_papers_authors.construct_papers_authors_table_from_json(**config)
+        elif table == "openreview_papers_reviews":
+            self.openreview_papers_reviews.construct_papers_reviews_table_from_json(**config)
+        elif table == "openreview_papers_revisions":
+            self.openreview_papers_revisions.construct_papers_revisions_table_from_json(**config)
+        elif table == "openreview_revisions_reviews":
+            self.openreview_revisions_reviews.construct_revisions_reviews_table_from_json(**config)
+        elif table == "openreview_arxiv":
+            self.openreview_arxiv.construct_openreview_arxiv_table_from_json(**config)         

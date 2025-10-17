@@ -1,5 +1,14 @@
 import openreview
+import arxiv
+from arxiv import UnexpectedEmptyPageError
 import os
+import re
+import ast
+import time
+import json
+import pandas as pd
+from tqdm import tqdm
+from datetime import datetime
 from .pdf_utils import extract_paragraphs_from_pdf_new
 
 class OpenReviewCrawler:
@@ -44,10 +53,11 @@ class OpenReviewCrawler:
                     # get paper's pdf
                     pdf = submission.content["pdf"]
                     paper_data.append({
+                            "venue": venue,
                             "paper_openreview_id": paper_id,
                             "title": title,
                             "abstract": abstract,
-                            "pdf_link": pdf,
+                            "paper_pdf_link": pdf,
                             "paper_decision": decision
                         })
                 return paper_data
@@ -79,7 +89,7 @@ class OpenReviewCrawler:
                             "paper_openreview_id": paper_id,
                             "title": title,
                             "abstract": abstract,
-                            "pdf_link": pdf,
+                            "paper_pdf_link": pdf,
                             "paper_decision": decision
                         })
                 return paper_data
@@ -101,13 +111,16 @@ class OpenReviewCrawler:
                         # get abstract
                         abstract = submission.content["abstract"]["value"]
                         # get paper's pdf
-                        pdf = submission.content["pdf"]["value"]
+                        if "pdf" in submission.content:
+                            pdf = submission.content["pdf"]["value"]
+                        else:
+                            pdf = ""
                         paper_data.append({
                             "venue": venue,
                             "paper_openreview_id": paper_id,
                             "title": title,
                             "abstract": abstract,
-                            "pdf_link": pdf,
+                            "paper_pdf_link": pdf,
                             "paper_decision": decision
                         })
                 return paper_data
@@ -120,79 +133,98 @@ class OpenReviewCrawler:
         author_set = set()
         if "2023" in venue or "2022" in venue or "2021" in venue or "2020" in venue or "2019" in venue or "2018" in venue:
             submissions = self.client_v1.get_all_notes(invitation=f'{venue}/-/Blind_Submission')
+            if submissions is None:
+                print(f"No submissions found for venue: {venue}")
+                return []
+            else:
+                for submission in tqdm(submissions):
+                    author_ids = submission.content["authorids"]
+                    author_set.update(author_ids)
+                # get profiles
+                author_profiles = openreview.tools.get_profiles(self.client_v1, author_set)
         elif "2017" in venue or "2014" in venue or "2013" in venue:
             submissions = self.client_v1.get_all_notes(invitation=f'{venue}/-/submission')
+            if submissions is None:
+                print(f"No submissions found for venue: {venue}")
+                return []
+            else:
+                for submission in tqdm(submissions):
+                    if "authorids" in submission.content:
+                        author_ids = submission.content["authorids"]
+                        author_set.update(author_ids)
+                # get profiles
+                author_profiles = openreview.tools.get_profiles(self.client_v1, author_set)
         else:
             submissions = self.client_v2.get_all_notes(invitation=f'{venue}/-/Submission')
-        if submissions is None:
-            print(f"No submissions found for venue: {venue}")
-            return []
-        else:
-            for submission in tqdm(submissions):
-                author_ids = submission.content["authorids"]
-                author_set.update(author_ids)
-            # get profiles
-            author_profiles = openreview.tools.get_profiles(self.client_v1, author_set)
-            for profile in tqdm(author_profiles):
-                # get author fullname and author openreview id
-                all_names = profile.content["names"]
-                author_id = ""
-                fullname = ""
-                for name in all_names:
-                    if name.get("preferred") is not None:
-                        if name["preferred"] == True:
-                            author_id = name["username"]
+            if submissions is None:
+                print(f"No submissions found for venue: {venue}")
+                return []
+            else:
+                for submission in tqdm(submissions):
+                    author_ids = submission.content["authorids"]["value"]
+                    author_set.update(author_ids)
+                # get profiles
+                author_profiles = openreview.tools.get_profiles(self.client_v2, author_set)
+        for profile in tqdm(author_profiles):
+            # get author fullname and author openreview id
+            all_names = profile.content["names"]
+            author_id = ""
+            fullname = ""
+            for name in all_names:
+                if name.get("preferred") is not None:
+                    if name["preferred"] == True:
+                        author_id = name["username"]
+                        fullname = name["fullname"]
+                        break
+                else:
+                    if name.get("username") is not None:
+                        author_id = name["username"]
+                        try:
                             fullname = name["fullname"]
                             break
+                        except:
+                            fullname = author_id
                     else:
-                        if name.get("username") is not None:
-                            author_id = name["username"]
-                            try:
-                                fullname = name["fullname"]
-                                break
-                            except:
-                                fullname = author_id
-                        else:
-                            pass
-                if author_id == "": # remove the author with no username
-                    author_id = profile.id
-                # get email
+                        pass
+            if author_id == "": # remove the author with no username
+                author_id = profile.id
+            # get email
+            try:
+                email = profile.content["preferredEmail"]
+            except:
                 try:
-                    email = profile.content["preferredEmail"]
+                    email = profile.content["emailsConfirmed"][0]
                 except:
                     try:
-                        email = profile.content["emailsConfirmed"][0]
+                        email = profile.content["emails"][0]
                     except:
-                        try:
-                            email = profile.content["emails"][0]
-                        except:
-                            email = ""
-                # get affiliation
-                try:
-                    affiliation = profile.content["history"][0]["institution"]["name"]
-                except:
-                    affiliation = ""
-                # get homepage
-                if profile.content.get("homepage") is not None:
-                    homepage = profile.content["homepage"]
-                else:
-                    homepage = ""
-                # get dblp
-                if profile.content.get("dblp") is not None:
-                    dblp = profile.content["dblp"]
-                else:
-                    dblp = ""
-                    
-                author_data.append({
-                    "venue": venue,
-                    "author_openreview_id": author_id,
-                    "author_full_name": fullname,
-                    "email": email,
-                    "affiliation": affiliation,
-                    "homepage": homepage,
-                    "dblp": dblp
-                })
-            return author_data
+                        email = ""
+            # get affiliation
+            try:
+                affiliation = profile.content["history"][0]["institution"]["name"]
+            except:
+                affiliation = ""
+            # get homepage
+            if profile.content.get("homepage") is not None:
+                homepage = profile.content["homepage"]
+            else:
+                homepage = ""
+            # get dblp
+            if profile.content.get("dblp") is not None:
+                dblp = profile.content["dblp"]
+            else:
+                dblp = ""
+                
+            author_data.append({
+                "venue": venue,
+                "author_openreview_id": author_id,
+                "author_full_name": fullname,
+                "email": email,
+                "affiliation": affiliation,
+                "homepage": homepage,
+                "dblp": dblp
+            })
+        return author_data
         
     def crawl_review_data_from_api(self, venue: str):
         review_data = []
@@ -281,7 +313,7 @@ class OpenReviewCrawler:
                 return []
             else:
                 for submission in tqdm(submissions):
-                    if review.content["venueid"]["value"].split('/')[-1] == "Withdrawn_Submission":
+                    if submission.content["venueid"]["value"].split('/')[-1] == "Withdrawn_Submission":
                         continue
                     else:
                         reviews = submission.details["replies"]
