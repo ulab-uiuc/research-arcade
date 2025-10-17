@@ -6,8 +6,7 @@ class ResearchArcade:
     def __init__(self, has_csv_dataset, csv_dir_path, has_sql_dataset, sql_args):
         if has_csv_dataset:
             self.csv_dir_path = csv_dir_path
-            # self.arxiv_csv_dataset = ArxivCSVDataset(self.csv_dir_path)
-
+        
         if has_sql_dataset:
             host, port, dbname, user, password, autocommit = (
                 sql_args.host,
