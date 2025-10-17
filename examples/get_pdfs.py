@@ -55,7 +55,7 @@ if __name__ == "__main__":
     client_v2 = openreview.api.OpenReviewClient(baseurl='https://api2.openreview.net')
     venue = 'ICLR.cc/2017/conference'
     pdf_dir = "/data/jingjunx/openreview_pdfs_2017/"
-    log_file = "./download_failed_ids_revisions_2017.txt"
+    log_file = "./download_failed_ids_revisions_2017.log"
     start_idx = 0
     end_idx = 5
     

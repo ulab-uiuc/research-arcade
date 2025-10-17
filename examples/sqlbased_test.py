@@ -179,16 +179,16 @@ research_arcade = ResearchArcade(db_type=db_type, config=config)
 # venue = "ICLR.cc/2025/Conference"
 # filter_list = ["Under review as a conference paper at ICLR 2025", "Published as a conference paper at ICLR 2025"]
 # pdf_dir = "/data/jingjunx/openreview_pdfs_2025/"
-# log_file = "./log/failed_ids_revisions_2025.txt"
+# log_file = "./log/failed_ids_revisions_2025.log"
 # venue = "ICLR.cc/2023/Conference"
 # filter_list = ["Under review as a conference paper at ICLR 2023", "Published as a conference paper at ICLR 2023"]
 # pdf_dir = "/data/jingjunx/openreview_pdfs_2023/"
-# log_file = "./log/failed_ids_revisions_2023.txt"
+# log_file = "./log/failed_ids_revisions_2023.log"
 # config = {"venue": venue, "filter_list": filter_list, "pdf_dir": pdf_dir, "log_file": log_file}
 # venue = "ICLR.cc/2017/conference"
 # filter_list = ["Under review as a conference paper at ICLR 2017", "Published as a conference paper at ICLR 2017"]
 # pdf_dir = "/data/jingjunx/openreview_pdfs_2017/"
-# log_file = "./log/failed_ids_revisions_2017.txt"
+# log_file = "./log/failed_ids_revisions_2017.log"
 # config = {"venue": venue, "filter_list": filter_list, "pdf_dir": pdf_dir, "log_file": log_file}
 # research_arcade.construct_table_from_api("openreview_revisions", config)
 
@@ -259,16 +259,16 @@ research_arcade = ResearchArcade(db_type=db_type, config=config)
 # venue = "ICLR.cc/2025/Conference"
 # filter_list = ["Under review as a conference paper at ICLR 2025", "Published as a conference paper at ICLR 2025"]
 # pdf_dir = "/data/jingjunx/openreview_pdfs_2025/"
-# log_file = "./log/failed_ids_revisions_2025.txt"
+# log_file = "./log/failed_ids_revisions_2025.log"
 # venue = "ICLR.cc/2023/Conference"
 # filter_list = ["Under review as a conference paper at ICLR 2023", "Published as a conference paper at ICLR 2023"]
 # pdf_dir = "/data/jingjunx/openreview_pdfs_2023/"
-# log_file = "./log/failed_ids_revisions_2023.txt"
+# log_file = "./log/failed_ids_revisions_2023.log"
 # config = {"venue": venue, "filter_list": filter_list, "pdf_dir": pdf_dir, "log_file": log_file}
 # venue = "ICLR.cc/2017/conference"
 # filter_list = ["Under review as a conference paper at ICLR 2017", "Published as a conference paper at ICLR 2017"]
 # pdf_dir = "/data/jingjunx/openreview_pdfs_2017/"
-# log_file = "./log/failed_ids_revisions_2017.txt"
+# log_file = "./log/failed_ids_revisions_2017.log"
 # config = {"venue": venue, "filter_list": filter_list, "pdf_dir": pdf_dir, "log_file": log_file, "is_paper": True, "is_revision": True, "is_pdf_delete": False}
 # research_arcade.construct_table_from_api("openreview_paragraphs", config)
 
