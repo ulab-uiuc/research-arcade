@@ -3,7 +3,7 @@ import os
 from typing import List, Optional, Tuple
 from pathlib import Path
 import json
-
+from ..arxiv_utils.arxiv_crawler import ArxivCrawler
 
 class CSVArxivAuthors:
     def __init__(self, csv_path):
@@ -13,8 +13,8 @@ class CSVArxivAuthors:
         Path(csv_path).parent.mkdir(parents=True, exist_ok=True)
         if not os.path.exists(csv_path):
             self.create_authors_table()
-        self.arxiv_crawler = ArxivCrawler()
-    
+        
+
 
     def create_authors_table(self):
         if not os.path.exists(self.csv_path):

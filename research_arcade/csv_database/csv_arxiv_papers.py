@@ -17,7 +17,7 @@ class CSVArxivPapers:
         Path(csv_path).parent.mkdir(parents=True, exist_ok=True)
         if not os.path.exists(csv_path):
             self.create_papers_table()
-        self.arxiv_crawler = ArxivCrawler()
+        # self.arxiv_crawler = ArxivCrawler()
     
     def create_papers_table(self):
         """Create papers CSV with appropriate columns."""

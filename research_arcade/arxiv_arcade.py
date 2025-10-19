@@ -1,37 +1,39 @@
-from .csv_database import (
-    CSVArxivAuthors,
-    CSVArxivCategory,
-    CSVArxivCitation,
-    CSVArxivFigure,
-    CSVArxivPaperAuthor,
-    CSVArxivPaperCategory,
-    CSVArxivPaperFigure,
-    CSVArxivPaperTable,
-    CSVArxivPapers,
-    CSVArxivParagraphReference,
-    CSVArxivParagraphs,
-    CSVArxivSections,
-    CSVArxivTable,
-)
+from .csv_database.csv_arxiv_authors import CSVArxivAuthors
+from .csv_database.csv_arxiv_categories import CSVArxivCategory
+from .csv_database.csv_arxiv_citations import CSVArxivCitation
+from .csv_database.csv_arxiv_figures import CSVArxivFigure
+from .csv_database.csv_arxiv_paper_authors import CSVArxivPaperAuthor
+from .csv_database.csv_arxiv_paper_categories import CSVArxivPaperCategory
+from .csv_database.csv_arxiv_paper_figures import CSVArxivPaperFigure
+from .csv_database.csv_arxiv_paper_tables import CSVArxivPaperTable
+from .csv_database.csv_arxiv_papers import CSVArxivPapers
+from .csv_database.csv_arxiv_paragraph_references import CSVArxivParagraphReference
+from .csv_database.csv_arxiv_paragraphs import CSVArxivParagraphs
+from .csv_database.csv_arxiv_sections import CSVArxivSections
+from .csv_database.csv_arxiv_tables import CSVArxivTable
+
+
 
 class ArxivArcade:
     def __init__(self, config: dict):
         # Nodes
-        self.arxiv_authors = CSVArxivAuthors(**config)
-        self.arxiv_categories = CSVArxivCategory(**config)
-        self.arxiv_figures = CSVArxivFigure(**config)
-        self.arxiv_tables = CSVArxivTable(**config)
-        self.arxiv_papers = CSVArxivPapers(**config)
-        self.arxiv_paragraphs = CSVArxivParagraphs(**config)
-        self.arxiv_sections = CSVArxivSections(**config)
+        csv_dir = config['csv_dir']
+        paper_dir = config['paper_dir']
+        self.arxiv_authors = CSVArxivAuthors(csv_path=f"{csv_dir}/authors.csv")
+        self.arxiv_categories = CSVArxivCategory(csv_path=f"{csv_dir}/categories.csv")
+        self.arxiv_figures = CSVArxivFigure(csv_path=f"{csv_dir}/figures.csv")
+        self.arxiv_tables = CSVArxivTable(csv_path=f"{csv_dir}/tables.csv")
+        self.arxiv_papers = CSVArxivPapers(csv_path=f"{csv_dir}/papers.csv")
+        self.arxiv_paragraphs = CSVArxivParagraphs(csv_path=f"{csv_dir}/paragraphs.csv")
+        self.arxiv_sections = CSVArxivSections(csv_path=f"{csv_dir}/sections.csv")
 
         # Edges
-        self.arxiv_citation = CSVArxivCitation(**config)
-        self.arxiv_paper_author = CSVArxivPaperAuthor(**config)
-        self.arxiv_paper_category = CSVArxivPaperCategory(**config)
-        self.arxiv_paper_figure = CSVArxivPaperFigure(**config)
-        self.arxiv_paper_table = CSVArxivPaperTable(**config)
-        self.arxiv_paragraph_reference = CSVArxivParagraphReference(**config)
+        self.arxiv_citation = CSVArxivCitation(csv_path=f"{csv_dir}/citations.csv")
+        self.arxiv_paper_author = CSVArxivPaperAuthor(csv_path=f"{csv_dir}/paper_authors.csv")
+        self.arxiv_paper_category = CSVArxivPaperCategory(csv_path=f"{csv_dir}/paper_category.csv")
+        self.arxiv_paper_figure = CSVArxivPaperFigure(csv_path=f"{csv_dir}/paper_figures.csv")
+        self.arxiv_paper_table = CSVArxivPaperTable(csv_path=f"{csv_dir}/paper_tables.csv")
+        self.arxiv_paragraph_reference = CSVArxivParagraphReference(csv_path=f"{csv_dir}/paragraph_references.csv")
 
     # -------------------------
     # Node CRUD
@@ -308,6 +310,7 @@ class ArxivArcade:
             print(f"Table {table} not found.")
             return None
 
-    # TODO: obtain the whole hetero graph of the community based on the dataset.
+    # TODO: obtain the whole hetero graph of the community based on the dataset.、
+    # Format of graph?
     def get_hetero_graph(self):
         pass

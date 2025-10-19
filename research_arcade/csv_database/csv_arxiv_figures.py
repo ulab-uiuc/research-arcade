@@ -11,7 +11,7 @@ class CSVArxivFigure:
         Path(csv_path).parent.mkdir(parents=True, exist_ok=True)
         if not os.path.exists(csv_path):
             self.create_figures_table()
-        self.arxiv_crawler = ArxivCrawler()
+        # self.arxiv_crawler = ArxivCrawler()
     
     
     def create_figures_table(self):
