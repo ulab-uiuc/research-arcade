@@ -1,12 +1,17 @@
-<h1 align="center">ResearchArcade: Graph Interface for Academic Tasks</h1>
+<h1 align="center">🎡 ResearchArcade: Graph Interface for Academic Tasks</h1>
+
+<p align="center">
+    <a href="https://ulab-uiuc.github.io/research_arcade/">🌐 Project Page</a> |
+    <a href="TODO">📜 arXiv</a>
+<p>
 
 <div align="center">
 
 </div>
 
-# News
+# 🗞️ News
 
-# Introduction
+# 👋🏻 Introduction
 
 ResearchArcade is a graph interface for academic tasks. It utilizes a coherent multi-table format with graph structures to organize data from different sources and multiple modalities. And it preserves temporal evolution at both the manuscript and community levels.
 
@@ -23,7 +28,7 @@ ResearchArcade is a graph interface for academic tasks. It utilizes a coherent m
 
 Tables are classified into **node tables** (colored) or **edge tables** (black and white). The blue (denoting the OpenReview part) or red (denoting the ArXiv part) columns represent the unique identification of each node or edge, and the remaining columns represent the features of the nodes or edges. The conversion from the multiple tables to heterogeneous graphs is straightforward.
 
-# Get started
+# 🚀 Get started
 
 ### Supported Features
 
