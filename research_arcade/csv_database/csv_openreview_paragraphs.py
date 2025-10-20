@@ -133,8 +133,7 @@ class CSVOpenReviewParagraphs:
                                             is_paper = True, is_revision = True, is_pdf_delete: bool = True) -> bool:
         # 从API爬取数据
         print("Crawling paragraph data from OpenReview API...")
-        paragraph_data = self.openreview_crawler.crawl_paragraph_data_from_api(venue, pdf_dir, filter_list, log_file,
-                                                                           is_paper, is_revision, is_pdf_delete)
+        paragraph_data = self.openreview_crawler.crawl_paragraph_data_from_api(venue, pdf_dir, filter_list, log_file, is_paper, is_revision, is_pdf_delete)
         
         # 插入数据
         if len(paragraph_data) > 0:
