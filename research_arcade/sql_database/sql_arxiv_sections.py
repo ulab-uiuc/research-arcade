@@ -5,18 +5,13 @@ import psycopg2.extras
 import pandas as pd  # used only in CSV import helper
 
 class SQLArxivSections:
-    def __init__(self, sql_args):
-        """
-        sql_args should provide: host, port, dbname, user, password, autocommit (bool)
-        """
-        self.host, self.port, self.dbname, self.user, self.password, self.autocommit = (
-            sql_args.host,
-            sql_args.port,
-            sql_args.dbname,
-            sql_args.user,
-            sql_args.password,
-            sql_args.autocommit,
-        )
+    def __init__(self, host: str, dbname: str, user: str, password: str, port: str):
+        self.host = host
+        self.dbname = dbname
+        self.user = user
+        self.password = password
+        self.autocommit = port
+        self.autocommit = True
 
     def _get_connection(self):
         conn = psycopg2.connect(

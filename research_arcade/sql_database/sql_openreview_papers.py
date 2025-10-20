@@ -4,9 +4,11 @@ import pandas as pd
 import json
 import os
 import psycopg2
+import os
+from typing import Optional
 
 class SQLOpenReviewPapers:
-    def __init__(self, host: str = "localhost", dbname: str = "iclr_openreview_database", user: str = "jingjunx", password: str = "", port: str = "5432"):
+    def __init__(self, host: str, dbname: str, user: str, password: str, port: str) -> None:
         self.conn = psycopg2.connect(
             host=host,
             dbname=dbname,
@@ -34,7 +36,7 @@ class SQLOpenReviewPapers:
         self.cur.execute(create_table_sql)
         
     def insert_paper(self, venue: str, paper_openreview_id: str, title: str, abstract: str,
-                    paper_decision: str, paper_pdf_link: str) -> None | tuple:
+                    paper_decision: str, paper_pdf_link: str) -> Optional[tuple]:
         insert_sql = """
         INSERT INTO openreview_papers (venue, paper_openreview_id, title, abstract, paper_decision, paper_pdf_link)
         VALUES (%s, %s, %s, %s, %s, %s)
@@ -56,7 +58,7 @@ class SQLOpenReviewPapers:
         res = self.cur.fetchone()
         return res[0] if res else None
     
-    def delete_paper_by_id(self, paper_openreview_id: str) -> None | pd.DataFrame:
+    def delete_paper_by_id(self, paper_openreview_id: str) -> Optional[pd.DataFrame]:
         # search for the row based on primary key
         select_sql = """
         SELECT * FROM openreview_papers WHERE paper_openreview_id = %s;
@@ -82,7 +84,7 @@ class SQLOpenReviewPapers:
             print(f"No paper found with paper_openreview_id {paper_openreview_id}.")
             return None
         
-    def delete_papers_by_venue(self, venue: str) -> None | pd.DataFrame:
+    def delete_papers_by_venue(self, venue: str) -> Optional[pd.DataFrame]:
         # search for the row based on primary key
         select_sql = """
         SELECT * FROM openreview_papers WHERE venue = %s;
@@ -109,7 +111,7 @@ class SQLOpenReviewPapers:
             return None
         
     def update_paper(self, venue: str, paper_openreview_id: str, title: str, abstract: str,
-                    paper_decision: str, paper_pdf_link: str) -> None | pd.DataFrame:
+                    paper_decision: str, paper_pdf_link: str) -> Optional[pd.DataFrame]:
         # Query to select the current record using primary key
         select_sql = """
         SELECT * FROM openreview_papers WHERE paper_openreview_id = %s AND venue = %s;
@@ -152,7 +154,7 @@ class SQLOpenReviewPapers:
             print(f"Paper with paper_openreview_id {paper_openreview_id} updated successfully.")
             return paper_df
     
-    def get_paper_by_id(self, paper_openreview_id: str) -> None | pd.DataFrame:
+    def get_paper_by_id(self, paper_openreview_id: str) -> Optional[pd.DataFrame]:
         # Query to select the current record using primary key
         select_sql = """
         SELECT * FROM openreview_papers WHERE paper_openreview_id = %s;
@@ -171,7 +173,7 @@ class SQLOpenReviewPapers:
             paper_df = pd.DataFrame(row, columns=columns)
             return paper_df
         
-    def get_papers_by_venue(self, venue: str) -> None | pd.DataFrame:
+    def get_papers_by_venue(self, venue: str) -> Optional[pd.DataFrame]:
         # Query to select all records for a specific venue
         select_sql = """
         SELECT * FROM openreview_papers WHERE venue = %s;
@@ -189,7 +191,7 @@ class SQLOpenReviewPapers:
             papers_df = pd.DataFrame(rows, columns=columns)
             return papers_df
     
-    def get_all_papers(self, is_all_features: bool = False) -> None | pd.DataFrame:
+    def get_all_papers(self, is_all_features: bool = False) -> Optional[pd.DataFrame]:
         if is_all_features:
             # Select query to get paper_openreview_id, title, and author_full_names
             select_query = """
@@ -219,13 +221,13 @@ class SQLOpenReviewPapers:
             papers_df = pd.DataFrame(papers, columns=["venue", "paper_openreview_id", "title"])
             return papers_df
     
-    def check_paper_exists(self, paper_openreview_id: str) -> bool | None:
+    def check_paper_exists(self, paper_openreview_id: str) -> bool:
         self.cur.execute("SELECT 1 FROM openreview_papers WHERE paper_openreview_id = %s LIMIT 1;", (paper_openreview_id,))
         result = self.cur.fetchone()
 
         return result is not None
     
-    def construct_papers_table_from_api(self, venue: str):
+    def construct_papers_table_from_api(self, venue: str) -> bool:
         # crawl paper data from openreview API
         print("Crawling paper data from OpenReview API...")
         paper_data = self.openreview_crawler.crawl_paper_data_from_api(venue)
@@ -235,45 +237,51 @@ class SQLOpenReviewPapers:
             print("Inserting data into 'openreview_papers' table...")
             for data in tqdm(paper_data):
                 self.insert_paper(**data)
+            return True
         else:
             print("No new paper data to insert.")
+            return False
             
-    def construct_papers_table_from_csv(self, csv_file: str):
+    def construct_papers_table_from_csv(self, csv_file: str) -> bool:
         if not os.path.exists(csv_file):
             print(f"File {csv_file} not exists")
             return False
-        # read paper data from csv file
-        print(f"Reading paper data from {csv_file}...")
-        paper_data = pd.read_csv(csv_file).to_dict(orient='records')
-        
-        # insert data into openreview_papers table
-        if len(paper_data) > 0:
-            print("Inserting data into 'openreview_papers' table...")
-            for data in tqdm(paper_data):
-                self.insert_paper(**data)
-            return True
         else:
-            print("No new paper data to insert.")
-            return False
+            # read paper data from csv file
+            print(f"Reading paper data from {csv_file}...")
+            paper_data = pd.read_csv(csv_file).to_dict(orient='records')
             
-    def construct_papers_table_from_json(self, json_file: str):
+            # insert data into openreview_papers table
+            if len(paper_data) > 0:
+                print("Inserting data into 'openreview_papers' table...")
+                for data in tqdm(paper_data):
+                    self.insert_paper(**data)
+                return True
+            else:
+                print("No new paper data to insert.")
+                return False
+            
+    def construct_papers_table_from_json(self, json_file: str) -> bool:
         if not os.path.exists(json_file):
-            print(f"File {json_file} not exists")
             return False
-        # read paper data from json file
-        print(f"Reading paper data from {json_file}...")
-        with open(json_file, 'r', encoding='utf-8') as f:
-            paper_data = json.load(f)
-        
-        # insert data into openreview_papers table
-        if len(paper_data) > 0:
-            print("Inserting data into 'openreview_papers' table...")
-            for data in tqdm(paper_data):
-                self.insert_paper(**data)
-            return True
         else:
-            print("No new paper data to insert.")
-            return False
+            if not os.path.exists(json_file):
+                print(f"File {json_file} not exists")
+                return False
+            # read paper data from json file
+            print(f"Reading paper data from {json_file}...")
+            with open(json_file, 'r', encoding='utf-8') as f:
+                paper_data = json.load(f)
+            
+            # insert data into openreview_papers table
+            if len(paper_data) > 0:
+                print("Inserting data into 'openreview_papers' table...")
+                for data in tqdm(paper_data):
+                    self.insert_paper(**data)
+                return True
+            else:
+                print("No new paper data to insert.")
+                return False
             
     def _clean_string(self, s: str) -> str:
         if isinstance(s, str):

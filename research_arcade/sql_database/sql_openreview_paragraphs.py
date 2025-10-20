@@ -4,9 +4,11 @@ import pandas as pd
 import json
 import os
 import psycopg2
+import os
+from typing import Optional
 
 class SQLOpenReviewParagraphs:
-    def __init__(self, host: str = "localhost", dbname: str = "iclr_openreview_database", user: str = "jingjunx", password: str = "", port: str = "5432"):
+    def __init__(self, host: str, dbname: str, user: str, password: str, port: str) -> None:
         self.conn = psycopg2.connect(
             host=host,
             dbname=dbname,
@@ -33,7 +35,7 @@ class SQLOpenReviewParagraphs:
         # Execute the SQL to create the table
         self.cur.execute(create_table_sql)
         
-    def insert_paragraph(self, venue: str, paper_openreview_id: str, paragraph_idx: int, section: str, content: str) -> None | tuple:
+    def insert_paragraph(self, venue: str, paper_openreview_id: str, paragraph_idx: int, section: str, content: str) -> Optional[tuple]:
         insert_sql = """
         INSERT INTO openreview_paragraphs (venue, paper_openreview_id, paragraph_idx, section, content)
         VALUES (%s, %s, %s, %s, %s)
@@ -48,7 +50,7 @@ class SQLOpenReviewParagraphs:
         res = self.cur.fetchone()
         return res[0] if res else None
     
-    def get_all_paragraphs(self, is_all_features: bool = False):
+    def get_all_paragraphs(self, is_all_features: bool = False) -> Optional[pd.DataFrame]:
         if is_all_features:
             select_sql = """
             SELECT * FROM openreview_paragraphs;
@@ -80,7 +82,7 @@ class SQLOpenReviewParagraphs:
                 paragraph_df = pd.DataFrame(row, columns=columns)
                 return paragraph_df
     
-    def get_paragraphs_by_paper_id(self, paper_openreview_id: str) -> None | pd.DataFrame:
+    def get_paragraphs_by_paper_id(self, paper_openreview_id: str) -> Optional[pd.DataFrame]:
         # Query to select the current record using primary key
         select_sql = """
         SELECT * FROM openreview_paragraphs WHERE paper_openreview_id = %s;
@@ -97,7 +99,7 @@ class SQLOpenReviewParagraphs:
             paragraph_df = pd.DataFrame(row, columns=columns)
             return paragraph_df
     
-    def get_paragraphs_by_venue(self, venue: str) -> None | pd.DataFrame:
+    def get_paragraphs_by_venue(self, venue: str) -> Optional[pd.DataFrame]:
         # Query to select all records for a specific venue
         select_sql = """
         SELECT * FROM openreview_paragraphs WHERE venue = %s;
@@ -114,7 +116,7 @@ class SQLOpenReviewParagraphs:
             paragraphs_df = pd.DataFrame(rows, columns=columns)
             return paragraphs_df
         
-    def delete_paragraphs_by_venue(self, venue: str) -> None | pd.DataFrame:
+    def delete_paragraphs_by_venue(self, venue: str) -> Optional[pd.DataFrame]:
         select_sql = """
         SELECT * FROM openreview_paragraphs WHERE venue = %s;
         """
@@ -138,7 +140,7 @@ class SQLOpenReviewParagraphs:
             print(f"No paragraphs found in venue {venue}.")
             return None
         
-    def delete_paragraphs_by_paper_id(self, paper_openreview_id: str) -> None | pd.DataFrame:
+    def delete_paragraphs_by_paper_id(self, paper_openreview_id: str) -> Optional[pd.DataFrame]:
         select_sql = """
         SELECT * FROM openreview_paragraphs WHERE paper_openreview_id = %s;
         """
@@ -163,7 +165,7 @@ class SQLOpenReviewParagraphs:
             return None
     
     def construct_paragraphs_table_from_api(self, venue: str, pdf_dir: str, filter_list: list, log_file: str, 
-                                            is_paper = True, is_revision = True, is_pdf_delete: bool = True):
+                                            is_paper = True, is_revision = True, is_pdf_delete: bool = True) -> bool:
         # crawl paragraph data from openreview API
         print("Crawling paragraph data from OpenReview API...")
         paragraph_data = self.openreview_crawler.crawl_paragraph_data_from_api(venue, pdf_dir, filter_list, log_file,
@@ -173,45 +175,49 @@ class SQLOpenReviewParagraphs:
             print("Inserting data into 'openreview_paragraphs' table...")
             for data in tqdm(paragraph_data):
                 self.insert_paragraph(**data)
+            return True
         else:
             print("No new paragraph data to insert.")
+            return False
             
-    def construct_paragraphs_table_from_csv(self, csv_file: str):
+    def construct_paragraphs_table_from_csv(self, csv_file: str) -> bool:
         if not os.path.exists(csv_file):
             print(f"File {csv_file} not exists")
             return False
-        # read paragraph data from csv file
-        print(f"Reading paragraph data from {csv_file}...")
-        paragraph_data = pd.read_csv(csv_file).to_dict(orient='records')
-        
-        # insert data into openreview_paragraphs table
-        if len(paragraph_data) > 0:
-            print("Inserting data into 'openreview_paragraphs' table...")
-            for data in tqdm(paragraph_data):
-                self.insert_paragraph(**data)
-            return True
         else:
-            print("No new paragraph data to insert.")
-            return False
+            # read paragraph data from csv file
+            print(f"Reading paragraph data from {csv_file}...")
+            paragraph_data = pd.read_csv(csv_file).to_dict(orient='records')
             
-    def construct_paragraphs_table_from_json(self, json_file: str):
+            # insert data into openreview_paragraphs table
+            if len(paragraph_data) > 0:
+                print("Inserting data into 'openreview_paragraphs' table...")
+                for data in tqdm(paragraph_data):
+                    self.insert_paragraph(**data)
+                return True
+            else:
+                print("No new paragraph data to insert.")
+                return False
+            
+    def construct_paragraphs_table_from_json(self, json_file: str) -> bool:
         if not os.path.exists(json_file):
             print(f"File {json_file} not exists")
             return False
-        # read insert_paragraph data from json file
-        print(f"Reading paragraph data from {json_file}...")
-        with open(json_file, 'r', encoding='utf-8') as f:
-            paragraph_data = json.load(f)
-        
-        # insert data into openreview_paragraphs table
-        if len(paragraph_data) > 0:
-            print("Inserting data into 'openreview_paragraphs' table...")
-            for data in tqdm(paragraph_data):
-                self.insert_paragraph(**data)
-            return True
         else:
-            print("No new insert_paragraph data to insert.")
-            return False
+            # read insert_paragraph data from json file
+            print(f"Reading paragraph data from {json_file}...")
+            with open(json_file, 'r', encoding='utf-8') as f:
+                paragraph_data = json.load(f)
+            
+            # insert data into openreview_paragraphs table
+            if len(paragraph_data) > 0:
+                print("Inserting data into 'openreview_paragraphs' table...")
+                for data in tqdm(paragraph_data):
+                    self.insert_paragraph(**data)
+                return True
+            else:
+                print("No new insert_paragraph data to insert.")
+                return False
             
     def _clean_string(self, s: str) -> str:
         if isinstance(s, str):

@@ -6,7 +6,7 @@ import os
 from typing import Optional
 
 class CSVOpenReviewPapersRevisions:
-    def __init__(self, csv_dir: str = "./"):
+    def __init__(self, csv_dir: str) -> None:
         self.csv_path = csv_dir + "openreview_papers_revisions.csv"
         self.openreview_crawler = OpenReviewCrawler()
         
@@ -14,19 +14,21 @@ class CSVOpenReviewPapersRevisions:
         if not os.path.exists(self.csv_path):
             self.create_papers_revisions_table()
     
-    def create_papers_revisions_table(self):
+    def create_papers_revisions_table(self) -> None:
         columns = ['venue', 'paper_openreview_id', 'revision_openreview_id', 
                    'title', 'time']
         empty_df = pd.DataFrame(columns=columns)
         empty_df.to_csv(self.csv_path, index=False)
         print(f"Created empty CSV file at {self.csv_path}")
     
-    def _load_data(self) -> pd.DataFrame:
+    def _load_data(self) -> Optional[pd.DataFrame]:
         if os.path.exists(self.csv_path):
             df = pd.read_csv(self.csv_path)
             return df
+        else:
+            return None
     
-    def _save_data(self, df: pd.DataFrame):
+    def _save_data(self, df: pd.DataFrame) -> None:
         """将DataFrame保存到CSV文件"""
         df.to_csv(self.csv_path, index=False)
     
@@ -182,7 +184,7 @@ class CSVOpenReviewPapersRevisions:
         
         return result
     
-    def construct_papers_revisions_table_from_api(self, venue: str):
+    def construct_papers_revisions_table_from_api(self, venue: str) -> bool:
         # 从API爬取数据
         print(f"Crawling paper-revision data from OpenReview API for venue: {venue}...")
         paper_revision_data = self.openreview_crawler.crawl_papers_revisions_data_from_api(venue)
@@ -191,32 +193,44 @@ class CSVOpenReviewPapersRevisions:
             print(f"Inserting paper-revision data into CSV file for venue: {venue}...")
             for data in tqdm(paper_revision_data):
                 self.insert_paper_revisions(**data)
+            return True
         else:
             print(f"No paper-revision data found for venue: {venue}.")
+            return False
     
-    def construct_papers_revisions_table_from_csv(self, csv_file: str):
-        print(f"Reading paper-revision data from {csv_file}...")
-        import_df = pd.read_csv(csv_file)
-        revision_data = import_df.to_dict(orient='records')
-        
-        if len(revision_data) > 0:
-            print(f"Inserting paper-revision data from {csv_file} into CSV file...")
-            for data in tqdm(revision_data):
-                self.insert_paper_revisions(**data)
+    def construct_papers_revisions_table_from_csv(self, csv_file: str) -> bool:
+        if not os.path.exists(csv_file):
+            return False
         else:
-            print(f"No paper-revision data found in {csv_file}.")
+            print(f"Reading paper-revision data from {csv_file}...")
+            import_df = pd.read_csv(csv_file)
+            revision_data = import_df.to_dict(orient='records')
+            
+            if len(revision_data) > 0:
+                print(f"Inserting paper-revision data from {csv_file} into CSV file...")
+                for data in tqdm(revision_data):
+                    self.insert_paper_revisions(**data)
+                return True
+            else:
+                print(f"No paper-revision data found in {csv_file}.")
+                return False
     
-    def construct_papers_revisions_table_from_json(self, json_file: str):
-        print(f"Reading revisions data from {json_file}...")
-        with open(json_file, 'r', encoding='utf-8') as f:
-            revision_data = json.load(f)
-        
-        if len(revision_data) > 0:
-            print(f"Inserting paper-revision data from {json_file} into CSV file...")
-            for data in tqdm(revision_data):
-                self.insert_paper_revisions(**data)
+    def construct_papers_revisions_table_from_json(self, json_file: str) -> bool:
+        if not os.path.exists(json_file):
+            return False
         else:
-            print(f"No paper-revision data found in {json_file}.")
+            print(f"Reading revisions data from {json_file}...")
+            with open(json_file, 'r', encoding='utf-8') as f:
+                revision_data = json.load(f)
+            
+            if len(revision_data) > 0:
+                print(f"Inserting paper-revision data from {json_file} into CSV file...")
+                for data in tqdm(revision_data):
+                    self.insert_paper_revisions(**data)
+                return True
+            else:
+                print(f"No paper-revision data found in {json_file}.")
+                return False
             
     def _clean_string(self, s: str) -> str:
         if isinstance(s, str):

@@ -6,7 +6,7 @@ import os
 from typing import Optional
 
 class CSVOpenReviewPapersReviews:
-    def __init__(self, csv_dir: str = "./"):
+    def __init__(self, csv_dir: str) -> None:
         self.csv_path = csv_dir + "openreview_papers_reviews.csv"
         self.openreview_crawler = OpenReviewCrawler()
         
@@ -14,19 +14,20 @@ class CSVOpenReviewPapersReviews:
         if not os.path.exists(self.csv_path):
             self.create_papers_reviews_table()
     
-    def create_papers_reviews_table(self):
+    def create_papers_reviews_table(self) -> None:
         columns = ['venue', 'paper_openreview_id', 'review_openreview_id', 
                    'title', 'time']
         empty_df = pd.DataFrame(columns=columns)
         empty_df.to_csv(self.csv_path, index=False)
         print(f"Created empty CSV file at {self.csv_path}")
     
-    def _load_data(self) -> pd.DataFrame:
+    def _load_data(self) -> Optional[pd.DataFrame]:
         if os.path.exists(self.csv_path):
             df = pd.read_csv(self.csv_path)
             return df
+        return None
     
-    def _save_data(self, df: pd.DataFrame):
+    def _save_data(self, df: pd.DataFrame) -> None:
         df.to_csv(self.csv_path, index=False)
     
     def insert_paper_reviews(self, venue: str, paper_openreview_id: str, 
@@ -181,7 +182,7 @@ class CSVOpenReviewPapersReviews:
         
         return result
     
-    def construct_papers_reviews_table_from_api(self, venue: str):
+    def construct_papers_reviews_table_from_api(self, venue: str) -> bool:
         # 从API爬取数据
         print(f"Crawling paper-review connections for venue: {venue}...")
         papers_reviews_data = self.openreview_crawler.crawl_papers_reviews_from_api(venue)
@@ -190,32 +191,44 @@ class CSVOpenReviewPapersReviews:
             print(f"Inserting paper-review connections into CSV file for venue: {venue}...")
             for data in tqdm(papers_reviews_data):
                 self.insert_paper_reviews(**data)
+            return True
         else:
             print(f"No paper-review connections found for venue: {venue}.")
+            return False
     
-    def construct_papers_reviews_table_from_csv(self, csv_file: str):
-        print(f"Reading paper-review connection data from {csv_file}...")
-        import_df = pd.read_csv(csv_file)
-        papers_reviews_data = import_df.to_dict(orient='records')
-        
-        if len(papers_reviews_data) > 0:
-            print("Inserting data into CSV file...")
-            for data in tqdm(papers_reviews_data):
-                self.insert_paper_reviews(**data)
+    def construct_papers_reviews_table_from_csv(self, csv_file: str) -> bool:
+        if not os.path.exists(csv_file):
+            return False
         else:
-            print("No new paper-review connection data to insert.")
+            print(f"Reading paper-review connection data from {csv_file}...")
+            import_df = pd.read_csv(csv_file)
+            papers_reviews_data = import_df.to_dict(orient='records')
+            
+            if len(papers_reviews_data) > 0:
+                print("Inserting data into CSV file...")
+                for data in tqdm(papers_reviews_data):
+                    self.insert_paper_reviews(**data)
+                return True
+            else:
+                print("No new paper-review connection data to insert.")
+                return False
     
-    def construct_papers_reviews_table_from_json(self, json_file: str):
-        print(f"Reading paper-review connection data from {json_file}...")
-        with open(json_file, 'r', encoding='utf-8') as f:
-            papers_reviews_data = json.load(f)
-        
-        if len(papers_reviews_data) > 0:
-            print("Inserting data into CSV file...")
-            for data in tqdm(papers_reviews_data):
-                self.insert_paper_reviews(**data)
+    def construct_papers_reviews_table_from_json(self, json_file: str) -> bool:
+        if not os.path.exists(json_file):
+            return False
         else:
-            print("No new paper-review connection data to insert.")
+            print(f"Reading paper-review connection data from {json_file}...")
+            with open(json_file, 'r', encoding='utf-8') as f:
+                papers_reviews_data = json.load(f)
+            
+            if len(papers_reviews_data) > 0:
+                print("Inserting data into CSV file...")
+                for data in tqdm(papers_reviews_data):
+                    self.insert_paper_reviews(**data)
+                return True
+            else:
+                print("No new paper-review connection data to insert.")
+                return False
             
     def _clean_string(self, s: str) -> str:
         if isinstance(s, str):

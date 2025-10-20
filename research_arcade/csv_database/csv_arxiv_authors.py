@@ -4,8 +4,8 @@ from typing import Optional
 from pathlib import Path
 
 class CSVArxivAuthors:
-    def __init__(self, csv_dir):
-        csv_path = f"{csv_dir}/authors.csv"
+    def __init__(self, csv_dir: str):
+        csv_path = f"{csv_dir}/arxiv_authors.csv"
         self.csv_path = csv_path
         # Set up the target directory
         # Automatically create the csv path

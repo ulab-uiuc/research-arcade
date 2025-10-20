@@ -6,10 +6,11 @@ import re
 import time
 from tqdm import tqdm
 from datetime import datetime
+from typing import Optional
 from .pdf_utils import extract_paragraphs_from_pdf_new, connect_diffs_and_paragraphs
 
 class OpenReviewCrawler:
-    def __init__(self):
+    def __init__(self) -> None:
         self.client_v1 = openreview.Client(
             baseurl='https://api.openreview.net'
         )
@@ -18,7 +19,7 @@ class OpenReviewCrawler:
             baseurl='https://api2.openreview.net'
         )
         
-    def crawl_paper_data_from_api(self, venue: str):
+    def crawl_paper_data_from_api(self, venue: str) -> list[dict]:
         paper_data = []
         if "2023" in venue or "2022" in venue or "2021" in venue or "2020" in venue or "2019" in venue or "2018" in venue:
             submissions = self.client_v1.get_all_notes(invitation=f'{venue}/-/Blind_Submission', details='replies')
@@ -125,7 +126,7 @@ class OpenReviewCrawler:
                 print(f"No submissions found for venue: {venue}")
                 return []
     
-    def crawl_author_data_from_api(self, venue: str):
+    def crawl_author_data_from_api(self, venue: str) -> list[dict]:
         author_data = []
         author_set = set()
         if "2023" in venue or "2022" in venue or "2021" in venue or "2020" in venue or "2019" in venue or "2018" in venue:
@@ -223,7 +224,7 @@ class OpenReviewCrawler:
             })
         return author_data
         
-    def crawl_review_data_from_api(self, venue: str):
+    def crawl_review_data_from_api(self, venue: str) -> list[dict]:
         review_data = []
         if "2023" in venue or "2022" in venue or "2021" in venue or "2020" in venue or "2019" in venue or "2018" in venue:
             submissions = self.client_v1.get_all_notes(invitation=f'{venue}/-/Blind_Submission', details='replies')
@@ -348,7 +349,7 @@ class OpenReviewCrawler:
                             })
                 return review_data
 
-    def crawl_revision_data_from_api(self, venue: str, filter_list: list, pdf_dir: str, log_file: str):
+    def crawl_revision_data_from_api(self, venue: str, filter_list: list, pdf_dir: str, log_file: str) -> list[dict]:
         import time
         revision_data = []
         if "2023" in venue or "2022" in venue or "2021" in venue or "2020" in venue or "2019" in venue or "2018" in venue or "2017" in venue or "2014" in venue or "2013" in venue:
@@ -498,7 +499,7 @@ class OpenReviewCrawler:
                 return revision_data
     
     def crawl_paragraph_data_from_api(self, venue: str, pdf_dir: str, filter_list: list, log_file: str, 
-                                      is_paper = True, is_revision = True, is_pdf_delete: bool = True):
+                                      is_paper = True, is_revision = True, is_pdf_delete: bool = True) -> list[dict]:
         # TODO: pdf_path is undefined
         pdf_path = None
         # TODO: original_id is undefined
@@ -757,7 +758,7 @@ class OpenReviewCrawler:
                                                         log.write(f"PDF {pdf_path} Failed\n")
                 return paragraph_data
         
-    def crawl_papers_authors_data_from_api(self, venue: str):
+    def crawl_papers_authors_data_from_api(self, venue: str) -> list[dict]:
         papers_authors_data = []
         if "2023" in venue or "2022" in venue or "2021" in venue or "2020" in venue or "2019" in venue or "2018" in venue or "2017" in venue or "2014" in venue or "2013" in venue:
             if "2023" in venue or "2022" in venue or "2021" in venue or "2020" in venue or "2019" in venue or "2018" in venue:
@@ -800,7 +801,7 @@ class OpenReviewCrawler:
                 print(f"No submissions found for venue: {venue}")
                 return []
             
-    def crawl_papers_revisions_data_from_api(self, venue: str):
+    def crawl_papers_revisions_data_from_api(self, venue: str) -> list[dict]:
         import time
         papers_revisions_data = []
         if "2023" in venue or "2022" in venue or "2021" in venue or "2020" in venue or "2019" in venue or "2018" in venue or "2017" in venue or "2014" in venue or "2013" in venue:
@@ -877,7 +878,7 @@ class OpenReviewCrawler:
                                 })
                 return papers_revisions_data
 
-    def crawl_papers_reviews_from_api(self, venue: str):
+    def crawl_papers_reviews_from_api(self, venue: str) -> list[dict]:
         papers_reviews_data = []
         if "2023" in venue or "2022" in venue or "2021" in venue or "2020" in venue or "2019" in venue or "2018" in venue:
             submissions = self.client_v1.get_all_notes(invitation=f'{venue}/-/Blind_Submission', details='replies')
@@ -987,7 +988,7 @@ class OpenReviewCrawler:
                             })
                 return papers_reviews_data
                 
-    def crawl_openreview_arxiv_data_from_api(self, venue: str):
+    def crawl_openreview_arxiv_data_from_api(self, venue: str) -> list[dict]:
         openreview_arxiv_data = []
         if "2023" in venue or "2022" in venue or "2021" in venue or "2020" in venue or "2019" in venue or "2018" in venue or "2017" in venue or "2014" in venue or "2013" in venue:
             if "2023" in venue or "2022" in venue or "2021" in venue or "2020" in venue or "2019" in venue or "2018" in venue:
@@ -1039,17 +1040,6 @@ class OpenReviewCrawler:
             else:
                 print(f"No submissions found for venue: {venue}")
                 return []
-                
-    def _title_cleaner(self, title: str):
-        """
-        Remove all symbols (non-alphanumeric, non-space characters) from the title.
-        Collapses multiple spaces down to one and trims ends.
-        """
-        # Remove anything that isn't a letter, number, or whitespace
-        cleaned = re.sub(r'[^A-Za-z0-9\s]', '', title)
-        # Collapse multiple spaces and strip leading/trailing spaces
-        cleaned = re.sub(r'\s+', ' ', cleaned).strip()
-        return cleaned.strip().lower()
     
     def _title_cleaner(self, title: str) -> str:
         # Remove anything that isn't a letter, number, or whitespace
@@ -1058,7 +1048,7 @@ class OpenReviewCrawler:
         cleaned = re.sub(r'\s+', ' ', cleaned).strip()
         return cleaned.strip().lower()
     
-    def _search_title_with_name(self, title, max_result=5):
+    def _search_title_with_name(self, title, max_result=5) -> Optional[str]:
         query = f"ti:{title}"
         search = arxiv.Search(
             query=query,

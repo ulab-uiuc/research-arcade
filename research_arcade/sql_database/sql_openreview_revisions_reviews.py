@@ -3,9 +3,11 @@ from tqdm import tqdm
 import pandas as pd
 import json
 import psycopg2
+import os
+from typing import Optional
 
 class SQLOpenReviewRevisionsReviews:
-    def __init__(self, host: str = "localhost", dbname: str = "iclr_openreview_database", user: str = "jingjunx", password: str = "", port: str = "5432"):
+    def __init__(self, host: str, dbname: str, user: str, password: str, port: str) -> None:
         # Store connection and cursor for reuse
         self.conn = psycopg2.connect(
             host=host, dbname=dbname,
@@ -29,7 +31,7 @@ class SQLOpenReviewRevisionsReviews:
         # Execute the SQL to create the table
         self.cur.execute(create_table_sql)
         
-    def insert_revision_reviews(self, venue: str, revision_openreview_id: str, review_openreview_id: str) -> None | tuple:
+    def insert_revision_reviews(self, venue: str, revision_openreview_id: str, review_openreview_id: str) -> Optional[tuple]:
         insert_sql = """
         INSERT INTO openreview_revisions_reviews (venue, revision_openreview_id, review_openreview_id)
         VALUES (%s, %s, %s)
@@ -48,7 +50,7 @@ class SQLOpenReviewRevisionsReviews:
         res = self.cur.fetchone()
         return res[0] if res else None
         
-    def get_revision_review_by_id(self, revision_openreview_id: str, review_openreview_id: str) -> None | pd.DataFrame:
+    def get_revision_review_by_id(self, revision_openreview_id: str, review_openreview_id: str) -> Optional[pd.DataFrame]:
         self.cur.execute("""
         SELECT venue, revision_openreview_id, review_openreview_id FROM openreview_revisions_reviews
         WHERE revision_openreview_id = %s AND review_openreview_id = %s;
@@ -67,7 +69,7 @@ class SQLOpenReviewRevisionsReviews:
             result_df = pd.DataFrame(result, columns=columns)
             return result_df
         
-    def get_revisions_reviews_by_venue(self, venue: str) -> None | pd.DataFrame:
+    def get_revisions_reviews_by_venue(self, venue: str) -> Optional[pd.DataFrame]:
         self.cur.execute("""
         SELECT venue, revision_openreview_id, review_openreview_id FROM openreview_revisions_reviews
         WHERE venue = %s;
@@ -81,7 +83,7 @@ class SQLOpenReviewRevisionsReviews:
         else:
             return None
         
-    def get_all_revisions_reviews(self) -> None | pd.DataFrame:
+    def get_all_revisions_reviews(self) -> Optional[pd.DataFrame]:
         select_query = """
         SELECT venue, revision_openreview_id, review_openreview_id
         FROM openreview_revisions_reviews;
@@ -95,7 +97,7 @@ class SQLOpenReviewRevisionsReviews:
         revisions_reviews_df = pd.DataFrame(openreview_revisions_reviews, columns=["venue", "revision_openreview_id", "review_openreview_id"])
         return revisions_reviews_df
     
-    def delete_revision_review_by_id(self, revision_openreview_id: str, review_openreview_id: str) -> None | pd.DataFrame:
+    def delete_revision_review_by_id(self, revision_openreview_id: str, review_openreview_id: str) -> Optional[pd.DataFrame]:
         # search for records with the given arxiv_id and delete them
         select_sql = """
         SELECT * FROM openreview_revisions_reviews WHERE revision_openreview_id = %s AND review_openreview_id = %s;
@@ -119,7 +121,7 @@ class SQLOpenReviewRevisionsReviews:
             print(f"No records found in 'openreview_revisions_reviews' with revision_openreview_id = {revision_openreview_id} and review_openreview_id = {review_openreview_id}.")
             return None
     
-    def delete_revision_review_by_revision_id(self, revision_openreview_id: str):
+    def delete_revision_review_by_revision_id(self, revision_openreview_id: str) -> Optional[pd.DataFrame]:
         # search for records with the given arxiv_id and delete them
         select_sql = """
         SELECT * FROM openreview_revisions_reviews WHERE revision_openreview_id = %s;
@@ -143,7 +145,7 @@ class SQLOpenReviewRevisionsReviews:
             print(f"No records found in 'openreview_revisions_reviews' with revision_openreview_id = {revision_openreview_id}.")
             return None
         
-    def delete_revision_review_by_review_id(self, review_openreview_id: str):
+    def delete_revision_review_by_review_id(self, review_openreview_id: str) -> Optional[pd.DataFrame]:
         # search for records with the given arxiv_id and delete them
         select_sql = """
         SELECT * FROM openreview_revisions_reviews WHERE review_openreview_id = %s;
@@ -167,7 +169,7 @@ class SQLOpenReviewRevisionsReviews:
             print(f"No records found in 'openreview_revisions_reviews' with review_openreview_id = {review_openreview_id}.")
             return None
     
-    def delete_revisions_reviews_by_venue(self, venue: str) -> None | pd.DataFrame:
+    def delete_revisions_reviews_by_venue(self, venue: str) -> Optional[pd.DataFrame]:
         # search the row based on primary key
         select_sql = """
         SELECT venue, revision_openreview_id, review_openreview_id FROM openreview_revisions_reviews WHERE venue = %s;
@@ -192,7 +194,7 @@ class SQLOpenReviewRevisionsReviews:
             print(f"No connections found in venue {venue}.")
             return None
         
-    def check_revision_review_exists(self, revision_openreview_id: str, review_openreview_id: str) -> bool | None:
+    def check_revision_review_exists(self, revision_openreview_id: str, review_openreview_id: str) -> bool:
         self.cur.execute("""
         SELECT 1 FROM openreview_revisions_reviews
         WHERE revision_openreview_id = %s AND review_openreview_id = %s 
@@ -203,7 +205,7 @@ class SQLOpenReviewRevisionsReviews:
 
         return result is not None
     
-    def get_revision_neighboring_reviews(self, revision_openreview_id: str) -> None | pd.DataFrame:
+    def get_revision_neighboring_reviews(self, revision_openreview_id: str) -> Optional[pd.DataFrame]:
         self.cur.execute("""
         SELECT venue, revision_openreview_id, review_openreview_id FROM openreview_revisions_reviews
         WHERE revision_openreview_id = %s;
@@ -217,7 +219,7 @@ class SQLOpenReviewRevisionsReviews:
         else:
             return None
         
-    def get_review_neighboring_revisions(self, review_openreview_id: str) -> None | pd.DataFrame:
+    def get_review_neighboring_revisions(self, review_openreview_id: str) -> Optional[pd.DataFrame]:
         self.cur.execute("""
         SELECT venue, revision_openreview_id, review_openreview_id FROM openreview_revisions_reviews
         WHERE review_openreview_id = %s;
@@ -231,7 +233,7 @@ class SQLOpenReviewRevisionsReviews:
         else:
             return None
         
-    def construct_revisions_reviews_table(self, papers_reviews_df: pd.DataFrame, papers_revisions_df: pd.DataFrame) -> None:
+    def construct_revisions_reviews_table(self, papers_reviews_df: pd.DataFrame, papers_revisions_df: pd.DataFrame) -> bool:
         # get unique paper ids
         unique_paper_ids = papers_revisions_df['paper_openreview_id'].unique()
         
@@ -265,30 +267,40 @@ class SQLOpenReviewRevisionsReviews:
                     
                     start_idx += 1
                     
-    def construct_revisions_reviews_table_from_csv(self, csv_file: str) -> None:
-        # read data from csv file
-        print(f"Reading revisions-reviews data from {csv_file}...")
-        revisions_reviews_data = pd.read_csv(csv_file).to_dict(orient='records')
-        
-        if len(revisions_reviews_data) > 0:
-            print(f"Inserting revisions-reviews data from {csv_file}...")
-            for data in tqdm(revisions_reviews_data):
-                self.insert_revision_reviews(**data)
+    def construct_revisions_reviews_table_from_csv(self, csv_file: str) -> bool:
+        if not os.path.exists(csv_file):
+            return False
         else:
-            print(f"No revisions-reviews data found in {csv_file}.")
+            # read data from csv file
+            print(f"Reading revisions-reviews data from {csv_file}...")
+            revisions_reviews_data = pd.read_csv(csv_file).to_dict(orient='records')
             
-    def construct_revisions_reviews_table_from_json(self, json_file: str) -> None:
-        # read revision data from json file
-        print(f"Reading revisions-reviews data from {json_file}...")
-        with open(json_file, 'r', encoding='utf-8') as f:
-            revisions_reviews_data = json.load(f)
-        
-        if len(revisions_reviews_data) > 0:
-            print(f"Inserting revisions-reviews data from {json_file}...")
-            for data in tqdm(revisions_reviews_data):
-                self.insert_revision_reviews(**data)
+            if len(revisions_reviews_data) > 0:
+                print(f"Inserting revisions-reviews data from {csv_file}...")
+                for data in tqdm(revisions_reviews_data):
+                    self.insert_revision_reviews(**data)
+                return True
+            else:
+                print(f"No revisions-reviews data found in {csv_file}.")
+                return False
+            
+    def construct_revisions_reviews_table_from_json(self, json_file: str) -> bool:
+        if not os.path.exists(json_file):
+            return False
         else:
-            print(f"No revisions-reviews data found in {json_file}.")
+            # read revision data from json file
+            print(f"Reading revisions-reviews data from {json_file}...")
+            with open(json_file, 'r', encoding='utf-8') as f:
+                revisions_reviews_data = json.load(f)
+            
+            if len(revisions_reviews_data) > 0:
+                print(f"Inserting revisions-reviews data from {json_file}...")
+                for data in tqdm(revisions_reviews_data):
+                    self.insert_revision_reviews(**data)
+                return True
+            else:
+                print(f"No revisions-reviews data found in {json_file}.")
+                return False
             
     def _clean_string(self, s: str) -> str:
         if isinstance(s, str):

@@ -6,7 +6,7 @@ import os
 from typing import Optional
 
 class CSVOpenReviewRevisionsReviews:
-    def __init__(self, csv_dir: str = "./"):
+    def __init__(self, csv_dir: str) -> None:
         self.csv_path = csv_dir + "openreview_revisions_reviews.csv"
         self.openreview_crawler = OpenReviewCrawler()
         
@@ -14,18 +14,20 @@ class CSVOpenReviewRevisionsReviews:
         if not os.path.exists(self.csv_path):
             self.create_revisions_reviews_table()
     
-    def create_revisions_reviews_table(self):
+    def create_revisions_reviews_table(self) -> None:
         columns = ['venue', 'revision_openreview_id', 'review_openreview_id']
         empty_df = pd.DataFrame(columns=columns)
         empty_df.to_csv(self.csv_path, index=False)
         print(f"Created empty CSV file at {self.csv_path}")
     
-    def _load_data(self) -> pd.DataFrame:
+    def _load_data(self) -> Optional[pd.DataFrame]:
         if os.path.exists(self.csv_path):
             df = pd.read_csv(self.csv_path)
             return df
+        else:
+            return None
     
-    def _save_data(self, df: pd.DataFrame):
+    def _save_data(self, df: pd.DataFrame) -> None:
         df.to_csv(self.csv_path, index=False)
     
     def insert_revision_reviews(self, venue: str, revision_openreview_id: str, 
@@ -86,7 +88,7 @@ class CSVOpenReviewRevisionsReviews:
         
         return df.copy()
     
-    def delete_revision_review_by_id(self, revision_openreview_id: str, review_openreview_id: str) -> None | pd.DataFrame:
+    def delete_revision_review_by_id(self, revision_openreview_id: str, review_openreview_id: str) -> Optional[pd.DataFrame]:
         df = self._load_data()
         
         # 查找要删除的行
@@ -105,7 +107,7 @@ class CSVOpenReviewRevisionsReviews:
         print(f"The connection between revision {revision_openreview_id} and review {review_openreview_id} is deleted successfully.")
         return deleted_rows
 
-    def delete_revision_review_by_revision_id(self, revision_openreview_id: str) -> None | pd.DataFrame:
+    def delete_revision_review_by_revision_id(self, revision_openreview_id: str) -> Optional[pd.DataFrame]:
         df = self._load_data()
         
         # 查找要删除的行
@@ -123,7 +125,7 @@ class CSVOpenReviewRevisionsReviews:
         print(f"The connection for revision {revision_openreview_id} is deleted successfully.")
         return deleted_rows
     
-    def delete_revision_review_by_review_id(self, review_openreview_id: str) -> None | pd.DataFrame:
+    def delete_revision_review_by_review_id(self, review_openreview_id: str) -> Optional[pd.DataFrame]:
         df = self._load_data()
         
         # 查找要删除的行
@@ -189,7 +191,7 @@ class CSVOpenReviewRevisionsReviews:
         return result
     
     def construct_revisions_reviews_table(self, papers_reviews_df: pd.DataFrame, 
-                                         papers_revisions_df: pd.DataFrame):        
+                                         papers_revisions_df: pd.DataFrame) -> bool:        
         # 获取唯一的论文ID
         unique_paper_ids = papers_revisions_df['paper_openreview_id'].unique()
         
@@ -232,30 +234,41 @@ class CSVOpenReviewRevisionsReviews:
                     start_idx += 1
         
         print("Revisions-reviews table construction completed.")
+        return True
     
-    def construct_revisions_reviews_table_from_csv(self, csv_file: str):
-        print(f"Reading revisions-reviews data from {csv_file}...")
-        import_df = pd.read_csv(csv_file)
-        revisions_reviews_data = import_df.to_dict(orient='records')
-        
-        if len(revisions_reviews_data) > 0:
-            print(f"Inserting revisions-reviews data from {csv_file}...")
-            for data in tqdm(revisions_reviews_data):
-                self.insert_revision_reviews(**data)
+    def construct_revisions_reviews_table_from_csv(self, csv_file: str) -> bool:
+        if not os.path.exists(csv_file):
+            return False
         else:
-            print(f"No revisions-reviews data found in {csv_file}.")
+            print(f"Reading revisions-reviews data from {csv_file}...")
+            import_df = pd.read_csv(csv_file)
+            revisions_reviews_data = import_df.to_dict(orient='records')
+            
+            if len(revisions_reviews_data) > 0:
+                print(f"Inserting revisions-reviews data from {csv_file}...")
+                for data in tqdm(revisions_reviews_data):
+                    self.insert_revision_reviews(**data)
+                return True
+            else:
+                print(f"No revisions-reviews data found in {csv_file}.")
+                return False
     
-    def construct_revisions_reviews_table_from_json(self, json_file: str):
-        print(f"Reading revisions-reviews data from {json_file}...")
-        with open(json_file, 'r', encoding='utf-8') as f:
-            revisions_reviews_data = json.load(f)
-        
-        if len(revisions_reviews_data) > 0:
-            print(f"Inserting revisions-reviews data from {json_file}...")
-            for data in tqdm(revisions_reviews_data):
-                self.insert_revision_reviews(**data)
+    def construct_revisions_reviews_table_from_json(self, json_file: str) -> bool:
+        if not os.path.exists(json_file):
+            return False
         else:
-            print(f"No revisions-reviews data found in {json_file}.")
+            print(f"Reading revisions-reviews data from {json_file}...")
+            with open(json_file, 'r', encoding='utf-8') as f:
+                revisions_reviews_data = json.load(f)
+            
+            if len(revisions_reviews_data) > 0:
+                print(f"Inserting revisions-reviews data from {json_file}...")
+                for data in tqdm(revisions_reviews_data):
+                    self.insert_revision_reviews(**data)
+                return True
+            else:
+                print(f"No revisions-reviews data found in {json_file}.")
+                return False
             
     def _clean_string(self, s: str) -> str:
         if isinstance(s, str):

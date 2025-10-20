@@ -3,9 +3,11 @@ from tqdm import tqdm
 import pandas as pd
 import json
 import psycopg2
+import os
+from typing import Optional
 
 class SQLOpenReviewPapersRevisions:
-    def __init__(self, host: str = "localhost", dbname: str = "iclr_openreview_database", user: str = "jingjunx", password: str = "", port: str = "5432"):
+    def __init__(self, host: str, dbname: str, user: str, password: str, port: str) -> None:
         # Store connection and cursor for reuse
         self.conn = psycopg2.connect(
             host=host, dbname=dbname,
@@ -30,7 +32,7 @@ class SQLOpenReviewPapersRevisions:
         """
         self.cur.execute(create_table_sql)
         
-    def insert_paper_revisions(self, venue: str, paper_openreview_id: str, revision_openreview_id: str, title: str, time: str) -> None | tuple:
+    def insert_paper_revisions(self, venue: str, paper_openreview_id: str, revision_openreview_id: str, title: str, time: str) -> Optional[tuple]:
         insert_sql = """
         INSERT INTO openreview_papers_revisions (venue, paper_openreview_id, revision_openreview_id, title, time)
         VALUES (%s, %s, %s, %s, %s)
@@ -51,7 +53,7 @@ class SQLOpenReviewPapersRevisions:
         res = self.cur.fetchone()
         return res[0] if res else None
     
-    def delete_paper_revision_by_id(self, paper_openreview_id: str, revision_openreview_id: str) -> None | pd.DataFrame:
+    def delete_paper_revision_by_id(self, paper_openreview_id: str, revision_openreview_id: str) -> Optional[pd.DataFrame]:
         # search for records with the given arxiv_id and delete them
         select_sql = """
         SELECT * FROM openreview_papers_revisions WHERE paper_openreview_id = %s AND revision_openreview_id = %s;
@@ -75,7 +77,7 @@ class SQLOpenReviewPapersRevisions:
             print(f"No records found in 'openreview_papers_revisions' with paper_openreview_id = {paper_openreview_id} and revision_openreview_id = {revision_openreview_id}.")
             return None
     
-    def delete_paper_revision_by_paper_id(self, paper_openreview_id: str):
+    def delete_paper_revision_by_paper_id(self, paper_openreview_id: str) -> Optional[pd.DataFrame]:
         # search for records with the given arxiv_id and delete them
         select_sql = """
         SELECT * FROM openreview_papers_revisions WHERE paper_openreview_id = %s;
@@ -99,7 +101,7 @@ class SQLOpenReviewPapersRevisions:
             print(f"No records found in 'openreview_papers_revisions' with paper_openreview_id = {paper_openreview_id}.")
             return None
         
-    def delete_paper_revision_by_revision_id(self, revision_openreview_id: str):
+    def delete_paper_revision_by_revision_id(self, revision_openreview_id: str) -> Optional[pd.DataFrame]:
         # search for records with the given arxiv_id and delete them
         select_sql = """
         SELECT * FROM openreview_papers_revisions WHERE revision_openreview_id = %s;
@@ -123,7 +125,7 @@ class SQLOpenReviewPapersRevisions:
             print(f"No records found in 'openreview_papers_revisions' with revision_openreview_id = {revision_openreview_id}.")
             return None
         
-    def delete_papers_revisions_by_venue(self, venue: str) -> None | pd.DataFrame:
+    def delete_papers_revisions_by_venue(self, venue: str) -> Optional[pd.DataFrame]:
         # search the row based on primary key
         select_sql = """
         SELECT venue, paper_openreview_id, revision_openreview_id, title, time FROM openreview_papers_revisions WHERE venue = %s;
@@ -148,7 +150,7 @@ class SQLOpenReviewPapersRevisions:
             print(f"No connections found in venue {venue}.")
             return None
     
-    def get_papers_revisions_by_venue(self, venue: str) -> None | pd.DataFrame:
+    def get_papers_revisions_by_venue(self, venue: str) -> Optional[pd.DataFrame]:
         # TODO: papers_revisions is undefined
         papers_revisions = None
         self.cur.execute("""
@@ -164,7 +166,7 @@ class SQLOpenReviewPapersRevisions:
         else:
             return None
     
-    def get_all_papers_revisions(self) -> None | pd.DataFrame:
+    def get_all_papers_revisions(self) -> Optional[pd.DataFrame]:
         select_query = """
         SELECT venue, paper_openreview_id, revision_openreview_id, title, time
         FROM openreview_papers_revisions ORDER BY paper_openreview_id ASC
@@ -178,7 +180,7 @@ class SQLOpenReviewPapersRevisions:
         authors_df = pd.DataFrame(papers_authors, columns=["venue", "paper_openreview_id", "revision_openreview_id", "title", "time"])
         return authors_df
     
-    def check_paper_revision_exists(self, paper_openreview_id: str, revision_openreview_id: str) -> bool | None:
+    def check_paper_revision_exists(self, paper_openreview_id: str, revision_openreview_id: str) -> bool:
         self.cur.execute("""
         SELECT 1 FROM openreview_papers_revisions
         WHERE paper_openreview_id = %s AND revision_openreview_id = %s 
@@ -189,7 +191,7 @@ class SQLOpenReviewPapersRevisions:
 
         return result is not None
     
-    def get_paper_neighboring_revisions(self, paper_openreview_id: str) -> None | pd.DataFrame:
+    def get_paper_neighboring_revisions(self, paper_openreview_id: str) -> Optional[pd.DataFrame]:
         self.cur.execute("""
         SELECT venue, paper_openreview_id, revision_openreview_id, title, time FROM openreview_papers_revisions
         WHERE paper_openreview_id = %s;
@@ -203,7 +205,7 @@ class SQLOpenReviewPapersRevisions:
         else:
             return None
         
-    def get_revision_neighboring_papers(self, revision_openreview_id: str) -> None | pd.DataFrame:
+    def get_revision_neighboring_papers(self, revision_openreview_id: str) -> Optional[pd.DataFrame]:
         self.cur.execute("""
         SELECT venue, paper_openreview_id, revision_openreview_id, title, time FROM openreview_papers_revisions
         WHERE revision_openreview_id = %s;
@@ -217,7 +219,7 @@ class SQLOpenReviewPapersRevisions:
         else:
             return None
         
-    def construct_papers_revisions_table_from_api(self, venue: str) -> None:
+    def construct_papers_revisions_table_from_api(self, venue: str) -> bool:
         # fetch paper-revision data from openreview API
         print(f"Crawling paper-revision data from OpenReview API for venue: {venue}...")
         paper_revision_data = self.openreview_crawler.crawl_papers_revisions_data_from_api(venue)
@@ -227,34 +229,46 @@ class SQLOpenReviewPapersRevisions:
             print(f"Inserting paper-revision data into the database for venue: {venue}...")
             for data in tqdm(paper_revision_data):
                 self.insert_paper_revisions(**data)
+            return True
         else:
             print(f"No paper-revision data found for venue: {venue}.")
+            return False
         
-    def construct_papers_revisions_table_from_csv(self, csv_file: str) -> None:
-        # read revision data from csv file
-        revision_data = pd.read_csv(csv_file).to_dict(orient='records')
-        
-        # insert data into papers table
-        if len(revision_data) > 0:
-            print(f"Inserting paper-revision data from {csv_file} into the database...")
-            for data in tqdm(revision_data):
-                self.insert_paper_revisions(**data)
+    def construct_papers_revisions_table_from_csv(self, csv_file: str) -> bool:
+        if not os.path.exists(csv_file):
+            return False
         else:
-            print(f"No paper-revision data found in {csv_file}.")
+            # read revision data from csv file
+            revision_data = pd.read_csv(csv_file).to_dict(orient='records')
             
-    def construct_papers_revisions_table_from_json(self, json_file: str) -> None:
-        # read revision data from json file
-        print(f"Reading revisions data from {json_file}...")
-        with open(json_file, 'r', encoding='utf-8') as f:
-            revision_data = json.load(f)
-        
-        # insert data into papers table
-        if len(revision_data) > 0:
-            print(f"Inserting paper-revision data from {json_file} into the database...")
-            for data in tqdm(revision_data):
-                self.insert_paper_revisions(**data)
+            # insert data into papers table
+            if len(revision_data) > 0:
+                print(f"Inserting paper-revision data from {csv_file} into the database...")
+                for data in tqdm(revision_data):
+                    self.insert_paper_revisions(**data)
+                return True
+            else:
+                print(f"No paper-revision data found in {csv_file}.")
+                return False
+            
+    def construct_papers_revisions_table_from_json(self, json_file: str) -> bool:
+        if not os.path.exists(json_file):
+            return False
         else:
-            print(f"No paper-revision data found in {json_file}.")
+            # read revision data from json file
+            print(f"Reading revisions data from {json_file}...")
+            with open(json_file, 'r', encoding='utf-8') as f:
+                revision_data = json.load(f)
+            
+            # insert data into papers table
+            if len(revision_data) > 0:
+                print(f"Inserting paper-revision data from {json_file} into the database...")
+                for data in tqdm(revision_data):
+                    self.insert_paper_revisions(**data)
+                return True
+            else:
+                print(f"No paper-revision data found in {json_file}.")
+                return False
             
     def _clean_string(self, s: str) -> str:
         if isinstance(s, str):

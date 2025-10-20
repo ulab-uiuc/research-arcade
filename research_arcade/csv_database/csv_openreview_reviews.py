@@ -4,24 +4,24 @@ import pandas as pd
 import json
 import ast
 import os
-from typing import Optional
+from typing import Optional, Union
 
 class CSVOpenReviewReviews:
-    def __init__(self, csv_dir: str = "./"):
+    def __init__(self, csv_dir: str) -> None:
         self.csv_path = csv_dir + "openreview_reviews.csv"
         self.crawler = OpenReviewCrawler()
         
         if not os.path.exists(self.csv_path):
             self.create_reviews_table()
         
-    def create_reviews_table(self):
+    def create_reviews_table(self) -> None:
         columns = ['venue', 'review_openreview_id', 'replyto_openreview_id', 
                    'writer', 'title', 'content', 'time']
         empty_df = pd.DataFrame(columns=columns)
         empty_df.to_csv(self.csv_path, index=False)
         print(f"Created empty CSV file at {self.csv_path}")
     
-    def _load_data(self) -> pd.DataFrame:
+    def _load_data(self) -> Optional[pd.DataFrame]:
         if os.path.exists(self.csv_path):
             df = pd.read_csv(self.csv_path)
             # 将content列从JSON字符串转换为字典
@@ -30,8 +30,10 @@ class CSVOpenReviewReviews:
                     lambda x: json.loads(x) if pd.notna(x) and x != '' else {}
                 )
             return df
+        else:
+            return None
     
-    def _save_data(self, df: pd.DataFrame):
+    def _save_data(self, df: pd.DataFrame) -> None:
         # 创建副本以避免修改原始数据
         df_to_save = df.copy()
         
@@ -181,7 +183,7 @@ class CSVOpenReviewReviews:
         df = self._load_data()
         return (df['review_openreview_id'] == review_openreview_id).any()
     
-    def construct_reviews_table_from_api(self, venue: str):
+    def construct_reviews_table_from_api(self, venue: str) -> bool:
         # 从API爬取数据
         print("Crawling review data from OpenReview API...")
         review_data = self.crawler.crawl_review_data_from_api(venue)
@@ -194,43 +196,52 @@ class CSVOpenReviewReviews:
         else:
             print("No new review data to insert.")
     
-    def construct_reviews_table_from_csv(self, csv_file: str):
-        print(f"Reading review data from {csv_file}...")
-        import_df = pd.read_csv(csv_file)
-        review_data = import_df.to_dict(orient='records')
-        
-        if len(review_data) > 0:
-            print("Inserting data into CSV file...")
-            for data in tqdm(review_data):
-                # 确保content是字典类型
-                if isinstance(data.get('content'), str):
-                    data['content'] = ast.literal_eval(data['content'])
-                self.insert_review(**data)
+    def construct_reviews_table_from_csv(self, csv_file: str) -> bool:
+        if not os.path.exists(csv_file):
+            return False
         else:
-            print("No new review data to insert.")
+            print(f"Reading review data from {csv_file}...")
+            import_df = pd.read_csv(csv_file)
+            review_data = import_df.to_dict(orient='records')
+            
+            if len(review_data) > 0:
+                print("Inserting data into CSV file...")
+                for data in tqdm(review_data):
+                    # 确保content是字典类型
+                    if isinstance(data.get('content'), str):
+                        data['content'] = ast.literal_eval(data['content'])
+                    self.insert_review(**data)
+                return False
+            else:
+                print("No new review data to insert.")
+                return True
     
-    def construct_reviews_table_from_json(self, json_file: str):
-        print(f"Reading review data from {json_file}...")
-        with open(json_file, 'r') as f:
-            review_data = json.load(f)
-        
-        if len(review_data) > 0:
-            print("Inserting data into CSV file...")
-            for data in tqdm(review_data):
-                self.insert_review(**data)
+    def construct_reviews_table_from_json(self, json_file: str) -> bool:
+        if not os.path.exists(json_file):
+            return False
         else:
-            print("No new review data to insert.")
+            print(f"Reading review data from {json_file}...")
+            with open(json_file, 'r') as f:
+                review_data = json.load(f)
+            
+            if len(review_data) > 0:
+                print("Inserting data into CSV file...")
+                for data in tqdm(review_data):
+                    self.insert_review(**data)
+                return True
+            else:
+                print("No new review data to insert.")
+                return False
     
-    def _clean_json_content(self, content):
+    def _clean_json_content(self, content: Union[str, dict, list, int, float, bool, None]) -> Union[str, dict, list, int, float, bool, None]:
         if isinstance(content, str):
-            return ''.join(char for char in content if char.isprintable())
+            return ''.join(char for char in content if char.isprintable())  # 返回 str
         elif isinstance(content, dict):
-            return {key: self._clean_json_content(value) 
-                   for key, value in content.items()}
+            return {key: self._clean_json_content(value) for key, value in content.items()}  # 返回 dict
         elif isinstance(content, list):
-            return [self._clean_json_content(item) for item in content]
+            return [self._clean_json_content(item) for item in content]  # 返回 list
         else:
-            return content
+            return content  # 返回原始类型
         
     def _clean_string(self, s: str) -> str:
         if isinstance(s, str):

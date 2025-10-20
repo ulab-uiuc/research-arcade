@@ -8,7 +8,7 @@ from pathlib import Path
 from pdfminer.high_level import extract_text
 
 # get pdf based on openreview_id
-def get_pdf_by_id(id, pdf_name):
+def get_pdf_by_id(id, pdf_name: str) -> bool:
     # pdf url
     pdf_url = "https://openreview.net/notes/edits/attachment?id="+id+"&name=pdf"
     
@@ -20,18 +20,20 @@ def get_pdf_by_id(id, pdf_name):
         with open(pdf_name, "wb") as f:
             f.write(response.content)
         print("✅ PDF is downloaded as "+pdf_name)
+        return True
     else:
         print("❌ Failure, Status Code: ", response.status_code)
+        return False
 
 # extract text from pdf
-def extract_text_from_pdf(pdf_path):
+def extract_text_from_pdf(pdf_path) -> Optional[str]:
     if os.path.isfile(pdf_path):
         return extract_text(pdf_path)
     else:
         return None
 
 # compare the differences between two pdfs
-def compare_texts(text1, text2):
+def compare_texts(text1, text2) -> str:
     diff = difflib.unified_diff(
         text1.splitlines(),
         text2.splitlines(),
@@ -42,7 +44,7 @@ def compare_texts(text1, text2):
     return '\n'.join(diff)
 
 # format the differences
-def parse_diff(diff_text):
+def parse_diff(diff_text) -> list[dict]:
     lines = diff_text.splitlines()
     
     all_diff = []
@@ -98,7 +100,7 @@ def preprocess_lines_in_paragraphs(lines: list) -> list:
     return formatted_lines
 
 # finally format pdf into paragraphs
-def extract_paragraphs_from_pdf_new(pdf_path: Path, filter_list: Optional[List[str]] = None):
+def extract_paragraphs_from_pdf_new(pdf_path: Path, filter_list: Optional[List[str]] = None) -> dict:
     # extract all the text from pdf
     full_text = extract_text(pdf_path)
     
@@ -235,7 +237,7 @@ def extract_paragraphs_from_pdf_new(pdf_path: Path, filter_list: Optional[List[s
     return structured_content
 
 # connect the differences with the paragraphs
-def connect_diffs_and_paragraphs(original_pdf_path: Path, modified_pdf_path: Path, filter_list: Optional[List[str]] = None):
+def connect_diffs_and_paragraphs(original_pdf_path: Path, modified_pdf_path: Path, filter_list: Optional[List[str]] = None) -> list[list[dict]]:
     # extract text
     original_text = extract_text_from_pdf(original_pdf_path)
     if original_text is not None:

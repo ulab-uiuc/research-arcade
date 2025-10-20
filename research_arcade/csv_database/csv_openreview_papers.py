@@ -6,7 +6,7 @@ import os
 from typing import Optional
 
 class CSVOpenReviewPapers:
-    def __init__(self, csv_dir: str = "./"):
+    def __init__(self, csv_dir: str) -> None:
         self.csv_path = csv_dir + "openreview_papers.csv"
         self.openreview_crawler = OpenReviewCrawler()
         
@@ -14,19 +14,21 @@ class CSVOpenReviewPapers:
         if not os.path.exists(self.csv_path):
             self.create_papers_table()
     
-    def create_papers_table(self):
+    def create_papers_table(self) -> None:
         columns = ['venue', 'paper_openreview_id', 'title', 'abstract', 
                    'paper_decision', 'paper_pdf_link']
         empty_df = pd.DataFrame(columns=columns)
         empty_df.to_csv(self.csv_path, index=False)
         print(f"Created empty CSV file at {self.csv_path}")
     
-    def _load_data(self) -> pd.DataFrame:
+    def _load_data(self) -> Optional[pd.DataFrame]:
         if os.path.exists(self.csv_path):
             df = pd.read_csv(self.csv_path)
             return df
+        else:
+            return None
     
-    def _save_data(self, df: pd.DataFrame):
+    def _save_data(self, df: pd.DataFrame) -> None:
         df.to_csv(self.csv_path, index=False)
     
     def insert_paper(self, venue: str, paper_openreview_id: str, title: str, 
@@ -164,7 +166,7 @@ class CSVOpenReviewPapers:
         df = self._load_data()
         return (df['paper_openreview_id'] == paper_openreview_id).any()
     
-    def construct_papers_table_from_api(self, venue: str):
+    def construct_papers_table_from_api(self, venue: str) -> bool:
         # 从API爬取数据
         print("Crawling paper data from OpenReview API...")
         paper_data = self.openreview_crawler.crawl_paper_data_from_api(venue)
@@ -174,32 +176,44 @@ class CSVOpenReviewPapers:
             print("Inserting data into CSV file...")
             for data in tqdm(paper_data):
                 self.insert_paper(**data)
+            return True
         else:
             print("No new paper data to insert.")
+            return False
     
-    def construct_papers_table_from_csv(self, csv_file: str):
-        print(f"Reading paper data from {csv_file}...")
-        import_df = pd.read_csv(csv_file)
-        paper_data = import_df.to_dict(orient='records')
-        
-        if len(paper_data) > 0:
-            print("Inserting data into CSV file...")
-            for data in tqdm(paper_data):
-                self.insert_paper(**data)
+    def construct_papers_table_from_csv(self, csv_file: str) -> bool:
+        if not os.path.exists(csv_file):
+            return False
         else:
-            print("No new paper data to insert.")
+            print(f"Reading paper data from {csv_file}...")
+            import_df = pd.read_csv(csv_file)
+            paper_data = import_df.to_dict(orient='records')
+            
+            if len(paper_data) > 0:
+                print("Inserting data into CSV file...")
+                for data in tqdm(paper_data):
+                    self.insert_paper(**data)
+                return True
+            else:
+                print("No new paper data to insert.")
+                return False
     
-    def construct_papers_table_from_json(self, json_file: str):
-        print(f"Reading paper data from {json_file}...")
-        with open(json_file, 'r', encoding='utf-8') as f:
-            paper_data = json.load(f)
-        
-        if len(paper_data) > 0:
-            print("Inserting data into CSV file...")
-            for data in tqdm(paper_data):
-                self.insert_paper(**data)
+    def construct_papers_table_from_json(self, json_file: str) -> bool:
+        if not os.path.exists(json_file):
+            return False
         else:
-            print("No new paper data to insert.")
+            print(f"Reading paper data from {json_file}...")
+            with open(json_file, 'r', encoding='utf-8') as f:
+                paper_data = json.load(f)
+            
+            if len(paper_data) > 0:
+                print("Inserting data into CSV file...")
+                for data in tqdm(paper_data):
+                    self.insert_paper(**data)
+                return True
+            else:
+                print("No new paper data to insert.")
+                return False
     
     def _clean_string(self, s: str) -> str:
         if isinstance(s, str):

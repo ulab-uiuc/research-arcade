@@ -5,8 +5,8 @@ from pathlib import Path
 
 
 class CSVArxivSections:
-    def __init__(self, csv_dir):
-        csv_path = f"{csv_dir}/sections.csv"
+    def __init__(self, csv_dir: str):
+        csv_path = f"{csv_dir}/arxiv_sections.csv"
         self.csv_path = csv_path
         # Set up the target directory
         # Automatically create the csv path

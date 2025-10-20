@@ -28,12 +28,18 @@ from .sql_database import (
     SQLArxivPaperTable, SQLArxivPapers, SQLArxivParagraphReference,
     SQLArxivParagraphs, SQLArxivSections, SQLArxivTable
 )
-
-
+import os
+from dotenv import load_dotenv
+from typing import Optional
+import pandas as pd
 
 class ResearchArcade:
-    def __init__(self, db_type: str, config: dict):
+    def __init__(self, db_type: str, config: dict) -> None:
+        load_dotenv()
         if db_type == 'csv':
+            if config["csv_dir"] is None:
+                config["csv_dir"] = os.getenv('CSV_DATASET_FOLDER_PATH')
+                
             """
             Below is the arxiv dataset
             """
@@ -44,15 +50,13 @@ class ResearchArcade:
             self.arxiv_papers = CSVArxivPapers(**config)
             self.arxiv_paragraphs = CSVArxivParagraphs(**config)
             self.arxiv_sections = CSVArxivSections(**config)
-
             self.arxiv_citation = CSVArxivCitation(**config)
             self.arxiv_paper_author = CSVArxivPaperAuthor(**config)
             self.arxiv_paper_category = CSVArxivPaperCategory(**config)
             self.arxiv_paper_figure = CSVArxivPaperFigure(**config)
             self.arxiv_paper_table = CSVArxivPaperTable(**config)
             self.arxiv_paragraph_reference = CSVArxivParagraphReference(**config)
-
-
+            
             """
             Below is the openreview dataset
             """
@@ -67,6 +71,9 @@ class ResearchArcade:
             self.openreview_revisions = CSVOpenReviewRevisions(**config)
             self.openreview_paragraphs = CSVOpenReviewParagraphs(**config)
         elif db_type == 'sql':
+            if config["host"] is None:
+                config["csv_dir"] = os.getenv('CSV_DATASET_FOLDER_PATH')
+                
             """
             Below is the arxiv dataset
             """
@@ -100,8 +107,7 @@ class ResearchArcade:
             self.openreview_paragraphs = SQLOpenReviewParagraphs(**config)
     
 
-    def insert_node(self, table: str, node_features: dict):
-
+    def insert_node(self, table: str, node_features: dict) -> Optional[tuple]:
         # Tables in openreview dataset
         if table == 'openreview_authors':
             return self.openreview_authors.insert_author(**node_features)
@@ -132,8 +138,7 @@ class ResearchArcade:
             print(f"Table {table} not found.")
             return None
     
-    def delete_node_by_id(self, table: str, primary_key: dict):
-
+    def delete_node_by_id(self, table: str, primary_key: dict) -> Optional[pd.DataFrame]:
         # Tables in openreview dataset
         if table == 'openreview_authors':
             return self.openreview_authors.delete_author_by_id(**primary_key)
@@ -165,8 +170,7 @@ class ResearchArcade:
             print(f"Table {table} not found.")
             return None
 
-    def update_node(self, table: str, node_features: dict):
-        
+    def update_node(self, table: str, node_features: dict) -> Optional[pd.DataFrame]:
         # Tables in openreview dataset
         if table == 'openreview_authors':
             return self.openreview_authors.update_author(**node_features)
@@ -195,9 +199,7 @@ class ResearchArcade:
             print(f"Table {table} not found.")
             return None
     
-    def get_node_features_by_id(self, table: str, primary_key: dict):
-
-
+    def get_node_features_by_id(self, table: str, primary_key: dict) -> Optional[pd.DataFrame]:
         # Tables in openreview dataset
         if table == 'openreview_authors':
             return self.openreview_authors.get_author_by_id(**primary_key)
@@ -229,7 +231,7 @@ class ResearchArcade:
             print(f"Table {table} not found.")
             return None
     
-    def get_all_node_features(self, table: str):
+    def get_all_node_features(self, table: str) -> Optional[pd.DataFrame]:
         # Openreview tables
         if table == 'openreview_authors':
             return self.openreview_authors.get_all_authors(is_all_features=True)
@@ -261,7 +263,7 @@ class ResearchArcade:
             print(f"Table {table} not found.")
             return None
     
-    def insert_edge(self, table: str, edge_features: dict):
+    def insert_edge(self, table: str, edge_features: dict) -> Optional[pd.DataFrame]:
         # openreview
         if table == 'openreview_arxiv':
             return self.openreview_arxiv.insert_openreview_arxiv(**edge_features)
@@ -291,7 +293,7 @@ class ResearchArcade:
             print(f"Table {table} not found.")
             return None
     
-    def delete_edge_by_id(self, table: str, primary_key: dict):
+    def delete_edge_by_id(self, table: str, primary_key: dict) -> Optional[pd.DataFrame]:
         # Openreview
         if table == 'openreview_arxiv':
             if "paper_openreview_id" in primary_key and "arxiv_id" in primary_key:
@@ -355,7 +357,6 @@ class ResearchArcade:
             else:
                 print("For arxiv_citation, primary key should include 'citing_paper_id' and/or 'cited_paper_id'.")
                 return None
-
         elif table == 'arxiv_paper_author':
             # Expect keys: 'paper_id' and/or 'author_id'
             if "paper_id" in primary_key and "author_id" in primary_key:
@@ -367,7 +368,6 @@ class ResearchArcade:
             else:
                 print("For arxiv_paper_author, primary key should include 'paper_id' and/or 'author_id'.")
                 return None
-
         elif table == 'arxiv_paper_category':
             # Expect keys: 'paper_id' and/or 'category_id'
             if "paper_id" in primary_key and "category_id" in primary_key:
@@ -379,7 +379,6 @@ class ResearchArcade:
             else:
                 print("For arxiv_paper_category, primary key should include 'paper_id' and/or 'category_id'.")
                 return None
-
         elif table == 'arxiv_paper_figure':
             # Expect keys: 'paper_id' and/or 'figure_id'
             if "paper_id" in primary_key and "figure_id" in primary_key:
@@ -391,7 +390,6 @@ class ResearchArcade:
             else:
                 print("For arxiv_paper_figure, primary key should include 'paper_id' and/or 'figure_id'.")
                 return None
-
         elif table == 'arxiv_paper_table':
             # Expect keys: 'paper_id' and/or 'table_id'
             if "paper_id" in primary_key and "table_id" in primary_key:
@@ -403,7 +401,6 @@ class ResearchArcade:
             else:
                 print("For arxiv_paper_table, primary key should include 'paper_id' and/or 'table_id'.")
                 return None
-
         elif table == 'arxiv_paragraph_reference':
             # Expect keys: 'paragraph_id' and/or 'reference_id'
             if "paragraph_id" in primary_key and "reference_id" in primary_key:
@@ -420,8 +417,7 @@ class ResearchArcade:
             print(f"Table {table} not found.")
             return None
 
-    def get_all_edge_features(self, table: str):
-
+    def get_all_edge_features(self, table: str) -> Optional[pd.DataFrame]:
         # Openreview
         if table == 'openreview_arxiv':
             return self.openreview_arxiv.get_all_openreview_arxiv()
@@ -451,7 +447,7 @@ class ResearchArcade:
             print(f"Table {table} not found.")
             return None
         
-    def get_neighborhood(self, table: str, primary_key: dict):
+    def get_neighborhood(self, table: str, primary_key: dict) -> Optional[pd.DataFrame]:
         # Openreview
         if table == 'openreview_arxiv':
             if "paper_openreview_id" in primary_key:
@@ -503,7 +499,6 @@ class ResearchArcade:
             else:
                 print("For arxiv_citation, provide 'citing_paper_id' or 'cited_paper_id'.")
                 return None
-
         elif table == 'arxiv_paper_author':
             if "paper_id" in primary_key:
                 return self.arxiv_paper_author.get_paper_neighboring_authors(**primary_key)
@@ -512,7 +507,6 @@ class ResearchArcade:
             else:
                 print("For arxiv_paper_author, provide 'paper_id' or 'author_id'.")
                 return None
-
         elif table == 'arxiv_paper_category':
             if "paper_id" in primary_key:
                 return self.arxiv_paper_category.get_paper_neighboring_categories(**primary_key)
@@ -521,7 +515,6 @@ class ResearchArcade:
             else:
                 print("For arxiv_paper_category, provide 'paper_id' or 'category_id'.")
                 return None
-
         elif table == 'arxiv_paper_figure':
             if "paper_id" in primary_key:
                 return self.arxiv_paper_figure.get_paper_neighboring_figures(**primary_key)
@@ -530,7 +523,6 @@ class ResearchArcade:
             else:
                 print("For arxiv_paper_figure, provide 'paper_id' or 'figure_id'.")
                 return None
-
         elif table == 'arxiv_paper_table':
             if "paper_id" in primary_key:
                 return self.arxiv_paper_table.get_paper_neighboring_tables(**primary_key)
@@ -539,7 +531,6 @@ class ResearchArcade:
             else:
                 print("For arxiv_paper_table, provide 'paper_id' or 'table_id'.")
                 return None
-
         elif table == 'arxiv_paragraph_reference':
             if "paragraph_id" in primary_key:
                 return self.arxiv_paragraph_reference.get_paragraph_neighboring_references(**primary_key)
@@ -548,11 +539,12 @@ class ResearchArcade:
             else:
                 print("For arxiv_paragraph_reference, provide 'paragraph_id' or 'reference_id'.")
                 return None
+        
         else:
             print(f"Table {table} not found.")
             return None
         
-    def construct_table_from_api(self, table: str, config: dict):
+    def construct_table_from_api(self, table: str, config: dict) -> Optional[pd.DataFrame]:
         if table == "openreview_papers":
             self.openreview_papers.construct_papers_table_from_api(**config)
         elif table == "openreview_authors":
@@ -560,6 +552,8 @@ class ResearchArcade:
         elif table == "openreview_reviews":
             self.openreview_reviews.construct_reviews_table_from_api(**config)
         elif table == "openreview_revisions":
+            if config["pdf_dir"] is None:
+                config["pdf_dir"] = os.getenv("PDF_FOLDER_PATH")
             self.openreview_revisions.construct_revisions_table_from_api(**config)
         elif table == "openreview_papers_authors":
             self.openreview_papers_authors.construct_papers_authors_table_from_api(**config)
@@ -572,11 +566,13 @@ class ResearchArcade:
         elif table == "openreview_arxiv":
             self.openreview_arxiv.construct_openreview_arxiv_table_from_api(**config)
         elif table == "openreview_paragraphs":
+            if config["pdf_dir"] is None:
+                config["pdf_dir"] = os.getenv("PDF_FOLDER_PATH")
             self.openreview_paragraphs.construct_paragraphs_table_from_api(**config)
         else:
             print(f"Table {table} does not support construction from API")
             
-    def construct_table_from_csv(self, table: str, config: dict):
+    def construct_table_from_csv(self, table: str, config: dict) -> Optional[pd.DataFrame]:
         if table == "openreview_papers":
             self.openreview_papers.construct_papers_table_from_csv(**config)
         elif table == "openreview_authors":
@@ -600,7 +596,7 @@ class ResearchArcade:
         else:
             print(f"Table {table} does not support construction from CSV")
             
-    def construct_table_from_json(self, table: str, config: dict):
+    def construct_table_from_json(self, table: str, config: dict) -> Optional[pd.DataFrame]:
         if table == "openreview_papers":
             self.openreview_papers.construct_papers_table_from_json(**config)
         elif table == "openreview_authors":

@@ -3,9 +3,11 @@ from tqdm import tqdm
 import pandas as pd
 import json
 import psycopg2
+import os
+from typing import Optional
 
 class SQLOpenReviewAuthors:
-    def __init__(self, host: str = "localhost", dbname: str = "iclr_openreview_database", user: str = "jingjunx", password: str = "", port: str = "5432"):
+    def __init__(self, host: str, dbname: str, user: str, password: str, port: str) -> None:
         self.conn = psycopg2.connect(
             host=host,
             dbname=dbname,
@@ -35,7 +37,7 @@ class SQLOpenReviewAuthors:
         self.cur.execute(create_table_sql)
         
     def insert_author(self, venue: str, author_openreview_id: str, author_full_name: str, email: str, 
-                      affiliation: str, homepage: str, dblp: str) -> None | tuple:
+                      affiliation: str, homepage: str, dblp: str) -> Optional[tuple]:
         insert_sql = """
         INSERT INTO openreview_authors (venue, author_openreview_id, author_full_name, email, affiliation, homepage, dblp)
         VALUES (%s, %s, %s, %s, %s, %s, %s)
@@ -58,7 +60,7 @@ class SQLOpenReviewAuthors:
         res = self.cur.fetchone()
         return res[0] if res else None
     
-    def delete_author_by_id(self, author_openreview_id: str) -> None | pd.DataFrame:
+    def delete_author_by_id(self, author_openreview_id: str) -> Optional[pd.DataFrame]:
         # search the row based on primary key
         select_sql = """
         SELECT * FROM openreview_authors WHERE author_openreview_id = %s;
@@ -84,7 +86,7 @@ class SQLOpenReviewAuthors:
             print(f"No author found with author_openreview_id {author_openreview_id}.")
             return None
         
-    def delete_authors_by_venue(self, venue: str) -> None | pd.DataFrame:
+    def delete_authors_by_venue(self, venue: str) -> Optional[pd.DataFrame]:
         # search the row based on primary key
         select_sql = """
         SELECT * FROM openreview_authors WHERE venue = %s;
@@ -111,7 +113,7 @@ class SQLOpenReviewAuthors:
             return None
         
     def update_author(self, venue: str, author_openreview_id: str, author_full_name: str, email: str, 
-                      affiliation: str, homepage: str, dblp: str) -> None | pd.DataFrame:
+                      affiliation: str, homepage: str, dblp: str) -> Optional[pd.DataFrame]:
         # Query to select the current record using primary key
         select_sql = """
         SELECT * FROM openreview_authors WHERE author_openreview_id = %s AND venue = %s;
@@ -154,7 +156,7 @@ class SQLOpenReviewAuthors:
             print(f"Author with author_openreview_id {author_openreview_id} updated successfully.")
             return author_df
     
-    def get_author_by_id(self, author_openreview_id: str) -> None | pd.DataFrame:
+    def get_author_by_id(self, author_openreview_id: str) -> Optional[pd.DataFrame]:
         # Query to select the current record using primary key
         select_sql = """
         SELECT * FROM openreview_authors WHERE author_openreview_id = %s;
@@ -172,7 +174,7 @@ class SQLOpenReviewAuthors:
             author_df = pd.DataFrame(row, columns=columns)
             return author_df
         
-    def get_authors_by_venue(self, venue: str) -> None | pd.DataFrame:
+    def get_authors_by_venue(self, venue: str) -> Optional[pd.DataFrame]:
         # Query to select all records for a specific venue
         select_sql = """
         SELECT * FROM openreview_authors WHERE venue = %s;
@@ -190,7 +192,7 @@ class SQLOpenReviewAuthors:
             authors_df = pd.DataFrame(rows, columns=columns)
             return authors_df
     
-    def get_all_authors(self, is_all_features: bool = False) -> None | pd.DataFrame:
+    def get_all_authors(self, is_all_features: bool = False) -> Optional[pd.DataFrame]:
         if is_all_features:
             select_query = """
             SELECT venue, author_openreview_id, author_full_name, email, affiliation, homepage, dblp
@@ -218,13 +220,13 @@ class SQLOpenReviewAuthors:
             authors_df = pd.DataFrame(authors, columns=["venue", "author_openreview_id", "author_full_name"])
             return authors_df
     
-    def check_author_exists(self, author_openreview_id: str) -> bool | None:
+    def check_author_exists(self, author_openreview_id: str) -> bool:
         self.cur.execute("SELECT 1 FROM openreview_authors WHERE author_openreview_id = %s LIMIT 1;", (author_openreview_id,))
         result = self.cur.fetchone()
 
         return result is not None
     
-    def construct_authors_table_from_api(self, venue: str):
+    def construct_authors_table_from_api(self, venue: str) -> bool:
         # crawl author data from openreview API
         print("Crawling author data from OpenReview API...")
         author_data = self.openreview_crawler.crawl_author_data_from_api(venue)
@@ -234,24 +236,12 @@ class SQLOpenReviewAuthors:
             print("Inserting data into 'openreview_authors' table...")
             for data in tqdm(author_data):
                 self.insert_author(**data)
+            return True
         else:
             print("No new author data to insert.")
-            
-    def construct_authors_table_from_json(self, json_file: str):
-        # read author data from json file
-        print(f"Reading openreview_authors data from {json_file}...")
-        with open(json_file, 'r', encoding='utf-8') as f:
-            author_data = json.load(f)
-        
-        # insert data into openreview_authors table
-        if len(author_data) > 0:
-            print("Inserting data into 'openreview_authors' table...")
-            for data in tqdm(author_data):
-                self.insert_author(**data)
-        else:
-            print("No new author data to insert.")
-            
-    def construct_authors_table_from_csv(self, csv_file: str):
+            return False
+    
+    def construct_authors_table_from_csv(self, csv_file: str) -> bool:
         # read author data from csv file
         print(f"Reading openreview_authors data from {csv_file}...")
         author_data = pd.read_csv(csv_file).to_dict(orient='records')
@@ -261,8 +251,29 @@ class SQLOpenReviewAuthors:
             print("Inserting data into 'openreview_authors' table...")
             for data in tqdm(author_data):
                 self.insert_author(**data)
+            return True
         else:
             print("No new author data to insert.")
+            return False
+                    
+    def construct_authors_table_from_json(self, json_file: str) -> bool:
+        if not os.path.exists(json_file):
+            return False
+        else:
+            # read author data from json file
+            print(f"Reading openreview_authors data from {json_file}...")
+            with open(json_file, 'r', encoding='utf-8') as f:
+                author_data = json.load(f)
+            
+            # insert data into openreview_authors table
+            if len(author_data) > 0:
+                print("Inserting data into 'openreview_authors' table...")
+                for data in tqdm(author_data):
+                    self.insert_author(**data)
+                return True
+            else:
+                print("No new author data to insert.")
+                return False
             
     def _clean_string(self, s: str) -> str:
         if isinstance(s, str):

@@ -6,7 +6,7 @@ import os
 from typing import Optional
 
 class CSVOpenReviewAuthors:
-    def __init__(self, csv_dir: str = "./"):
+    def __init__(self, csv_dir: str) -> None:
         self.csv_path = csv_dir + "openreview_authors.csv"
         self.openreview_crawler = OpenReviewCrawler()
         
@@ -14,19 +14,21 @@ class CSVOpenReviewAuthors:
         if not os.path.exists(self.csv_path):
             self.create_author_table()
     
-    def create_author_table(self):
+    def create_author_table(self) -> None:
         columns = ['venue', 'author_openreview_id', 'author_full_name', 'email', 
                    'affiliation', 'homepage', 'dblp']
         empty_df = pd.DataFrame(columns=columns)
         empty_df.to_csv(self.csv_path, index=False)
         print(f"Created empty CSV file at {self.csv_path}")
     
-    def _load_data(self) -> pd.DataFrame:
+    def _load_data(self) -> Optional[pd.DataFrame]:
         if os.path.exists(self.csv_path):
             df = pd.read_csv(self.csv_path)
             return df
+        else:
+            None
     
-    def _save_data(self, df: pd.DataFrame):
+    def _save_data(self, df: pd.DataFrame) -> None:
         df.to_csv(self.csv_path, index=False)
     
     def insert_author(self, venue: str, author_openreview_id: str, 
@@ -165,7 +167,7 @@ class CSVOpenReviewAuthors:
         df = self._load_data()
         return (df['author_openreview_id'] == author_openreview_id).any()
     
-    def construct_authors_table_from_api(self, venue: str):
+    def construct_authors_table_from_api(self, venue: str) -> bool:
         # 从API爬取数据
         print("Crawling author data from OpenReview API...")
         author_data = self.openreview_crawler.crawl_author_data_from_api(venue)
@@ -175,33 +177,45 @@ class CSVOpenReviewAuthors:
             print("Inserting data into CSV file...")
             for data in tqdm(author_data):
                 self.insert_author(**data)
+            return True
         else:
             print("No new author data to insert.")
+            return False
     
-    def construct_authors_table_from_json(self, json_file: str):
-        print(f"Reading authors data from {json_file}...")
-        with open(json_file, 'r', encoding='utf-8') as f:
-            author_data = json.load(f)
-        
-        if len(author_data) > 0:
-            print("Inserting data into CSV file...")
-            for data in tqdm(author_data):
-                self.insert_author(**data)
+    def construct_authors_table_from_csv(self, csv_file: str) -> bool:
+        if not os.path.exists(csv_file):
+            return False
         else:
-            print("No new author data to insert.")
-    
-    def construct_authors_table_from_csv(self, csv_file: str):
-        print(f"Reading authors data from {csv_file}...")
-        import_df = pd.read_csv(csv_file)
-        author_data = import_df.to_dict(orient='records')
-        
-        if len(author_data) > 0:
-            print("Inserting data into CSV file...")
-            for data in tqdm(author_data):
-                self.insert_author(**data)
-        else:
-            print("No new author data to insert.")
+            print(f"Reading authors data from {csv_file}...")
+            import_df = pd.read_csv(csv_file)
+            author_data = import_df.to_dict(orient='records')
             
+            if len(author_data) > 0:
+                print("Inserting data into CSV file...")
+                for data in tqdm(author_data):
+                    self.insert_author(**data)
+                return True
+            else:
+                print("No new author data to insert.")
+                return False
+    
+    def construct_authors_table_from_json(self, json_file: str) -> bool:
+        if not os.path.exists(json_file):
+            return False
+        else:
+            print(f"Reading authors data from {json_file}...")
+            with open(json_file, 'r', encoding='utf-8') as f:
+                author_data = json.load(f)
+            
+            if len(author_data) > 0:
+                print("Inserting data into CSV file...")
+                for data in tqdm(author_data):
+                    self.insert_author(**data)
+                return True
+            else:
+                print("No new author data to insert.")
+                return False
+    
     def _clean_string(self, s: str) -> str:
         if isinstance(s, str):
             return s.replace('\x00', '')

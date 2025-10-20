@@ -3,9 +3,11 @@ from tqdm import tqdm
 import pandas as pd
 import json
 import psycopg2
+import os
+from typing import Optional
 
 class SQLOpenReviewArxiv:
-    def __init__(self, host: str = "localhost", dbname: str = "iclr_openreview_database", user: str = "jingjunx", password: str = "", port: str = "5432"):
+    def __init__(self, host: str, dbname: str, user: str, password: str, port: str) -> None:
         # Store connection and cursor for reuse
         self.conn = psycopg2.connect(
             host=host, dbname=dbname,
@@ -30,7 +32,7 @@ class SQLOpenReviewArxiv:
         # Execute the SQL to create the table
         self.cur.execute(create_table_sql)
     
-    def insert_openreview_arxiv(self, venue, paper_openreview_id, arxiv_id, title) -> None | tuple:
+    def insert_openreview_arxiv(self, venue, paper_openreview_id, arxiv_id, title) -> Optional[tuple]:
         insert_sql = """
         INSERT INTO openreview_arxiv (venue, paper_openreview_id, arxiv_id, title)
         VALUES (%s, %s, %s, %s)
@@ -50,7 +52,7 @@ class SQLOpenReviewArxiv:
         res = self.cur.fetchone()
         return res[0] if res else None
     
-    def delete_openreview_arxiv_by_openreview_id(self, paper_openreview_id: str) -> None:
+    def delete_openreview_arxiv_by_openreview_id(self, paper_openreview_id: str) -> Optional[pd.DataFrame]:
         # search for records with the given paper_openreview_id and delete them
         select_sql = """
         SELECT * FROM openreview_arxiv WHERE paper_openreview_id = %s;
@@ -74,7 +76,7 @@ class SQLOpenReviewArxiv:
             print(f"No records found in 'openreview_arxiv' with paper_openreview_id = {paper_openreview_id}.")
             return None
         
-    def delete_openreview_arxiv_by_id(self, paper_openreview_id: str, arxiv_id: str) -> None:
+    def delete_openreview_arxiv_by_id(self, paper_openreview_id: str, arxiv_id: str) -> Optional[pd.DataFrame]:
         # search for records with the given paper_openreview_id and delete them
         select_sql = """
         SELECT * FROM openreview_arxiv WHERE paper_openreview_id = %s AND arxiv_id = %s;
@@ -98,7 +100,7 @@ class SQLOpenReviewArxiv:
             print(f"No records found in 'openreview_arxiv' with paper_openreview_id = {paper_openreview_id} and arxiv_id = {arxiv_id}.")
             return None
         
-    def delete_openreview_arxiv_by_arxiv_id(self, arxiv_id: str) -> None:
+    def delete_openreview_arxiv_by_arxiv_id(self, arxiv_id: str) -> Optional[pd.DataFrame]:
         # search for records with the given arxiv_id and delete them
         select_sql = """
         SELECT * FROM openreview_arxiv WHERE arxiv_id = %s;
@@ -122,7 +124,7 @@ class SQLOpenReviewArxiv:
             print(f"No records found in 'openreview_arxiv' with arxiv_id = {arxiv_id}.")
             return None
     
-    def delete_openreview_arxiv_by_venue(self, venue: str) -> None:
+    def delete_openreview_arxiv_by_venue(self, venue: str) -> Optional[pd.DataFrame]:
         # search for records with the given venue and delete them
         select_sql = """
         SELECT * FROM openreview_arxiv WHERE venue = %s;
@@ -146,7 +148,7 @@ class SQLOpenReviewArxiv:
             print(f"No records found in 'openreview_arxiv' for venue = {venue}.")
             return None
     
-    def get_openreview_neighboring_arxivs(self, paper_openreview_id: str) -> None | pd.DataFrame:
+    def get_openreview_neighboring_arxivs(self, paper_openreview_id: str) -> Optional[pd.DataFrame]:
         self.cur.execute("""
         SELECT venue, paper_openreview_id, arxiv_id, title FROM openreview_arxiv
         WHERE paper_openreview_id = %s;
@@ -160,7 +162,7 @@ class SQLOpenReviewArxiv:
         else:
             return None
         
-    def get_arxiv_neighboring_openreviews(self, arxiv_id: str) -> None | pd.DataFrame:
+    def get_arxiv_neighboring_openreviews(self, arxiv_id: str) -> Optional[pd.DataFrame]:
         self.cur.execute("""
         SELECT venue, paper_openreview_id, arxiv_id, title FROM openreview_arxiv
         WHERE arxiv_id = %s;
@@ -174,7 +176,7 @@ class SQLOpenReviewArxiv:
         else:
             return None
     
-    def get_openreview_arxiv_by_venue(self, venue: str) -> None | pd.DataFrame:
+    def get_openreview_arxiv_by_venue(self, venue: str) -> Optional[pd.DataFrame]:
         self.cur.execute("""
         SELECT venue, paper_openreview_id, arxiv_id, title FROM openreview_arxiv
         WHERE venue = %s;
@@ -188,7 +190,7 @@ class SQLOpenReviewArxiv:
         else:
             return None
     
-    def get_all_openreview_arxiv(self) -> None | pd.DataFrame:
+    def get_all_openreview_arxiv(self) -> Optional[pd.DataFrame]:
         self.cur.execute("""
         SELECT venue, paper_openreview_id, arxiv_id, title FROM openreview_arxiv;
         """)
@@ -209,7 +211,7 @@ class SQLOpenReviewArxiv:
         
         return self.cur.fetchone() is not None
     
-    def construct_openreview_arxiv_table_from_api(self, venue: str) -> None:
+    def construct_openreview_arxiv_table_from_api(self, venue: str) -> bool:
         # crawl openreview arxiv data from openreview.net
         print(f"Crawling openreview arxiv data for venue: {venue}...")
         openreview_arxiv_data = self.openreview_crawler.crawl_openreview_arxiv_data_from_api(venue)
@@ -219,35 +221,47 @@ class SQLOpenReviewArxiv:
             print("Inserting data into 'openreview_arxiv' table...")
             for data in tqdm(openreview_arxiv_data):
                 self.insert_openreview_arxiv(**data)
+            return True
         else:
             print("No new openreview arxiv data to insert.")
+            return False
     
-    def construct_openreview_arxiv_table_from_csv(self, csv_file: str) -> None:
-        # read openreview arxiv data from csv file
-        print(f"Reading openreview arxiv data from {csv_file}...")
-        openreview_arxiv_data = pd.read_csv(csv_file).to_dict(orient='records')
-        
-        # insert data into openreview_arxiv table
-        if len(openreview_arxiv_data) > 0:
-            print("Inserting data into 'openreview_arxiv' table...")
-            for data in tqdm(openreview_arxiv_data):
-                self.insert_openreview_arxiv(**data)
+    def construct_openreview_arxiv_table_from_csv(self, csv_file: str) -> bool:
+        if not os.path.exists(csv_file):
+            return False
         else:
-            print("No new openreview arxiv data to insert.")
+            # read openreview arxiv data from csv file
+            print(f"Reading openreview arxiv data from {csv_file}...")
+            openreview_arxiv_data = pd.read_csv(csv_file).to_dict(orient='records')
+            
+            # insert data into openreview_arxiv table
+            if len(openreview_arxiv_data) > 0:
+                print("Inserting data into 'openreview_arxiv' table...")
+                for data in tqdm(openreview_arxiv_data):
+                    self.insert_openreview_arxiv(**data)
+                return True
+            else:
+                print("No new openreview arxiv data to insert.")
+                return False
     
     def construct_openreview_arxiv_table_from_json(self, json_file: str) -> None:
-        # read openreview arxiv data from json file
-        print(f"Reading openreview arxiv data from {json_file}...")
-        with open(json_file, 'r', encoding='utf-8') as f:
-            openreview_arxiv_data = json.load(f)
-        
-        # insert data into openreview_arxiv table
-        if len(openreview_arxiv_data) > 0:
-            print("Inserting data into 'openreview_arxiv' table...")
-            for data in tqdm(openreview_arxiv_data):
-                self.insert_openreview_arxiv(**data)
+        if not os.path.exists(json_file):
+            return False
         else:
-            print("No new openreview arxiv data to insert.")
+            # read openreview arxiv data from json file
+            print(f"Reading openreview arxiv data from {json_file}...")
+            with open(json_file, 'r', encoding='utf-8') as f:
+                openreview_arxiv_data = json.load(f)
+            
+            # insert data into openreview_arxiv table
+            if len(openreview_arxiv_data) > 0:
+                print("Inserting data into 'openreview_arxiv' table...")
+                for data in tqdm(openreview_arxiv_data):
+                    self.insert_openreview_arxiv(**data)
+                return True
+            else:
+                print("No new openreview arxiv data to insert.")
+                return False
             
     def _clean_string(self, s: str) -> str:
         if isinstance(s, str):

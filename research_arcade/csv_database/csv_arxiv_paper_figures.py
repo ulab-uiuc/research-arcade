@@ -1,11 +1,11 @@
 import pandas as pd
 import os
 from pathlib import Path
-
+from typing import Optional
 
 class CSVArxivPaperFigure:
-    def __init__(self, csv_dir):
-        csv_path = f"{csv_dir}/paper_figures.csv"
+    def __init__(self, csv_dir: str):
+        csv_path = f"{csv_dir}/arxiv_paper_figures.csv"
         self.csv_path = csv_path
         Path(csv_path).parent.mkdir(parents=True, exist_ok=True)
         if not os.path.exists(csv_path):

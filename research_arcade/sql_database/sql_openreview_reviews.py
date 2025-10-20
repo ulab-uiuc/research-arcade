@@ -5,9 +5,11 @@ import json
 import ast
 import psycopg2
 from psycopg2.extras import Json
+import os
+from typing import Optional, Union
 
 class SQLOpenReviewReviews:
-    def __init__(self, host: str = "localhost", dbname: str = "iclr_openreview_database", user: str = "jingjunx", password: str = "", port: str = "5432"):
+    def __init__(self, host: str, dbname: str, user: str, password: str, port: str) -> None:
         self.conn = psycopg2.connect(
             host=host,
             dbname=dbname,
@@ -20,7 +22,7 @@ class SQLOpenReviewReviews:
         self.crawler = OpenReviewCrawler()
         self.create_reviews_table()
         
-    def create_reviews_table(self):
+    def create_reviews_table(self) -> None:
         create_table_sql = """
         CREATE TABLE IF NOT EXISTS openreview_reviews  (
             id SERIAL UNIQUE,
@@ -38,7 +40,7 @@ class SQLOpenReviewReviews:
         self.cur.execute(create_table_sql)
         
     def insert_review(self, venue: str, review_openreview_id: str, replyto_openreview_id: str, 
-                      title: str, writer: str, content: dict, time: str) -> None | tuple:
+                      title: str, writer: str, content: dict, time: str) -> Optional[tuple]:
         """
         Insert a review into the openreview_reviews  table. Returns the inserted review id or None if it fails.
         - venue: str, the venue where the paper was submitted.
@@ -72,7 +74,7 @@ class SQLOpenReviewReviews:
         res = self.cur.fetchone()
         return res[0] if res else None
     
-    def delete_review_by_id(self, review_openreview_id: str) -> None | pd.DataFrame:
+    def delete_review_by_id(self, review_openreview_id: str) -> Optional[pd.DataFrame]:
         # search for the row based on primary key
         select_sql = """
         SELECT venue, review_openreview_id, replyto_openreview_id, writer, title, content, time 
@@ -99,7 +101,7 @@ class SQLOpenReviewReviews:
             print(f"No review found with review_openreview_id {review_openreview_id}.")
             return None
         
-    def delete_reviews_by_venue(self, venue: str) -> None | pd.DataFrame:
+    def delete_reviews_by_venue(self, venue: str) -> Optional[pd.DataFrame]:
         # search for the row based on primary key
         select_sql = """
         SELECT venue, review_openreview_id, replyto_openreview_id, writer, title, content, time 
@@ -127,7 +129,7 @@ class SQLOpenReviewReviews:
             return None
         
     def update_review(self, venue: str, review_openreview_id: str, replyto_openreview_id: str, 
-                    writer: str, title: str, content: dict, time: str) -> None | pd.DataFrame:
+                    writer: str, title: str, content: dict, time: str) -> Optional[pd.DataFrame]:
         # Query to select the current record using primary key
         select_sql = """
         SELECT venue, review_openreview_id, replyto_openreview_id, writer, title, content, time 
@@ -173,7 +175,7 @@ class SQLOpenReviewReviews:
             print(f"Review with review_openreview_id {review_openreview_id} updated successfully.")
             return review_df
         
-    def get_review_by_id(self, review_openreview_id: str) -> None | pd.DataFrame:
+    def get_review_by_id(self, review_openreview_id: str) -> Optional[pd.DataFrame]:
         # Query to select the current record using primary key
         select_sql = """
         SELECT venue, review_openreview_id, replyto_openreview_id, writer, title, content, time 
@@ -197,7 +199,7 @@ class SQLOpenReviewReviews:
 
             return review_df
         
-    def get_reviews_by_venue(self, venue: str) -> None | pd.DataFrame:
+    def get_reviews_by_venue(self, venue: str) -> Optional[pd.DataFrame]:
         # Query to select all records for a specific venue
         select_sql = """
         SELECT venue, review_openreview_id, replyto_openreview_id, writer, title, content, time 
@@ -222,7 +224,7 @@ class SQLOpenReviewReviews:
             reviews_df = pd.DataFrame(processed_rows, columns=columns)
             return reviews_df
         
-    def get_all_reviews(self, is_all_features: bool = False) -> None | pd.DataFrame:
+    def get_all_reviews(self, is_all_features: bool = False) -> Optional[pd.DataFrame]:
         if is_all_features:
             select_query = """
             SELECT venue, review_openreview_id, replyto_openreview_id, writer, title, content, time 
@@ -256,13 +258,13 @@ class SQLOpenReviewReviews:
             reviews_df = pd.DataFrame(reviews, columns=["venue", "review_openreview_id", "replyto_openreview_id", "title", "time"])
             return reviews_df
         
-    def check_review_exists(self, review_openreview_id: str) -> bool | None:
+    def check_review_exists(self, review_openreview_id: str) -> bool:
         self.cur.execute("SELECT 1 FROM openreview_reviews  WHERE review_openreview_id = %s LIMIT 1;", (review_openreview_id,))
         result = self.cur.fetchone()
 
         return result is not None
     
-    def construct_reviews_table_from_api(self, venue: str):
+    def construct_reviews_table_from_api(self, venue: str) -> None:
         # crawl review data from openreview API
         print("Crawling review data from OpenReview API...")
         review_data = self.crawler.crawl_review_data_from_api(venue)
@@ -275,46 +277,53 @@ class SQLOpenReviewReviews:
         else:
             print("No new review data to insert.")
             
-    def construct_reviews_table_from_csv(self, csv_file: str):
-        # read review data from csv
-        print(f"Reading review data from {csv_file}...")
-        review_data = pd.read_csv(csv_file).to_dict(orient='records')
-        
-        # insert data into openreview_reviews  table
-        if len(review_data) > 0:
-            print("Inserting data into 'openreview_reviews' table...")
-            for data in tqdm(review_data):
-                data["content"] = ast.literal_eval(data["content"])
-                self.insert_review(**data)
+    def construct_reviews_table_from_csv(self, csv_file: str) -> bool:
+        if not os.path.exists(csv_file):
+            return False
         else:
-            print("No new review data to insert.")
+            # read review data from csv
+            print(f"Reading review data from {csv_file}...")
+            review_data = pd.read_csv(csv_file).to_dict(orient='records')
             
-    def construct_reviews_table_from_json(self, json_file: str):
-        # read review data from json
-        print(f"Reading review data from {json_file}...")
-        with open(json_file, 'r') as f:
-            review_data = json.load(f)
-        
-        # insert data into openreview_reviews  table
-        if len(review_data) > 0:
-            print("Inserting data into 'openreview_reviews' table...")
-            for data in tqdm(review_data):
-                self.insert_review(**data)
+            # insert data into openreview_reviews  table
+            if len(review_data) > 0:
+                print("Inserting data into 'openreview_reviews' table...")
+                for data in tqdm(review_data):
+                    data["content"] = ast.literal_eval(data["content"])
+                    self.insert_review(**data)
+                return True
+            else:
+                print("No new review data to insert.")
+                return False
+            
+    def construct_reviews_table_from_json(self, json_file: str) -> bool:
+        if not os.path.exists(json_file):
+            return False
         else:
-            print("No new review data to insert.")
+            # read review data from json
+            print(f"Reading review data from {json_file}...")
+            with open(json_file, 'r') as f:
+                review_data = json.load(f)
+            
+            # insert data into openreview_reviews  table
+            if len(review_data) > 0:
+                print("Inserting data into 'openreview_reviews' table...")
+                for data in tqdm(review_data):
+                    self.insert_review(**data)
+                return True
+            else:
+                print("No new review data to insert.")
+                return False
     
-    def _clean_json_content(self, content: dict | list | str) -> dict | list | str:
+    def _clean_json_content(self, content: Union[str, dict, list, int, float, bool, None]) -> Union[str, dict, list, int, float, bool, None]:
         if isinstance(content, str):
-            # Remove null character (\u0000) and any other non-printable characters
-            return ''.join(char for char in content if char.isprintable())
+            return ''.join(char for char in content if char.isprintable())  # 返回 str
         elif isinstance(content, dict):
-            # Clean all string values in the dictionary
-            return {key: self._clean_json_content(value) for key, value in content.items()}
+            return {key: self._clean_json_content(value) for key, value in content.items()}  # 返回 dict
         elif isinstance(content, list):
-            # Clean all elements in the list
-            return [self._clean_json_content(item) for item in content]
+            return [self._clean_json_content(item) for item in content]  # 返回 list
         else:
-            return content
+            return content  # 返回原始类型
         
     def _clean_string(self, s: str) -> str:
         if isinstance(s, str):

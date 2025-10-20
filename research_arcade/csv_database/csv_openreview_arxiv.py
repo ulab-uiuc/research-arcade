@@ -6,7 +6,7 @@ import os
 from typing import Optional
 
 class CSVOpenReviewArxiv:
-    def __init__(self, csv_dir: str = "./"):
+    def __init__(self, csv_dir: str) -> None:
         self.csv_path = csv_dir + "openreview_arxiv.csv"
         self.openreview_crawler = OpenReviewCrawler()
         
@@ -14,18 +14,20 @@ class CSVOpenReviewArxiv:
         if not os.path.exists(self.csv_path):
             self.create_openreview_arxiv_table()
     
-    def create_openreview_arxiv_table(self):
+    def create_openreview_arxiv_table(self) -> None:
         columns = ['venue', 'paper_openreview_id', 'arxiv_id', 'title']
         empty_df = pd.DataFrame(columns=columns)
         empty_df.to_csv(self.csv_path, index=False)
         print(f"Created empty CSV file at {self.csv_path}")
     
-    def _load_data(self) -> pd.DataFrame:
+    def _load_data(self) -> Optional[pd.DataFrame]:
         if os.path.exists(self.csv_path):
             df = pd.read_csv(self.csv_path)
             return df
+        else:
+            return None
     
-    def _save_data(self, df: pd.DataFrame):
+    def _save_data(self, df: pd.DataFrame) -> None:
         df.to_csv(self.csv_path, index=False)
     
     def insert_openreview_arxiv(self, venue: str, paper_openreview_id: str, 
@@ -172,7 +174,7 @@ class CSVOpenReviewArxiv:
                  (df['paper_openreview_id'] == paper_openreview_id)).any()
         return exists
     
-    def construct_openreview_arxiv_table_from_api(self, venue: str):
+    def construct_openreview_arxiv_table_from_api(self, venue: str) -> bool:
         # 从API爬取数据
         print(f"Crawling openreview arxiv data for venue: {venue}...")
         openreview_arxiv_data = self.openreview_crawler.crawl_openreview_arxiv_data_from_api(venue)
@@ -182,32 +184,44 @@ class CSVOpenReviewArxiv:
             print("Inserting data into CSV file...")
             for data in tqdm(openreview_arxiv_data):
                 self.insert_openreview_arxiv(**data)
+            return True
         else:
             print("No new openreview arxiv data to insert.")
+            return False
     
-    def construct_openreview_arxiv_table_from_csv(self, csv_file: str):
-        print(f"Reading openreview arxiv data from {csv_file}...")
-        import_df = pd.read_csv(csv_file)
-        openreview_arxiv_data = import_df.to_dict(orient='records')
-        
-        if len(openreview_arxiv_data) > 0:
-            print("Inserting data into CSV file...")
-            for data in tqdm(openreview_arxiv_data):
-                self.insert_openreview_arxiv(**data)
+    def construct_openreview_arxiv_table_from_csv(self, csv_file: str) -> bool:
+        if not os.path.exists(csv_file):
+            return False
         else:
-            print("No new openreview arxiv data to insert.")
+            print(f"Reading openreview arxiv data from {csv_file}...")
+            import_df = pd.read_csv(csv_file)
+            openreview_arxiv_data = import_df.to_dict(orient='records')
+            
+            if len(openreview_arxiv_data) > 0:
+                print("Inserting data into CSV file...")
+                for data in tqdm(openreview_arxiv_data):
+                    self.insert_openreview_arxiv(**data)
+                return True
+            else:
+                print("No new openreview arxiv data to insert.")
+                return False
     
-    def construct_openreview_arxiv_table_from_json(self, json_file: str):
-        print(f"Reading openreview arxiv data from {json_file}...")
-        with open(json_file, 'r', encoding='utf-8') as f:
-            openreview_arxiv_data = json.load(f)
-        
-        if len(openreview_arxiv_data) > 0:
-            print("Inserting data into CSV file...")
-            for data in tqdm(openreview_arxiv_data):
-                self.insert_openreview_arxiv(**data)
+    def construct_openreview_arxiv_table_from_json(self, json_file: str) -> bool:
+        if not os.path.exists(json_file):
+            return False
         else:
-            print("No new openreview arxiv data to insert.")
+            print(f"Reading openreview arxiv data from {json_file}...")
+            with open(json_file, 'r', encoding='utf-8') as f:
+                openreview_arxiv_data = json.load(f)
+            
+            if len(openreview_arxiv_data) > 0:
+                print("Inserting data into CSV file...")
+                for data in tqdm(openreview_arxiv_data):
+                    self.insert_openreview_arxiv(**data)
+                return True
+            else:
+                print("No new openreview arxiv data to insert.")
+                return False
             
     def _clean_string(self, s: str) -> str:
         if isinstance(s, str):

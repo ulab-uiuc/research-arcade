@@ -11,9 +11,9 @@
 
 # 🗞️ News
 
-# 👋🏻 Introduction
+<!-- # 👋🏻 Introduction
 
-ResearchArcade is a graph interface for academic tasks. It utilizes a coherent multi-table format with graph structures to organize data from different sources and multiple modalities. And it preserves temporal evolution at both the manuscript and community levels.
+ResearchArcade is a graph interface for academic tasks. It utilizes a coherent multi-table format with graph structures to organize data from different sources and multiple modalities. And it preserves temporal evolution at both the manuscript and community levels. -->
 
 # 🧭 Motivation
 
@@ -52,10 +52,7 @@ Tables are classified into **node tables** (colored) or **edge tables** (black a
 - Conda ≥ 22.0 (recommended)
 - API keys:
   - Semantic Scholar API
-  - Other APIs of user's choice/convenience
-
-
-### Environment Setup
+  <!-- - Other APIs of user's choice/convenience -->
 
 ```python
 # create a new environment
@@ -70,16 +67,10 @@ pip install -r requirements.txt
 
 To run the code, you’ll need to set up environment variables such as your **Semantic Scholar API key** and database configurations.
 
-#### Recommended setup
-
-1. Copy the template file into the project root directory:
-   ```bash
-   cp .env.template .env
- 
-### Run Tests
-
-
-### Run Tasks and Models
+Copy the template file into the project root directory:
+```bash
+cp .env.template .env
+```
 
 ### Backend Selection
 
@@ -199,7 +190,4 @@ This project is licensed under the MIT License – see the [LICENSE](./LICENSE) 
 
 
 # Citation
-
-- [Graph World Model (Feng et al., 2025)](https://arxiv.org/abs/2507.10539)
-- [ResearchTown: Simulator of Human Research Community (Yu et al., 2025)](https://arxiv.org/abs/2412.17767)
 

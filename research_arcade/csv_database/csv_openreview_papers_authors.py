@@ -6,7 +6,7 @@ import os
 from typing import Optional
 
 class CSVOpenReviewPapersAuthors:
-    def __init__(self, csv_dir: str = "./"):
+    def __init__(self, csv_dir: str) -> None:
         self.csv_path = csv_dir + "openreview_papers_authors.csv"
         self.openreview_crawler = OpenReviewCrawler()
         
@@ -14,18 +14,20 @@ class CSVOpenReviewPapersAuthors:
         if not os.path.exists(self.csv_path):
             self.create_papers_authors_table()
     
-    def create_papers_authors_table(self):
+    def create_papers_authors_table(self) -> None:
         columns = ['venue', 'paper_openreview_id', 'author_openreview_id']
         empty_df = pd.DataFrame(columns=columns)
         empty_df.to_csv(self.csv_path, index=False)
         print(f"Created empty CSV file at {self.csv_path}")
     
-    def _load_data(self) -> pd.DataFrame:
+    def _load_data(self) -> Optional[pd.DataFrame]:
         if os.path.exists(self.csv_path):
             df = pd.read_csv(self.csv_path)
             return df
+        else:
+            return None
     
-    def _save_data(self, df: pd.DataFrame):
+    def _save_data(self, df: pd.DataFrame) -> None:
         df.to_csv(self.csv_path, index=False)
     
     def insert_paper_authors(self, venue: str, paper_openreview_id: str, 
@@ -177,7 +179,7 @@ class CSVOpenReviewPapersAuthors:
                  (df['author_openreview_id'] == author_openreview_id)).any()
         return exists
     
-    def construct_papers_authors_table_from_api(self, venue: str):
+    def construct_papers_authors_table_from_api(self, venue: str) -> bool:
         # 从API爬取数据
         print(f"Crawling papers-authors data for venue {venue} from OpenReview API...")
         papers_authors_data = self.openreview_crawler.crawl_papers_authors_data_from_api(venue)
@@ -186,32 +188,44 @@ class CSVOpenReviewPapersAuthors:
             print(f"Inserting papers-authors data for venue {venue}...")
             for data in tqdm(papers_authors_data):
                 self.insert_paper_authors(**data)
+            return True
         else:
             print(f"No papers-authors data found for venue {venue}.")
+            return False
     
-    def construct_papers_authors_table_from_csv(self, csv_file: str):
-        print(f"Reading papers-authors data from {csv_file}...")
-        import_df = pd.read_csv(csv_file)
-        papers_authors_data = import_df.to_dict(orient='records')
-        
-        if len(papers_authors_data) > 0:
-            print(f"Inserting papers-authors data from {csv_file}...")
-            for data in tqdm(papers_authors_data):
-                self.insert_paper_authors(**data)
+    def construct_papers_authors_table_from_csv(self, csv_file: str) -> bool:
+        if not os.path.exists(csv_file):
+            return False
         else:
-            print(f"No papers-authors data found in {csv_file}.")
+            print(f"Reading papers-authors data from {csv_file}...")
+            import_df = pd.read_csv(csv_file)
+            papers_authors_data = import_df.to_dict(orient='records')
+            
+            if len(papers_authors_data) > 0:
+                print(f"Inserting papers-authors data from {csv_file}...")
+                for data in tqdm(papers_authors_data):
+                    self.insert_paper_authors(**data)
+                return True
+            else:
+                print(f"No papers-authors data found in {csv_file}.")
+                return False
     
-    def construct_papers_authors_table_from_json(self, json_file: str):
-        print(f"Reading papers-authors data from {json_file}...")
-        with open(json_file, 'r', encoding='utf-8') as f:
-            papers_authors_data = json.load(f)
-        
-        if len(papers_authors_data) > 0:
-            print(f"Inserting papers-authors data from {json_file}...")
-            for data in tqdm(papers_authors_data):
-                self.insert_paper_authors(**data)
+    def construct_papers_authors_table_from_json(self, json_file: str) -> bool:
+        if not os.path.exists(json_file):
+            return False
         else:
-            print(f"No papers-authors data found in {json_file}.")
+            print(f"Reading papers-authors data from {json_file}...")
+            with open(json_file, 'r', encoding='utf-8') as f:
+                papers_authors_data = json.load(f)
+            
+            if len(papers_authors_data) > 0:
+                print(f"Inserting papers-authors data from {json_file}...")
+                for data in tqdm(papers_authors_data):
+                    self.insert_paper_authors(**data)
+                return True
+            else:
+                print(f"No papers-authors data found in {json_file}.")
+                return False
             
     def _clean_string(self, s: str) -> str:
         if isinstance(s, str):

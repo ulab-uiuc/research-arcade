@@ -10,8 +10,8 @@ import json
 # TODO: refactor the original ArxivCrawler into the ArxivCrawler file
 
 class CSVArxivPapers:
-    def __init__(self, csv_dir):
-        csv_path = f"{csv_dir}/papers.csv"
+    def __init__(self, csv_dir: str):
+        csv_path = f"{csv_dir}/arxiv_papers.csv"
         self.csv_path = csv_path
         # Set up the target directory
         # Automatically create the csv path

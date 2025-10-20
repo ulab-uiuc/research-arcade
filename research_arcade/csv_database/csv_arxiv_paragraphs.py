@@ -5,8 +5,8 @@ from pathlib import Path
 
 
 class CSVArxivParagraphs:
-    def __init__(self, csv_dir):
-        csv_path = f"{csv_dir}/paragraphs.csv"
+    def __init__(self, csv_dir: str):
+        csv_path = f"{csv_dir}/arxiv_paragraphs.csv"
         self.csv_path = csv_path
         Path(csv_path).parent.mkdir(parents=True, exist_ok=True)
         if not os.path.exists(csv_path):

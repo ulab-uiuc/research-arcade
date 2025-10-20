@@ -6,7 +6,7 @@ import os
 from typing import Optional
 
 class CSVOpenReviewParagraphs:
-    def __init__(self, csv_dir: str = "./"):
+    def __init__(self, csv_dir: str) -> None:
         self.csv_path = csv_dir + "openreview_paragraphs.csv"
         self.openreview_crawler = OpenReviewCrawler()
         
@@ -14,18 +14,19 @@ class CSVOpenReviewParagraphs:
         if not os.path.exists(self.csv_path):
             self.create_paragraphs_table()
     
-    def create_paragraphs_table(self):
+    def create_paragraphs_table(self) -> None:
         columns = ['venue', 'paper_openreview_id', 'paragraph_idx', 'section', 'content']
         empty_df = pd.DataFrame(columns=columns)
         empty_df.to_csv(self.csv_path, index=False)
         print(f"Created empty CSV file at {self.csv_path}")
     
-    def _load_data(self) -> pd.DataFrame:
+    def _load_data(self) -> Optional[pd.DataFrame]:
         if os.path.exists(self.csv_path):
             df = pd.read_csv(self.csv_path)
             return df
+        return None
     
-    def _save_data(self, df: pd.DataFrame):
+    def _save_data(self, df: pd.DataFrame) -> None:
         df.to_csv(self.csv_path, index=False)
     
     def insert_paragraph(self, venue: str, paper_openreview_id: str, paragraph_idx: int, section: str, content: str) -> Optional[tuple]:
@@ -129,7 +130,7 @@ class CSVOpenReviewParagraphs:
         return deleted_rows
     
     def construct_paragraphs_table_from_api(self, venue: str, pdf_dir: str, filter_list: list, log_file: str, 
-                                            is_paper = True, is_revision = True, is_pdf_delete: bool = True):
+                                            is_paper = True, is_revision = True, is_pdf_delete: bool = True) -> bool:
         # 从API爬取数据
         print("Crawling paragraph data from OpenReview API...")
         paragraph_data = self.openreview_crawler.crawl_paragraph_data_from_api(venue, pdf_dir, filter_list, log_file,
@@ -140,44 +141,46 @@ class CSVOpenReviewParagraphs:
             print("Inserting data into CSV file...")
             for data in tqdm(paragraph_data):
                 self.insert_paragraph(**data)
+            return True
         else:
             print("No new paragraph data to insert.")
+            return False
     
-    def construct_paragraphs_table_from_csv(self, csv_file: str):
+    def construct_paragraphs_table_from_csv(self, csv_file: str) -> bool:
         if not os.path.exists(csv_file):
             print(f"File {csv_file} not exists")
             return False
-        
-        print(f"Reading paragraph data from {csv_file}...")
-        import_df = pd.read_csv(csv_file)
-        paper_data = import_df.to_dict(orient='records')
-        
-        if len(paper_data) > 0:
-            print("Inserting data into CSV file...")
-            for data in tqdm(paper_data):
-                self.insert_paragraph(**data)
-            return True
         else:
-            print("No new paragraph data to insert.")
-            return False
+            print(f"Reading paragraph data from {csv_file}...")
+            import_df = pd.read_csv(csv_file)
+            paper_data = import_df.to_dict(orient='records')
+            
+            if len(paper_data) > 0:
+                print("Inserting data into CSV file...")
+                for data in tqdm(paper_data):
+                    self.insert_paragraph(**data)
+                return True
+            else:
+                print("No new paragraph data to insert.")
+                return False
     
-    def construct_paragraphs_table_from_json(self, json_file: str):
+    def construct_paragraphs_table_from_json(self, json_file: str) -> bool:
         if not os.path.exists(json_file):
             print(f"File {json_file} not exists")
             return False
-        
-        print(f"Reading paper data from {json_file}...")
-        with open(json_file, 'r', encoding='utf-8') as f:
-            paper_data = json.load(f)
-        
-        if len(paper_data) > 0:
-            print("Inserting data into CSV file...")
-            for data in tqdm(paper_data):
-                self.insert_paragraph(**data)
-            return True
         else:
-            print("No new paper data to insert.")
-            return False
+            print(f"Reading paper data from {json_file}...")
+            with open(json_file, 'r', encoding='utf-8') as f:
+                paper_data = json.load(f)
+            
+            if len(paper_data) > 0:
+                print("Inserting data into CSV file...")
+                for data in tqdm(paper_data):
+                    self.insert_paragraph(**data)
+                return True
+            else:
+                print("No new paper data to insert.")
+                return False
     
     def _clean_string(self, s: str) -> str:
         if isinstance(s, str):
