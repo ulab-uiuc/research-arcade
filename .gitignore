@@ -5,7 +5,7 @@ __pycache__/
 *.log
 *.py[cod]
 *$py.class
-
+.vscode
 json/
 # C extensions
 *.so
