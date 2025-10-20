@@ -1,7 +1,7 @@
 <h1 align="center">🎡 ResearchArcade: Graph Interface for Academic Tasks</h1>
 
 <p align="center">
-    <a href="https://ulab-uiuc.github.io/research_arcade/">🌐 Project Page</a> |
+    <a href="https://ulab-uiuc.github.io/research-arcade/">🌐 Project Page</a> |
     <a href="TODO">📜 arXiv</a>
 <p>
 
