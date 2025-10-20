@@ -53,6 +53,17 @@ conda activate research_arcade
 pip install -r requirements.txt
 ```
 
+### Configure Environment Variables
+
+To run the code, you’ll need to set up environment variables such as your **Semantic Scholar API key** and database configurations.
+
+#### Recommended setup
+
+1. Copy the template file into the project root directory:
+   ```bash
+   cp .env.template .env
+ 
+
 ### Backend Selection
 
 #### Initialize with CSV Backend

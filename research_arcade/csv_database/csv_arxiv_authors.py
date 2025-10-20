@@ -28,10 +28,9 @@ class CSVArxivAuthors:
             df = pd.read_csv(self.csv_path)
             return df
         return pd.DataFrame()
-    
+
     def _save_data(self, df: pd.DataFrame):
         df.to_csv(self.csv_path, index=False)
-
 
     def insert_author(self, semantic_scholar_id, name, homepage=None):
         """Insert an author. Returns the generated author id."""
@@ -63,9 +62,7 @@ class CSVArxivAuthors:
         df = df[df['id'] != id]
         self._save_data(df)
         return True
-    
-    
-    
+
     def update_author(self, id, semantic_scholar_id=None, name=None, homepage=None):
         """Update an author by id. Returns True if updated, False if not found."""
         df = self._load_data()
@@ -84,7 +81,7 @@ class CSVArxivAuthors:
         
         self._save_data(df)
         return True
-    
+
     def get_author_by_id(self, id: int) -> Optional[pd.DataFrame]:
         """Get an author by its id. Returns a DataFrame with the author or None if not found."""
         df = self._load_data()
@@ -94,17 +91,15 @@ class CSVArxivAuthors:
         
         author = df[df['id'] == id]
         return author
-    
+
     def check_author_exists(self, id: int) -> bool:
         """Check if an author exists by its id."""
         df = self._load_data()
-        
+
         if df.empty:
             return False
-        
+
         return id in df['id'].values
-
-
 
     def construct_author_table_from_csv(self, csv_file: str):
         """
@@ -114,31 +109,31 @@ class CSVArxivAuthors:
         if not os.path.exists(csv_file):
             print(f"Error: CSV file {csv_file} does not exist.")
             return False
-        
+
         external_df = pd.read_csv(csv_file)
         current_df = self._load_data()
-        
+
         required_cols = ['semantic_scholar_id', 'name']
         missing_cols = [col for col in required_cols if col not in external_df.columns]
-        
+
         if missing_cols:
             print(f"Error: External CSV is missing required columns: {missing_cols}")
             return False
-        
+
         # Add optional columns if they don't exist
         if 'homepage' not in external_df.columns:
             external_df['homepage'] = None
-        
+
         start_id = current_df['id'].max() + 1 if not current_df.empty else 1
         external_df['id'] = range(start_id, start_id + len(external_df))
-        
+
         # Filter out authors that already exist (based on semantic_scholar_id)
         if not current_df.empty:
             existing_ids = set(current_df['semantic_scholar_id'].values)
             external_df = external_df[~external_df['semantic_scholar_id'].isin(existing_ids)]
-        
+
         combined_df = pd.concat([current_df, external_df], ignore_index=True)
         self._save_data(combined_df)
-        
+
         print(f"Successfully imported {len(external_df)} authors from {csv_file}")
         return True
