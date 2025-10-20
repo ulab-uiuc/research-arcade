@@ -1,13 +1,12 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
-<<<<<<< HEAD
 
 # Django stuff:
 *.log
-=======
 *.py[cod]
 *$py.class
 
+json/
 # C extensions
 *.so
 !./data/openreview/figures.csv
@@ -185,4 +184,3 @@ paragraph_generation_models/*
 token_embedding_cache/
 wandb/
 *.json
->>>>>>> research_arcade_arxiv
