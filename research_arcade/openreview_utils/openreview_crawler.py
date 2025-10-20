@@ -3,10 +3,7 @@ import arxiv
 from arxiv import UnexpectedEmptyPageError
 import os
 import re
-import ast
 import time
-import json
-import pandas as pd
 from tqdm import tqdm
 from datetime import datetime
 from .pdf_utils import extract_paragraphs_from_pdf_new, connect_diffs_and_paragraphs
@@ -172,7 +169,7 @@ class OpenReviewCrawler:
             fullname = ""
             for name in all_names:
                 if name.get("preferred") is not None:
-                    if name["preferred"] == True:
+                    if name["preferred"]:
                         author_id = name["username"]
                         fullname = name["fullname"]
                         break
@@ -182,7 +179,7 @@ class OpenReviewCrawler:
                         try:
                             fullname = name["fullname"]
                             break
-                        except:
+                        except Exception:
                             fullname = author_id
                     else:
                         pass
@@ -191,18 +188,18 @@ class OpenReviewCrawler:
             # get email
             try:
                 email = profile.content["preferredEmail"]
-            except:
+            except Exception:
                 try:
                     email = profile.content["emailsConfirmed"][0]
-                except:
+                except Exception:
                     try:
                         email = profile.content["emails"][0]
-                    except:
+                    except Exception:
                         email = ""
             # get affiliation
             try:
                 affiliation = profile.content["history"][0]["institution"]["name"]
-            except:
+            except Exception:
                 affiliation = ""
             # get homepage
             if profile.content.get("homepage") is not None:
@@ -426,7 +423,7 @@ class OpenReviewCrawler:
                                             "content": content,
                                             "time": date
                                             })
-                                    except:
+                                    except Exception:
                                         continue
                 return revision_data
         else:
@@ -489,7 +486,7 @@ class OpenReviewCrawler:
                                         time = revision[1]["Time"]
                                         try:
                                             content = connect_diffs_and_paragraphs(original_pdf, modified_pdf, filter_list)
-                                        except:
+                                        except Exception:
                                             continue
                                         revision_data.append({
                                             "venue": venue,
@@ -502,6 +499,10 @@ class OpenReviewCrawler:
     
     def crawl_paragraph_data_from_api(self, venue: str, pdf_dir: str, filter_list: list, log_file: str, 
                                       is_paper = True, is_revision = True, is_pdf_delete: bool = True):
+        # TODO: pdf_path is undefined
+        pdf_path = None
+        # TODO: original_id is undefined
+        original_id = None
         paragraph_data = []
         if "2023" in venue or "2022" in venue or "2021" in venue or "2020" in venue or "2019" in venue or "2018" in venue or "2017" in venue or "2014" in venue or "2013" in venue:
             if "2023" in venue or "2022" in venue or "2021" in venue or "2020" in venue or "2019" in venue or "2018" in venue:
@@ -537,7 +538,7 @@ class OpenReviewCrawler:
                                 if is_pdf_delete:
                                     os.remove(pdf_path)
                                     print(f"Deleted PDF file: {pdf_path}")
-                            except:
+                            except Exception:
                                 with open(log_file, "a") as log:
                                     log.write(f"PDF {pdf_path} Failed\n")
                     if is_revision:
@@ -607,7 +608,7 @@ class OpenReviewCrawler:
                                             if is_pdf_delete:
                                                 os.remove(pdf_path)
                                                 print(f"Deleted PDF file: {pdf_path}")
-                                        except:
+                                        except Exception:
                                             with open(log_file, "a") as log:
                                                 log.write(f"PDF {pdf_path} Failed\n")
                                         if idx == num_revision - 1:
@@ -627,7 +628,7 @@ class OpenReviewCrawler:
                                                 if is_pdf_delete:
                                                     os.remove(pdf_path)
                                                     print(f"Deleted PDF file: {pdf_path}")
-                                            except:
+                                            except Exception:
                                                 with open(log_file, "a") as log:
                                                     log.write(f"PDF {pdf_path} Failed\n")
                 return paragraph_data
@@ -667,7 +668,7 @@ class OpenReviewCrawler:
                                     if is_pdf_delete:
                                         os.remove(pdf_path)
                                         print(f"Deleted PDF file: {pdf_path}")
-                                except:
+                                except Exception:
                                     with open(log_file, "a") as log:
                                         log.write(f"PDF {pdf_path} Failed\n")
                         
@@ -731,7 +732,7 @@ class OpenReviewCrawler:
                                                 if is_pdf_delete:
                                                     os.remove(pdf_path)
                                                     print(f"Deleted PDF file: {pdf_path}")
-                                            except:
+                                            except Exception:
                                                 with open(log_file, "a") as log:
                                                     log.write(f"PDF {pdf_path} Failed\n")
                                             if idx == num_revision - 1:
@@ -751,7 +752,7 @@ class OpenReviewCrawler:
                                                     if is_pdf_delete:
                                                         os.remove(pdf_path)
                                                         print(f"Deleted PDF file: {pdf_path}")
-                                                except:
+                                                except Exception:
                                                     with open(log_file, "a") as log:
                                                         log.write(f"PDF {pdf_path} Failed\n")
                 return paragraph_data
@@ -815,7 +816,7 @@ class OpenReviewCrawler:
                     # get paper openreview id
                     paper_id = submission.id
                     # get revisions and their time
-                    revisions = {}
+                    # revisions = {}
                     # get revisions and their time
                     note_edits = self.client_v1.get_references(referent=paper_id, original=True)
                     time.sleep(1)
@@ -855,7 +856,7 @@ class OpenReviewCrawler:
                         # get paper openreview id
                         paper_id = submission.id
                         # get revisions and their time
-                        revisions = {}
+                        # revisions = {}
                         # all_diffs = []
                         note_edits = self.client_v2.get_note_edits(note_id=paper_id)
                         time.sleep(1)

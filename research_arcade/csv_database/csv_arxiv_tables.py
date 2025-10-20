@@ -1,8 +1,7 @@
 import pandas as pd
 import os
-from typing import List, Optional, Tuple
+from typing import Optional
 from pathlib import Path
-import json
 
 
 class CSVArxivTable:
@@ -34,6 +33,10 @@ class CSVArxivTable:
 
 
     def insert_table(self, paper_arxiv_id, path=None, caption=None, label=None, table_text=None):
+
+        # TODO: name is undefined:
+        name = None
+
         df = self._load_data()
         
         if name in df['name'].values:

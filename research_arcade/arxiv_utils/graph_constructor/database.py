@@ -473,7 +473,7 @@ class Database:
         try:
             self.cur.execute(sql, (paragraph_id, paper_arxiv_id, bib_key))
             self.conn.commit()
-        except Exception as e:
+        except Exception:
             self.conn.rollback()
             raise
 

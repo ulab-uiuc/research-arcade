@@ -1,18 +1,15 @@
 import sys
 import os
-import json
-import argparse
-from types import SimpleNamespace  
 
 import unittest
-from unittest.mock import Mock, MagicMock, patch
+from unittest.mock import Mock, patch
 
 from dotenv import load_dotenv  
-load_dotenv()
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from research_arcade.research_arcade import ResearchArcade
+load_dotenv()
 
 
 class TestArxivArcadeNodeCRUD(unittest.TestCase):
@@ -466,7 +463,7 @@ class TestArxivArcadeEdgeCRUD(unittest.TestCase):
              patch('arxiv_arcade.CSVArxivPaperFigure'), \
              patch('arxiv_arcade.CSVArxivPaperTable'), \
              patch('arxiv_arcade.CSVArxivParagraphReference'):
-            self.arcade = ArxivArcade(self.config)
+            self.arcade = ResearchArcade(self.config)
     
     # -------------------------
     # insert_edge tests

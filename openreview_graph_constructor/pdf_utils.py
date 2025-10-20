@@ -112,18 +112,18 @@ def extract_paragraphs_from_pdf_new(pdf_path: Path, filter_list: Optional[List[s
     start = 0
     try:
         start = formatted_lines.index("Abstract")
-    except:
+    except Exception:
         try:
             start = formatted_lines.index("ABSTRACT")
-        except:
+        except Exception:
             print("can not find abstract")
     end = len(formatted_lines)
     try:
         end = formatted_lines.index("References")
-    except:
+    except Exception:
         try:
             end = formatted_lines.index("REFERENCES")
-        except:
+        except Exception:
             print("can not find appendix")
 
     # the structured content and insert the title

@@ -4,7 +4,6 @@ import pandas as pd
 import json
 import ast
 import os
-from pathlib import Path
 from typing import Optional
 
 class CSVOpenReviewReviews:

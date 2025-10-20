@@ -1,6 +1,4 @@
 from sqlDatabaseConstructor import sqlDatabaseConstructor
-from database import Database
-import pandas as pd
 
 sql_database = sqlDatabaseConstructor()
 

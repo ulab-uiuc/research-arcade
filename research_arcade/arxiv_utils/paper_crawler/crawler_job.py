@@ -3,11 +3,7 @@ from ..multi_input.multi_download import MultiDownload
 from ..paper_crawler.task_database import TaskDatabase
 from ..graph_constructor.database import Database
 from ..paper_collector.paper_graph_processor import PaperGraphProcessor
-import psycopg2
-from psycopg2 import errorcodes
-from psycopg2 import errors as psy_errors  # alias correctly
 import pytz
-import json
 from arxiv import UnexpectedEmptyPageError
 import datetime
 import arxiv
@@ -144,7 +140,7 @@ class CrawlerJob:
 
         for id in cleaned_ids:
             try:
-                fetched = self.tdb.initialize_state(id)
+                # fetched = self.tdb.initialize_state(id)
                 # if fetched:
                 added.append(id)
                 print(f"[+] Task for {id} initialized.")
@@ -244,7 +240,7 @@ class CrawlerJob:
         """
         Similarly, we can create but not add arxiv_ids
         """
-        processed_paper_ids = []
+        # processed_paper_ids = []
 
         try:
             self.md.build_paper_graphs(

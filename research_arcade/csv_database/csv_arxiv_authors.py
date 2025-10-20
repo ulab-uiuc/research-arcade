@@ -1,9 +1,7 @@
 import pandas as pd
 import os
-from typing import List, Optional, Tuple
+from typing import Optional
 from pathlib import Path
-import json
-from ..arxiv_utils.arxiv_crawler import ArxivCrawler
 
 class CSVArxivAuthors:
     def __init__(self, csv_dir):

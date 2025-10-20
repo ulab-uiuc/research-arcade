@@ -1,6 +1,5 @@
 import json
 import csv
-from io import StringIO
 import psycopg2
 
 

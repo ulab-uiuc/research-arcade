@@ -1,4 +1,4 @@
-from paper_graph_processor import PaperGraphProcessor, clean_latex_code
+from paper_graph_processor import PaperGraphProcessor
 
 
 data_dir_path = "/Users/chongshan0lin/Documents/Research/UIUC/paper-crawler/arxiv_papers_with_source/2501.01149v2"

@@ -5,16 +5,13 @@ import os
 import arxiv
 from filelock import FileLock
 
-from ..paper_collector.graph_construction import build_citation_graph_thread, build_citation_graph
+from ..paper_collector.graph_construction import build_citation_graph_thread
 from ..paper_collector.utils import None_constraint
 from utils.error_handler import api_calling_error_exponential_backoff
 from ..paper_collector.latex_parser import clean_latex_code
 from semanticscholar import SemanticScholar
 
-import os
 from ..multi_input.multi_input import MultiInput
-import arxiv
-import json
 import time
 from typing import Optional, List, Dict, Any
 import sys
@@ -66,6 +63,7 @@ class MultiDownload:
 
         if output_type == "pdf":
             pdf_path = paper.download_pdf(filename = filename_pdf, dirpath = dest_dir)
+            
 
         if output_type == "latex":
             latex_path = paper.download_source(filename = filename_latex, dirpath = dest_dir)
@@ -75,6 +73,7 @@ class MultiDownload:
         if output_type == "both":
             latex_path = paper.download_source(filename = filename_latex, dirpath = dest_dir)
             pdf_path = paper.download_pdf(filename = filename_pdf, dirpath = dest_dir)
+        pdf_path = pdf_path
 
 
     def download_papers_by_field_and_date(

@@ -1,15 +1,13 @@
 import sys
 import os
-import json
-import argparse
 from types import SimpleNamespace  
 
 from dotenv import load_dotenv  
-load_dotenv()
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from research_arcade.research_arcade import ResearchArcade
+load_dotenv()
 
 
 def main():

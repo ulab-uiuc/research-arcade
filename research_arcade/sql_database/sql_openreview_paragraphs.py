@@ -4,7 +4,6 @@ import pandas as pd
 import json
 import os
 import psycopg2
-from psycopg2.extras import Json
 
 class SQLOpenReviewParagraphs:
     def __init__(self, host: str = "localhost", dbname: str = "iclr_openreview_database", user: str = "jingjunx", password: str = "", port: str = "5432"):
@@ -58,7 +57,7 @@ class SQLOpenReviewParagraphs:
             row = self.cur.fetchall()
 
             if not row:
-                print(f"No paragraph found in openreview_paragraphs table.")
+                print("No paragraph found in openreview_paragraphs table.")
                 return None
             else:
                 columns = ['venue', 'paper_openreview_id', 'paragraph_idx', 'section', 'content']
@@ -73,7 +72,7 @@ class SQLOpenReviewParagraphs:
             row = self.cur.fetchall()
 
             if not row:
-                print(f"No paragraph found in openreview_paragraphs table.")
+                print("No paragraph found in openreview_paragraphs table.")
                 return None
             else:
                 columns = ['venue', 'paper_openreview_id', 'paragraph_idx', 'section']

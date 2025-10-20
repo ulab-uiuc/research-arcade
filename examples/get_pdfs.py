@@ -3,7 +3,6 @@ import openreview
 import requests
 from tqdm import tqdm
 import time
-import re
 
 def get_paper_pdf(link, pdf_path, log_file):
     pdf_url = "https://openreview.net"+link

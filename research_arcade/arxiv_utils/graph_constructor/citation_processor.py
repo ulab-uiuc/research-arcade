@@ -1,5 +1,6 @@
 from semanticscholar import SemanticScholar
-import os, re
+import os
+import re
 import psycopg2
 
 sch = SemanticScholar(api_key=os.getenv("S2_API_KEY"))

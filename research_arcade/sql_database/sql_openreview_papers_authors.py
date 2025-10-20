@@ -3,7 +3,6 @@ from tqdm import tqdm
 import pandas as pd
 import json
 import psycopg2
-from psycopg2.extras import Json
 
 class SQLOpenReviewPapersAuthors:
     def __init__(self, host: str = "localhost", dbname: str = "iclr_openreview_database", user: str = "jingjunx", password: str = "", port: str = "5432"):

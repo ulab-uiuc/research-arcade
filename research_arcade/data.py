@@ -121,7 +121,7 @@
 #     paragraph_global_id: int
 #     table_id: int
 
-from typing import List, Optional, Tuple
+from typing import List, Optional
 from dataclasses import dataclass
 
 

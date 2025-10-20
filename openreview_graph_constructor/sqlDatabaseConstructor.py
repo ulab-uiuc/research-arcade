@@ -2,9 +2,7 @@ import openreview
 import arxiv
 import os
 import re
-import time
 from arxiv import UnexpectedEmptyPageError
-import pandas as pd
 from datetime import datetime
 from tqdm import tqdm
 from database import Database
@@ -82,11 +80,11 @@ class sqlDatabaseConstructor:
                             additional_comments = ""
                             try:
                                 meta_review = reply["content"]["metareview"]["value"]
-                            except:
+                            except Exception:
                                 pass
                             try:
                                 additional_comments = reply["content"]["additional_comments_on_reviewer_discussion"]["value"]
-                            except:
+                            except Exception:
                                 pass
                             content = {
                                 "Meta Review": meta_review,
@@ -101,7 +99,7 @@ class sqlDatabaseConstructor:
                             # set content
                             try:
                                 comment = reply["content"]["comment"]["value"]
-                            except:
+                            except Exception:
                                 comment = ""
                             content = {
                                 "Decision": reply["content"]["decision"]["value"],
@@ -196,7 +194,7 @@ class sqlDatabaseConstructor:
                 fullname = ""
                 for name in all_names:
                     if name.get("preferred") is not None:
-                        if name["preferred"] == True:
+                        if name["preferred"]:
                             author_id = name["username"]
                             fullname = name["fullname"]
                             break
@@ -206,7 +204,7 @@ class sqlDatabaseConstructor:
                             try:
                                 fullname = name["fullname"]
                                 break
-                            except:
+                            except Exception:
                                 fullname = author_id
                         else:
                             pass
@@ -215,18 +213,18 @@ class sqlDatabaseConstructor:
                 # get email
                 try:
                     email = profile.content["preferredEmail"]
-                except:
+                except Exception:
                     try:
                         email = profile.content["emailsConfirmed"][0]
-                    except:
+                    except Exception:
                         try:
                             email = profile.content["emails"][0]
-                        except:
+                        except Exception:
                             email = ""
                 # get affiliation
                 try:
                     affiliation = profile.content["history"][0]["institution"]["name"]
-                except:
+                except Exception:
                     affiliation = ""
                 # get homepage
                 if profile.content.get("homepage") is not None:
@@ -257,7 +255,7 @@ class sqlDatabaseConstructor:
                 fullname = ""
                 for name in all_names:
                     if name.get("preferred") is not None:
-                        if name["preferred"] == True:
+                        if name["preferred"]:
                             author_id = name["username"]
                             fullname = name["fullname"]
                             break
@@ -267,7 +265,7 @@ class sqlDatabaseConstructor:
                             try:
                                 fullname = name["fullname"]
                                 break
-                            except:
+                            except Exception:
                                 fullname = author_id
                         else:
                             pass
@@ -276,18 +274,18 @@ class sqlDatabaseConstructor:
                 # get email
                 try:
                     email = profile.content["preferredEmail"]
-                except:
+                except Exception:
                     try:
                         email = profile.content["emailsConfirmed"][0]
-                    except:
+                    except Exception:
                         try:
                             email = profile.content["emails"][0]
-                        except:
+                        except Exception:
                             email = ""
                 # get affiliation
                 try:
                     affiliation = profile.content["history"][0]["institution"]["name"]
-                except:
+                except Exception:
                     affiliation = ""
                 # get homepage
                 if profile.content.get("homepage") is not None:
@@ -337,7 +335,7 @@ class sqlDatabaseConstructor:
                             # delete the original pdf
                             os.remove(pdf_path)
                             print(pdf_path+" Deleted")
-                        except:
+                        except Exception:
                             with open(log_file, "a") as log:
                                 log.write(f"{pdf_path}\n")
                     else:
@@ -374,7 +372,7 @@ class sqlDatabaseConstructor:
                 # get paper decision and remove withdrawn papers
                 try:
                     decision = submission.content["venue"]
-                except:
+                except Exception:
                     decision = ""
                 
                 # get paper openreview id
@@ -395,7 +393,7 @@ class sqlDatabaseConstructor:
                         # delete the original pdf
                         os.remove(pdf_path)
                         print(pdf_path+" Deleted")
-                    except:
+                    except Exception:
                         with open(log_file, "a") as log:
                             log.write(f"{pdf_path}\n")
                 else:
@@ -463,7 +461,7 @@ class sqlDatabaseConstructor:
                                     # get_pdf(modified_id, modified_pdf)
                                     try:
                                         content = connect_diffs_and_paragraphs(original_pdf, modified_pdf, filter_list)
-                                    except:
+                                    except Exception:
                                         continue
                                     
                                     self.db.insert_revision(venue, original_id, modified_id, content, time)
@@ -481,7 +479,7 @@ class sqlDatabaseConstructor:
                                             # delete the original pdf
                                             os.remove(original_pdf)
                                             print(original_pdf+" Deleted")
-                                        except:
+                                        except Exception:
                                             with open(log_file, "a") as log:
                                                 log.write(f"{original_pdf}\n")
                                     else:
@@ -503,7 +501,7 @@ class sqlDatabaseConstructor:
                                                 # delete the modified pdf
                                                 os.remove(modified_pdf)
                                                 print(modified_pdf+" Deleted")
-                                            except:
+                                            except Exception:
                                                 with open(log_file, "a") as log:
                                                     log.write(f"{modified_pdf}\n")
                                         else:
@@ -560,7 +558,7 @@ class sqlDatabaseConstructor:
                                     # get_pdf(modified_id, modified_pdf)
                                     try:
                                         content = connect_diffs_and_paragraphs(original_pdf, modified_pdf, filter_list)
-                                    except:
+                                    except Exception:
                                         continue
                                     
                                     self.db.insert_revision(venue, original_id, modified_id, content, time)
@@ -578,7 +576,7 @@ class sqlDatabaseConstructor:
                                             # delete the original pdf
                                             os.remove(original_pdf)
                                             print(original_pdf+" Deleted")
-                                        except:
+                                        except Exception:
                                             with open(log_file, "a") as log:
                                                 log.write(f"{original_pdf}\n")
                                     else:
@@ -600,7 +598,7 @@ class sqlDatabaseConstructor:
                                                 # delete the modified pdf
                                                 os.remove(modified_pdf)
                                                 print(modified_pdf+" Deleted")
-                                            except:
+                                            except Exception:
                                                 with open(log_file, "a") as log:
                                                     log.write(f"{modified_pdf}\n")
                                         else:
@@ -860,7 +858,7 @@ class sqlDatabaseConstructor:
                 self.db.insert_paper(**node_features)
                 paper_openreview_id = node_features["paper_openreview_id"]
                 print(f"Paper with paper_openreview_id {paper_openreview_id} inserted successfully.")
-            except: # venue, paper_openreview_id, title, abstract, author_openreview_ids, author_full_names, paper_decision, paper_pdf_link, revisions
+            except Exception: # venue, paper_openreview_id, title, abstract, author_openreview_ids, author_full_names, paper_decision, paper_pdf_link, revisions
                 print(f'''The node in 'papers' table requires the following node features:
                       venue: str,
                       paper_openreview_id: str,
@@ -878,7 +876,7 @@ class sqlDatabaseConstructor:
                 self.db.insert_review(**node_features)
                 review_openreview_id = node_features["review_openreview_id"]
                 print(f"Review with review_openreview_id {review_openreview_id} inserted successfully.")
-            except: # venue, paper_openreview_id, review_openreview_id, replyto_openreview_id, writer, title, content, time
+            except Exception: # venue, paper_openreview_id, review_openreview_id, replyto_openreview_id, writer, title, content, time
                 print(f'''The node in 'reviews' table requires the following node features:
                       venue: str,
                       review_openreview_id: str, 
@@ -897,7 +895,7 @@ class sqlDatabaseConstructor:
                 self.db.insert_author(**node_features)
                 author_openreview_id = node_features["author_openreview_id"]
                 print(f"Author with author_openreview_id {author_openreview_id} inserted successfully.")
-            except: # venue, author_openreview_id, author_full_name, email, affiliation, homepage, dblp
+            except Exception: # venue, author_openreview_id, author_full_name, email, affiliation, homepage, dblp
                 print(f'''The node in 'authors' table requires the following node features:
                       venue: str,
                       author_openreview_id: str,
@@ -916,7 +914,7 @@ class sqlDatabaseConstructor:
                 self.db.insert_revision(**node_features)
                 modified_openreview_id = node_features["modified_openreview_id"]
                 print(f"Revision with modified_openreview_id {modified_openreview_id} inserted successfully.")
-            except: # venue, paper_openreview_id, original_openreview_id, modified_openreview_id, content, time
+            except Exception: # venue, paper_openreview_id, original_openreview_id, modified_openreview_id, content, time
                 print(f'''The node in 'revisions' table requires the following node features:
                       venue: str,
                       original_openreview_id: str, 
@@ -935,7 +933,7 @@ class sqlDatabaseConstructor:
         if table == "papers":
             try:
                 return self.db.delete_paper_by_id(**primary_key)
-            except: # venue, paper_openreview_id, title, abstract, author_openreview_ids, author_full_names, paper_decision, paper_pdf_link, revisions
+            except Exception: # venue, paper_openreview_id, title, abstract, author_openreview_ids, author_full_names, paper_decision, paper_pdf_link, revisions
                 print(f'''The primary key in 'paper' table is
                       
                       paper_openreview_id: str
@@ -948,7 +946,7 @@ class sqlDatabaseConstructor:
         elif table == "reviews":
             try:
                 return self.db.delete_review_by_id(**primary_key)
-            except: # venue, paper_openreview_id, review_openreview_id, replyto_openreview_id, writer, title, content, time
+            except Exception: # venue, paper_openreview_id, review_openreview_id, replyto_openreview_id, writer, title, content, time
                 print(f'''The node in 'reviews' table requires the following node features:
 
                       review_openreview_id: str
@@ -961,7 +959,7 @@ class sqlDatabaseConstructor:
         elif table == "authors":
             try:
                 return self.db.delete_author_by_id(**primary_key)
-            except: # venue, author_openreview_id, author_full_name, email, affiliation, homepage, dblp
+            except Exception: # venue, author_openreview_id, author_full_name, email, affiliation, homepage, dblp
                 print(f'''The node in 'authors' table requires the following node features:
 
                       author_openreview_id: str
@@ -974,7 +972,7 @@ class sqlDatabaseConstructor:
         elif table == "revisions":
             try:
                 return self.db.delete_revision_by_id(**primary_key)
-            except: # venue, paper_openreview_id, original_openreview_id, modified_openreview_id, content, time
+            except Exception: # venue, paper_openreview_id, original_openreview_id, modified_openreview_id, content, time
                 print(f'''The node in 'revisions' table requires the following node features:
 
                       modified_openreview_id: str, 
@@ -992,7 +990,7 @@ class sqlDatabaseConstructor:
         if table == "papers":
             try:
                 return self.db.delete_papers_by_venue(venue)
-            except:
+            except Exception:
                 print(f'''The venue you provided:
                       {venue}
                       is not qualified
@@ -1001,7 +999,7 @@ class sqlDatabaseConstructor:
         elif table == "reviews":
             try:
                 return self.db.delete_reviews_by_venue(venue)
-            except:
+            except Exception:
                 print(f'''The venue you provided:
                       {venue}
                       is not qualified
@@ -1010,7 +1008,7 @@ class sqlDatabaseConstructor:
         elif table == "authors":
             try:
                 return self.db.delete_authors_by_venue(venue)
-            except:
+            except Exception:
                 print(f'''The venue you provided:
                       {venue}
                       is not qualified
@@ -1019,7 +1017,7 @@ class sqlDatabaseConstructor:
         elif table == "revisions":
             try:
                 return self.db.delete_revisions_by_venue(venue)
-            except:
+            except Exception:
                 print(f'''The venue you provided:
                       {venue}
                       is not qualified
@@ -1033,7 +1031,7 @@ class sqlDatabaseConstructor:
         if table == "papers":
             try:
                 return self.db.get_paper_by_id(**primary_key)
-            except: # venue, paper_openreview_id, title, abstract, author_openreview_ids, author_full_names, paper_decision, paper_pdf_link, revisions
+            except Exception: # venue, paper_openreview_id, title, abstract, author_openreview_ids, author_full_names, paper_decision, paper_pdf_link, revisions
                 print(f'''The primary key in 'paper' table is
                       
                       paper_openreview_id: str
@@ -1046,7 +1044,7 @@ class sqlDatabaseConstructor:
         elif table == "reviews":
             try:
                 return self.db.get_review_by_id(**primary_key)
-            except: # venue, paper_openreview_id, review_openreview_id, replyto_openreview_id, writer, title, content, time
+            except Exception: # venue, paper_openreview_id, review_openreview_id, replyto_openreview_id, writer, title, content, time
                 print(f'''The node in 'reviews' table requires the following node features:
 
                       review_openreview_id: str
@@ -1059,7 +1057,7 @@ class sqlDatabaseConstructor:
         elif table == "authors":
             try:
                 return self.db.get_author_by_id(**primary_key)
-            except: # venue, author_openreview_id, author_full_name, email, affiliation, homepage, dblp
+            except Exception: # venue, author_openreview_id, author_full_name, email, affiliation, homepage, dblp
                 print(f'''The node in 'authors' table requires the following node features:
 
                       author_openreview_id: str
@@ -1072,7 +1070,7 @@ class sqlDatabaseConstructor:
         elif table == "revisions":
             try:
                 return self.db.get_revision_by_id(**primary_key)
-            except: # venue, paper_openreview_id, original_openreview_id, modified_openreview_id, content, time
+            except Exception: # venue, paper_openreview_id, original_openreview_id, modified_openreview_id, content, time
                 print(f'''The node in 'revisions' table requires the following node features:
 
                       modified_openreview_id: str, 
@@ -1090,7 +1088,7 @@ class sqlDatabaseConstructor:
         if table == "papers":
             try:
                 return self.db.get_papers_by_venue(venue)
-            except:
+            except Exception:
                 print(f'''The venue you provided:
                       {venue}
                       is not qualified
@@ -1099,7 +1097,7 @@ class sqlDatabaseConstructor:
         elif table == "reviews":
             try:
                 return self.db.get_reviews_by_venue(venue)
-            except:
+            except Exception:
                 print(f'''The venue you provided:
                       {venue}
                       is not qualified
@@ -1108,7 +1106,7 @@ class sqlDatabaseConstructor:
         elif table == "authors":
             try:
                 return self.db.get_authors_by_venue(venue)
-            except:
+            except Exception:
                 print(f'''The venue you provided:
                       {venue}
                       is not qualified
@@ -1117,7 +1115,7 @@ class sqlDatabaseConstructor:
         elif table == "revisions":
             try:
                 return self.db.get_revisions_by_venue(venue)
-            except:
+            except Exception:
                 print(f'''The venue you provided:
                       {venue}
                       is not qualified
@@ -1131,7 +1129,7 @@ class sqlDatabaseConstructor:
         if table == "papers":
             try:
                 return self.db.update_paper(**node_features)
-            except: # venue, paper_openreview_id, title, abstract, author_openreview_ids, author_full_names, paper_decision, paper_pdf_link, revisions
+            except Exception: # venue, paper_openreview_id, title, abstract, author_openreview_ids, author_full_names, paper_decision, paper_pdf_link, revisions
                 print(f'''The node in 'papers' table requires the following node features:
                       venue: str,
                       paper_openreview_id: str,
@@ -1151,7 +1149,7 @@ class sqlDatabaseConstructor:
         elif table == "reviews":
             try:
                 return self.db.update_review(**node_features)
-            except: # venue, paper_openreview_id, review_openreview_id, replyto_openreview_id, writer, title, content, time
+            except Exception: # venue, paper_openreview_id, review_openreview_id, replyto_openreview_id, writer, title, content, time
                 print(f'''The node in 'reviews' table requires the following node features:
                       venue: str,
                       paper_openreview_id: str,
@@ -1170,7 +1168,7 @@ class sqlDatabaseConstructor:
         elif table == "authors":
             try:
                 return self.db.update_author(**node_features)
-            except: # venue, author_openreview_id, author_full_name, email, affiliation, homepage, dblp
+            except Exception: # venue, author_openreview_id, author_full_name, email, affiliation, homepage, dblp
                 print(f'''The node in 'authors' table requires the following node features:
                       venue: str,
                       author_openreview_id: str,
@@ -1188,7 +1186,7 @@ class sqlDatabaseConstructor:
         elif table == "revisions":
             try:
                 return self.db.update_revision(**node_features)
-            except: # venue, paper_openreview_id, original_openreview_id, modified_openreview_id, content, time
+            except Exception: # venue, paper_openreview_id, original_openreview_id, modified_openreview_id, content, time
                 print(f'''The node in 'revisions' table requires the following node features:
                       venue: str,
                       paper_openreview_id: str,
@@ -1237,7 +1235,7 @@ class sqlDatabaseConstructor:
         if table == "papers_authors":
             try:
                 return self.db.get_paper_author_by_id(**primary_key)
-            except:
+            except Exception:
                 print(f'''The primary key in 'papers_authors' table is
                       
                       paper_openreview_id: str,
@@ -1251,7 +1249,7 @@ class sqlDatabaseConstructor:
         elif table == "papers_reviews":
             try:
                 return self.db.get_paper_review_by_id(**primary_key)
-            except:
+            except Exception:
                 print(f'''The primary key in 'papers_reviews' table is
                       
                       paper_openreview_id: str,
@@ -1265,7 +1263,7 @@ class sqlDatabaseConstructor:
         elif table == "papers_revisions":
             try:
                 return self.db.get_paper_revision_by_id(**primary_key)
-            except:
+            except Exception:
                 print(f'''The primary key in 'papers_revisions' table is
                       
                       paper_openreview_id: str,
@@ -1284,7 +1282,7 @@ class sqlDatabaseConstructor:
         if table == "papers_authors":
             try:
                 return self.db.get_papers_authors_by_venue(venue)
-            except:
+            except Exception:
                 print(f'''The venue you provided:
                       {venue}
                       is not qualified
@@ -1293,7 +1291,7 @@ class sqlDatabaseConstructor:
         elif table == "papers_reviews":
             try:
                 return self.db.get_papers_reviews_by_venue(venue)
-            except:
+            except Exception:
                 print(f'''The venue you provided:
                       {venue}
                       is not qualified
@@ -1302,7 +1300,7 @@ class sqlDatabaseConstructor:
         elif table == "papers_revisions":
             try:
                 return self.db.get_papers_revisions_by_venue(venue)
-            except:
+            except Exception:
                 print(f'''The venue you provided:
                       {venue}
                       is not qualified
@@ -1327,7 +1325,7 @@ class sqlDatabaseConstructor:
         if table == "papers_authors":
             try:
                 return self.db.delete_paper_author_by_id(**primary_key)
-            except:
+            except Exception:
                 print(f'''The primary key in 'papers_authors' table is
                       
                       paper_openreview_id: str,
@@ -1341,7 +1339,7 @@ class sqlDatabaseConstructor:
         elif table == "papers_reviews":
             try:
                 return self.db.delete_paper_review_by_id(**primary_key)
-            except:
+            except Exception:
                 print(f'''The primary key in 'papers_reviews' table is
                       
                       paper_openreview_id: str,
@@ -1355,7 +1353,7 @@ class sqlDatabaseConstructor:
         elif table == "papers_revisions":
             try:
                 return self.db.delete_paper_revision_by_id(**primary_key)
-            except:
+            except Exception:
                 print(f'''The primary key in 'papers_revisions' table is
                       
                       paper_openreview_id: str,
@@ -1374,7 +1372,7 @@ class sqlDatabaseConstructor:
         if table == "papers_authors":
             try:
                 return self.db.delete_papers_authors_by_venue(venue)
-            except:
+            except Exception:
                 print(f'''The venue you provided:
                       {venue}
                       is not qualified
@@ -1383,7 +1381,7 @@ class sqlDatabaseConstructor:
         elif table == "papers_reviews":
             try:
                 return self.db.delete_papers_reviews_by_venue(venue)
-            except:
+            except Exception:
                 print(f'''The venue you provided:
                       {venue}
                       is not qualified
@@ -1392,7 +1390,7 @@ class sqlDatabaseConstructor:
         elif table == "papers_revisions":
             try:
                 return self.db.delete_papers_revisions_by_venue(venue)
-            except:
+            except Exception:
                 print(f'''The venue you provided:
                       {venue}
                       is not qualified
@@ -1409,7 +1407,7 @@ class sqlDatabaseConstructor:
                 paper_openreview_id = edge_features["paper_openreview_id"]
                 author_openreview_id = edge_features["author_openreview_id"]
                 print(f"Paper {paper_openreview_id} and author {author_openreview_id} are connected successfully.")
-            except:
+            except Exception:
                 print(f'''The edge in 'papers_authors' table requires the following edge features:
                       venue: str,
                       paper_openreview_id: str,
@@ -1425,7 +1423,7 @@ class sqlDatabaseConstructor:
                 paper_openreview_id = edge_features["paper_openreview_id"]
                 review_openreview_id = edge_features["review_openreview_id"]
                 print(f"Paper {paper_openreview_id} and review {review_openreview_id} are connected successfully.")
-            except:
+            except Exception:
                 print(f'''The edge in 'papers_reviews' table requires the following edge features:
                       venue: str,
                       paper_openreview_id: str,
@@ -1443,7 +1441,7 @@ class sqlDatabaseConstructor:
                 paper_openreview_id = edge_features["paper_openreview_id"]
                 revision_openreview_id = edge_features["revision_openreview_id"]
                 print(f"Paper {paper_openreview_id} and revision {revision_openreview_id} are connected successfully.")
-            except:
+            except Exception:
                 print(f'''The edge in 'papers_reviews' table requires the following edge features:
                       venue: str,
                       paper_openreview_id: str,
@@ -1479,7 +1477,7 @@ class sqlDatabaseConstructor:
                         is not qualified
                         ''')
                     return None
-            except:
+            except Exception:
                 print(f'''To find neighborhood in table 'papers_authors',
                     the primary key should only include
                     
@@ -1511,7 +1509,7 @@ class sqlDatabaseConstructor:
                         is not qualified
                         ''')
                     return None
-            except:
+            except Exception:
                 print(f'''To find neighborhood in table 'papers_authors',
                         the primary key should only include
                         
@@ -1543,7 +1541,7 @@ class sqlDatabaseConstructor:
                         is not qualified
                         ''')
                     return None
-            except:
+            except Exception:
                 print(f'''To find neighborhood in table 'papers_revisions',
                         the primary key should only include
                         

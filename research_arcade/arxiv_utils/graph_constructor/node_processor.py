@@ -1,8 +1,6 @@
 from ..graph_constructor.database import Database
 from semanticscholar import SemanticScholar
 import arxiv
-from arxiv import UnexpectedEmptyPageError
-from ..multi_input.multi_input import MultiInput
 from ..paper_collector.latex_parser import clean_latex_format
 import re
 import json
@@ -462,6 +460,7 @@ class NodeConstructor:
 
         want_title = self._norm(title)
         want_author = self._norm(name)
+        want_author=want_author
 
         try:
             for r in client.results(search):

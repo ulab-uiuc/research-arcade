@@ -1,6 +1,4 @@
 import json
-import psycopg2
-from psycopg2.extras import Json
 from typing import Callable, Optional
 
 class Database:

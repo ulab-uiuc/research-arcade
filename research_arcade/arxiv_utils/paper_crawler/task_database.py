@@ -9,8 +9,6 @@ Below is the database for task management, which faciliates the tracking of pape
 """
 
 import psycopg2
-from psycopg2.extras import Json
-import json
 
 PASSWORD = "Lcs20031121!"
 

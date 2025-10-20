@@ -31,19 +31,6 @@ from .sql_database import (
 
 
 
-from .csv_database.csv_arxiv_authors import CSVArxivAuthors
-from .csv_database.csv_arxiv_categories import CSVArxivCategory
-from .csv_database.csv_arxiv_citations import CSVArxivCitation
-from .csv_database.csv_arxiv_figures import CSVArxivFigure
-from .csv_database.csv_arxiv_paper_authors import CSVArxivPaperAuthor
-from .csv_database.csv_arxiv_paper_categories import CSVArxivPaperCategory
-from .csv_database.csv_arxiv_paper_figures import CSVArxivPaperFigure
-from .csv_database.csv_arxiv_paper_tables import CSVArxivPaperTable
-from .csv_database.csv_arxiv_papers import CSVArxivPapers
-from .csv_database.csv_arxiv_paragraph_references import CSVArxivParagraphReference
-from .csv_database.csv_arxiv_paragraphs import CSVArxivParagraphs
-from .csv_database.csv_arxiv_sections import CSVArxivSections
-from .csv_database.csv_arxiv_tables import CSVArxivTable
 
 
 class ResearchArcade:

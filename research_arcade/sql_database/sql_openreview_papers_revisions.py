@@ -3,7 +3,6 @@ from tqdm import tqdm
 import pandas as pd
 import json
 import psycopg2
-from psycopg2.extras import Json
 
 class SQLOpenReviewPapersRevisions:
     def __init__(self, host: str = "localhost", dbname: str = "iclr_openreview_database", user: str = "jingjunx", password: str = "", port: str = "5432"):
@@ -150,6 +149,8 @@ class SQLOpenReviewPapersRevisions:
             return None
     
     def get_papers_revisions_by_venue(self, venue: str) -> None | pd.DataFrame:
+        # TODO: papers_revisions is undefined
+        papers_revisions = None
         self.cur.execute("""
         SELECT venue, paper_openreview_id, revision_openreview_id, title, time FROM openreview_papers_revisions
         WHERE venue = %s;

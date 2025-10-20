@@ -4,7 +4,6 @@ import pandas as pd
 import json
 import os
 import psycopg2
-from psycopg2.extras import Json
 
 class SQLOpenReviewPapers:
     def __init__(self, host: str = "localhost", dbname: str = "iclr_openreview_database", user: str = "jingjunx", password: str = "", port: str = "5432"):

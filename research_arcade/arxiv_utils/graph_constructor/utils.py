@@ -1,4 +1,3 @@
-import os
 import re
 
 def figure_latex_path_to_path(path, arxiv_id, latex_path):

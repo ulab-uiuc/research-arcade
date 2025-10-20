@@ -3,6 +3,7 @@ from typing import Optional, List, Tuple
 import psycopg2
 import psycopg2.extras
 import pandas as pd  # only used for CSV import
+import json
 
 class SQLArxivPapers:
     def __init__(self, sql_args):
