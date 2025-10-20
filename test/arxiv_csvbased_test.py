@@ -17,6 +17,7 @@ class TestArxivArcadeNodeCRUD(unittest.TestCase):
     
     def setUp(self):
         """Set up test fixtures before each test method"""
+        self.config = os.getenv('CSV_DATASET_FOLDER_PATH')
         self.config = {'csv_dir': './arxiv_csv'}
         self.db_type = "csv"
         
