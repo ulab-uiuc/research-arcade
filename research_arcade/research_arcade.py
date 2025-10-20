@@ -31,8 +31,6 @@ from .sql_database import (
 
 
 
-
-
 class ResearchArcade:
     def __init__(self, db_type: str, config: dict):
         if db_type == 'csv':
