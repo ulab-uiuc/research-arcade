@@ -76,10 +76,10 @@ To run the code, you’ll need to set up environment variables such as your **Se
    ```bash
    cp .env.template .env
  
-### 🧪 Run Tests
+### Run Tests
 
-### 🏃‍♀️ Run Tasks and Models
 
+### Run Tasks and Models
 
 ### Backend Selection
 
@@ -190,11 +190,16 @@ research_arcade.delete_edge_by_id("openreview_papers_authors", paper_author_edge
 
 We’re working on extending support for data and operations. Contributions welcome!
 
-# 🙏 Acknowledgements
+# Acknowledgements
 This project builds on open academic infrastructures such as ArXiv and OpenReview. 
 
-# 🧾 License
+# License
 
 This project is licensed under the MIT License – see the [LICENSE](./LICENSE) file for details.
 
+
 # Citation
+
+- [Graph World Model (Feng et al., 2025)](https://arxiv.org/abs/2507.10539)
+- [ResearchTown: Simulator of Human Research Community (Yu et al., 2025)](https://arxiv.org/abs/2412.17767)
+
