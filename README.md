@@ -15,6 +15,10 @@
 
 ResearchArcade is a graph interface for academic tasks. It utilizes a coherent multi-table format with graph structures to organize data from different sources and multiple modalities. And it preserves temporal evolution at both the manuscript and community levels.
 
+# 🧭 Motivation
+
+Academic data is distributed across multiple platforms (e.g., ArXiv, OpenReview) and modalities (text, figures, tables, reviews). ResearchArcade unifies these heterogeneous data sources into a single graph-based interface to enable large-scale, structured, and temporal analysis of academic dataset.
+
 ### Core Features
 
 - **Multi-Source**: ArXiv (Academic Corpora) & OpenReview (Peer Reviews and Manuscript Revisions)
@@ -42,6 +46,15 @@ Tables are classified into **node tables** (colored) or **edge tables** (black a
     - **ArXiv**: citationship (paper-paper), authorship (paper-author), paragraph-of-paper (paper-paragraph), figure-of-paper (paper-figure), table-of-paper (paper-table), etc.
 - **CRUD Operations**: Full support for Create, Read, Update, and Delete operations on all entities
 
+### ⚙️ Environment Requirements
+- Python ≥ 3.9 (tested on 3.12)
+- PostgreSQL ≥ 14 (for SQL backend)
+- Conda ≥ 22.0 (recommended)
+- API keys:
+  - Semantic Scholar API
+  - Other APIs of user's choice/convenience
+
+
 ### Environment Setup
 
 ```python
@@ -63,6 +76,10 @@ To run the code, you’ll need to set up environment variables such as your **Se
    ```bash
    cp .env.template .env
  
+### 🧪 Run Tests
+
+### 🏃‍♀️ Run Tasks and Models
+
 
 ### Backend Selection
 
@@ -172,5 +189,12 @@ research_arcade.delete_edge_by_id("openreview_papers_authors", paper_author_edge
 # Contribution
 
 We’re working on extending support for data and operations. Contributions welcome!
+
+# 🙏 Acknowledgements
+This project builds on open academic infrastructures such as ArXiv and OpenReview. 
+
+# 🧾 License
+
+This project is licensed under the MIT License – see the [LICENSE](./LICENSE) file for details.
 
 # Citation
