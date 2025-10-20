@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Tutorials • ResearchArcade</title>
 
-  <meta name="description" content="Hands-on tutorials for ResearchArcade tasks, models, and data workflows." />
+  <meta name="description" content="Hands-on tutorials for ResearchArcade dataset interaction, CRUD operations, and task execution." />
   <meta property="og:title" content="Tutorials • ResearchArcade" />
-  <meta property="og:description" content="Hands-on tutorials for ResearchArcade tasks, models, and data workflows." />
+  <meta property="og:description" content="Hands-on tutorials for ResearchArcade dataset interaction, CRUD operations, and task execution." />
   <meta property="og:image" content="../static/images/your_banner_image.png" />
   <meta property="og:type" content="website" />
   <meta name="twitter:card" content="summary_large_image" />
@@ -32,68 +32,264 @@
           </ul>
         </nav>
         <h1 class="title is-2">Tutorials</h1>
-        <p class="subtitle is-5">End-to-end, reproducible guides for common tasks and models.</p>
+        <p class="subtitle is-5">Step-by-step guides for dataset interaction, CRUD operations, and running tasks.</p>
       </div>
     </div>
   </section>
 
-  <!-- Tutorial Grid -->
+  <!-- Tutorial Content -->
   <section class="section">
     <div class="container is-max-desktop">
+      
+      <!-- Setup & Quickstart -->
+      <h2 class="title is-3 mb-4">Setup & Quickstart</h2>
       <div class="columns is-multiline">
-        <!-- T1 -->
-        <div class="column is-half">
-          <a class="box" href="./figure-table-insertion.html">
-            <h3 class="title is-4"><span class="icon"><i class="fa-regular fa-image"></i></span> Figure/Table Insertion</h3>
-            <p>Retrieve and insert the most relevant figure or table given a paper context.</p>
-            <p class="has-text-grey is-size-7">/tutorials/figure-table-insertion.html</p>
-          </a>
-        </div>
-        <!-- T2 -->
-        <div class="column is-half">
-          <a class="box" href="./paragraph-generation.html">
-            <h3 class="title is-4"><span class="icon"><i class="fa-solid fa-align-left"></i></span> Paragraph Generation</h3>
-            <p>Generate a missing paragraph from neighborhood context and cross-source evidence.</p>
-            <p class="has-text-grey is-size-7">/tutorials/paragraph-generation.html</p>
-          </a>
-        </div>
-        <!-- T3 -->
-        <div class="column is-half">
-          <a class="box" href="./revision-retrieval.html">
-            <h3 class="title is-4"><span class="icon"><i class="fa-solid fa-magnifying-glass"></i></span> Revision Retrieval</h3>
-            <p>Find the most relevant historical revision given a current manuscript state.</p>
-            <p class="has-text-grey is-size-7">/tutorials/revision-retrieval.html</p>
-          </a>
-        </div>
-        <!-- T4 -->
-        <div class="column is-half">
-          <a class="box" href="./revision-generation.html">
-            <h3 class="title is-4"><span class="icon"><i class="fa-solid fa-pen-to-square"></i></span> Revision Generation</h3>
-            <p>Suggest edits based on reviews, rebuttals, and temporal evolution signals.</p>
-            <p class="has-text-grey is-size-7">/tutorials/revision-generation.html</p>
-          </a>
-        </div>
-        <!-- T5 -->
-        <div class="column is-half">
-          <a class="box" href="./acceptance-prediction.html">
-            <h3 class="title is-4"><span class="icon"><i class="fa-regular fa-circle-check"></i></span> Acceptance Prediction</h3>
-            <p>Predict acceptance outcomes with graph-aware signals and multi-hop aggregation.</p>
-            <p class="has-text-grey is-size-7">/tutorials/acceptance-prediction.html</p>
-          </a>
-        </div>
-        <!-- T6 -->
-        <div class="column is-half">
-          <a class="box" href="./rebuttal-generation.html">
-            <h3 class="title is-4"><span class="icon"><i class="fa-solid fa-message"></i></span> Rebuttal Generation</h3>
-            <p>Draft rebuttals using cross-source context (paper + reviews + revisions + rebuttals).</p>
-            <p class="has-text-grey is-size-7">/tutorials/rebuttal-generation.html</p>
+        <div class="column is-full">
+          <a class="box" href="./setup-quickstart.html">
+            <article class="media">
+              <figure class="media-left">
+                <span class="icon is-large"><i class="fa-solid fa-rocket fa-2x"></i></span>
+              </figure>
+              <div class="media-content">
+                <h3 class="title is-5">Getting Started with ResearchArcade</h3>
+                <p>Installation, environment configuration, and your first queries to interact with the dataset.</p>
+                <p class="has-text-grey is-size-7">/tutorials/setup-quickstart.html</p>
+              </div>
+            </article>
           </a>
         </div>
       </div>
 
-      <hr />
+      <!-- Node and Edge CRUD -->
+      <h2 class="title is-3 mt-6 mb-4">Node and Edge CRUD</h2>
+      <div class="columns is-multiline">
+        <div class="column is-half">
+          <a class="box" href="./crud-add.html">
+            <article class="media">
+              <figure class="media-left">
+                <span class="icon is-large"><i class="fa-solid fa-plus fa-2x"></i></span>
+              </figure>
+              <div class="media-content">
+                <h3 class="title is-5">Add Nodes & Edges</h3>
+                <p>Create new entities and relationships in the graph database.</p>
+                <p class="has-text-grey is-size-7">/tutorials/crud-add.html</p>
+              </div>
+            </article>
+          </a>
+        </div>
+
+        <div class="column is-half">
+          <a class="box" href="./crud-read.html">
+            <article class="media">
+              <figure class="media-left">
+                <span class="icon is-large"><i class="fa-solid fa-book-open fa-2x"></i></span>
+              </figure>
+              <div class="media-content">
+                <h3 class="title is-5">Read Nodes & Edges</h3>
+                <p>Query and retrieve entities, traverse relationships, and filter results.</p>
+                <p class="has-text-grey is-size-7">/tutorials/crud-read.html</p>
+              </div>
+            </article>
+          </a>
+        </div>
+
+        <div class="column is-half">
+          <a class="box" href="./crud-delete.html">
+            <article class="media">
+              <figure class="media-left">
+                <span class="icon is-large"><i class="fa-solid fa-trash fa-2x"></i></span>
+              </figure>
+              <div class="media-content">
+                <h3 class="title is-5">Delete Nodes & Edges</h3>
+                <p>Remove entities and relationships with cascade handling and integrity checks.</p>
+                <p class="has-text-grey is-size-7">/tutorials/crud-delete.html</p>
+              </div>
+            </article>
+          </a>
+        </div>
+
+        <div class="column is-half">
+          <a class="box" href="./crud-edit.html">
+            <article class="media">
+              <figure class="media-left">
+                <span class="icon is-large"><i class="fa-solid fa-pen-to-square fa-2x"></i></span>
+              </figure>
+              <div class="media-content">
+                <h3 class="title is-5">Edit Nodes & Edges</h3>
+                <p>Update entity properties and modify relationship attributes.</p>
+                <p class="has-text-grey is-size-7">/tutorials/crud-edit.html</p>
+              </div>
+            </article>
+          </a>
+        </div>
+      </div>
+
+      <!-- Data Import -->
+      <h2 class="title is-3 mt-6 mb-4">Data Import</h2>
+      <div class="columns is-multiline">
+        <div class="column is-one-third">
+          <a class="box" href="./import-csv.html">
+            <article class="media">
+              <figure class="media-left">
+                <span class="icon is-large"><i class="fa-solid fa-file-csv fa-2x"></i></span>
+              </figure>
+              <div class="media-content">
+                <h3 class="title is-5">Import from CSV</h3>
+                <p>Load data from CSV files into the graph structure.</p>
+                <p class="has-text-grey is-size-7">/tutorials/import-csv.html</p>
+              </div>
+            </article>
+          </a>
+        </div>
+
+        <div class="column is-one-third">
+          <a class="box" href="./import-json.html">
+            <article class="media">
+              <figure class="media-left">
+                <span class="icon is-large"><i class="fa-solid fa-code fa-2x"></i></span>
+              </figure>
+              <div class="media-content">
+                <h3 class="title is-5">Import from JSON</h3>
+                <p>Parse and import JSON documents with nested structures.</p>
+                <p class="has-text-grey is-size-7">/tutorials/import-json.html</p>
+              </div>
+            </article>
+          </a>
+        </div>
+
+        <div class="column is-one-third">
+          <a class="box" href="./import-api.html">
+            <article class="media">
+              <figure class="media-left">
+                <span class="icon is-large"><i class="fa-solid fa-cloud-arrow-down fa-2x"></i></span>
+              </figure>
+              <div class="media-content">
+                <h3 class="title is-5">Import from API</h3>
+                <p>Fetch and ingest data directly from ArXiv and OpenReview APIs.</p>
+                <p class="has-text-grey is-size-7">/tutorials/import-api.html</p>
+              </div>
+            </article>
+          </a>
+        </div>
+      </div>
+
+      <!-- Running Tasks -->
+      <h2 class="title is-3 mt-6 mb-4">Running Tasks on the Dataset</h2>
+      <div class="columns is-multiline">
+        <div class="column is-half">
+          <a class="box" href="./task-missing-paragraph.html">
+            <article class="media">
+              <figure class="media-left">
+                <span class="icon is-large"><i class="fa-solid fa-align-left fa-2x"></i></span>
+              </figure>
+              <div class="media-content">
+                <h3 class="title is-5">Missing Paragraph Prediction</h3>
+                <p>Predict missing paragraph content using neighborhood context and graph structure.</p>
+                <p class="has-text-grey is-size-7">/tutorials/task-missing-paragraph.html</p>
+              </div>
+            </article>
+          </a>
+        </div>
+
+        <div class="column is-half">
+          <a class="box" href="./task-figure-table-paragraph.html">
+            <article class="media">
+              <figure class="media-left">
+                <span class="icon is-large"><i class="fa-regular fa-image fa-2x"></i></span>
+              </figure>
+              <div class="media-content">
+                <h3 class="title is-5">Figure/Table → Paragraph</h3>
+                <p>Generate descriptive paragraphs from figures and tables with context.</p>
+                <p class="has-text-grey is-size-7">/tutorials/task-figure-table-paragraph.html</p>
+              </div>
+            </article>
+          </a>
+        </div>
+
+        <div class="column is-half">
+          <a class="box" href="./task-acceptance-prediction.html">
+            <article class="media">
+              <figure class="media-left">
+                <span class="icon is-large"><i class="fa-regular fa-circle-check fa-2x"></i></span>
+              </figure>
+              <div class="media-content">
+                <h3 class="title is-5">Acceptance Prediction</h3>
+                <p>Predict paper acceptance using reviews, rebuttals, and historical patterns.</p>
+                <p class="has-text-grey is-size-7">/tutorials/task-acceptance-prediction.html</p>
+              </div>
+            </article>
+          </a>
+        </div>
+
+        <div class="column is-half">
+          <a class="box" href="./task-rebuttal-generation.html">
+            <article class="media">
+              <figure class="media-left">
+                <span class="icon is-large"><i class="fa-solid fa-message fa-2x"></i></span>
+              </figure>
+              <div class="media-content">
+                <h3 class="title is-5">Rebuttal Generation</h3>
+                <p>Generate responses to reviewer comments using paper and review context.</p>
+                <p class="has-text-grey is-size-7">/tutorials/task-rebuttal-generation.html</p>
+              </div>
+            </article>
+          </a>
+        </div>
+
+        <div class="column is-half">
+          <a class="box" href="./task-revision-location.html">
+            <article class="media">
+              <figure class="media-left">
+                <span class="icon is-large"><i class="fa-solid fa-location-dot fa-2x"></i></span>
+              </figure>
+              <div class="media-content">
+                <h3 class="title is-5">Paragraph Revision Location Prediction</h3>
+                <p>Identify where revisions should be made based on review feedback.</p>
+                <p class="has-text-grey is-size-7">/tutorials/task-revision-location.html</p>
+              </div>
+            </article>
+          </a>
+        </div>
+
+        <div class="column is-half">
+          <a class="box" href="./task-revision-generation.html">
+            <article class="media">
+              <figure class="media-left">
+                <span class="icon is-large"><i class="fa-solid fa-file-pen fa-2x"></i></span>
+              </figure>
+              <div class="media-content">
+                <h3 class="title is-5">Paragraph Revision Generation</h3>
+                <p>Generate revised paragraph text incorporating reviewer suggestions.</p>
+                <p class="has-text-grey is-size-7">/tutorials/task-revision-generation.html</p>
+              </div>
+            </article>
+          </a>
+        </div>
+      </div>
+
+      <!-- Continuous Crawling -->
+      <h2 class="title is-3 mt-6 mb-4">Continuous Crawling</h2>
+      <div class="columns is-multiline">
+        <div class="column is-full">
+          <a class="box" href="./continuous-crawling.html">
+            <article class="media">
+              <figure class="media-left">
+                <span class="icon is-large"><i class="fa-solid fa-rotate fa-2x"></i></span>
+              </figure>
+              <div class="media-content">
+                <h3 class="title is-5">Automated Data Collection</h3>
+                <p>Set up automated crawlers to continuously fetch new papers, reviews, and updates from ArXiv and OpenReview.</p>
+                <p class="has-text-grey is-size-7">/tutorials/continuous-crawling.html</p>
+              </div>
+            </article>
+          </a>
+        </div>
+      </div>
+
+      <hr class="mt-6" />
       <p class="has-text-grey is-size-7">
-        Looking for the API reference? See <a href="../api/index.html">API Reference</a>. New to the project? Start with <a href="../learn/index.html">Learn</a>.
+        Looking for conceptual information? Start with <a href="../learn/index.html">Learn</a>. 
+        Need API details? See <a href="../api/index.html">API Reference</a>.
       </p>
     </div>
   </section>
