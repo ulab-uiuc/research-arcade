@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Page Title • ResearchArcade</title>
+
+  <meta name="description" content="Detailed guide for a ResearchArcade topic." />
+  <meta property="og:title" content="Page Title • ResearchArcade" />
+  <meta property="og:description" content="Detailed guide for a ResearchArcade topic." />
+  <meta property="og:image" content="../static/images/your_banner_image.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="icon" type="image/x-icon" href="../static/images/favicon.ico" />
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet" />
+  <link rel="stylesheet" href="../static/css/bulma.min.css" />
+  <link rel="stylesheet" href="../static/css/fontawesome.all.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="../static/css/index.css" />
+
+  <style>
+    /* Simple sticky TOC on large screens */
+    .toc {
+      position: sticky;
+      top: 2rem;
+      max-height: calc(100vh - 4rem);
+      overflow: auto;
+      padding-left: 1rem;
+      border-left: 1px solid #eee;
+    }
+    .toc a { display: block; padding: 0.2rem 0; font-size: 0.95rem; }
+    .toc .level-3 { padding-left: 1rem; font-size: 0.9rem; }
+    @media (max-width: 1023px) {
+      .toc { display: none; }
+    }
+    pre code { white-space: pre; }
+  </style>
+</head>
+<body>
+
+  <!-- Hero -->
+  <section class="hero is-white">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <nav class="breadcrumb" aria-label="breadcrumbs">
+          <ul>
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="../learn/index.html">Learn</a></li>
+            <li class="is-active"><a aria-current="page">Page Title</a></li>
+          </ul>
+        </nav>
+        <h1 class="title is-2">Page Title</h1>
+        <p class="subtitle is-6">Short one-liner describing what this page covers.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content with TOC -->
+  <section class="section">
+    <div class="container">
+      <div class="columns">
+        <!-- Content -->
+        <div class="column is-8 is-offset-1 content" id="article">
+          <p class="is-size-6 has-text-grey">Updated: <span id="last-updated"></span></p>
+
+          <h2 id="introduction">Introduction</h2>
+          <p>
+            Replace this template with your content. Use <code>h2</code> and <code>h3</code> to auto-populate the TOC.
+          </p>
+
+          <h2 id="setup">Setup</h2>
+          <p>Example commands:</p>
+<pre><code class="language-bash">conda create -n research_arcade python=3.12
+conda activate research_arcade
+pip install -r requirements.txt
+cp .env.template .env</code></pre>
+
+          <h3 id="backend-selection">Backend Selection</h3>
+<pre><code class="language-python">from research_arcade import ResearchArcade
+ra = ResearchArcade(db_type="csv", config={"csv_dir": "/path/to/csv"})</code></pre>
+
+          <h2 id="next-steps">Next Steps</h2>
+          <ul>
+            <li>Try the <a href="../tutorials/index.html">Tutorials</a></li>
+            <li>Read the <a href="../learn/backends.html">Backend Guide</a></li>
+            <li>Explore the <a href="../api/index.html">API Reference</a></li>
+          </ul>
+        </div>
+
+        <!-- TOC -->
+        <div class="column is-3">
+          <aside class="menu toc" id="toc">
+            <p class="menu-label">On this page</p>
+            <ul class="menu-list" id="toc-list">
+              <!-- populated by JS -->
+            </ul>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="content has-text-centered is-size-7">
+        <p>
+          Built with the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a>.
+          Licensed under <a href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC BY-SA 4.0</a>.
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Optional: simple JS to build the TOC and last-updated -->
+  <script>
+    (function buildTOC() {
+      const article = document.getElementById('article');
+      const tocList = document.getElementById('toc-list');
+      if (!article || !tocList) return;
+
+      const headers = article.querySelectorAll('h2, h3');
+      headers.forEach(h => {
+        const id = h.id || h.textContent.trim().toLowerCase().replace(/[^\w]+/g, '-');
+        h.id = id;
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = '#' + id;
+        a.textContent = h.textContent;
+        if (h.tagName.toLowerCase() === 'h3') a.classList.add('level-3');
+        li.appendChild(a);
+        tocList.appendChild(li);
+      });
+    })();
+
+    (function stampDate() {
+      const el = document.getElementById('last-updated');
+      if (el) el.textContent = new Date().toLocaleDateString();
+    })();
+  </script>
+</body>
+</html>

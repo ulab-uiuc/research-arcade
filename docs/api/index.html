@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>API Reference • ResearchArcade</title>
+
+  <meta name="description" content="API Reference for ResearchArcade: modules, classes, and functions." />
+  <meta property="og:title" content="API Reference • ResearchArcade" />
+  <meta property="og:description" content="API Reference for ResearchArcade: modules, classes, and functions." />
+  <meta property="og:image" content="../static/images/your_banner_image.png" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="icon" type="image/x-icon" href="../static/images/favicon.ico" />
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet" />
+  <link rel="stylesheet" href="../static/css/bulma.min.css" />
+  <!-- Use ONE Font Awesome include to prevent style collisions -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="../static/css/index.css" />
+
+  <style>
+    /* Layout + spacing tweaks to prevent overlaps in cards */
+    .api-search { max-width: 520px; }
+    .module-card .box { padding: 1.25rem; }
+    .module-card article.media { align-items: flex-start; } /* keep icon and text aligned */
+    .module-card .title { margin: 0 0 .25rem; line-height: 1.2; }
+    .module-card .subtitle { margin: 0 0 .5rem; line-height: 1.45; display: block; }
+    .module-card .tags { margin-top: .25rem; }
+    .module-card .permalink { margin-top: .25rem; }
+
+    .tag + .tag { margin-left: .25rem; }
+
+    .api-meta { font-size: 0.875rem; color: #6b7280; }
+    .sticky-side {
+      position: sticky; top: 2rem; max-height: calc(100vh - 4rem);
+      overflow: auto; padding-left: 1rem; border-left: 1px solid #eee;
+    }
+    @media (max-width: 1023px) { .sticky-side { display: none; } }
+  </style>
+</head>
+<body>
+
+  <!-- Hero -->
+  <section class="hero is-white">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <nav class="breadcrumb" aria-label="breadcrumbs">
+          <ul>
+            <li><a href="../index.html">Home</a></li>
+            <li class="is-active"><a aria-current="page">API Reference</a></li>
+          </ul>
+        </nav>
+        <h1 class="title is-2">API Reference</h1>
+        <p class="subtitle is-5">Modules, classes, and functions for building on ResearchArcade.</p>
+
+        <div class="field has-addons api-search" style="margin-top:1rem;">
+          <div class="control has-icons-left is-expanded">
+            <input id="api-filter" class="input" type="text" placeholder="Filter modules… (e.g., csv, openreview, insert_node)" />
+            <span class="icon is-left"><i class="fa-solid fa-magnifying-glass"></i></span>
+          </div>
+          <div class="control">
+            <a id="clear-filter" class="button is-light">Clear</a>
+          </div>
+        </div>
+
+        <p class="api-meta">Updated: <span id="last-updated"></span></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Content -->
+  <section class="section">
+    <div class="container">
+      <div class="columns">
+        <!-- Main column -->
+        <div class="column is-9">
+          <!-- Overview -->
+          <div class="content">
+            <h2 id="overview">Overview</h2>
+            <p>
+              This section lists public modules in the <code>research_arcade</code> package. Click a module to view detailed
+              classes, methods, and examples. We recommend one HTML page per module (or submodule), e.g.:
+            </p>
+            <ul>
+              <li><code>api/research_arcade.html</code> — top-level interfaces</li>
+              <li><code>api/research_arcade.csv_backend.html</code> — CSV data management</li>
+              <li><code>api/research_arcade.sql_backend.html</code> — PostgreSQL data management</li>
+              <li><code>api/research_arcade.utils.html</code> — shared utilities</li>
+              <li><code>api/research_arcade.openreview.html</code> — OpenReview tables & ops</li>
+              <li><code>api/research_arcade.arxiv.html</code> — ArXiv tables & ops</li>
+            </ul>
+          </div>
+
+          <hr />
+
+          <!-- Module grid (media layout inside each box) -->
+          <div id="module-grid" class="columns is-multiline">
+
+            <!-- research_arcade -->
+            <div class="column is-half module-card" data-tags="core init high-level">
+              <a class="box" href="./research_arcade.html">
+                <article class="media">
+                  <figure class="media-left">
+                    <span class="icon is-large"><i class="fa-solid fa-cube fa-2x" aria-hidden="true"></i></span>
+                  </figure>
+                  <div class="media-content">
+                    <h3 class="title is-4">research_arcade</h3>
+                    <p class="subtitle is-6">Top-level package: unified interface, constructors, and orchestration.</p>
+                    <div class="tags">
+                      <span class="tag is-info is-light">core</span>
+                      <span class="tag is-link is-light">init</span>
+                    </div>
+                    <p class="has-text-grey is-size-7 permalink">/api/research_arcade.html</p>
+                  </div>
+                </article>
+              </a>
+            </div>
+
+            <!-- csv_backend -->
+            <div class="column is-half module-card" data-tags="csv backend storage io tables">
+              <a class="box" href="./research_arcade.csv_backend.html">
+                <article class="media">
+                  <figure class="media-left">
+                    <span class="icon is-large"><i class="fa-solid fa-file-csv fa-2x" aria-hidden="true"></i></span>
+                  </figure>
+                  <div class="media-content">
+                    <h3 class="title is-4">research_arcade.csv_backend</h3>
+                    <p class="subtitle is-6">Lightweight CSV backend for local development and quick experiments.</p>
+                    <div class="tags">
+                      <span class="tag is-success is-light">CSV</span>
+                      <span class="tag is-warning is-light">storage</span>
+                    </div>
+                    <p class="has-text-grey is-size-7 permalink">/api/research_arcade.csv_backend.html</p>
+                  </div>
+                </article>
+              </a>
+            </div>
+
+            <!-- sql_backend -->
+            <div class="column is-half module-card" data-tags="sql postgres backend storage performance">
+              <a class="box" href="./research_arcade.sql_backend.html">
+                <article class="media">
+                  <figure class="media-left">
+                    <span class="icon is-large"><i class="fa-solid fa-database fa-2x" aria-hidden="true"></i></span>
+                  </figure>
+                  <div class="media-content">
+                    <h3 class="title is-4">research_arcade.sql_backend</h3>
+                    <p class="subtitle is-6">PostgreSQL backend for larger datasets, indexing, and relational ops.</p>
+                    <div class="tags">
+                      <span class="tag is-danger is-light">SQL</span>
+                      <span class="tag is-dark is-light">PostgreSQL</span>
+                    </div>
+                    <p class="has-text-grey is-size-7 permalink">/api/research_arcade.sql_backend.html</p>
+                  </div>
+                </article>
+              </a>
+            </div>
+
+            <!-- utils -->
+            <div class="column is-half module-card" data-tags="utils helpers parsing config env">
+              <a class="box" href="./research_arcade.utils.html">
+                <article class="media">
+                  <figure class="media-left">
+                    <span class="icon is-large"><i class="fa-solid fa-wrench fa-2x" aria-hidden="true"></i></span>
+                  </figure>
+                  <div class="media-content">
+                    <h3 class="title is-4">research_arcade.utils</h3>
+                    <p class="subtitle is-6">Common helpers for configuration, parsing, and I/O.</p>
+                    <div class="tags">
+                      <span class="tag is-primary is-light">utils</span>
+                    </div>
+                    <p class="has-text-grey is-size-7 permalink">/api/research_arcade.utils.html</p>
+                  </div>
+                </article>
+              </a>
+            </div>
+
+            <!-- openreview -->
+            <div class="column is-half module-card" data-tags="openreview papers reviews revisions edges paragraphs">
+              <a class="box" href="./research_arcade.openreview.html">
+                <article class="media">
+                  <figure class="media-left">
+                    <span class="icon is-large"><i class="fa-regular fa-comments fa-2x" aria-hidden="true"></i></span>
+                  </figure>
+                  <div class="media-content">
+                    <h3 class="title is-4">research_arcade.openreview</h3>
+                    <p class="subtitle is-6">Tables and operations for papers, authors, reviews, revisions, and links.</p>
+                    <div class="tags">
+                      <span class="tag is-link is-light">OpenReview</span>
+                    </div>
+                    <p class="has-text-grey is-size-7 permalink">/api/research_arcade.openreview.html</p>
+                  </div>
+                </article>
+              </a>
+            </div>
+
+            <!-- arxiv -->
+            <div class="column is-half module-card" data-tags="arxiv papers figures tables sections citations">
+              <a class="box" href="./research_arcade.arxiv.html">
+                <article class="media">
+                  <figure class="media-left">
+                    <span class="icon is-large"><i class="fa-solid fa-book-open fa-2x" aria-hidden="true"></i></span>
+                  </figure>
+                  <div class="media-content">
+                    <h3 class="title is-4">research_arcade.arxiv</h3>
+                    <p class="subtitle is-6">Tables and operations for papers, authors, sections, figures, tables, and citations.</p>
+                    <div class="tags">
+                      <span class="tag is-info is-light">ArXiv</span>
+                    </div>
+                    <p class="has-text-grey is-size-7 permalink">/api/research_arcade.arxiv.html</p>
+                  </div>
+                </article>
+              </a>
+            </div>
+
+          </div>
+
+          <hr />
+
+          <!-- How to write a module page -->
+          <div class="content">
+            <h2 id="writing-module-pages">Writing module pages</h2>
+            <p>
+              Each module page can reuse your article template (see <code>pages/template.html</code>). Suggested structure:
+            </p>
+            <ol>
+              <li><strong>Header & breadcrumbs</strong> (back to API index)</li>
+              <li><strong>Module description</strong> (what it provides; key concepts)</li>
+              <li><strong>Public classes</strong> with constructor args and short examples</li>
+              <li><strong>Key functions/methods</strong> with parameters & return types</li>
+              <li><strong>Short code snippets</strong> for common workflows</li>
+            </ol>
+<pre><code class="language-python">from research_arcade import ResearchArcade
+
+ra = ResearchArcade(db_type="csv", config={"csv_dir": "/path/to/csv"})
+papers = ra.get_all_node_features("openreview_papers")
+print(len(papers))</code></pre>
+          </div>
+        </div>
+
+        <!-- Right sidebar -->
+        <div class="column is-3">
+          <aside class="menu sticky-side">
+            <p class="menu-label">On this page</p>
+            <ul class="menu-list">
+              <li><a href="#overview">Overview</a></li>
+              <li><a href="#writing-module-pages">Writing module pages</a></li>
+            </ul>
+            <p class="menu-label" style="margin-top:1rem;">Quick links</p>
+            <ul class="menu-list">
+              <li><a href="./research_arcade.html">research_arcade</a></li>
+              <li><a href="./research_arcade.csv_backend.html">research_arcade.csv_backend</a></li>
+              <li><a href="./research_arcade.sql_backend.html">research_arcade.sql_backend</a></li>
+              <li><a href="./research_arcade.utils.html">research_arcade.utils</a></li>
+              <li><a href="./research_arcade.openreview.html">research_arcade.openreview</a></li>
+              <li><a href="./research_arcade.arxiv.html">research_arcade.arxiv</a></li>
+            </ul>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="content has-text-centered is-size-7">
+        <p>
+          Built with the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a>.
+          Licensed under <a href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC BY-SA 4.0</a>.
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Simple filter for module cards
+    (function () {
+      const input = document.getElementById('api-filter');
+      const clear = document.getElementById('clear-filter');
+      const cards = Array.from(document.querySelectorAll('.module-card'));
+
+      function normalize(s){return (s||'').toLowerCase();}
+
+      function applyFilter() {
+        const q = normalize(input.value);
+        cards.forEach(card => {
+          const text = normalize(card.textContent);
+          const tags = normalize(card.getAttribute('data-tags'));
+          const match = text.includes(q) || tags.includes(q);
+          card.style.display = match ? '' : 'none';
+        });
+      }
+
+      if (input) input.addEventListener('input', applyFilter);
+      if (clear) clear.addEventListener('click', () => { input.value = ''; applyFilter(); });
+
+      // Stamp date
+      const stamp = document.getElementById('last-updated');
+      if (stamp) stamp.textContent = new Date().toLocaleDateString();
+    })();
+  </script>
+</body>
+</html>

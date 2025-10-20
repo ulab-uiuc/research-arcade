@@ -1,45 +1,257 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <!-- Meta tags for social media banners, these should be filled in appropriatly as they are your "business card" -->
-  <!-- Replace the content tag with appropriate information -->
-  <meta name="description" content="DESCRIPTION META TAG">
-  <meta property="og:title" content="SOCIAL MEDIA TITLE TAG"/>
-  <meta property="og:description" content="SOCIAL MEDIA DESCRIPTION TAG TAG"/>
-  <meta property="og:url" content="URL OF THE WEBSITE"/>
-  <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X630-->
-  <meta property="og:image" content="static/image/your_banner_image.png" />
-  <meta property="og:image:width" content="1200"/>
-  <meta property="og:image:height" content="630"/>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-
-  <meta name="twitter:title" content="TWITTER BANNER TITLE META TAG">
-  <meta name="twitter:description" content="TWITTER BANNER DESCRIPTION META TAG">
-  <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X600-->
-  <meta name="twitter:image" content="static/images/your_twitter_banner_image.png">
-  <meta name="twitter:card" content="summary_large_image">
-  <!-- Keywords for your paper to be indexed by-->
-  <meta name="keywords" content="KEYWORDS SHOULD BE PLACED HERE">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-
+  <!-- ===== Social / SEO ===== -->
   <title>ResearchArcade: Graph Interface for Academic Tasks</title>
+  <meta name="description" content="ResearchArcade is a graph-based, multi-source, multi-modal interface for academic tasks across ArXiv, OpenReview, and more." />
+  <meta name="keywords" content="research, academic graphs, arxiv, openreview, multimodal, gnn, llm, researcharcade" />
 
-  <link rel="icon" type="image/x-icon" href="static/images/favicon.ico">
-  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
-  rel="stylesheet">
+  <!-- Open Graph -->
+  <meta property="og:title" content="ResearchArcade: Graph Interface for Academic Tasks" />
+  <meta property="og:description" content="A unified, graph-based data interface for machine learning on academic tasks." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://example.com" />
+  <meta property="og:image" content="static/images/your_banner_image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
 
-  <link rel="stylesheet" href="static/css/bulma.min.css">
-  <link rel="stylesheet" href="static/css/bulma-carousel.min.css">
-  <link rel="stylesheet" href="static/css/bulma-slider.min.css">
-  <link rel="stylesheet" href="static/css/fontawesome.all.min.css">
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="ResearchArcade: Graph Interface for Academic Tasks" />
+  <meta name="twitter:description" content="A unified, graph-based data interface for machine learning on academic tasks." />
+  <meta name="twitter:image" content="static/images/your_twitter_banner_image.png" />
+
+  <!-- Favicon & Fonts -->
+  <link rel="icon" type="image/x-icon" href="static/images/favicon.ico" />
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet" />
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="static/css/bulma.min.css" />
+  <link rel="stylesheet" href="static/css/bulma-carousel.min.css" />
+  <link rel="stylesheet" href="static/css/bulma-slider.min.css" />
+  <link rel="stylesheet" href="static/css/fontawesome.all.min.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css" />
+  <link rel="stylesheet" href="static/css/index.css" />
 
-  <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
-  <link rel="stylesheet" href="static/css/index.css">
+  <!-- Small additions to match subpages -->
+  <style>
+    .navbar.is-white { border-bottom: 1px solid #eee; }
+    .quick-links .button + .button { margin-left: .5rem; }
+    .publication-authors .author-block + .author-block { margin-left: .25rem; }
+    figure { margin: 0; }
+    figure img { max-width: 100%; height: auto; }
+    figure figcaption { font-size: 0.9rem; color: #666; margin-top: .25rem; }
+  </style>
+</head>
+<body>
 
+  <!-- ===== Navbar ===== -->
+  <nav class="navbar is-white" role="navigation" aria-label="main navigation">
+    <div class="container">
+      <div class="navbar-brand">
+        <a class="navbar-item" href="./index.html">
+          <strong>ResearchArcade</strong>
+        </a>
+        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="mainNav">
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </a>
+      </div>
+
+      <div id="mainNav" class="navbar-menu">
+        <div class="navbar-start">
+          <a class="navbar-item" href="./learn/index.html">Learn</a>
+          <a class="navbar-item" href="./tutorials/index.html">Tutorials</a>
+          <a class="navbar-item" href="./api/index.html">API Reference</a>
+        </div>
+        <div class="navbar-end">
+          <a class="navbar-item" href="#" rel="noopener" aria-label="arXiv link placeholder">arXiv</a>
+          <a class="navbar-item" href="https://github.com/ulab-uiuc/research_arcade" target="_blank" rel="noopener">Code</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===== Quick Links ===== -->
+  <section class="section quick-links">
+    <div class="container is-max-desktop has-text-centered">
+      <a class="button is-link is-light" href="./learn/index.html"><span class="icon"><i class="fa-solid fa-book-open"></i></span><span>Learn</span></a>
+      <a class="button is-info is-light" href="./tutorials/index.html"><span class="icon"><i class="fa-solid fa-chalkboard-user"></i></span><span>Tutorials</span></a>
+      <a class="button is-dark is-light" href="./api/index.html"><span class="icon"><i class="fa-solid fa-code"></i></span><span>API Reference</span></a>
+      <a class="button is-danger is-light" href="#" target="_blank" aria-label="arXiv link placeholder"><span class="icon"><i class="ai ai-arxiv"></i></span><span>arXiv</span></a>
+      <a class="button is-black is-light" href="https://github.com/ulab-uiuc/research_arcade" target="_blank"><span class="icon"><i class="fab fa-github"></i></span><span>Code</span></a>
+    </div>
+  </section>
+
+  <!-- ===== Hero ===== -->
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+            <h1 class="title is-1 publication-title">ResearchArcade: Graph Interface for Academic Tasks</h1>
+
+            <div class="is-size-5 publication-authors">
+              <span class="author-block"><a href="https://cs.stanford.edu/~jiaxuan/" target="_blank" rel="noopener">Jiaxuan You</a></span>
+              <!-- <span class="author-block">Tao Feng</span>
+              <span class="author-block">Yanzhen Shen</span> -->
+            </div>
+
+            <div class="is-size-6 publication-authors">
+              <span class="author-block">University of Illinois Urbana–Champaign</span>
+            </div>
+
+            <div class="buttons is-centered" style="margin-top: 1rem;">
+              <a href="#" target="_blank" rel="noopener" class="external-link button is-normal is-rounded is-dark" aria-label="arXiv link placeholder">
+                <span class="icon"><i class="ai ai-arxiv"></i></span>
+                <span>arXiv</span>
+              </a>
+              <a href="https://github.com/ulab-uiuc/research_arcade" target="_blank" rel="noopener" class="external-link button is-normal is-rounded is-dark">
+                <span class="icon"><i class="fab fa-github"></i></span>
+                <span>Code</span>
+              </a>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Abstract ===== -->
+  <section class="section hero">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3">Abstract</h2>
+          <div class="content has-text-justified">
+            <p>
+              Academic research generates diverse data sources. As researchers increasingly use machine learning to assist research tasks, a crucial question arises: <em>Can we build a unified data interface to support the development of machine learning models for various academic tasks?</em> Models trained on such a unified interface can better support human researchers throughout the research process and eventually accelerate knowledge discovery. In this work, we introduce <span style="font-variant:small-caps;">ResearchArcade</span>, a graph-based interface that connects multiple academic <em>data sources</em>, unifies <em>task definitions</em>, and supports a wide range of <em>base models</em> to address key academic challenges. <span style="font-variant:small-caps;">ResearchArcade</span> utilizes a coherent multi-table format with graph structures to organize data from different sources, including academic corpora from ArXiv and peer reviews from OpenReview, while capturing information with multiple modalities, such as text, figures, and tables. <span style="font-variant:small-caps;">ResearchArcade</span> also preserves temporal evolution at both the manuscript and community levels, supporting the study of paper revisions as well as broader research trends over time. Additionally, <span style="font-variant:small-caps;">ResearchArcade</span> unifies diverse academic task definitions and supports various models with distinct input requirements. Our experiments across six academic tasks demonstrate that combining cross-source and multi-modal information enables a broader range of tasks, while incorporating graph structures consistently improves performance over baseline methods. This highlights the effectiveness of <span style="font-variant:small-caps;">ResearchArcade</span> and its potential to advance research progress.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Section 1: Introduction ===== -->
+  <section class="section hero">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3">1. Introduction</h2>
+          <div class="content has-text-justified">
+            <p>
+              Diverse research tasks demand access to comprehensive data from multiple sources and various models are employed to accomplish these tasks. Building a unified data interface for academic tasks is challenging due to the diverse, relational nature of academic data sourced from platforms like ArXiv and OpenReview, which spans multiple modalities such as text, visuals, and tables. This requires a flexible framework that can manage these complexities while evolving with ongoing research. Additionally, defining academic tasks and accommodating various models, such as Large Language Models (LLMs) and Graph Neural Networks (GNNs), adds further complexity in terms of data preprocessing and model-specific interfaces.
+            </p>
+            <p>
+              In this paper, we propose <span style="font-variant:small-caps;">ResearchArcade</span>, a graph-based interface that links diverse academic data sources, unifies task definitions, and supports various base models to address important academic tasks. <span style="font-variant:small-caps;">ResearchArcade</span> offers four core features: <em>Multi-Source</em>, <em>Multi-Modal</em>, <em>Highly Structural and Heterogeneous</em>, and <em>Dynamically Evolving</em>. We unify diverse academic tasks within the academic graphs in <span style="font-variant:small-caps;">ResearchArcade</span>, enabling easy formulation of new tasks for both predictive and generative models. The structured knowledge in <span style="font-variant:small-caps;">ResearchArcade</span> can also be exported to standardized formats like CSV and JSON, ensuring seamless integration with models such as LLMs and GNNs.
+            </p>
+            <p>
+              To demonstrate the key advantages of <span style="font-variant:small-caps;">ResearchArcade</span>, we define six academic tasks: figure/table insertion, paragraph generation, revision retrieval, revision generation, acceptance prediction, and rebuttal generation. Extensive experiments show that models benefit from the multi-source, multi-modal, heterogeneous, and dynamic information in <span style="font-variant:small-caps;">ResearchArcade</span>.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Section 2: ResearchArcade ===== -->
+  <section class="section hero">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3">2. ResearchArcade</h2>
+          <div class="content">
+            <figure class="has-text-centered">
+              <img src="static/images/intro_1.png" alt="Diagram showing ResearchArcade multi-table graph across sources and modalities." />
+              <figcaption>Figure 1. <span style="font-variant:small-caps;">ResearchArcade</span> uses a multi-table format with graph structures to collect data from different sources with multiple modalities.</figcaption>
+            </figure>
+            <br />
+            <p>
+              <span style="font-variant:small-caps;">ResearchArcade</span> integrates data from multiple sources, such as research papers from ArXiv and peer reviews from OpenReview, and handles multi-modal information like text, figures, and tables. These entities are organized in a multi-table format, where tables are treated as nodes and edges in a graph, enabling efficient management of relational and heterogeneous academic data. Additionally, ResearchArcade tracks academic evolution at both microscopic and macroscopic scales: it preserves paper revisions over time, while its extensible framework allows continuous data updates to analyze research trends.
+            </p>
+            <br />
+            <figure class="has-text-centered">
+              <img src="static/images/intro_2.png" alt="Two-step task-unification scheme: target entity selection and neighborhood retrieval." />
+              <figcaption>Figure 2. <span style="font-variant:small-caps;">ResearchArcade</span> unifies the academic task definitions in a two-step scheme.</figcaption>
+            </figure>
+            <br />
+            <p>
+              <span style="font-variant:small-caps;">ResearchArcade</span> unifies the academic task definitions in the following two steps: (1) identifying the target entity and (2) retrieving the neighborhood of the target entity. Six academic tasks are defined based on the two-step scheme.
+            </p>
+            <div class="has-text-centered">
+              <img src="static/images/Tasks_definition.png" alt="Tasks definition grid for six academic tasks supported by ResearchArcade." />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Section 3: Experiments ===== -->
+  <section class="section hero">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3">3. Experiments</h2>
+          <h3 class="title is-4">3.1 Main Results</h3>
+          <div class="content has-text-justified">
+            <div class="has-text-centered">
+              <img src="static/images/Main_results.png" alt="Main experiment results across tasks comparing model families." />
+            </div>
+            <p><strong><span style="font-variant:small-caps;">ResearchArcade</span> is General.</strong> It supports diverse tasks by integrating multi-modal data from ArXiv and OpenReview and converting it into formats like CSV or JSON. Predictive tasks are handled by EMB-based, GNN-based, and GWM-based models, while generative tasks are managed by LLM-based models. The data quality in <span style="font-variant:small-caps;">ResearchArcade</span> is validated, with smaller LLMs approaching the performance of larger ones, particularly in tasks like Revision and Rebuttal Generation.</p>
+            <p><strong><span style="font-variant:small-caps;">ResearchArcade</span> Models Dynamic Evolution.</strong> It captures dynamic evolution at both intra-paper and inter-paper levels by integrating temporal data from ArXiv and OpenReview. It excels in tasks like <em>Revision Retrieval</em> and <em>Revision Generation</em>, where GNN-based and GWM-based models outperform EMB-based models, showcasing the framework's effectiveness in modeling manuscript evolution. Incorporating OpenReview rebuttal data significantly improves performance, while the <em>Acceptance Prediction</em> task highlights the difficulty of predicting research trends, with accuracy barely exceeding random chance.</p>
+            <p><strong>Relational Graph Structure Delivers Consistent Gains.</strong> Graph-based models (GNN and GWM) outperform non-graph models (EMB and MLP) with performance improvements of 7.7%, 67%, and 7.2% in <em>Figure/Table Insertion</em>, <em>Revision Retrieval</em>, and <em>Acceptance Prediction</em>, respectively. Multi-hop aggregation further boosts performance in <em>Acceptance Prediction</em>, where 3-hop aggregation increases accuracy to 0.55, surpassing the MLP baseline. However, additional hops show limited or negative benefits in tasks like <em>Figure/Table Insertion</em> due to graph sparsity.</p>
+
+          <h3 class="title is-4">3.2 Ablation Study</h3>
+            <div class="has-text-centered">
+              <img src="static/images/Ablation_study.png" alt="Ablation study chart highlighting modality contributions." />
+            </div>
+            <p><strong>Multi-Modal Information Is Critical.</strong> In tasks like <em>Rebuttal Generation</em> and <em>Generate Missing Paragraph</em>, including visual and tabular data improves understanding and leads to significant performance gains. For instance, revision generation scores increase from 0.693 to 0.717 for the larger model, while paragraph generation improves from 0.259 to 0.272, demonstrating the critical role of multi-modal information.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== BibTeX ===== -->
+  <section class="section" id="BibTeX">
+    <div class="container is-max-desktop content">
+      <h2 class="title">BibTeX</h2>
+      <pre><code>@inproceedings{researcharcade2025,
+  title     = {ResearchArcade: Graph Interface for Academic Tasks},
+  author    = {You, Jiaxuan and others},
+  booktitle = {Proceedings of ...},
+  year      = {2025},
+  url       = {https://github.com/ulab-uiuc/research_arcade}
+}</code></pre>
+    </div>
+  </section>
+
+  <!-- ===== Footer ===== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="columns is-centered">
+        <div class="column is-8">
+          <div class="content">
+            <p>
+              This page was built using the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank" rel="noopener">Academic Project Page Template</a> which was adopted from the <a href="https://nerfies.github.io" target="_blank" rel="noopener">Nerfies</a> project page.
+              You are free to borrow the code of this website, we just ask that you link back to this page in the footer. <br />
+              This website is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===== Scripts (deferred) ===== -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://documentcloud.adobe.com/view-sdk/main.js"></script>
   <script defer src="static/js/fontawesome.all.min.js"></script>
@@ -48,360 +260,22 @@
   <script src="static/js/index.js"></script>
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-</head>
-<body>
 
-
-  <section class="hero">
-    <div class="hero-body">
-      <div class="container is-max-desktop">
-        <div class="columns is-centered">
-          <div class="column has-text-centered">
-            <h1 class="title is-1 publication-title">ResearchArcade: Graph Interface for Academic Tasks</h1>
-            <div class="is-size-5 publication-authors">
-              <!-- Paper authors -->
-              <!-- <span class="author-block">
-                Tao Feng,
-              </span>
-                <span class="author-block">
-                  Yanzhen Shen,
-                </span>
-                  <span class="author-block"> -->
-                    <span class="author-block">
-                      <a href="https://cs.stanford.edu/~jiaxuan/" target="_blank">Jiaxuan You</a></span>
-                    <span class="author-block">
-                
-                  </div>
-             
-                  <div class="is-size-5 publication-authors">
-                    <span class="author-block">
-                      University of Illinois Urbana-Champaign
-                  </div>
-
-                  <!-- ArXiv abstract Link -->
-                <span class="link-block">
-                  <a href=TODO target="_blank"
-                  class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon">
-                    <i class="ai ai-arxiv"></i>
-                  </span>
-                  <span>arXiv</span>
-                </a>
-              </span>
-
-                  <!-- Github link -->
-                  <span class="link-block">
-                    <a href="https://github.com/ulab-uiuc/research_arcade" target="_blank"
-                    class="external-link button is-normal is-rounded is-dark">
-                    <span class="icon">
-                      <i class="fab fa-github"></i>
-                    </span>
-                    <span>Code</span>
-                  </a>
-                </span>
-
-        
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Paper abstract -->
-<section class="section hero">
-  <div class="container is-max-desktop">
-    <div class="columns is-centered has-text-centered">
-      <div class="column is-four-fifths">
-        <h2 class="title is-3">Abstract</h2>
-        <div class="content has-text-justified">
-          <p>
-            Academic research generates diverse data sources. As researchers increasingly use machine learning to assist research tasks, a crucial question arises: <em>Can we build a unified data interface to support the development of machine learning models for various academic tasks?</em> Models trained on such a unified interface can better support human researchers throughout the research process and eventually accelerate knowledge discovery. In this work, we introduce <span style="font-variant:big-caps;">ResearchArcade</span>, a graph-based interface that connects multiple academic <em>data sources</em>, unifies <em>task definitions</em>, and supports a wide range of <em>base models</em> to address key academic challenges. <span style="font-variant:big-caps;">ResearchArcade</span> utilizes a coherent multi-table format with graph structures to organize data from different sources, including academic corpora from ArXiv and peer reviews from OpenReview, while capturing information with multiple modalities, such as text, figures, and tables. <span style="font-variant:big-caps;">ResearchArcade</span> also preserves temporal evolution at both the manuscript and community levels, supporting the study of paper revisions as well as broader research trends over time. Additionally, <span style="font-variant:big-caps;">ResearchArcade</span> unifies diverse academic task definitions and supports various models with distinct input requirements. Our experiments across six academic tasks demonstrate that combining cross-source and multi-modal information enables a broader range of tasks, while incorporating graph structures consistently improves performance over baseline methods. This highlights the effectiveness of <span style="font-variant:big-caps;">ResearchArcade</span> and its potential to advance research progress.
-          </p>
-        </div>
-
-        <!-- <div class="content">
-          <div class=" has-text-centered">
-            <img src="static/images/figure2.png" alt="MY ALT TEXT"/>
-          </div>
-          <b class="subtitle is-size-6">
-            Thought-Retriever Framework. (a) Thought retrieval: Upon receiving a user query, Thought-Retriever retrieves top-K data
-            chunks from the mixture of external knowledge and thought memory based on embedding similarity; (b) Answer generation: The LLM generates the answer for the user query based on the retrieved data chunks; (c) Thought generation: The LLM further generates thought and its confidence based on the user query and the generated answer; (d) Thought memory update: Meaningless and redundant thoughts are removed and the remaining novel thoughts are used to update the thought memory. 
-          </b>
-        </div> -->
-
-      </div>
-    </div>
-  </div>
-</section>
-
-
-
-<section class="section hero">
-  <div class="container is-max-desktop">
-    <div class="columns is-centered">
-      <div class="column is-four-fifths">
-        <h2 class="title is-3">1. Introduction</h2>
-        <div class="content">
-
-          <div class="content has-text-justified">
-          
-          <p>
-            Diverse research tasks demand access to comprehensive data from multiple sources and various models are employed to accomplish these tasks. Building a unified data interface for academic tasks is challenging due to the diverse, relational nature of academic data sourced from platforms like ArXiv and OpenReview, which spans multiple modalities such as text, visuals, and tables. This requires a flexible framework that can manage these complexities while evolving with ongoing research. Additionally, defining academic tasks and accommodating various models, such as Large Language Models (LLMs) and Graph Neural Networks (GNNs), adds further complexity in terms of data preprocessing and model-specific interfaces.
-          </p>
-          
-          <p>In this paper, we propose <span style="font-variant:big-caps;">ResearchArcade</span>, a graph-based interface that links diverse academic data sources, unifies task definitions, and supports various base models to address important academic tasks. <span style="font-variant:big-caps;">ResearchArcade</span> offers four core features: <em>Multi-Source</em>, <em>Multi-Modal</em>, <em>Highly Structural and Heterogeneous</em>, and <em>Dynamically Evolving</em>. We unify diverse academic tasks within the academic graphs in <span style="font-variant:big-caps;">ResearchArcade</span>, enabling easy formulation of new tasks for both predictive and generative models. The structured knowledge in <span style="font-variant:big-caps;">ResearchArcade</span> can also be exported to standardized formats like CSV and JSON, ensuring seamless integration with models such as LLMs and GNNs.</p>
-
-          <p>To demonstrate the key advantages of <span style="font-variant:big-caps;">ResearchArcade</span>, we define six academic tasks: figure/table insertion, paragraph generation, revision retrieval, revision generation, acceptance prediction, and rebuttal generation. Extensive experiments show that models benefit from the multi-source, multi-modal, heterogeneous, and dynamic information in <span style="font-variant:big-caps;">ResearchArcade</span>. </p>
-          
-       
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="section hero">
-  <div class="container is-max-desktop">
-    <div class="columns is-centered">
-      <div class="column is-four-fifths">
-        <h2 class="title is-3">2. ResearchArcade</h2>
-        <div class="content">
-          <div class=" has-text-centered">
-            <img src="static/images/intro_1.png" alt="MY ALT TEXT"/>
-            <figcaption>Figure 1. <span style="font-variant:big-caps;">ResearchArcade</span> uses a multi-table format with graph structures to collect data from different sources with multiple modalities.</figcaption>
-          </div>
-          <br><br>
-          <p><span style="font-variant:big-caps;">ResearchArcade</span> integrates data from multiple sources, such as research papers from ArXiv and peer reviews from OpenReview, and handles multi-modal information like text, figures, and tables. These entities are organized in a multi-table format, where tables are treated as nodes and edges in a graph, enabling efficient management of relational and heterogeneous academic data. Additionally, ResearchArcade tracks academic evolution at both microscopic and macroscopic scales: it preserves paper revisions over time, while its extensible framework allows continuous data updates to analyze research trends.</p>
-          <br><br>
-          <div class=" has-text-centered">
-            <img src="static/images/intro_2.png" alt="MY ALT TEXT"/>
-            <figcaption>Figure 2. <span style="font-variant:big-caps;">ResearchArcade</span> unifies the academic task definitions in a two-step scheme.</figcaption>
-          </div>
-          <br><br>
-          <p>
-            <span style="font-variant:big-caps;">ResearchArcade</span> unifies the academic task definitions in the following two steps: (1) identifying the target entity and (2) retrieving the neighborhood of the target entity. Six academic tasks are defined based on the two-step scheme.
-          </p>
-          <div class=" has-text-centered">
-            <img src="static/images/Tasks_definition.png" alt="MY ALT TEXT"/>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="section hero">
-  <div class="container is-max-desktop">
-    <div class="columns is-centered">
-      <div class="column is-four-fifths">
-        <h2 class="title is-3">3. Experiments</h2>
-        <h2 class="title is-4">3.1 Main Results</h2>
-        <div class="content has-text-justified">
-          <div class="content">
-          <div class=" has-text-centered">
-            <img src="static/images/Main_results.png"  alt="MY ALT TEXT"/>
-          </div>
-        </div>
-
-          <p>
-            <strong><span style="font-variant:big-caps;">ResearchArcade</span> is General.</strong> It supports diverse tasks by integrating multi-modal data from ArXiv and OpenReview and converting it into formats like CSV or JSON. Predictive tasks are handled by EMB-based, GNN-based, and GWM-based models, while generative tasks are managed by LLM-based models. The data quality in <span style="font-variant:big-caps;">ResearchArcade</span> is validated, with smaller LLMs approaching the performance of larger ones, particularly in tasks like Revision and Rebuttal Generation.
-          </p>
-
-          <p>
-            <strong><span style="font-variant:big-caps;">ResearchArcade</span> Models Dynamic Evolution.</strong> It captures dynamic evolution at both intra-paper and inter-paper levels by integrating temporal data from ArXiv and OpenReview. It excels in tasks like <em>Revision Retrieval</em> and <em>Revision Generation</em>, where GNN-based and GWM-based models outperform EMB-based models, showcasing the framework's effectiveness in modeling manuscript evolution. Incorporating OpenReview rebuttal data significantly improves performance, while the <em>Acceptance Prediction</em> task highlights the difficulty of predicting research trends, with accuracy barely exceeding random chance.
-          </p>
-
-          <p>
-            <strong>Relational Graph Structure Delivers Consistent Gains.</strong> Graph-based models (GNN and GWM) outperform non-graph models (EMB and MLP) with performance improvements of 7.7%, 67%, and 7.2% in <em>Figure/Table Insertion</em>, <em>Revision Retrieval</em>, and <em>Acceptance Prediction</em>, respectively. Multi-hop aggregation further boosts performance in <em>Acceptance Prediction</em>, where 3-hop aggregation increases accuracy to 0.55, surpassing the MLP baseline. However, additional hops show limited or negative benefits in tasks like <em>Figure/Table Insertion</em> due to graph sparsity.
-          </p>
-        </div>
-        
-        <h2 class="title is-4">3.2 Ablation Study</h2>
-        <div class="content has-text-justified">
-
-          <div class="content">
-            <div class=" has-text-centered">
-              <img src="static/images/Ablation_study.png"  alt="MY ALT TEXT"/>
-            </div>
-          </div>
-
-          <p>
-            <strong>Multi-Modal Information Is Critical.</strong> In tasks like <em>Rebuttal Generation</em> and <em>Generate Missing Paragraph</em>, including visual and tabular data improves understanding and leads to significant performance gains. For instance, revision generation scores increase from 0.693 to 0.717 for the larger model, while paragraph generation improves from 0.259 to 0.272, demonstrating the critical role of multi-modal information.
-          </p>
-        </div>
-        
-        
-
-      </div>
-    </div>
-  </div>
-</section>
-<!-- End paper abstract -->
-
-
-<!-- Image carousel -->
-<!-- <section class="hero is-small">
-  <div class="hero-body">
-    <div class="container">
-      <div id="results-carousel" class="carousel results-carousel">
-       <div class="item">
-        Your image here
-        <img src="static/images/carousel1.jpg" alt="MY ALT TEXT"/>
-        <h2 class="subtitle has-text-centered">
-          First image description.
-        </h2>
-      </div>
-      <div class="item">
-        Your image here
-        <img src="static/images/carousel2.jpg" alt="MY ALT TEXT"/>
-        <h2 class="subtitle has-text-centered">
-          Second image description.
-        </h2>
-      </div>
-      <div class="item">
-        Your image here
-        <img src="static/images/carousel3.jpg" alt="MY ALT TEXT"/>
-        <h2 class="subtitle has-text-centered">
-         Third image description.
-       </h2>
-     </div>
-     <div class="item">
-       Your image here
-      <img src="static/images/carousel4.jpg" alt="MY ALT TEXT"/>
-      <h2 class="subtitle has-text-centered">
-        Fourth image description.
-      </h2>
-    </div>
-  </div>
-</div>
-</div>
-</section> -->
-<!-- End image carousel -->
-
-
-
-
-<!-- Youtube video -->
-<!-- <section class="hero is-small is-light">
-  <div class="hero-body">
-    <div class="container">
-       Paper video.
-      <h2 class="title is-3">Video Presentation</h2>
-      <div class="columns is-centered has-text-centered">
-        <div class="column is-four-fifths">
-          
-          <div class="publication-video">
-            Youtube embed code here
-            <iframe src="https://www.youtube.com/embed/JkaxUblCGz0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section> -->
-<!-- End youtube video -->
-
-
-<!-- Video carousel -->
-<!-- <section class="hero is-small">
-  <div class="hero-body">
-    <div class="container">
-      <h2 class="title is-3">Another Carousel</h2>
-      <div id="results-carousel" class="carousel results-carousel">
-        <div class="item item-video1">
-          <video poster="" id="video1" autoplay controls muted loop height="100%">
-            
-            <source src="static/videos/carousel1.mp4"
-            type="video/mp4">
-          </video>
-        </div>
-        <div class="item item-video2">
-          <video poster="" id="video2" autoplay controls muted loop height="100%">
-            
-            <source src="static/videos/carousel2.mp4"
-            type="video/mp4">
-          </video>
-        </div>
-        <div class="item item-video3">
-          <video poster="" id="video3" autoplay controls muted loop height="100%">\
-            
-            <source src="static/videos/carousel3.mp4"
-            type="video/mp4">
-          </video>
-        </div>
-      </div>
-    </div>
-  </div>
-</section> -->
-<!-- End video carousel -->
-
-
-
-
-
-
-<!-- Paper poster -->
-<!-- <section class="hero is-small is-light">
-  <div class="hero-body">
-    <div class="container">
-      <h2 class="title">Poster</h2>
-
-      <iframe  src="static/pdfs/sample.pdf" width="100%" height="550">
-          </iframe>
-        
-      </div>
-    </div>
-  </section> -->
-<!--End paper poster -->
-
-<!-- <section class="section">
-  <div class="container is-max-desktop content">
-        <h2 class="title">Community</h2>
-        <div class="content has-text-justified">
-          <p>
-            Join our community to connect with other agent enthusiasts, share your tools and demos, and collaborate on exciting initiatives. You can find us on <a href="https://join.slack.com/t/slack-ped8294/shared_invite/zt-2cqebow90-soac9UFKGZ2RcUy8PqjZrA" target="_blank" >Slack</a>.
-          </p>
-       
-      </div>
-  </div>
-</section> -->
-
-<!--BibTeX citation -->
-<section class="section" id="BibTeX">
-  <div class="container is-max-desktop content">
-    <h2 class="title">BibTeX</h2>
-    <pre><code>TODO</code></pre>
-  </div>
-</section>
-<!--End BibTeX citation -->
-
-
-  <footer class="footer">
-  <div class="container">
-    <div class="columns is-centered">
-      <div class="column is-8">
-        <div class="content">
-
-          <p>
-            This page was built using the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a> which was adopted from the <a href="https://nerfies.github.io" target="_blank">Nerfies</a> project page.
-            You are free to borrow the of this website, we just ask that you link back to this page in the footer. <br> This website is licensed under a <a rel="license"  href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">Creative
-            Commons Attribution-ShareAlike 4.0 International License</a>.
-          </p>
-
-        </div>
-      </div>
-    </div>
-  </div>
-</footer>
-
-<!-- Statcounter tracking code -->
-  
-<!-- You can add a tracker to track page visits by creating an account at statcounter.com -->
-
-    <!-- End of Statcounter Code -->
-
-  </body>
-  </html>
+  <!-- Navbar burger toggle -->
+  <script>
+    (function() {
+      var burgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+      if (burgers.length > 0) {
+        burgers.forEach(function(el) {
+          el.addEventListener('click', function() {
+            var target = el.dataset.target;
+            var $target = document.getElementById(target);
+            el.classList.toggle('is-active');
+            $target.classList.toggle('is-active');
+          });
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

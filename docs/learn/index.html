@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Learn • ResearchArcade</title>
+
+  <!-- Open Graph / Twitter (fill these in later) -->
+  <meta name="description" content="Learn the concepts behind ResearchArcade: data model, tasks, backends, and pipeline." />
+  <meta property="og:title" content="Learn • ResearchArcade" />
+  <meta property="og:description" content="Learn the concepts behind ResearchArcade: data model, tasks, backends, and pipeline." />
+  <meta property="og:image" content="../static/images/your_banner_image.png" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="icon" type="image/x-icon" href="../static/images/favicon.ico" />
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet" />
+  <link rel="stylesheet" href="../static/css/bulma.min.css" />
+  <link rel="stylesheet" href="../static/css/fontawesome.all.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="../static/css/index.css" />
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="../static/js/fontawesome.all.min.js"></script>
+</head>
+<body>
+
+  <!-- Top Hero -->
+  <section class="hero is-white">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <nav class="breadcrumb" aria-label="breadcrumbs">
+          <ul>
+            <li><a href="../index.html">Home</a></li>
+            <li class="is-active"><a aria-current="page">Learn</a></li>
+          </ul>
+        </nav>
+        <h1 class="title is-2">Learn ResearchArcade</h1>
+        <p class="subtitle is-5">
+          Conceptual docs for the <strong>graph interface</strong>, <strong>task unification</strong>, and <strong>data backends</strong>.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Overview + Cards -->
+  <section class="section">
+    <div class="container is-max-desktop">
+      <div class="content">
+        <p>
+          Start here to understand how ResearchArcade structures multi-source and multi-modal academic data into a coherent
+          graph, how tasks are unified, and how different backends (CSV / PostgreSQL) are used.
+        </p>
+      </div>
+
+      <div class="columns is-multiline">
+        <!-- Card 1 -->
+        <div class="column is-half">
+          <a class="box" href="./data-model.html">
+            <article class="media">
+              <figure class="media-left">
+                <span class="icon is-large"><i class="fa-solid fa-diagram-project fa-2x"></i></span>
+              </figure>
+              <div class="media-content">
+                <h3 class="title is-4">Data Model & Schema</h3>
+                <p>Nodes, edges, multi-table format, identifiers, and multi-modal fields (text, figures, tables).</p>
+                <p class="has-text-grey is-size-7">/learn/data-model.html</p>
+              </div>
+            </article>
+          </a>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="column is-half">
+          <a class="box" href="./tasks.html">
+            <article class="media">
+              <figure class="media-left">
+                <span class="icon is-large"><i class="fa-solid fa-bullseye fa-2x"></i></span>
+              </figure>
+              <div class="media-content">
+                <h3 class="title is-4">Task Unification</h3>
+                <p>Two-step scheme: pick a target entity, retrieve its neighborhood—then define inputs/outputs.</p>
+                <p class="has-text-grey is-size-7">/learn/tasks.html</p>
+              </div>
+            </article>
+          </a>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="column is-half">
+          <a class="box" href="./backends.html">
+            <article class="media">
+              <figure class="media-left">
+                <span class="icon is-large"><i class="fa-solid fa-database fa-2x"></i></span>
+              </figure>
+              <div class="media-content">
+                <h3 class="title is-4">Backends (CSV / SQL)</h3>
+                <p>When to choose CSV vs PostgreSQL, configuration, performance notes, and migration tips.</p>
+                <p class="has-text-grey is-size-7">/learn/backends.html</p>
+              </div>
+            </article>
+          </a>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="column is-half">
+          <a class="box" href="./auth-and-env.html">
+            <article class="media">
+              <figure class="media-left">
+                <span class="icon is-large"><i class="fa-solid fa-key fa-2x"></i></span>
+              </figure>
+              <div class="media-content">
+                <h3 class="title is-4">API Keys & Environment</h3>
+                <p>Semantic Scholar key, DB configs, and recommended <code>.env</code> setup.</p>
+                <p class="has-text-grey is-size-7">/learn/auth-and-env.html</p>
+              </div>
+            </article>
+          </a>
+        </div>
+
+        <!-- Card 5 -->
+        <div class="column is-half">
+          <a class="box" href="./datasets-and-ingest.html">
+            <article class="media">
+              <figure class="media-left">
+                <span class="icon is-large"><i class="fa-solid fa-download fa-2x"></i></span>
+              </figure>
+              <div class="media-content">
+                <h3 class="title is-4">Datasets & Ingestion</h3>
+                <p>Pull from APIs (OpenReview/ArXiv), import CSV/JSON, and construct tables programmatically.</p>
+                <p class="has-text-grey is-size-7">/learn/datasets-and-ingest.html</p>
+              </div>
+            </article>
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="content has-text-centered is-size-7">
+        <p>
+          Built with the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a>.
+          Licensed under <a href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC BY-SA 4.0</a>.
+        </p>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
