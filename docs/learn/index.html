@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Learn • ResearchArcade</title>
 
-  <!-- Open Graph / Twitter (fill these in later) -->
-  <meta name="description" content="Learn the concepts behind ResearchArcade: data model, tasks, backends, and pipeline." />
+  <!-- Open Graph / Twitter -->
+  <meta name="description" content="Learn the concepts behind ResearchArcade: datasets, utilities, data model, and storage layers." />
   <meta property="og:title" content="Learn • ResearchArcade" />
-  <meta property="og:description" content="Learn the concepts behind ResearchArcade: data model, tasks, backends, and pipeline." />
+  <meta property="og:description" content="Learn the concepts behind ResearchArcade: datasets, utilities, data model, and storage layers." />
   <meta property="og:image" content="../static/images/your_banner_image.png" />
   <meta property="og:type" content="website" />
   <meta name="twitter:card" content="summary_large_image" />
@@ -37,104 +37,293 @@
         </nav>
         <h1 class="title is-2">Learn ResearchArcade</h1>
         <p class="subtitle is-5">
-          Conceptual docs for the <strong>graph interface</strong>, <strong>task unification</strong>, and <strong>data backends</strong>.
+          Explore our <strong>datasets</strong>, <strong>utilities</strong>, <strong>data model</strong>, and <strong>storage layers</strong>.
         </p>
       </div>
     </div>
   </section>
 
-  <!-- Overview + Cards -->
+  <!-- Overview -->
   <section class="section">
     <div class="container is-max-desktop">
       <div class="content">
         <p>
-          Start here to understand how ResearchArcade structures multi-source and multi-modal academic data into a coherent
-          graph, how tasks are unified, and how different backends (CSV / PostgreSQL) are used.
+          Start here to understand ResearchArcade's comprehensive academic data infrastructure—from pre-built datasets
+          to processing utilities, graph-based data modeling, and flexible storage formats.
         </p>
       </div>
 
+      <!-- Datasets Section -->
+      <h2 class="title is-3 mt-6 mb-4">Datasets</h2>
       <div class="columns is-multiline">
-        <!-- Card 1 -->
         <div class="column is-half">
-          <a class="box" href="./data-model.html">
-            <article class="media">
-              <figure class="media-left">
-                <span class="icon is-large"><i class="fa-solid fa-diagram-project fa-2x"></i></span>
-              </figure>
-              <div class="media-content">
-                <h3 class="title is-4">Data Model & Schema</h3>
-                <p>Nodes, edges, multi-table format, identifiers, and multi-modal fields (text, figures, tables).</p>
-                <p class="has-text-grey is-size-7">/learn/data-model.html</p>
-              </div>
-            </article>
-          </a>
-        </div>
-
-        <!-- Card 2 -->
-        <div class="column is-half">
-          <a class="box" href="./tasks.html">
-            <article class="media">
-              <figure class="media-left">
-                <span class="icon is-large"><i class="fa-solid fa-bullseye fa-2x"></i></span>
-              </figure>
-              <div class="media-content">
-                <h3 class="title is-4">Task Unification</h3>
-                <p>Two-step scheme: pick a target entity, retrieve its neighborhood—then define inputs/outputs.</p>
-                <p class="has-text-grey is-size-7">/learn/tasks.html</p>
-              </div>
-            </article>
-          </a>
-        </div>
-
-        <!-- Card 3 -->
-        <div class="column is-half">
-          <a class="box" href="./backends.html">
+          <a class="box" href="./arxiv-sql-dataset.html">
             <article class="media">
               <figure class="media-left">
                 <span class="icon is-large"><i class="fa-solid fa-database fa-2x"></i></span>
               </figure>
               <div class="media-content">
-                <h3 class="title is-4">Backends (CSV / SQL)</h3>
-                <p>When to choose CSV vs PostgreSQL, configuration, performance notes, and migration tips.</p>
-                <p class="has-text-grey is-size-7">/learn/backends.html</p>
+                <h3 class="title is-5">ArXiv SQL Dataset</h3>
+                <p>Pre-processed ArXiv papers in PostgreSQL format with full graph structure.</p>
+                <p class="has-text-grey is-size-7">/learn/arxiv-sql-dataset.html</p>
               </div>
             </article>
           </a>
         </div>
 
-        <!-- Card 4 -->
         <div class="column is-half">
-          <a class="box" href="./auth-and-env.html">
+          <a class="box" href="./arxiv-csv-dataset.html">
             <article class="media">
               <figure class="media-left">
-                <span class="icon is-large"><i class="fa-solid fa-key fa-2x"></i></span>
+                <span class="icon is-large"><i class="fa-solid fa-file-csv fa-2x"></i></span>
               </figure>
               <div class="media-content">
-                <h3 class="title is-4">API Keys & Environment</h3>
-                <p>Semantic Scholar key, DB configs, and recommended <code>.env</code> setup.</p>
-                <p class="has-text-grey is-size-7">/learn/auth-and-env.html</p>
+                <h3 class="title is-5">ArXiv CSV Dataset</h3>
+                <p>Lightweight CSV exports of ArXiv papers for quick experimentation.</p>
+                <p class="has-text-grey is-size-7">/learn/arxiv-csv-dataset.html</p>
               </div>
             </article>
           </a>
         </div>
 
-        <!-- Card 5 -->
         <div class="column is-half">
-          <a class="box" href="./datasets-and-ingest.html">
+          <a class="box" href="./openreview-sql-dataset.html">
             <article class="media">
               <figure class="media-left">
-                <span class="icon is-large"><i class="fa-solid fa-download fa-2x"></i></span>
+                <span class="icon is-large"><i class="fa-solid fa-database fa-2x"></i></span>
               </figure>
               <div class="media-content">
-                <h3 class="title is-4">Datasets & Ingestion</h3>
-                <p>Pull from APIs (OpenReview/ArXiv), import CSV/JSON, and construct tables programmatically.</p>
-                <p class="has-text-grey is-size-7">/learn/datasets-and-ingest.html</p>
+                <h3 class="title is-5">OpenReview SQL Dataset</h3>
+                <p>OpenReview papers, reviews, and decisions in relational database format.</p>
+                <p class="has-text-grey is-size-7">/learn/openreview-sql-dataset.html</p>
               </div>
             </article>
           </a>
         </div>
 
+        <div class="column is-half">
+          <a class="box" href="./openreview-csv-dataset.html">
+            <article class="media">
+              <figure class="media-left">
+                <span class="icon is-large"><i class="fa-solid fa-file-csv fa-2x"></i></span>
+              </figure>
+              <div class="media-content">
+                <h3 class="title is-5">OpenReview CSV Dataset</h3>
+                <p>CSV exports of OpenReview data including reviews and meta-review information.</p>
+                <p class="has-text-grey is-size-7">/learn/openreview-csv-dataset.html</p>
+              </div>
+            </article>
+          </a>
+        </div>
       </div>
+
+      <!-- Utilities Section -->
+      <h2 class="title is-3 mt-6 mb-4">Utilities</h2>
+      <div class="columns is-multiline">
+        <div class="column is-half">
+          <a class="box" href="./arxiv-paper-crawling.html">
+            <article class="media">
+              <figure class="media-left">
+                <span class="icon is-large"><i class="fa-solid fa-spider fa-2x"></i></span>
+              </figure>
+              <div class="media-content">
+                <h3 class="title is-5">ArXiv Paper Crawling</h3>
+                <p>Tools for fetching papers from ArXiv API with metadata and PDFs.</p>
+                <p class="has-text-grey is-size-7">/learn/arxiv-paper-crawling.html</p>
+              </div>
+            </article>
+          </a>
+        </div>
+
+        <div class="column is-half">
+          <a class="box" href="./arxiv-paper-processing.html">
+            <article class="media">
+              <figure class="media-left">
+                <span class="icon is-large"><i class="fa-solid fa-diagram-project fa-2x"></i></span>
+              </figure>
+              <div class="media-content">
+                <h3 class="title is-5">ArXiv Paper Processing</h3>
+                <p>Convert ArXiv papers into structured graph representations with entities and relations.</p>
+                <p class="has-text-grey is-size-7">/learn/arxiv-paper-processing.html</p>
+              </div>
+            </article>
+          </a>
+        </div>
+
+        <div class="column is-half">
+          <a class="box" href="./arxiv-paragraph-processing.html">
+            <article class="media">
+              <figure class="media-left">
+                <span class="icon is-large"><i class="fa-solid fa-paragraph fa-2x"></i></span>
+              </figure>
+              <div class="media-content">
+                <h3 class="title is-5">ArXiv Paragraph Processing</h3>
+                <p>Extract and process paragraph-level text with reference tracking and graph construction.</p>
+                <p class="has-text-grey is-size-7">/learn/arxiv-paragraph-processing.html</p>
+              </div>
+            </article>
+          </a>
+        </div>
+
+        <div class="column is-half">
+          <a class="box" href="./openreview-paper-crawling.html">
+            <article class="media">
+              <figure class="media-left">
+                <span class="icon is-large"><i class="fa-solid fa-spider fa-2x"></i></span>
+              </figure>
+              <div class="media-content">
+                <h3 class="title is-5">OpenReview Paper Crawling</h3>
+                <p>Fetch papers, reviews, and decisions from OpenReview API endpoints.</p>
+                <p class="has-text-grey is-size-7">/learn/openreview-paper-crawling.html</p>
+              </div>
+            </article>
+          </a>
+        </div>
+
+        <div class="column is-half">
+          <a class="box" href="./openreview-pdf-processing.html">
+            <article class="media">
+              <figure class="media-left">
+                <span class="icon is-large"><i class="fa-solid fa-file-pdf fa-2x"></i></span>
+              </figure>
+              <div class="media-content">
+                <h3 class="title is-5">OpenReview PDF Processing</h3>
+                <p>Extract text, figures, and tables from OpenReview PDF submissions.</p>
+                <p class="has-text-grey is-size-7">/learn/openreview-pdf-processing.html</p>
+              </div>
+            </article>
+          </a>
+        </div>
+
+        <div class="column is-half">
+          <a class="box" href="./openreview-processing.html">
+            <article class="media">
+              <figure class="media-left">
+                <span class="icon is-large"><i class="fa-solid fa-gears fa-2x"></i></span>
+              </figure>
+              <div class="media-content">
+                <h3 class="title is-5">OpenReview Processing</h3>
+                <p>End-to-end pipeline for transforming OpenReview data into graph format.</p>
+                <p class="has-text-grey is-size-7">/learn/openreview-processing.html</p>
+              </div>
+            </article>
+          </a>
+        </div>
+      </div>
+
+      <!-- Data Model & Schema Section -->
+      <h2 class="title is-3 mt-6 mb-4">Data Model & Schema</h2>
+      <div class="columns is-multiline">
+        <div class="column is-half">
+          <a class="box" href="./entities.html">
+            <article class="media">
+              <figure class="media-left">
+                <span class="icon is-large"><i class="fa-solid fa-circle-nodes fa-2x"></i></span>
+              </figure>
+              <div class="media-content">
+                <h3 class="title is-5">Entities (Nodes)</h3>
+                <p>Paper, section, paragraph, figure, table, author, review, revision, decision, and venue entities.</p>
+                <p class="has-text-grey is-size-7">/learn/entities.html</p>
+              </div>
+            </article>
+          </a>
+        </div>
+
+        <div class="column is-half">
+          <a class="box" href="./relations.html">
+            <article class="media">
+              <figure class="media-left">
+                <span class="icon is-large"><i class="fa-solid fa-arrows-left-right fa-2x"></i></span>
+              </figure>
+              <div class="media-content">
+                <h3 class="title is-5">Relations (Edges)</h3>
+                <p>Authorship, citation, contains, refers, revises, reviews, and rebuts relationships.</p>
+                <p class="has-text-grey is-size-7">/learn/relations.html</p>
+              </div>
+            </article>
+          </a>
+        </div>
+
+        <div class="column is-half">
+          <a class="box" href="./schema-details.html">
+            <article class="media">
+              <figure class="media-left">
+                <span class="icon is-large"><i class="fa-solid fa-table-list fa-2x"></i></span>
+              </figure>
+              <div class="media-content">
+                <h3 class="title is-5">Schema Details</h3>
+                <p>Cardinalities, required fields, primary keys, stable IDs, and cross-source linking rules.</p>
+                <p class="has-text-grey is-size-7">/learn/schema-details.html</p>
+              </div>
+            </article>
+          </a>
+        </div>
+      </div>
+
+      <!-- Storage Layers & Exports Section -->
+      <h2 class="title is-3 mt-6 mb-4">Storage Layers & Exports</h2>
+      <div class="columns is-multiline">
+        <div class="column is-half">
+          <a class="box" href="./sql-storage.html">
+            <article class="media">
+              <figure class="media-left">
+                <span class="icon is-large"><i class="fa-solid fa-database fa-2x"></i></span>
+              </figure>
+              <div class="media-content">
+                <h3 class="title is-5">SQL Storage</h3>
+                <p>SQL dialect support, DDL snapshots, indexing strategies, and query optimization.</p>
+                <p class="has-text-grey is-size-7">/learn/sql-storage.html</p>
+              </div>
+            </article>
+          </a>
+        </div>
+
+        <div class="column is-half">
+          <a class="box" href="./csv-storage.html">
+            <article class="media">
+              <figure class="media-left">
+                <span class="icon is-large"><i class="fa-solid fa-file-csv fa-2x"></i></span>
+              </figure>
+              <div class="media-content">
+                <h3 class="title is-5">CSV Storage</h3>
+                <p>Per-table CSV specifications, format conventions, and best practices.</p>
+                <p class="has-text-grey is-size-7">/learn/csv-storage.html</p>
+              </div>
+            </article>
+          </a>
+        </div>
+
+        <div class="column is-half">
+          <a class="box" href="./json-storage.html">
+            <article class="media">
+              <figure class="media-left">
+                <span class="icon is-large"><i class="fa-solid fa-code fa-2x"></i></span>
+              </figure>
+              <div class="media-content">
+                <h3 class="title is-5">JSON Storage</h3>
+                <p>Per-entity JSON schemas and document structure for flexible exports.</p>
+                <p class="has-text-grey is-size-7">/learn/json-storage.html</p>
+              </div>
+            </article>
+          </a>
+        </div>
+
+        <div class="column is-half">
+          <a class="box" href="./format-conversion.html">
+            <article class="media">
+              <figure class="media-left">
+                <span class="icon is-large"><i class="fa-solid fa-arrows-rotate fa-2x"></i></span>
+              </figure>
+              <div class="media-content">
+                <h3 class="title is-5">Format Conversion</h3>
+                <p>Round-trip conversion between SQL, CSV, and JSON with data integrity preservation.</p>
+                <p class="has-text-grey is-size-7">/learn/format-conversion.html</p>
+              </div>
+            </article>
+          </a>
+        </div>
+      </div>
+
     </div>
   </section>
 
