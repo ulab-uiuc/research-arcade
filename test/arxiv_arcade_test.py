@@ -289,7 +289,7 @@ class TestArxivArcadeNodeCRUD(unittest.TestCase):
         
         self.arcade.arxiv_authors.get_author_by_id.assert_called_once_with(**primary_key)
         self.assertEqual(result, expected)
-    
+
     def test_get_node_features_categories(self):
         """Test getting category features by ID"""
         primary_key = {'category_id': 'cs.AI'}
@@ -300,7 +300,7 @@ class TestArxivArcadeNodeCRUD(unittest.TestCase):
         
         self.arcade.arxiv_categories.get_category_by_id.assert_called_once_with(**primary_key)
         self.assertEqual(result, expected)
-    
+
     def test_get_node_features_figures(self):
         """Test getting figure features by ID"""
         primary_key = {'figure_id': 'fig1'}
