@@ -30,26 +30,34 @@ class ArxivCrawler:
         pass
         
     def crawl_section_data_from_api(self, arxiv_ids):
+        pass
     
     def crawl_paragraph_data_from_api(self, arxiv_ids):
         # Process first then tackle down the problems
+        pass
     
 
     def crawl_category_data_from_api(self, arxiv_ids):
         # Give the category of data
+        pass
 
     def crawl_paper_category_data_from_api(self, arxiv_ids):
         # Process first then tackle down the problems
+        pass
 
     def crawl_author_data_from_api(self, arxiv_ids):
         # Given the arxiv ids, search the authors on semantic scholar
         # This also returns the edge information? Edge between papers and authors
+        pass
 
     def crawl_figure_data_from_api(self, arxiv_ids):
-        # 
+        
+        pass
 
     def crawl_table_data_from_api(self, arxiv_ids):
+        pass
 
     def crawl_paragraph_references_data_from_api(self, arxiv_ids):
+        pass
 
 
