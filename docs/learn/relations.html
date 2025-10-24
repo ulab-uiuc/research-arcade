@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Relations (Edges) • ResearchArcade</title>
+
+  <!-- Open Graph / Twitter -->
+  <meta name="description" content="Complete reference for all relationship types in ResearchArcade: authorship, citations, reviews, and more." />
+  <meta property="og:title" content="Relations (Edges) • ResearchArcade" />
+  <meta property="og:description" content="Complete reference for all relationship types in ResearchArcade: authorship, citations, reviews, and more." />
+  <meta property="og:image" content="../static/images/your_banner_image.png" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="icon" type="image/x-icon" href="../static/images/favicon.ico" />
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet" />
+  <link rel="stylesheet" href="../static/css/bulma.min.css" />
+  <link rel="stylesheet" href="../static/css/fontawesome.all.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="../static/css/index.css" />
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="../static/js/fontawesome.all.min.js"></script>
+</head>
+<body>
+
+  <!-- Top Hero -->
+  <section class="hero is-white">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <nav class="breadcrumb" aria-label="breadcrumbs">
+          <ul>
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="../learn/index.html">Learn</a></li>
+            <li class="is-active"><a aria-current="page">Relations</a></li>
+          </ul>
+        </nav>
+        <h1 class="title is-2">
+          <span class="icon-text">
+            <span class="icon"><i class="fa-solid fa-arrows-left-right"></i></span>
+            <span>Relations (Edges)</span>
+          </span>
+        </h1>
+        <p class="subtitle is-5">
+          Complete reference for all <strong>relationship types</strong> connecting entities in ResearchArcade.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Overview -->
+  <section class="section">
+    <div class="container is-max-desktop">
+      <div class="content">
+        <h2 class="title is-3">Overview</h2>
+        <p>
+          Relations define how entities connect to each other in ResearchArcade's knowledge graph. Each relation type represents a specific kind of connection, from authorship and citations to reviews and rebuttals. This page provides a comprehensive reference for all relation types, their cardinalities, and attributes.
+        </p>
+        
+        <div class="notification is-info is-light">
+          <span class="icon"><i class="fa-solid fa-circle-info"></i></span>
+          <strong>Note:</strong> 
+          Relations connect entities within and across ArXiv and OpenReview datasets. See <a href="./entities.html">Entities</a> for information on entity types.
+        </div>
+      </div>
+
+      <!-- Relation Categories -->
+      <div class="content mt-6">
+        <h2 class="title is-3">Relation Categories</h2>
+        <div class="columns is-multiline">
+          <div class="column is-one-third">
+            <div class="box">
+              <h3 class="title is-5">
+                <span class="icon-text">
+                  <span class="icon has-text-info"><i class="fa-solid fa-sitemap"></i></span>
+                  <span>Structural Relations</span>
+                </span>
+              </h3>
+              <p>Authorship, containment, and hierarchy</p>
+            </div>
+          </div>
+          <div class="column is-one-third">
+            <div class="box">
+              <h3 class="title is-5">
+                <span class="icon-text">
+                  <span class="icon has-text-success"><i class="fa-solid fa-link"></i></span>
+                  <span>Reference Relations</span>
+                </span>
+              </h3>
+              <p>Citations, references, and revisions</p>
+            </div>
+          </div>
+          <div class="column is-one-third">
+            <div class="box">
+              <h3 class="title is-5">
+                <span class="icon-text">
+                  <span class="icon has-text-warning"><i class="fa-solid fa-comment-dots"></i></span>
+                  <span>Review Relations</span>
+                </span>
+              </h3>
+              <p>Reviews, decisions, and rebuttals</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Authorship Relation -->
+      <div class="content mt-6">
+        <h2 class="title is-3" id="authorship">Authorship</h2>
+        <p>
+          Links papers to their authors, preserving author order and affiliation information.
+        </p>
+
+        <div class="box has-background-light">
+          <h3 class="title is-5">Relation Details</h3>
+          <div class="columns">
+            <div class="column">
+              <p><strong>Source:</strong> <code>Paper</code></p>
+              <p><strong>Target:</strong> <code>Author</code></p>
+            </div>
+            <div class="column">
+              <p><strong>Cardinality:</strong> Many-to-Many</p>
+              <p><strong>Direction:</strong> Bidirectional</p>
+            </div>
+          </div>
+        </div>
+
+        <h3 class="title is-4 mt-5">Attributes</h3>
+        <div class="table-container">
+          <table class="table is-striped is-fullwidth">
+            <thead>
+              <tr>
+                <th>Attribute</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>paper_id</code></td>
+                <td>string</td>
+                <td><span class="tag is-success">Yes</span></td>
+                <td>Reference to paper</td>
+              </tr>
+              <tr>
+                <td><code>author_id</code></td>
+                <td>string</td>
+                <td><span class="tag is-success">Yes</span></td>
+                <td>Reference to author</td>
+              </tr>
+              <tr>
+                <td><code>position</code></td>
+                <td>integer</td>
+                <td><span class="tag is-warning">No</span></td>
+                <td>Author order (1 = first author)</td>
+              </tr>
+              <tr>
+                <td><code>corresponding</code></td>
+                <td>boolean</td>
+                <td><span class="tag is-warning">No</span></td>
+                <td>Is corresponding author</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Citations Relation -->
+      <div class="content mt-6">
+        <h2 class="title is-3" id="citations">Citations</h2>
+        <p>
+          Paper-to-paper citation relationships showing which papers reference other papers.
+        </p>
+
+        <div class="box has-background-light">
+          <h3 class="title is-5">Relation Details</h3>
+          <div class="columns">
+            <div class="column">
+              <p><strong>Source:</strong> <code>Paper</code> (citing)</p>
+              <p><strong>Target:</strong> <code>Paper</code> (cited)</p>
+            </div>
+            <div class="column">
+              <p><strong>Cardinality:</strong> Many-to-Many</p>
+              <p><strong>Direction:</strong> Directed</p>
+            </div>
+          </div>
+        </div>
+
+        <h3 class="title is-4 mt-5">Attributes</h3>
+        <div class="table-container">
+          <table class="table is-striped is-fullwidth">
+            <thead>
+              <tr>
+                <th>Attribute</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>citing_paper_id</code></td>
+                <td>string</td>
+                <td><span class="tag is-success">Yes</span></td>
+                <td>Paper making the citation</td>
+              </tr>
+              <tr>
+                <td><code>cited_paper_id</code></td>
+                <td>string</td>
+                <td><span class="tag is-success">Yes</span></td>
+                <td>Paper being cited</td>
+              </tr>
+              <tr>
+                <td><code>citation_count</code></td>
+                <td>integer</td>
+                <td><span class="tag is-warning">No</span></td>
+                <td>Number of times cited in paper</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Contains Relation -->
+      <div class="content mt-6">
+        <h2 class="title is-3" id="contains">Contains</h2>
+        <p>
+          Hierarchical containment relationships between papers and their components (sections, paragraphs, figures, tables).
+        </p>
+
+        <div class="box has-background-light">
+          <h3 class="title is-5">Relation Details</h3>
+          <div class="columns">
+            <div class="column">
+              <p><strong>Source:</strong> <code>Paper/Section</code></p>
+              <p><strong>Target:</strong> <code>Section/Paragraph/Figure/Table</code></p>
+            </div>
+            <div class="column">
+              <p><strong>Cardinality:</strong> One-to-Many</p>
+              <p><strong>Direction:</strong> Directed</p>
+            </div>
+          </div>
+        </div>
+
+        <h3 class="title is-4 mt-5">Example Containment Hierarchies</h3>
+        <ul>
+          <li><code>Paper</code> → <code>Section</code></li>
+          <li><code>Paper</code> → <code>Figure</code></li>
+          <li><code>Paper</code> → <code>Table</code></li>
+          <li><code>Section</code> → <code>Paragraph</code></li>
+          <li><code>Section</code> → <code>Section</code> (nested sections)</li>
+        </ul>
+      </div>
+
+      <!-- References Relation -->
+      <div class="content mt-6">
+        <h2 class="title is-3" id="references">References</h2>
+        <p>
+          Paragraph-level citation contexts showing where and how papers are referenced in the text.
+        </p>
+
+        <div class="box has-background-light">
+          <h3 class="title is-5">Relation Details</h3>
+          <div class="columns">
+            <div class="column">
+              <p><strong>Source:</strong> <code>Paragraph</code></p>
+              <p><strong>Target:</strong> <code>Paper</code></p>
+            </div>
+            <div class="column">
+              <p><strong>Cardinality:</strong> Many-to-Many</p>
+              <p><strong>Direction:</strong> Directed</p>
+            </div>
+          </div>
+        </div>
+
+        <h3 class="title is-4 mt-5">Attributes</h3>
+        <div class="table-container">
+          <table class="table is-striped is-fullwidth">
+            <thead>
+              <tr>
+                <th>Attribute</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>paragraph_id</code></td>
+                <td>string</td>
+                <td><span class="tag is-success">Yes</span></td>
+                <td>Paragraph containing reference</td>
+              </tr>
+              <tr>
+                <td><code>cited_paper_id</code></td>
+                <td>string</td>
+                <td><span class="tag is-success">Yes</span></td>
+                <td>Paper being referenced</td>
+              </tr>
+              <tr>
+                <td><code>context</code></td>
+                <td>text</td>
+                <td><span class="tag is-warning">No</span></td>
+                <td>Citation context snippet</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Reviews Relation -->
+      <div class="content mt-6">
+        <h2 class="title is-3" id="reviews">Reviews</h2>
+        <p>
+          Links reviews to the papers they evaluate in the peer review process.
+        </p>
+
+        <div class="box has-background-light">
+          <h3 class="title is-5">Relation Details</h3>
+          <div class="columns">
+            <div class="column">
+              <p><strong>Source:</strong> <code>Review</code></p>
+              <p><strong>Target:</strong> <code>Paper</code></p>
+            </div>
+            <div class="column">
+              <p><strong>Cardinality:</strong> Many-to-One</p>
+              <p><strong>Direction:</strong> Directed</p>
+            </div>
+          </div>
+        </div>
+
+        <h3 class="title is-4 mt-5">Attributes</h3>
+        <div class="table-container">
+          <table class="table is-striped is-fullwidth">
+            <thead>
+              <tr>
+                <th>Attribute</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>review_id</code></td>
+                <td>string</td>
+                <td><span class="tag is-success">Yes</span></td>
+                <td>Reference to review</td>
+              </tr>
+              <tr>
+                <td><code>paper_id</code></td>
+                <td>string</td>
+                <td><span class="tag is-success">Yes</span></td>
+                <td>Paper being reviewed</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Rebuts Relation -->
+      <div class="content mt-6">
+        <h2 class="title is-3" id="rebuts">Rebuts</h2>
+        <p>
+          Links author rebuttals to the reviews they address.
+        </p>
+
+        <div class="box has-background-light">
+          <h3 class="title is-5">Relation Details</h3>
+          <div class="columns">
+            <div class="column">
+              <p><strong>Source:</strong> <code>Rebuttal</code></p>
+              <p><strong>Target:</strong> <code>Review</code></p>
+            </div>
+            <div class="column">
+              <p><strong>Cardinality:</strong> Many-to-One</p>
+              <p><strong>Direction:</strong> Directed</p>
+            </div>
+          </div>
+        </div>
+
+        <h3 class="title is-4 mt-5">Attributes</h3>
+        <div class="table-container">
+          <table class="table is-striped is-fullwidth">
+            <thead>
+              <tr>
+                <th>Attribute</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>rebuttal_id</code></td>
+                <td>string</td>
+                <td><span class="tag is-success">Yes</span></td>
+                <td>Reference to rebuttal</td>
+              </tr>
+              <tr>
+                <td><code>review_id</code></td>
+                <td>string</td>
+                <td><span class="tag is-success">Yes</span></td>
+                <td>Review being addressed</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Revises Relation -->
+      <div class="content mt-6">
+        <h2 class="title is-3" id="revises">Revises</h2>
+        <p>
+          Tracks revision history, linking papers to their updated versions.
+        </p>
+
+        <div class="box has-background-light">
+          <h3 class="title is-5">Relation Details</h3>
+          <div class="columns">
+            <div class="column">
+              <p><strong>Source:</strong> <code>Revision</code></p>
+              <p><strong>Target:</strong> <code>Paper</code></p>
+            </div>
+            <div class="column">
+              <p><strong>Cardinality:</strong> Many-to-One</p>
+              <p><strong>Direction:</strong> Directed</p>
+            </div>
+          </div>
+        </div>
+
+        <h3 class="title is-4 mt-5">Attributes</h3>
+        <div class="table-container">
+          <table class="table is-striped is-fullwidth">
+            <thead>
+              <tr>
+                <th>Attribute</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>revision_id</code></td>
+                <td>string</td>
+                <td><span class="tag is-success">Yes</span></td>
+                <td>Reference to revision</td>
+              </tr>
+              <tr>
+                <td><code>paper_id</code></td>
+                <td>string</td>
+                <td><span class="tag is-success">Yes</span></td>
+                <td>Paper being revised</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Decides Relation -->
+      <div class="content mt-6">
+        <h2 class="title is-3" id="decides">Decides</h2>
+        <p>
+          Links editorial decisions to the papers they concern.
+        </p>
+
+        <div class="box has-background-light">
+          <h3 class="title is-5">Relation Details</h3>
+          <div class="columns">
+            <div class="column">
+              <p><strong>Source:</strong> <code>Decision</code></p>
+              <p><strong>Target:</strong> <code>Paper</code></p>
+            </div>
+            <div class="column">
+              <p><strong>Cardinality:</strong> Many-to-One</p>
+              <p><strong>Direction:</strong> Directed</p>
+            </div>
+          </div>
+        </div>
+
+        <h3 class="title is-4 mt-5">Attributes</h3>
+        <div class="table-container">
+          <table class="table is-striped is-fullwidth">
+            <thead>
+              <tr>
+                <th>Attribute</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>decision_id</code></td>
+                <td>string</td>
+                <td><span class="tag is-success">Yes</span></td>
+                <td>Reference to decision</td>
+              </tr>
+              <tr>
+                <td><code>paper_id</code></td>
+                <td>string</td>
+                <td><span class="tag is-success">Yes</span></td>
+                <td>Paper receiving decision</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Submitted To Relation -->
+      <div class="content mt-6">
+        <h2 class="title is-3" id="submitted-to">Submitted To</h2>
+        <p>
+          Links papers to the venues (conferences, journals) where they were submitted or published.
+        </p>
+
+        <div class="box has-background-light">
+          <h3 class="title is-5">Relation Details</h3>
+          <div class="columns">
+            <div class="column">
+              <p><strong>Source:</strong> <code>Paper</code></p>
+              <p><strong>Target:</strong> <code>Venue</code></p>
+            </div>
+            <div class="column">
+              <p><strong>Cardinality:</strong> Many-to-One</p>
+              <p><strong>Direction:</strong> Directed</p>
+            </div>
+          </div>
+        </div>
+
+        <h3 class="title is-4 mt-5">Attributes</h3>
+        <div class="table-container">
+          <table class="table is-striped is-fullwidth">
+            <thead>
+              <tr>
+                <th>Attribute</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>paper_id</code></td>
+                <td>string</td>
+                <td><span class="tag is-success">Yes</span></td>
+                <td>Reference to paper</td>
+              </tr>
+              <tr>
+                <td><code>venue_id</code></td>
+                <td>string</td>
+                <td><span class="tag is-success">Yes</span></td>
+                <td>Venue for submission</td>
+              </tr>
+              <tr>
+                <td><code>submission_date</code></td>
+                <td>date</td>
+                <td><span class="tag is-warning">No</span></td>
+                <td>When paper was submitted</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Relation Summary -->
+      <div class="content mt-6">
+        <h2 class="title is-3">Relation Summary</h2>
+        <p>
+          Quick reference table showing all available relations and their characteristics.
+        </p>
+
+        <div class="table-container">
+          <table class="table is-striped is-fullwidth">
+            <thead>
+              <tr>
+                <th>Relation</th>
+                <th>Source Entity</th>
+                <th>Target Entity</th>
+                <th>Cardinality</th>
+                <th>Category</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Authorship</strong></td>
+                <td>Paper</td>
+                <td>Author</td>
+                <td>M:N</td>
+                <td>Structural</td>
+              </tr>
+              <tr>
+                <td><strong>Citations</strong></td>
+                <td>Paper</td>
+                <td>Paper</td>
+                <td>M:N</td>
+                <td>Reference</td>
+              </tr>
+              <tr>
+                <td><strong>Contains</strong></td>
+                <td>Paper/Section</td>
+                <td>Section/Paragraph/Figure/Table</td>
+                <td>1:M</td>
+                <td>Structural</td>
+              </tr>
+              <tr>
+                <td><strong>References</strong></td>
+                <td>Paragraph</td>
+                <td>Paper</td>
+                <td>M:N</td>
+                <td>Reference</td>
+              </tr>
+              <tr>
+                <td><strong>Reviews</strong></td>
+                <td>Review</td>
+                <td>Paper</td>
+                <td>M:1</td>
+                <td>Review</td>
+              </tr>
+              <tr>
+                <td><strong>Rebuts</strong></td>
+                <td>Rebuttal</td>
+                <td>Review</td>
+                <td>M:1</td>
+                <td>Review</td>
+              </tr>
+              <tr>
+                <td><strong>Revises</strong></td>
+                <td>Revision</td>
+                <td>Paper</td>
+                <td>M:1</td>
+                <td>Reference</td>
+              </tr>
+              <tr>
+                <td><strong>Decides</strong></td>
+                <td>Decision</td>
+                <td>Paper</td>
+                <td>M:1</td>
+                <td>Review</td>
+              </tr>
+              <tr>
+                <td><strong>Submitted To</strong></td>
+                <td>Paper</td>
+                <td>Venue</td>
+                <td>M:1</td>
+                <td>Structural</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Related Resources -->
+      <div class="content mt-6">
+        <h2 class="title is-3">Related Resources</h2>
+        <div class="columns is-multiline">
+          <div class="column is-one-third">
+            <a class="box" href="./entities.html">
+              <h3 class="title is-6">
+                <span class="icon-text">
+                  <span class="icon"><i class="fa-solid fa-circle-nodes"></i></span>
+                  <span>Entity Reference</span>
+                </span>
+              </h3>
+              <p class="is-size-7">Complete entity type documentation</p>
+            </a>
+          </div>
+          <div class="column is-one-third">
+            <a class="box" href="./schema-details.html">
+              <h3 class="title is-6">
+                <span class="icon-text">
+                  <span class="icon"><i class="fa-solid fa-table-list"></i></span>
+                  <span>Schema Details</span>
+                </span>
+              </h3>
+              <p class="is-size-7">Schema organization and structure</p>
+            </a>
+          </div>
+          <div class="column is-one-third">
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="content has-text-centered is-size-7">
+        <p>
+          Built with the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a>.
+          Licensed under <a href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC BY-SA 4.0</a>.
+        </p>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

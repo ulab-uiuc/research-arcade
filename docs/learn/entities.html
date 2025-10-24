@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Entities (Nodes) • ResearchArcade</title>
+
+  <!-- Open Graph / Twitter -->
+  <meta name="description" content="Complete reference for all entity types in ResearchArcade: papers, authors, sections, reviews, and more." />
+  <meta property="og:title" content="Entities (Nodes) • ResearchArcade" />
+  <meta property="og:description" content="Complete reference for all entity types in ResearchArcade: papers, authors, sections, reviews, and more." />
+  <meta property="og:image" content="../static/images/your_banner_image.png" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="icon" type="image/x-icon" href="../static/images/favicon.ico" />
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet" />
+  <link rel="stylesheet" href="../static/css/bulma.min.css" />
+  <link rel="stylesheet" href="../static/css/fontawesome.all.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="../static/css/index.css" />
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="../static/js/fontawesome.all.min.js"></script>
+</head>
+<body>
+
+  <!-- Top Hero -->
+  <section class="hero is-white">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <nav class="breadcrumb" aria-label="breadcrumbs">
+          <ul>
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="../learn/index.html">Learn</a></li>
+            <li class="is-active"><a aria-current="page">Entities</a></li>
+          </ul>
+        </nav>
+        <h1 class="title is-2">
+          <span class="icon-text">
+            <span class="icon"><i class="fa-solid fa-circle-nodes"></i></span>
+            <span>Entities (Nodes)</span>
+          </span>
+        </h1>
+        <p class="subtitle is-5">
+          Complete reference for all <strong>entity types</strong> and their attributes in ResearchArcade.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Overview -->
+  <section class="section">
+    <div class="container is-max-desktop">
+      <div class="content">
+        <h2 class="title is-3">Overview</h2>
+        <p>
+          Entities are the fundamental building blocks of ResearchArcade's knowledge graph. Each entity type represents a distinct concept in academic research, from papers and authors to reviews and decisions. This page provides a comprehensive reference for all entity types, their attributes, and data types.
+        </p>
+        
+        <div class="notification is-info is-light">
+          <span class="icon"><i class="fa-solid fa-circle-info"></i></span>
+          <strong>Note:</strong> 
+          Entities are stored across both ArXiv and OpenReview datasets. See <a href="./schema-details.html">Schema Details</a> for information on schema organization.
+        </div>
+      </div>
+
+      <!-- Entity Categories -->
+      <div class="content mt-6">
+        <h2 class="title is-3">Entity Categories</h2>
+        <div class="columns is-multiline">
+          <div class="column is-one-third">
+            <div class="box">
+              <h3 class="title is-5">
+                <span class="icon-text">
+                  <span class="icon has-text-info"><i class="fa-solid fa-file-lines"></i></span>
+                  <span>Content Entities</span>
+                </span>
+              </h3>
+              <p>Papers, sections, paragraphs, figures, and tables</p>
+            </div>
+          </div>
+          <div class="column is-one-third">
+            <div class="box">
+              <h3 class="title is-5">
+                <span class="icon-text">
+                  <span class="icon has-text-success"><i class="fa-solid fa-users"></i></span>
+                  <span>People Entities</span>
+                </span>
+              </h3>
+              <p>Authors and reviewers</p>
+            </div>
+          </div>
+          <div class="column is-one-third">
+            <div class="box">
+              <h3 class="title is-5">
+                <span class="icon-text">
+                  <span class="icon has-text-warning"><i class="fa-solid fa-comments"></i></span>
+                  <span>Review Entities</span>
+                </span>
+              </h3>
+              <p>Reviews, rebuttals, decisions, and revisions</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Paper Entity -->
+      <div class="content mt-6">
+        <h2 class="title is-3" id="paper">Paper</h2>
+        <p>
+          The core entity representing an academic paper from ArXiv or OpenReview. Contains metadata, abstract, and links to all paper components.
+        </p>
+
+        <h3 class="title is-4 mt-5">Attributes</h3>
+        <div class="table-container">
+          <table class="table is-striped is-fullwidth">
+            <thead>
+              <tr>
+                <th>Attribute</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>paper_id</code></td>
+                <td>string</td>
+                <td><span class="tag is-success">Yes</span></td>
+                <td>Unique identifier (primary key)</td>
+              </tr>
+              <tr>
+                <td><code>title</code></td>
+                <td>string</td>
+                <td><span class="tag is-success">Yes</span></td>
+                <td>Paper title</td>
+              </tr>
+              <tr>
+                <td><code>abstract</code></td>
+                <td>text</td>
+                <td><span class="tag is-success">Yes</span></td>
+                <td>Paper abstract</td>
+              </tr>
+              <tr>
+                <td><code>publish_date</code></td>
+                <td>date</td>
+                <td><span class="tag is-warning">No</span></td>
+                <td>Publication or submission date</td>
+              </tr>
+              <tr>
+                <td><code>source</code></td>
+                <td>string</td>
+                <td><span class="tag is-success">Yes</span></td>
+                <td>Data source (arxiv or openreview)</td>
+              </tr>
+              <tr>
+                <td><code>arxiv_id</code></td>
+                <td>string</td>
+                <td><span class="tag is-warning">No</span></td>
+                <td>ArXiv identifier (e.g., 2301.12345)</td>
+              </tr>
+              <tr>
+                <td><code>doi</code></td>
+                <td>string</td>
+                <td><span class="tag is-warning">No</span></td>
+                <td>Digital Object Identifier</td>
+              </tr>
+              <tr>
+                <td><code>categories</code></td>
+                <td>array</td>
+                <td><span class="tag is-warning">No</span></td>
+                <td>ArXiv categories (e.g., cs.AI, cs.LG)</td>
+              </tr>
+              <!-- Add more attributes -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Author Entity -->
+      <div class="content mt-6">
+        <h2 class="title is-3" id="author">Author</h2>
+        <p>
+          Represents an author of academic papers. May include affiliation and contact information.
+        </p>
+
+        <h3 class="title is-4 mt-5">Attributes</h3>
+        <div class="table-container">
+          <table class="table is-striped is-fullwidth">
+            <thead>
+              <tr>
+                <th>Attribute</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>author_id</code></td>
+                <td>string</td>
+                <td><span class="tag is-success">Yes</span></td>
+                <td>Unique identifier (primary key)</td>
+              </tr>
+              <tr>
+                <td><code>name</code></td>
+                <td>string</td>
+                <td><span class="tag is-success">Yes</span></td>
+                <td>Author full name</td>
+              </tr>
+              <tr>
+                <td><code>email</code></td>
+                <td>string</td>
+                <td><span class="tag is-warning">No</span></td>
+                <td>Contact email address</td>
+              </tr>
+              <tr>
+                <td><code>affiliation</code></td>
+                <td>string</td>
+                <td><span class="tag is-warning">No</span></td>
+                <td>Institutional affiliation</td>
+              </tr>
+              <tr>
+                <td><code>orcid</code></td>
+                <td>string</td>
+                <td><span class="tag is-warning">No</span></td>
+                <td>ORCID identifier</td>
+              </tr>
+              <!-- Add more attributes -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Section Entity -->
+      <div class="content mt-6">
+        <h2 class="title is-3" id="section">Section</h2>
+        <p>
+          Hierarchical sections within papers (e.g., Introduction, Methods, Results). Supports nested structure.
+        </p>
+
+        <h3 class="title is-4 mt-5">Attributes</h3>
+        <div class="table-container">
+          <table class="table is-striped is-fullwidth">
+            <thead>
+              <tr>
+                <th>Attribute</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>section_id</code></td>
+                <td>string</td>
+                <td><span class="tag is-success">Yes</span></td>
+                <td>Unique identifier (primary key)</td>
+              </tr>
+              <tr>
+                <td><code>paper_id</code></td>
+                <td>string</td>
+                <td><span class="tag is-success">Yes</span></td>
+                <td>Reference to parent paper</td>
+              </tr>
+              <tr>
+                <td><code>title</code></td>
+                <td>string</td>
+                <td><span class="tag is-success">Yes</span></td>
+                <td>Section heading</td>
+              </tr>
+              <tr>
+                <td><code>section_type</code></td>
+                <td>string</td>
+                <td><span class="tag is-warning">No</span></td>
+                <td>Type (e.g., introduction, methods, conclusion)</td>
+              </tr>
+              <tr>
+                <td><code>depth</code></td>
+                <td>integer</td>
+                <td><span class="tag is-warning">No</span></td>
+                <td>Nesting level in hierarchy</td>
+              </tr>
+              <tr>
+                <td><code>position</code></td>
+                <td>integer</td>
+                <td><span class="tag is-warning">No</span></td>
+                <td>Order within parent</td>
+              </tr>
+              <!-- Add more attributes -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Paragraph Entity -->
+      <div class="content mt-6">
+        <h2 class="title is-3" id="paragraph">Paragraph</h2>
+        <p>
+          Text content at the paragraph level within sections. Enables fine-grained text analysis and citation tracking.
+        </p>
+
+        <h3 class="title is-4 mt-5">Attributes</h3>
+        <div class="table-container">
+          <table class="table is-striped is-fullwidth">
+            <thead>
+              <tr>
+                <th>Attribute</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>paragraph_id</code></td>
+                <td>string</td>
+                <td><span class="tag is-success">Yes</span></td>
+                <td>Unique identifier (primary key)</td>
+              </tr>
+              <tr>
+                <td><code>section_id</code></td>
+                <td>string</td>
+                <td><span class="tag is-success">Yes</span></td>
+                <td>Reference to parent section</td>
+              </tr>
+              <tr>
+                <td><code>text</code></td>
+                <td>text</td>
+                <td><span class="tag is-success">Yes</span></td>
+                <td>Paragraph text content</td>
+              </tr>
+              <tr>
+                <td><code>position</code></td>
+                <td>integer</td>
+                <td><span class="tag is-warning">No</span></td>
+                <td>Order within section</td>
+              </tr>
+              <tr>
+                <td><code>word_count</code></td>
+                <td>integer</td>
+                <td><span class="tag is-warning">No</span></td>
+                <td>Number of words</td>
+              </tr>
+              <!-- Add more attributes -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Figure Entity -->
+      <div class="content mt-6">
+        <h2 class="title is-3" id="figure">Figure</h2>
+        <p>
+          Images, diagrams, and visualizations within papers.
+        </p>
+
+        <h3 class="title is-4 mt-5">Attributes</h3>
+        <div class="table-container">
+          <table class="table is-striped is-fullwidth">
+            <thead>
+              <tr>
+                <th>Attribute</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>figure_id</code></td>
+                <td>string</td>
+                <td><span class="tag is-success">Yes</span></td>
+                <td>Unique identifier (primary key)</td>
+              </tr>
+              <tr>
+                <td><code>paper_id</code></td>
+                <td>string</td>
+                <td><span class="tag is-success">Yes</span></td>
+                <td>Reference to parent paper</td>
+              </tr>
+              <tr>
+                <td><code>caption</code></td>
+                <td>text</td>
+                <td><span class="tag is-warning">No</span></td>
+                <td>Figure caption</td>
+              </tr>
+              <tr>
+                <td><code>file_path</code></td>
+                <td>string</td>
+                <td><span class="tag is-warning">No</span></td>
+                <td>Path to image file</td>
+              </tr>
+              <tr>
+                <td><code>position</code></td>
+                <td>integer</td>
+                <td><span class="tag is-warning">No</span></td>
+                <td>Order within paper</td>
+              </tr>
+              <!-- Add more attributes -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Table Entity -->
+      <div class="content mt-6">
+        <h2 class="title is-3" id="table">Table</h2>
+        <p>
+          Tabular data and structured information within papers.
+        </p>
+
+        <h3 class="title is-4 mt-5">Attributes</h3>
+        <div class="table-container">
+          <table class="table is-striped is-fullwidth">
+            <thead>
+              <tr>
+                <th>Attribute</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>table_id</code></td>
+                <td>string</td>
+                <td><span class="tag is-success">Yes</span></td>
+                <td>Unique identifier (primary key)</td>
+              </tr>
+              <tr>
+                <td><code>paper_id</code></td>
+                <td>string</td>
+                <td><span class="tag is-success">Yes</span></td>
+                <td>Reference to parent paper</td>
+              </tr>
+              <tr>
+                <td><code>caption</code></td>
+                <td>text</td>
+                <td><span class="tag is-warning">No</span></td>
+                <td>Table caption</td>
+              </tr>
+              <tr>
+                <td><code>content</code></td>
+                <td>json</td>
+                <td><span class="tag is-warning">No</span></td>
+                <td>Structured table data</td>
+              </tr>
+              <tr>
+                <td><code>position</code></td>
+                <td>integer</td>
+                <td><span class="tag is-warning">No</span></td>
+                <td>Order within paper</td>
+              </tr>
+              <!-- Add more attributes -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Review Entity -->
+      <div class="content mt-6">
+        <h2 class="title is-3" id="review">Review</h2>
+        <p>
+          Peer reviews from OpenReview, including ratings, confidence scores, and review text.
+        </p>
+
+        <h3 class="title is-4 mt-5">Attributes</h3>
+        <div class="table-container">
+          <table class="table is-striped is-fullwidth">
+            <thead>
+              <tr>
+                <th>Attribute</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>review_id</code></td>
+                <td>string</td>
+                <td><span class="tag is-success">Yes</span></td>
+                <td>Unique identifier (primary key)</td>
+              </tr>
+              <tr>
+                <td><code>paper_id</code></td>
+                <td>string</td>
+                <td><span class="tag is-success">Yes</span></td>
+                <td>Reference to reviewed paper</td>
+              </tr>
+              <tr>
+                <td><code>reviewer_id</code></td>
+                <td>string</td>
+                <td><span class="tag is-warning">No</span></td>
+                <td>Reference to reviewer (may be anonymous)</td>
+              </tr>
+              <tr>
+                <td><code>rating</code></td>
+                <td>integer</td>
+                <td><span class="tag is-warning">No</span></td>
+                <td>Numerical rating</td>
+              </tr>
+              <tr>
+                <td><code>confidence</code></td>
+                <td>integer</td>
+                <td><span class="tag is-warning">No</span></td>
+                <td>Reviewer confidence level</td>
+              </tr>
+              <tr>
+                <td><code>review_text</code></td>
+                <td>text</td>
+                <td><span class="tag is-warning">No</span></td>
+                <td>Review content</td>
+              </tr>
+              <tr>
+                <td><code>review_date</code></td>
+                <td>date</td>
+                <td><span class="tag is-warning">No</span></td>
+                <td>When review was submitted</td>
+              </tr>
+              <!-- Add more attributes -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Decision Entity -->
+      <div class="content mt-6">
+        <h2 class="title is-3" id="decision">Decision</h2>
+        <p>
+          Editorial decisions on paper submissions (accept, reject, etc.).
+        </p>
+
+        <h3 class="title is-4 mt-5">Attributes</h3>
+        <div class="table-container">
+          <table class="table is-striped is-fullwidth">
+            <thead>
+              <tr>
+                <th>Attribute</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>decision_id</code></td>
+                <td>string</td>
+                <td><span class="tag is-success">Yes</span></td>
+                <td>Unique identifier (primary key)</td>
+              </tr>
+              <tr>
+                <td><code>paper_id</code></td>
+                <td>string</td>
+                <td><span class="tag is-success">Yes</span></td>
+                <td>Reference to paper</td>
+              </tr>
+              <tr>
+                <td><code>decision_type</code></td>
+                <td>string</td>
+                <td><span class="tag is-success">Yes</span></td>
+                <td>Type (accept, reject, etc.)</td>
+              </tr>
+              <tr>
+                <td><code>decision_date</code></td>
+                <td>date</td>
+                <td><span class="tag is-warning">No</span></td>
+                <td>When decision was made</td>
+              </tr>
+              <tr>
+                <td><code>comments</code></td>
+                <td>text</td>
+                <td><span class="tag is-warning">No</span></td>
+                <td>Additional comments</td>
+              </tr>
+              <!-- Add more attributes -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Rebuttal Entity -->
+      <div class="content mt-6">
+        <h2 class="title is-3" id="rebuttal">Rebuttal</h2>
+        <p>
+          Author responses to reviews during the peer review process.
+        </p>
+
+        <h3 class="title is-4 mt-5">Attributes</h3>
+        <div class="table-container">
+          <table class="table is-striped is-fullwidth">
+            <thead>
+              <tr>
+                <th>Attribute</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>rebuttal_id</code></td>
+                <td>string</td>
+                <td><span class="tag is-success">Yes</span></td>
+                <td>Unique identifier (primary key)</td>
+              </tr>
+              <tr>
+                <td><code>review_id</code></td>
+                <td>string</td>
+                <td><span class="tag is-success">Yes</span></td>
+                <td>Reference to review being addressed</td>
+              </tr>
+              <tr>
+                <td><code>content</code></td>
+                <td>text</td>
+                <td><span class="tag is-success">Yes</span></td>
+                <td>Rebuttal text</td>
+              </tr>
+              <tr>
+                <td><code>rebuttal_date</code></td>
+                <td>date</td>
+                <td><span class="tag is-warning">No</span></td>
+                <td>When rebuttal was submitted</td>
+              </tr>
+              <!-- Add more attributes -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Revision Entity -->
+      <div class="content mt-6">
+        <h2 class="title is-3" id="revision">Revision</h2>
+        <p>
+          Different versions of papers as they are updated and revised.
+        </p>
+
+        <h3 class="title is-4 mt-5">Attributes</h3>
+        <div class="table-container">
+          <table class="table is-striped is-fullwidth">
+            <thead>
+              <tr>
+                <th>Attribute</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>revision_id</code></td>
+                <td>string</td>
+                <td><span class="tag is-success">Yes</span></td>
+                <td>Unique identifier (primary key)</td>
+              </tr>
+              <tr>
+                <td><code>paper_id</code></td>
+                <td>string</td>
+                <td><span class="tag is-success">Yes</span></td>
+                <td>Reference to paper</td>
+              </tr>
+              <tr>
+                <td><code>version</code></td>
+                <td>integer</td>
+                <td><span class="tag is-success">Yes</span></td>
+                <td>Version number</td>
+              </tr>
+              <tr>
+                <td><code>revision_date</code></td>
+                <td>date</td>
+                <td><span class="tag is-warning">No</span></td>
+                <td>When revision was made</td>
+              </tr>
+              <tr>
+                <td><code>changes</code></td>
+                <td>text</td>
+                <td><span class="tag is-warning">No</span></td>
+                <td>Description of changes</td>
+              </tr>
+              <!-- Add more attributes -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Venue Entity -->
+      <div class="content mt-6">
+        <h2 class="title is-3" id="venue">Venue</h2>
+        <p>
+          Publication venues such as conferences and journals.
+        </p>
+
+        <h3 class="title is-4 mt-5">Attributes</h3>
+        <div class="table-container">
+          <table class="table is-striped is-fullwidth">
+            <thead>
+              <tr>
+                <th>Attribute</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>venue_id</code></td>
+                <td>string</td>
+                <td><span class="tag is-success">Yes</span></td>
+                <td>Unique identifier (primary key)</td>
+              </tr>
+              <tr>
+                <td><code>name</code></td>
+                <td>string</td>
+                <td><span class="tag is-success">Yes</span></td>
+                <td>Full venue name</td>
+              </tr>
+              <tr>
+                <td><code>abbreviation</code></td>
+                <td>string</td>
+                <td><span class="tag is-warning">No</span></td>
+                <td>Short name (e.g., ICLR, NeurIPS)</td>
+              </tr>
+              <tr>
+                <td><code>venue_type</code></td>
+                <td>string</td>
+                <td><span class="tag is-warning">No</span></td>
+                <td>Type (conference, journal, workshop)</td>
+              </tr>
+              <tr>
+                <td><code>year</code></td>
+                <td>integer</td>
+                <td><span class="tag is-warning">No</span></td>
+                <td>Year of venue instance</td>
+              </tr>
+              <!-- Add more attributes -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Related Resources -->
+      <div class="content mt-6">
+        <h2 class="title is-3">Related Resources</h2>
+        <div class="columns is-multiline">
+          <div class="column is-one-third">
+            <a class="box" href="./relations.html">
+              <h3 class="title is-6">
+                <span class="icon-text">
+                  <span class="icon"><i class="fa-solid fa-arrows-left-right"></i></span>
+                  <span>Relations Reference</span>
+                </span>
+              </h3>
+              <p class="is-size-7">How entities connect to each other</p>
+            </a>
+          </div>
+          <div class="column is-one-third">
+            <a class="box" href="./schema-details.html">
+              <h3 class="title is-6">
+                <span class="icon-text">
+                  <span class="icon"><i class="fa-solid fa-table-list"></i></span>
+                  <span>Schema Details</span>
+                </span>
+              </h3>
+              <p class="is-size-7">Schema organization and structure</p>
+            </a>
+          </div>
+          <div class="column is-one-third">
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="content has-text-centered is-size-7">
+        <p>
+          Built with the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a>.
+          Licensed under <a href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC BY-SA 4.0</a>.
+        </p>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
