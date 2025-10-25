@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Add Nodes & Edges • ResearchArcade Tutorials</title>
+  
+  <meta name="description" content="Learn how to create new entities and relationships in the ResearchArcade graph database." />
+  <meta property="og:title" content="Add Nodes & Edges • ResearchArcade Tutorials" />
+  <meta property="og:description" content="Learn how to create new entities and relationships in the ResearchArcade graph database." />
+  <meta property="og:image" content="../static/images/your_banner_image.png" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="icon" type="image/x-icon" href="../static/images/favicon.ico" />
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet" />
+  <link rel="stylesheet" href="../static/css/bulma.min.css" />
+  <link rel="stylesheet" href="../static/css/fontawesome.all.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="../static/css/index.css" />
+</head>
+<body>
+
+  <!-- Hero -->
+  <section class="hero is-white">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <nav class="breadcrumb" aria-label="breadcrumbs">
+          <ul>
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="./index.html">Tutorials</a></li>
+            <li class="is-active"><a aria-current="page">Add Nodes & Edges</a></li>
+          </ul>
+        </nav>
+        <h1 class="title is-2">Add Nodes & Edges</h1>
+        <p class="subtitle is-5">Create new entities and relationships in the graph database.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tutorial Content -->
+  <section class="section">
+    <div class="container is-max-desktop">
+      
+      <!-- Overview -->
+      <div class="content">
+        <h2 class="title is-3">Overview</h2>
+        <p>
+          This tutorial demonstrates how to add nodes (entities) and edges (relationships) to your ResearchArcade graph database. 
+          You'll learn the basic CRUD operations for creating papers, authors, citations, and other research entities.
+        </p>
+      </div>
+
+      <!-- Prerequisites -->
+      <div class="content mt-5">
+        <h2 class="title is-3">Prerequisites</h2>
+        <ul>
+          <li>ResearchArcade installed and configured (see <a href="./setup.html">Getting Started</a>)</li>
+          <li>Active database connection</li>
+          <li>Basic understanding of graph database concepts</li>
+        </ul>
+      </div>
+
+      <!-- Adding Nodes -->
+      <div class="content mt-6">
+        <h2 class="title is-3">Adding Nodes</h2>
+        
+        <h3 class="title is-4 mt-5">Creating a Paper Node</h3>
+        <p>
+          To add a new paper to the database, use the following pattern:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for creating a paper node
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Creating an Author Node</h3>
+        <p>
+          Authors are represented as nodes with properties such as name, affiliation, and email:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for creating an author node
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Creating Other Entity Types</h3>
+        <p>
+          ResearchArcade supports various entity types including sections, paragraphs, figures, tables, and reviews:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for creating other entity types
+</code></pre>
+      </div>
+
+      <!-- Adding Edges -->
+      <div class="content mt-6">
+        <h2 class="title is-3">Adding Edges</h2>
+        
+        <h3 class="title is-4 mt-5">Creating Authorship Relationships</h3>
+        <p>
+          Connect authors to papers using authorship edges:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for creating authorship relationships
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Creating Citation Relationships</h3>
+        <p>
+          Link papers together through citation relationships:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for creating citation relationships
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Creating Structural Relationships</h3>
+        <p>
+          Define hierarchical relationships between papers, sections, paragraphs, and other elements:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for creating structural relationships
+</code></pre>
+      </div>
+
+      <!-- Batch Operations -->
+      <div class="content mt-6">
+        <h2 class="title is-3">Batch Operations</h2>
+        <p>
+          For efficiency when adding multiple entities, use batch operations:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for batch adding nodes and edges
+</code></pre>
+      </div>
+
+      <!-- Validation and Error Handling -->
+      <div class="content mt-6">
+        <h2 class="title is-3">Validation and Error Handling</h2>
+        <p>
+          Best practices for validating data before insertion and handling errors:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for validation and error handling
+</code></pre>
+      </div>
+
+      <!-- Best Practices -->
+      <div class="content mt-6">
+        <h2 class="title is-3">Best Practices</h2>
+        <ul>
+          <li>Always validate data before insertion to maintain data integrity</li>
+          <li>Use batch operations when adding multiple entities to improve performance</li>
+          <li>Set appropriate properties for all required fields</li>
+          <li>Check for existing entities to avoid duplicates</li>
+          <li>Use transactions when adding multiple related entities</li>
+          <li>Follow naming conventions for entity types and relationship types</li>
+        </ul>
+      </div>
+
+      <!-- Next Steps -->
+      <div class="content mt-6">
+        <h2 class="title is-3">Next Steps</h2>
+        <p>
+          Now that you can add nodes and edges, explore these related tutorials:
+        </p>
+        <div class="columns is-multiline mt-4">
+          <div class="column is-half">
+            <a class="box" href="./crud-read.html">
+              <article class="media">
+                <figure class="media-left">
+                  <span class="icon is-large"><i class="fa-solid fa-book-open fa-2x"></i></span>
+                </figure>
+                <div class="media-content">
+                  <h3 class="title is-5">Read Nodes & Edges</h3>
+                  <p>Query and retrieve the entities you've created.</p>
+                </div>
+              </article>
+            </a>
+          </div>
+
+          <div class="column is-half">
+            <a class="box" href="./crud-edit.html">
+              <article class="media">
+                <figure class="media-left">
+                  <span class="icon is-large"><i class="fa-solid fa-pen-to-square fa-2x"></i></span>
+                </figure>
+                <div class="media-content">
+                  <h3 class="title is-5">Edit Nodes & Edges</h3>
+                  <p>Update properties and modify relationships.</p>
+                </div>
+              </article>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation -->
+      <hr class="mt-6" />
+      <nav class="level">
+        <div class="level-left">
+          <div class="level-item">
+            <a href="./index.html" class="button is-light">
+              <span class="icon is-small">
+                <i class="fas fa-arrow-left"></i>
+              </span>
+              <span>Back to Tutorials</span>
+            </a>
+          </div>
+        </div>
+        <div class="level-right">
+          <div class="level-item">
+            <a href="./crud-read.html" class="button is-link">
+              <span>Next: Read Nodes & Edges</span>
+              <span class="icon is-small">
+                <i class="fas fa-arrow-right"></i>
+              </span>
+            </a>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="content has-text-centered is-size-7">
+        <p>
+          Built with the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a>.
+          Licensed under <a href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC BY-SA 4.0</a>.
+        </p>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
