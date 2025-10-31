@@ -5,7 +5,7 @@ import json
 
 
 class SQLArxivCitation:
-    def __init__(self, csv_path: str):
+    def __init__(self, host: str, dbname: str, user: str, password: str, port: str):
         self.csv_path = csv_path
         Path(csv_path).parent.mkdir(parents=True, exist_ok=True)
         if not os.path.exists(csv_path):
