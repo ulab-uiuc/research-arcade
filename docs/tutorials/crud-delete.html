@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Delete Nodes & Edges • ResearchArcade Tutorials</title>
+  
+  <meta name="description" content="Learn how to remove entities and relationships with cascade handling and integrity checks in ResearchArcade." />
+  <meta property="og:title" content="Delete Nodes & Edges • ResearchArcade Tutorials" />
+  <meta property="og:description" content="Learn how to remove entities and relationships with cascade handling and integrity checks in ResearchArcade." />
+  <meta property="og:image" content="../static/images/your_banner_image.png" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="icon" type="image/x-icon" href="../static/images/favicon.ico" />
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet" />
+  <link rel="stylesheet" href="../static/css/bulma.min.css" />
+  <link rel="stylesheet" href="../static/css/fontawesome.all.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="../static/css/index.css" />
+</head>
+<body>
+
+  <!-- Hero -->
+  <section class="hero is-white">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <nav class="breadcrumb" aria-label="breadcrumbs">
+          <ul>
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="./index.html">Tutorials</a></li>
+            <li class="is-active"><a aria-current="page">Delete Nodes & Edges</a></li>
+          </ul>
+        </nav>
+        <h1 class="title is-2">Delete Nodes & Edges</h1>
+        <p class="subtitle is-5">Remove entities and relationships with cascade handling and integrity checks.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tutorial Content -->
+  <section class="section">
+    <div class="container is-max-desktop">
+      
+      <!-- Overview -->
+      <div class="content">
+        <h2 class="title is-3">Overview</h2>
+        <p>
+          This tutorial covers the safe deletion of nodes and edges from your ResearchArcade graph database. 
+          You'll learn how to remove individual entities, handle cascade deletions, maintain referential integrity, 
+          and implement soft deletion strategies for critical data.
+        </p>
+      </div>
+
+
+      <!-- Deleting Nodes -->
+      <div class="content mt-6">
+        <h2 class="title is-3">Deleting Nodes</h2>
+        
+        <h3 class="title is-4 mt-5">Deleting a Single Node</h3>
+        <p>
+          Remove an individual node from the database:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for deleting a single node
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Checking Node Dependencies</h3>
+        <p>
+          Before deletion, verify what relationships and dependent entities exist:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for checking dependencies
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Deleting Nodes with Connected Edges</h3>
+        <p>
+          Handle nodes that have relationships to other entities:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for deleting nodes with edges
+</code></pre>
+      </div>
+
+      <!-- Deleting Edges -->
+      <div class="content mt-6">
+        <h2 class="title is-3">Deleting Edges</h2>
+        
+        <h3 class="title is-4 mt-5">Removing a Specific Edge</h3>
+        <p>
+          Delete individual relationships between nodes:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for removing a specific edge
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Removing All Edges of a Type</h3>
+        <p>
+          Delete all relationships of a particular type:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for removing edges by type
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Removing Edges Between Specific Nodes</h3>
+        <p>
+          Delete all connections between two particular nodes:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for removing edges between nodes
+</code></pre>
+      </div>
+
+      <!-- Cascade Deletion -->
+      <div class="content mt-6">
+        <h2 class="title is-3">Cascade Deletion</h2>
+        
+        <h3 class="title is-4 mt-5">Understanding Cascade Behavior</h3>
+        <p>
+          Learn how deletions propagate through related entities:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for cascade deletion explanation
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Implementing Cascade Delete</h3>
+        <p>
+          Remove a node and all its dependent entities:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for cascade deletion
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Selective Cascade Rules</h3>
+        <p>
+          Define which relationships should trigger cascading deletes:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for selective cascade rules
+</code></pre>
+      </div>
+
+      <!-- Soft Deletion -->
+      <div class="content mt-6">
+        <h2 class="title is-3">Soft Deletion</h2>
+        
+        <h3 class="title is-4 mt-5">Implementing Soft Delete</h3>
+        <p>
+          Mark entities as deleted without physically removing them:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for soft deletion
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Filtering Soft-Deleted Entities</h3>
+        <p>
+          Exclude soft-deleted entities from query results:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for filtering soft-deleted entities
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Restoring Soft-Deleted Entities</h3>
+        <p>
+          Recover entities that were previously marked as deleted:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for restoring entities
+</code></pre>
+      </div>
+
+      <!-- Batch Deletion -->
+      <div class="content mt-6">
+        <h2 class="title is-3">Batch Deletion</h2>
+        
+        <h3 class="title is-4 mt-5">Deleting Multiple Nodes</h3>
+        <p>
+          Remove multiple entities matching specific criteria:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for batch node deletion
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Bulk Edge Removal</h3>
+        <p>
+          Delete multiple relationships in a single operation:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for bulk edge deletion
+</code></pre>
+      </div>
+
+      <!-- Safety and Validation -->
+      <div class="content mt-6">
+        <h2 class="title is-3">Safety and Validation</h2>
+        
+        <h3 class="title is-4 mt-5">Pre-Deletion Checks</h3>
+        <p>
+          Validate deletion operations before execution:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for pre-deletion validation
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Referential Integrity</h3>
+        <p>
+          Ensure database consistency after deletions:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for integrity checks
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Rollback Mechanisms</h3>
+        <p>
+          Implement safeguards to undo accidental deletions:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for rollback mechanisms
+</code></pre>
+      </div>
+
+      <!-- Best Practices -->
+      <div class="content mt-6">
+        <h2 class="title is-3">Best Practices</h2>
+        <ul>
+          <li>Always backup critical data before performing delete operations</li>
+          <li>Implement soft deletion for important entities to enable recovery</li>
+          <li>Use transactions to ensure atomic deletion of related entities</li>
+          <li>Check dependencies before deleting to prevent orphaned data</li>
+          <li>Log all deletion operations for audit trails</li>
+          <li>Implement confirmation mechanisms for batch deletions</li>
+          <li>Consider archiving deleted data to a separate storage location</li>
+          <li>Test deletion logic thoroughly in development environments</li>
+          <li>Document cascade deletion rules and relationships</li>
+          <li>Use access controls to restrict deletion permissions</li>
+        </ul>
+      </div>
+
+      <!-- Common Deletion Scenarios -->
+      <div class="content mt-6">
+        <h2 class="title is-3">Common Deletion Scenarios</h2>
+        
+        <h3 class="title is-4 mt-5">Removing a Paper and Its Components</h3>
+        <pre><code># Code example placeholder
+# Delete paper along with sections, paragraphs, and figures
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Cleaning Up Orphaned Nodes</h3>
+        <pre><code># Code example placeholder
+# Find and remove nodes with no relationships
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Archiving Old Data</h3>
+        <pre><code># Code example placeholder
+# Move outdated entities to archive storage
+</code></pre>
+      </div>
+
+      <!-- Recovery and Backup -->
+      <div class="content mt-6">
+        <h2 class="title is-3">Recovery and Backup</h2>
+        
+        <h3 class="title is-4 mt-5">Creating Backups Before Deletion</h3>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for creating backups
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Recovering Deleted Data</h3>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for data recovery
+</code></pre>
+      </div>
+
+      <!-- Next Steps -->
+      <div class="content mt-6">
+        <h2 class="title is-3">Next Steps</h2>
+        <p>
+          Now that you understand CRUD operations, explore data import and analysis:
+        </p>
+        <div class="columns is-multiline mt-4">
+          <div class="column is-half">
+            <a class="box" href="./import-csv.html">
+              <article class="media">
+                <figure class="media-left">
+                  <span class="icon is-large"><i class="fa-solid fa-file-csv fa-2x"></i></span>
+                </figure>
+                <div class="media-content">
+                  <h3 class="title is-5">Import from CSV</h3>
+                  <p>Load bulk data into your database.</p>
+                </div>
+              </article>
+            </a>
+          </div>
+
+          <div class="column is-half">
+            <a class="box" href="./task-missing-paragraph.html">
+              <article class="media">
+                <figure class="media-left">
+                  <span class="icon is-large"><i class="fa-solid fa-align-left fa-2x"></i></span>
+                </figure>
+                <div class="media-content">
+                  <h3 class="title is-5">Missing Paragraph Prediction</h3>
+                  <p>Run ML tasks on your dataset.</p>
+                </div>
+              </article>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation -->
+      <hr class="mt-6" />
+      <nav class="level">
+        <div class="level-left">
+          <div class="level-item">
+            <a href="./crud-edit.html" class="button is-light">
+              <span class="icon is-small">
+                <i class="fas fa-arrow-left"></i>
+              </span>
+              <span>Previous: Edit Nodes & Edges</span>
+            </a>
+          </div>
+        </div>
+        <div class="level-right">
+          <div class="level-item">
+            <a href="./index.html" class="button is-light">
+              <span>Back to Tutorials</span>
+              <span class="icon is-small">
+                <i class="fas fa-arrow-right"></i>
+              </span>
+            </a>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="content has-text-centered is-size-7">
+        <p>
+          Built with the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a>.
+          Licensed under <a href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC BY-SA 4.0</a>.
+        </p>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

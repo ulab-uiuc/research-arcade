@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Import from API • ResearchArcade Tutorials</title>
+  
+  <meta name="description" content="Learn how to fetch and import data from external APIs into your ResearchArcade graph database." />
+  <meta property="og:title" content="Import from API • ResearchArcade Tutorials" />
+  <meta property="og:description" content="Learn how to fetch and import data from external APIs into your ResearchArcade graph database." />
+  <meta property="og:image" content="../static/images/your_banner_image.png" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="icon" type="image/x-icon" href="../static/images/favicon.ico" />
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet" />
+  <link rel="stylesheet" href="../static/css/bulma.min.css" />
+  <link rel="stylesheet" href="../static/css/fontawesome.all.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="../static/css/index.css" />
+</head>
+<body>
+
+  <!-- Hero -->
+  <section class="hero is-white">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <nav class="breadcrumb" aria-label="breadcrumbs">
+          <ul>
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="./index.html">Tutorials</a></li>
+            <li class="is-active"><a aria-current="page">Import from API</a></li>
+          </ul>
+        </nav>
+        <h1 class="title is-2">Import from API</h1>
+        <p class="subtitle is-5">Fetch and import real-time data from external APIs with authentication and rate limiting.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tutorial Content -->
+  <section class="section">
+    <div class="container is-max-desktop">
+      
+      <!-- Overview -->
+      <div class="content">
+        <h2 class="title is-3">Overview</h2>
+        <p>
+          This tutorial covers importing data from external APIs into your ResearchArcade graph database. 
+          You'll learn how to make API requests, handle authentication, process paginated responses, 
+          implement rate limiting, transform API data into graph structures, and schedule automated imports.
+        </p>
+      </div>
+
+      <!-- API Basics -->
+      <div class="content mt-6">
+        <h2 class="title is-3">API Integration Basics</h2>
+        
+        <h3 class="title is-4 mt-5">Making Basic API Requests</h3>
+        <p>
+          Connect to external APIs and fetch data:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for basic requests
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Handling API Response Formats</h3>
+        <p>
+          Process different response types (JSON, XML, etc.):
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for response handling
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Error Handling and Retries</h3>
+        <p>
+          Manage API errors, timeouts, and retry logic:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for error handling
+</code></pre>
+      </div>
+
+      <!-- Authentication -->
+      <div class="content mt-6">
+        <h2 class="title is-3">API Authentication</h2>
+        
+        <h3 class="title is-4 mt-5">API Key Authentication</h3>
+        <p>
+          Use API keys for authenticated requests:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for API key auth
+</code></pre>
+
+        <h3 class="title is-4 mt-5">OAuth 2.0 Integration</h3>
+        <p>
+          Implement OAuth flows for secure access:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for OAuth
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Token Management</h3>
+        <p>
+          Handle token refresh and expiration:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for token management
+</code></pre>
+      </div>
+
+      <!-- Pagination -->
+      <div class="content mt-6">
+        <h2 class="title is-3">Handling Paginated Responses</h2>
+        
+        <h3 class="title is-4 mt-5">Offset-Based Pagination</h3>
+        <p>
+          Navigate through pages using offset and limit:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for offset pagination
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Cursor-Based Pagination</h3>
+        <p>
+          Use cursors for efficient data fetching:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for cursor pagination
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Link Header Pagination</h3>
+        <p>
+          Follow pagination links in response headers:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for link header pagination
+</code></pre>
+      </div>
+
+      <!-- Rate Limiting -->
+      <div class="content mt-6">
+        <h2 class="title is-3">Rate Limiting and Throttling</h2>
+        
+        <h3 class="title is-4 mt-5">Respecting API Rate Limits</h3>
+        <p>
+          Monitor and comply with API rate limits:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for rate limit handling
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Implementing Backoff Strategies</h3>
+        <p>
+          Use exponential backoff for failed requests:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for backoff
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Request Queuing</h3>
+        <p>
+          Queue requests to stay within rate limits:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for request queuing
+</code></pre>
+      </div>
+
+      <!-- Data Transformation -->
+      <div class="content mt-6">
+        <h2 class="title is-3">Transforming API Data</h2>
+        
+        <h3 class="title is-4 mt-5">Mapping API Responses to Nodes</h3>
+        <p>
+          Convert API data structures to graph nodes:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for node mapping
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Creating Relationships from API Data</h3>
+        <p>
+          Extract and create edges from API responses:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for relationship extraction
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Data Enrichment</h3>
+        <p>
+          Enhance imported data with additional API calls:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for data enrichment
+</code></pre>
+      </div>
+
+      <!-- Common API Sources -->
+      <div class="content mt-6">
+        <h2 class="title is-3">Common API Sources for Research</h2>
+        
+        <h3 class="title is-4 mt-5">Academic Databases</h3>
+        <p>
+          Import from scholarly APIs like PubMed, arXiv, Semantic Scholar:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for academic APIs
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Citation Networks</h3>
+        <p>
+          Fetch citation data from CrossRef, OpenCitations:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for citation APIs
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Institutional Repositories</h3>
+        <p>
+          Connect to university and institutional data sources:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for institutional APIs
+</code></pre>
+      </div>
+
+      <!-- Incremental Updates -->
+      <div class="content mt-6">
+        <h2 class="title is-3">Incremental Data Import</h2>
+        
+        <h3 class="title is-4 mt-5">Tracking Import State</h3>
+        <p>
+          Maintain state to fetch only new or updated records:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for state tracking
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Delta Synchronization</h3>
+        <p>
+          Sync only changes since last import:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for delta sync
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Webhooks for Real-Time Updates</h3>
+        <p>
+          Receive and process webhook notifications:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for webhooks
+</code></pre>
+      </div>
+
+      <!-- Scheduled Imports -->
+      <div class="content mt-6">
+        <h2 class="title is-3">Scheduled and Automated Imports</h2>
+        
+        <h3 class="title is-4 mt-5">Setting Up Cron Jobs</h3>
+        <p>
+          Schedule regular API imports using cron:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for cron jobs
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Task Queue Integration</h3>
+        <p>
+          Use task queues for background API imports:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for task queues
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Monitoring Import Jobs</h3>
+        <p>
+          Track and monitor scheduled import tasks:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for monitoring
+</code></pre>
+      </div>
+
+      <!-- Caching -->
+      <div class="content mt-6">
+        <h2 class="title is-3">Caching and Performance</h2>
+        
+        <h3 class="title is-4 mt-5">Response Caching</h3>
+        <p>
+          Cache API responses to reduce requests:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for caching
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Conditional Requests</h3>
+        <p>
+          Use ETags and Last-Modified headers:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for conditional requests
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Parallel API Requests</h3>
+        <p>
+          Make concurrent requests for faster imports:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for parallel requests
+</code></pre>
+      </div>
+
+      <!-- Data Validation -->
+      <div class="content mt-6">
+        <h2 class="title is-3">Validating API Data</h2>
+        
+        <h3 class="title is-4 mt-5">Schema Validation</h3>
+        <p>
+          Validate API responses against expected schemas:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for schema validation
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Data Quality Checks</h3>
+        <p>
+          Verify completeness and accuracy of imported data:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for quality checks
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Handling Malformed Data</h3>
+        <p>
+          Manage unexpected or invalid API responses:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for malformed data
+</code></pre>
+      </div>
+
+      <!-- Best Practices -->
+      <div class="content mt-6">
+        <h2 class="title is-3">Best Practices</h2>
+        <ul>
+          <li>Store API credentials securely using environment variables</li>
+          <li>Implement comprehensive error handling and retries</li>
+          <li>Respect API rate limits and terms of service</li>
+          <li>Cache responses to minimize redundant API calls</li>
+          <li>Use pagination to handle large datasets efficiently</li>
+          <li>Log all API interactions for debugging and audit trails</li>
+          <li>Implement timeouts to prevent hanging requests</li>
+          <li>Validate API data before inserting into database</li>
+          <li>Monitor API usage and costs if applicable</li>
+          <li>Keep API client libraries and dependencies updated</li>
+        </ul>
+      </div>
+
+      <!-- Common Import Scenarios -->
+      <div class="content mt-6">
+        <h2 class="title is-3">Common API Import Scenarios</h2>
+        
+        <h3 class="title is-4 mt-5">Importing Papers from Semantic Scholar</h3>
+        <pre><code># Code example placeholder
+# Fetch and import academic papers from Semantic Scholar API
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Building Citation Networks from CrossRef</h3>
+        <pre><code># Code example placeholder
+# Import citation relationships from CrossRef API
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Fetching Author Profiles from ORCID</h3>
+        <pre><code># Code example placeholder
+# Import researcher profiles and publications
+</code></pre>
+      </div>
+
+      <!-- Troubleshooting -->
+      <div class="content mt-6">
+        <h2 class="title is-3">Troubleshooting API Imports</h2>
+        
+        <h3 class="title is-4 mt-5">Common API Errors</h3>
+        <ul>
+          <li><strong>401 Unauthorized:</strong> Check API credentials and authentication</li>
+          <li><strong>403 Forbidden:</strong> Verify API permissions and access rights</li>
+          <li><strong>429 Too Many Requests:</strong> Implement rate limiting and backoff</li>
+          <li><strong>500 Server Error:</strong> Retry with exponential backoff</li>
+          <li><strong>Timeout errors:</strong> Increase timeout duration or optimize queries</li>
+        </ul>
+
+        <h3 class="title is-4 mt-5">Debugging API Requests</h3>
+        <pre><code># Code example placeholder
+# Add logging and debugging for API calls
+</code></pre>
+      </div>
+
+      <!-- Security Considerations -->
+      <div class="content mt-6">
+        <h2 class="title is-3">Security Considerations</h2>
+        
+        <h3 class="title is-4 mt-5">Credential Management</h3>
+        <p>
+          Securely store and manage API credentials:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for credential management
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Data Privacy</h3>
+        <p>
+          Ensure compliance with data protection regulations:
+        </p>
+        <ul>
+          <li>Review API terms of service and data usage policies</li>
+          <li>Anonymize or pseudonymize sensitive data</li>
+          <li>Implement data retention policies</li>
+          <li>Ensure secure transmission (HTTPS only)</li>
+        </ul>
+
+        <h3 class="title is-4 mt-5">Input Sanitization</h3>
+        <p>
+          Sanitize API data before database insertion:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for sanitization
+</code></pre>
+      </div>
+
+      <!-- API Comparison -->
+      <div class="content mt-6">
+        <h2 class="title is-3">Popular Research APIs</h2>
+        <table class="table is-bordered is-striped is-fullwidth">
+          <thead>
+            <tr>
+              <th>API</th>
+              <th>Data Type</th>
+              <th>Authentication</th>
+              <th>Rate Limit</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Semantic Scholar</td>
+              <td>Papers, citations, authors</td>
+              <td>API Key</td>
+              <td>100 req/5 min</td>
+            </tr>
+            <tr>
+              <td>CrossRef</td>
+              <td>DOIs, citations, metadata</td>
+              <td>Optional (polite pool)</td>
+              <td>50 req/second</td>
+            </tr>
+            <tr>
+              <td>PubMed</td>
+              <td>Biomedical literature</td>
+              <td>API Key</td>
+              <td>10 req/second</td>
+            </tr>
+            <tr>
+              <td>arXiv</td>
+              <td>Preprints</td>
+              <td>None</td>
+              <td>3 req/second</td>
+            </tr>
+            <tr>
+              <td>ORCID</td>
+              <td>Researcher profiles</td>
+              <td>OAuth 2.0</td>
+              <td>24 req/second</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Next Steps -->
+      <div class="content mt-6">
+        <h2 class="title is-3">Next Steps</h2>
+        <p>
+          Explore other data import methods and analysis tools:
+        </p>
+        <div class="columns is-multiline mt-4">
+          <div class="column is-half">
+            <a class="box" href="./import-csv.html">
+              <article class="media">
+                <figure class="media-left">
+                  <span class="icon is-large"><i class="fa-solid fa-file-csv fa-2x"></i></span>
+                </figure>
+                <div class="media-content">
+                  <h3 class="title is-5">Import from CSV</h3>
+                  <p>Load bulk data from CSV files.</p>
+                </div>
+              </article>
+            </a>
+          </div>
+
+          <div class="column is-half">
+            <a class="box" href="./import-json.html">
+              <article class="media">
+                <figure class="media-left">
+                  <span class="icon is-large"><i class="fa-solid fa-file-code fa-2x"></i></span>
+                </figure>
+                <div class="media-content">
+                  <h3 class="title is-5">Import from JSON</h3>
+                  <p>Load structured data from JSON files.</p>
+                </div>
+              </article>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation -->
+      <hr class="mt-6" />
+      <nav class="level">
+        <div class="level-left">
+          <div class="level-item">
+            <a href="./import-json.html" class="button is-light">
+              <span class="icon is-small">
+                <i class="fas fa-arrow-left"></i>
+              </span>
+              <span>Previous: Import from JSON</span>
+            </a>
+          </div>
+        </div>
+        <div class="level-right">
+          <div class="level-item">
+            <a href="./index.html" class="button is-light">
+              <span>Back to Tutorials</span>
+              <span class="icon is-small">
+                <i class="fas fa-arrow-right"></i>
+              </span>
+            </a>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="content has-text-centered is-size-7">
+        <p>
+          Built with the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a>.
+          Licensed under <a href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC BY-SA 4.0</a>.
+        </p>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
