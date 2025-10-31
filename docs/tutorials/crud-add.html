@@ -18,6 +18,49 @@
   <link rel="stylesheet" href="../static/css/fontawesome.all.min.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <link rel="stylesheet" href="../static/css/index.css" />
+  
+  <style>
+    .code-container {
+      display: none;
+      margin-top: 1rem;
+    }
+    
+    .code-container.is-active {
+      display: block;
+    }
+    
+    .select-full-width {
+      width: 100%;
+    }
+    
+    .select-full-width select {
+      width: 100%;
+    }
+    
+    pre {
+      background-color: #f5f5f5;
+      padding: 1.25rem 1.5rem;
+      overflow-x: auto;
+    }
+    
+    code {
+      background-color: transparent;
+      color: #363636;
+      font-size: 0.875em;
+      font-weight: normal;
+      padding: 0;
+    }
+    
+    .placeholder-text {
+      color: #7a7a7a;
+      font-style: italic;
+      padding: 2rem;
+      text-align: center;
+      background-color: #fafafa;
+      border: 2px dashed #dbdbdb;
+      border-radius: 4px;
+    }
+  </style>
 </head>
 <body>
 
@@ -64,59 +107,753 @@
       <!-- Adding Nodes -->
       <div class="content mt-6">
         <h2 class="title is-3">Adding Nodes</h2>
+        <p>
+          Select a node type below to see the code example for creating that entity:
+        </p>
         
-        <h3 class="title is-4 mt-5">Creating a Paper Node</h3>
-        <p>
-          To add a new paper to the database, use the following pattern:
-        </p>
-        <pre><code># Code example placeholder
-# Add your Python/API code here for creating a paper node
-</code></pre>
+        <div class="field mt-4">
+          <label class="label">Select Node Type:</label>
+          <div class="control">
+            <div class="select select-full-width is-medium">
+              <select id="nodeTypeSelect">
+                <option value="">-- Choose a node type --</option>
+                <option value="paper">Paper</option>
+                <option value="author">Author</option>
+                <option value="section">Section</option>
+                <option value="paragraph">Paragraph</option>
+                <option value="figure">Figure</option>
+                <option value="table">Table</option>
+                <option value="equation">Equation</option>
+                <option value="review">Review</option>
+                <option value="venue">Venue</option>
+                <option value="institution">Institution</option>
+                <option value="keyword">Keyword</option>
+                <option value="dataset">Dataset</option>
+              </select>
+            </div>
+          </div>
+        </div>
 
-        <h3 class="title is-4 mt-5">Creating an Author Node</h3>
-        <p>
-          Authors are represented as nodes with properties such as name, affiliation, and email:
-        </p>
-        <pre><code># Code example placeholder
-# Add your Python/API code here for creating an author node
-</code></pre>
+        <div id="nodePlaceholder" class="placeholder-text">
+          <i class="fas fa-hand-pointer fa-2x mb-3"></i>
+          <p>Select a node type from the dropdown above to view the code example.</p>
+        </div>
 
-        <h3 class="title is-4 mt-5">Creating Other Entity Types</h3>
-        <p>
-          ResearchArcade supports various entity types including sections, paragraphs, figures, tables, and reviews:
-        </p>
-        <pre><code># Code example placeholder
-# Add your Python/API code here for creating other entity types
-</code></pre>
+        <!-- Paper Node -->
+        <div id="node-paper" class="code-container">
+          <h3 class="title is-5">Creating a Paper Node</h3>
+          <p>Add a new research paper with metadata such as title, abstract, publication date, and DOI:</p>
+          <pre><code>from researcharcade import GraphDB
+
+# Initialize database connection
+db = GraphDB()
+
+# Create a new paper node
+paper = db.create_node(
+    node_type="Paper",
+    properties={
+        "title": "Attention Is All You Need",
+        "abstract": "The dominant sequence transduction models are based on complex recurrent or convolutional neural networks...",
+        "year": 2017,
+        "doi": "10.48550/arXiv.1706.03762",
+        "arxiv_id": "1706.03762",
+        "venue": "NeurIPS",
+        "pdf_url": "https://arxiv.org/pdf/1706.03762.pdf",
+        "created_at": "2024-01-15T10:30:00Z"
+    }
+)
+
+print(f"Created paper with ID: {paper.id}")</code></pre>
+        </div>
+
+        <!-- Author Node -->
+        <div id="node-author" class="code-container">
+          <h3 class="title is-5">Creating an Author Node</h3>
+          <p>Add an author with their name, affiliation, and contact information:</p>
+          <pre><code>from researcharcade import GraphDB
+
+# Initialize database connection
+db = GraphDB()
+
+# Create a new author node
+author = db.create_node(
+    node_type="Author",
+    properties={
+        "name": "Ashish Vaswani",
+        "email": "avaswani@google.com",
+        "affiliation": "Google Brain",
+        "orcid": "0000-0002-1234-5678",
+        "h_index": 45,
+        "total_citations": 125000,
+        "research_interests": ["Deep Learning", "NLP", "Transformers"],
+        "homepage": "https://ashishvaswani.com"
+    }
+)
+
+print(f"Created author with ID: {author.id}")</code></pre>
+        </div>
+
+        <!-- Section Node -->
+        <div id="node-section" class="code-container">
+          <h3 class="title is-5">Creating a Section Node</h3>
+          <p>Add a section that belongs to a paper (e.g., Introduction, Methods, Results):</p>
+          <pre><code>from researcharcade import GraphDB
+
+# Initialize database connection
+db = GraphDB()
+
+# Create a new section node
+section = db.create_node(
+    node_type="Section",
+    properties={
+        "title": "Introduction",
+        "section_number": "1",
+        "content": "Full text content of the introduction section...",
+        "word_count": 850,
+        "order": 1
+    }
+)
+
+# Link section to its parent paper
+db.create_edge(
+    from_node=paper_id,
+    to_node=section.id,
+    edge_type="HAS_SECTION",
+    properties={"order": 1}
+)
+
+print(f"Created section with ID: {section.id}")</code></pre>
+        </div>
+
+        <!-- Paragraph Node -->
+        <div id="node-paragraph" class="code-container">
+          <h3 class="title is-5">Creating a Paragraph Node</h3>
+          <p>Add a paragraph within a section:</p>
+          <pre><code>from researcharcade import GraphDB
+
+# Initialize database connection
+db = GraphDB()
+
+# Create a new paragraph node
+paragraph = db.create_node(
+    node_type="Paragraph",
+    properties={
+        "text": "Machine learning has revolutionized natural language processing...",
+        "order": 1,
+        "word_count": 125,
+        "has_citation": True
+    }
+)
+
+# Link paragraph to its parent section
+db.create_edge(
+    from_node=section_id,
+    to_node=paragraph.id,
+    edge_type="HAS_PARAGRAPH",
+    properties={"order": 1}
+)
+
+print(f"Created paragraph with ID: {paragraph.id}")</code></pre>
+        </div>
+
+        <!-- Figure Node -->
+        <div id="node-figure" class="code-container">
+          <h3 class="title is-5">Creating a Figure Node</h3>
+          <p>Add a figure with its caption and metadata:</p>
+          <pre><code>from researcharcade import GraphDB
+
+# Initialize database connection
+db = GraphDB()
+
+# Create a new figure node
+figure = db.create_node(
+    node_type="Figure",
+    properties={
+        "figure_number": "1",
+        "caption": "The Transformer model architecture showing encoder and decoder stacks.",
+        "image_url": "https://example.com/figures/transformer_architecture.png",
+        "image_format": "PNG",
+        "width": 800,
+        "height": 600,
+        "file_size_kb": 245
+    }
+)
+
+# Link figure to its paper
+db.create_edge(
+    from_node=paper_id,
+    to_node=figure.id,
+    edge_type="HAS_FIGURE",
+    properties={"figure_number": 1}
+)
+
+print(f"Created figure with ID: {figure.id}")</code></pre>
+        </div>
+
+        <!-- Table Node -->
+        <div id="node-table" class="code-container">
+          <h3 class="title is-5">Creating a Table Node</h3>
+          <p>Add a table with structured data:</p>
+          <pre><code>from researcharcade import GraphDB
+
+# Initialize database connection
+db = GraphDB()
+
+# Create a new table node
+table = db.create_node(
+    node_type="Table",
+    properties={
+        "table_number": "1",
+        "caption": "Comparison of model performance on WMT 2014 English-German translation.",
+        "num_rows": 5,
+        "num_columns": 4,
+        "data": [
+            ["Model", "BLEU", "Parameters", "Training Time"],
+            ["Transformer Base", "27.3", "65M", "12 hours"],
+            ["Transformer Big", "28.4", "213M", "3.5 days"]
+        ]
+    }
+)
+
+# Link table to its paper
+db.create_edge(
+    from_node=paper_id,
+    to_node=table.id,
+    edge_type="HAS_TABLE",
+    properties={"table_number": 1}
+)
+
+print(f"Created table with ID: {table.id}")</code></pre>
+        </div>
+
+        <!-- Equation Node -->
+        <div id="node-equation" class="code-container">
+          <h3 class="title is-5">Creating an Equation Node</h3>
+          <p>Add a mathematical equation:</p>
+          <pre><code>from researcharcade import GraphDB
+
+# Initialize database connection
+db = GraphDB()
+
+# Create a new equation node
+equation = db.create_node(
+    node_type="Equation",
+    properties={
+        "equation_number": "1",
+        "latex": "\\text{Attention}(Q, K, V) = \\text{softmax}(\\frac{QK^T}{\\sqrt{d_k}})V",
+        "description": "Scaled dot-product attention mechanism",
+        "variables": ["Q", "K", "V", "d_k"]
+    }
+)
+
+# Link equation to its paper or section
+db.create_edge(
+    from_node=section_id,
+    to_node=equation.id,
+    edge_type="HAS_EQUATION",
+    properties={"equation_number": 1}
+)
+
+print(f"Created equation with ID: {equation.id}")</code></pre>
+        </div>
+
+        <!-- Review Node -->
+        <div id="node-review" class="code-container">
+          <h3 class="title is-5">Creating a Review Node</h3>
+          <p>Add a peer review or commentary on a paper:</p>
+          <pre><code>from researcharcade import GraphDB
+
+# Initialize database connection
+db = GraphDB()
+
+# Create a new review node
+review = db.create_node(
+    node_type="Review",
+    properties={
+        "rating": 8,
+        "confidence": 4,
+        "summary": "This paper presents a novel architecture that significantly advances the field...",
+        "strengths": "Clear presentation, strong empirical results, thorough ablation studies",
+        "weaknesses": "Limited discussion of computational costs",
+        "recommendation": "Accept",
+        "reviewer_id": "reviewer_123",
+        "review_date": "2017-05-15",
+        "is_public": False
+    }
+)
+
+# Link review to the paper
+db.create_edge(
+    from_node=review.id,
+    to_node=paper_id,
+    edge_type="REVIEWS",
+    properties={"review_date": "2017-05-15"}
+)
+
+print(f"Created review with ID: {review.id}")</code></pre>
+        </div>
+
+        <!-- Venue Node -->
+        <div id="node-venue" class="code-container">
+          <h3 class="title is-5">Creating a Venue Node</h3>
+          <p>Add a publication venue (conference or journal):</p>
+          <pre><code>from researcharcade import GraphDB
+
+# Initialize database connection
+db = GraphDB()
+
+# Create a new venue node
+venue = db.create_node(
+    node_type="Venue",
+    properties={
+        "name": "Neural Information Processing Systems",
+        "short_name": "NeurIPS",
+        "type": "Conference",
+        "year": 2017,
+        "location": "Long Beach, CA, USA",
+        "url": "https://nips.cc/Conferences/2017",
+        "acceptance_rate": 0.21,
+        "h5_index": 332
+    }
+)
+
+# Link paper to venue
+db.create_edge(
+    from_node=paper_id,
+    to_node=venue.id,
+    edge_type="PUBLISHED_IN",
+    properties={"year": 2017}
+)
+
+print(f"Created venue with ID: {venue.id}")</code></pre>
+        </div>
+
+        <!-- Institution Node -->
+        <div id="node-institution" class="code-container">
+          <h3 class="title is-5">Creating an Institution Node</h3>
+          <p>Add an academic or research institution:</p>
+          <pre><code>from researcharcade import GraphDB
+
+# Initialize database connection
+db = GraphDB()
+
+# Create a new institution node
+institution = db.create_node(
+    node_type="Institution",
+    properties={
+        "name": "Google Brain",
+        "type": "Research Lab",
+        "parent_organization": "Google",
+        "country": "USA",
+        "city": "Mountain View, CA",
+        "url": "https://research.google/teams/brain/",
+        "founded": 2011
+    }
+)
+
+# Link author to institution
+db.create_edge(
+    from_node=author_id,
+    to_node=institution.id,
+    edge_type="AFFILIATED_WITH",
+    properties={"start_date": "2015-01-01"}
+)
+
+print(f"Created institution with ID: {institution.id}")</code></pre>
+        </div>
+
+        <!-- Keyword Node -->
+        <div id="node-keyword" class="code-container">
+          <h3 class="title is-5">Creating a Keyword Node</h3>
+          <p>Add a keyword or research topic:</p>
+          <pre><code>from researcharcade import GraphDB
+
+# Initialize database connection
+db = GraphDB()
+
+# Create a new keyword node
+keyword = db.create_node(
+    node_type="Keyword",
+    properties={
+        "term": "Attention Mechanism",
+        "category": "Deep Learning",
+        "definition": "A technique allowing neural networks to focus on relevant parts of input",
+        "aliases": ["Self-Attention", "Attention Layer"]
+    }
+)
+
+# Link paper to keyword
+db.create_edge(
+    from_node=paper_id,
+    to_node=keyword.id,
+    edge_type="HAS_KEYWORD",
+    properties={"relevance_score": 0.95}
+)
+
+print(f"Created keyword with ID: {keyword.id}")</code></pre>
+        </div>
+
+        <!-- Dataset Node -->
+        <div id="node-dataset" class="code-container">
+          <h3 class="title is-5">Creating a Dataset Node</h3>
+          <p>Add a research dataset:</p>
+          <pre><code>from researcharcade import GraphDB
+
+# Initialize database connection
+db = GraphDB()
+
+# Create a new dataset node
+dataset = db.create_node(
+    node_type="Dataset",
+    properties={
+        "name": "WMT 2014 English-German",
+        "description": "Workshop on Machine Translation 2014 translation dataset",
+        "size": "4.5M sentence pairs",
+        "url": "https://www.statmt.org/wmt14/",
+        "license": "CC BY-SA 4.0",
+        "format": "parallel text",
+        "domain": "news"
+    }
+)
+
+# Link paper to dataset
+db.create_edge(
+    from_node=paper_id,
+    to_node=dataset.id,
+    edge_type="USES_DATASET",
+    properties={"purpose": "evaluation"}
+)
+
+print(f"Created dataset with ID: {dataset.id}")</code></pre>
+        </div>
       </div>
 
       <!-- Adding Edges -->
       <div class="content mt-6">
         <h2 class="title is-3">Adding Edges</h2>
+        <p>
+          Select an edge type below to see the code example for creating that relationship:
+        </p>
         
-        <h3 class="title is-4 mt-5">Creating Authorship Relationships</h3>
-        <p>
-          Connect authors to papers using authorship edges:
-        </p>
-        <pre><code># Code example placeholder
-# Add your Python/API code here for creating authorship relationships
-</code></pre>
+        <div class="field mt-4">
+          <label class="label">Select Edge Type:</label>
+          <div class="control">
+            <div class="select select-full-width is-medium">
+              <select id="edgeTypeSelect">
+                <option value="">-- Choose an edge type --</option>
+                <option value="authorship">Authorship (Author → Paper)</option>
+                <option value="citation">Citation (Paper → Paper)</option>
+                <option value="has_section">Has Section (Paper → Section)</option>
+                <option value="has_paragraph">Has Paragraph (Section → Paragraph)</option>
+                <option value="references">References (Paragraph → Paper)</option>
+                <option value="collaboration">Collaboration (Author → Author)</option>
+                <option value="supervision">Supervision (Author → Author)</option>
+                <option value="reviews">Reviews (Review → Paper)</option>
+                <option value="published_in">Published In (Paper → Venue)</option>
+                <option value="affiliated_with">Affiliated With (Author → Institution)</option>
+                <option value="has_keyword">Has Keyword (Paper → Keyword)</option>
+                <option value="uses_dataset">Uses Dataset (Paper → Dataset)</option>
+              </select>
+            </div>
+          </div>
+        </div>
 
-        <h3 class="title is-4 mt-5">Creating Citation Relationships</h3>
-        <p>
-          Link papers together through citation relationships:
-        </p>
-        <pre><code># Code example placeholder
-# Add your Python/API code here for creating citation relationships
-</code></pre>
+        <div id="edgePlaceholder" class="placeholder-text">
+          <i class="fas fa-hand-pointer fa-2x mb-3"></i>
+          <p>Select an edge type from the dropdown above to view the code example.</p>
+        </div>
 
-        <h3 class="title is-4 mt-5">Creating Structural Relationships</h3>
-        <p>
-          Define hierarchical relationships between papers, sections, paragraphs, and other elements:
-        </p>
-        <pre><code># Code example placeholder
-# Add your Python/API code here for creating structural relationships
-</code></pre>
+        <!-- Authorship Edge -->
+        <div id="edge-authorship" class="code-container">
+          <h3 class="title is-5">Creating Authorship Relationships</h3>
+          <p>Connect authors to papers they have written:</p>
+          <pre><code>from researcharcade import GraphDB
+
+# Initialize database connection
+db = GraphDB()
+
+# Create authorship edge
+authorship = db.create_edge(
+    from_node=author_id,
+    to_node=paper_id,
+    edge_type="AUTHORED",
+    properties={
+        "author_position": 1,  # First author
+        "contribution_percentage": 35,
+        "is_corresponding": True,
+        "affiliation_at_time": "Google Brain"
+    }
+)
+
+print(f"Created authorship relationship with ID: {authorship.id}")</code></pre>
+        </div>
+
+        <!-- Citation Edge -->
+        <div id="edge-citation" class="code-container">
+          <h3 class="title is-5">Creating Citation Relationships</h3>
+          <p>Link papers together through citations:</p>
+          <pre><code>from researcharcade import GraphDB
+
+# Initialize database connection
+db = GraphDB()
+
+# Create citation edge (citing_paper cites cited_paper)
+citation = db.create_edge(
+    from_node=citing_paper_id,
+    to_node=cited_paper_id,
+    edge_type="CITES",
+    properties={
+        "citation_context": "We build upon the architecture proposed by Vaswani et al...",
+        "section": "Related Work",
+        "citation_count": 1,
+        "is_self_citation": False
+    }
+)
+
+print(f"Created citation with ID: {citation.id}")</code></pre>
+        </div>
+
+        <!-- Has Section Edge -->
+        <div id="edge-has_section" class="code-container">
+          <h3 class="title is-5">Creating Has Section Relationships</h3>
+          <p>Define the hierarchical structure between papers and their sections:</p>
+          <pre><code>from researcharcade import GraphDB
+
+# Initialize database connection
+db = GraphDB()
+
+# Create has_section edge
+has_section = db.create_edge(
+    from_node=paper_id,
+    to_node=section_id,
+    edge_type="HAS_SECTION",
+    properties={
+        "order": 2,  # Second section in the paper
+        "section_type": "methods"
+    }
+)
+
+print(f"Created has_section relationship with ID: {has_section.id}")</code></pre>
+        </div>
+
+        <!-- Has Paragraph Edge -->
+        <div id="edge-has_paragraph" class="code-container">
+          <h3 class="title is-5">Creating Has Paragraph Relationships</h3>
+          <p>Connect sections to their constituent paragraphs:</p>
+          <pre><code>from researcharcade import GraphDB
+
+# Initialize database connection
+db = GraphDB()
+
+# Create has_paragraph edge
+has_paragraph = db.create_edge(
+    from_node=section_id,
+    to_node=paragraph_id,
+    edge_type="HAS_PARAGRAPH",
+    properties={
+        "order": 3,  # Third paragraph in the section
+        "character_offset": 450
+    }
+)
+
+print(f"Created has_paragraph relationship with ID: {has_paragraph.id}")</code></pre>
+        </div>
+
+        <!-- References Edge -->
+        <div id="edge-references" class="code-container">
+          <h3 class="title is-5">Creating References Relationships</h3>
+          <p>Link specific paragraphs to papers they reference:</p>
+          <pre><code>from researcharcade import GraphDB
+
+# Initialize database connection
+db = GraphDB()
+
+# Create references edge
+references = db.create_edge(
+    from_node=paragraph_id,
+    to_node=referenced_paper_id,
+    edge_type="REFERENCES",
+    properties={
+        "citation_number": 15,
+        "citation_text": "[15]",
+        "character_position": 234
+    }
+)
+
+print(f"Created references relationship with ID: {references.id}")</code></pre>
+        </div>
+
+        <!-- Collaboration Edge -->
+        <div id="edge-collaboration" class="code-container">
+          <h3 class="title is-5">Creating Collaboration Relationships</h3>
+          <p>Connect authors who have collaborated on papers:</p>
+          <pre><code>from researcharcade import GraphDB
+
+# Initialize database connection
+db = GraphDB()
+
+# Create collaboration edge
+collaboration = db.create_edge(
+    from_node=author1_id,
+    to_node=author2_id,
+    edge_type="COLLABORATED_WITH",
+    properties={
+        "num_papers": 5,
+        "first_collaboration_year": 2015,
+        "last_collaboration_year": 2023,
+        "shared_papers": ["paper_id_1", "paper_id_2", "paper_id_3"]
+    }
+)
+
+print(f"Created collaboration relationship with ID: {collaboration.id}")</code></pre>
+        </div>
+
+        <!-- Supervision Edge -->
+        <div id="edge-supervision" class="code-container">
+          <h3 class="title is-5">Creating Supervision Relationships</h3>
+          <p>Represent advisor-advisee or mentor-mentee relationships:</p>
+          <pre><code>from researcharcade import GraphDB
+
+# Initialize database connection
+db = GraphDB()
+
+# Create supervision edge
+supervision = db.create_edge(
+    from_node=advisor_id,
+    to_node=student_id,
+    edge_type="SUPERVISES",
+    properties={
+        "relationship_type": "PhD Advisor",
+        "start_date": "2018-09-01",
+        "end_date": "2023-06-15",
+        "institution": "Stanford University"
+    }
+)
+
+print(f"Created supervision relationship with ID: {supervision.id}")</code></pre>
+        </div>
+
+        <!-- Reviews Edge -->
+        <div id="edge-reviews" class="code-container">
+          <h3 class="title is-5">Creating Reviews Relationships</h3>
+          <p>Connect reviews to the papers they evaluate:</p>
+          <pre><code>from researcharcade import GraphDB
+
+# Initialize database connection
+db = GraphDB()
+
+# Create reviews edge
+reviews = db.create_edge(
+    from_node=review_id,
+    to_node=paper_id,
+    edge_type="REVIEWS",
+    properties={
+        "review_round": 1,
+        "review_date": "2017-05-15",
+        "decision": "accept"
+    }
+)
+
+print(f"Created reviews relationship with ID: {reviews.id}")</code></pre>
+        </div>
+
+        <!-- Published In Edge -->
+        <div id="edge-published_in" class="code-container">
+          <h3 class="title is-5">Creating Published In Relationships</h3>
+          <p>Link papers to their publication venues:</p>
+          <pre><code>from researcharcade import GraphDB
+
+# Initialize database connection
+db = GraphDB()
+
+# Create published_in edge
+published_in = db.create_edge(
+    from_node=paper_id,
+    to_node=venue_id,
+    edge_type="PUBLISHED_IN",
+    properties={
+        "year": 2017,
+        "volume": "30",
+        "pages": "5998-6008",
+        "presentation_type": "oral"
+    }
+)
+
+print(f"Created published_in relationship with ID: {published_in.id}")</code></pre>
+        </div>
+
+        <!-- Affiliated With Edge -->
+        <div id="edge-affiliated_with" class="code-container">
+          <h3 class="title is-5">Creating Affiliated With Relationships</h3>
+          <p>Connect authors to their institutional affiliations:</p>
+          <pre><code>from researcharcade import GraphDB
+
+# Initialize database connection
+db = GraphDB()
+
+# Create affiliated_with edge
+affiliated_with = db.create_edge(
+    from_node=author_id,
+    to_node=institution_id,
+    edge_type="AFFILIATED_WITH",
+    properties={
+        "start_date": "2015-01-01",
+        "end_date": None,  # Still affiliated
+        "position": "Senior Research Scientist",
+        "is_primary": True
+    }
+)
+
+print(f"Created affiliated_with relationship with ID: {affiliated_with.id}")</code></pre>
+        </div>
+
+        <!-- Has Keyword Edge -->
+        <div id="edge-has_keyword" class="code-container">
+          <h3 class="title is-5">Creating Has Keyword Relationships</h3>
+          <p>Tag papers with relevant keywords:</p>
+          <pre><code>from researcharcade import GraphDB
+
+# Initialize database connection
+db = GraphDB()
+
+# Create has_keyword edge
+has_keyword = db.create_edge(
+    from_node=paper_id,
+    to_node=keyword_id,
+    edge_type="HAS_KEYWORD",
+    properties={
+        "relevance_score": 0.95,
+        "source": "author_provided",  # or "auto_extracted"
+        "confidence": 0.98
+    }
+)
+
+print(f"Created has_keyword relationship with ID: {has_keyword.id}")</code></pre>
+        </div>
+
+        <!-- Uses Dataset Edge -->
+        <div id="edge-uses_dataset" class="code-container">
+          <h3 class="title is-5">Creating Uses Dataset Relationships</h3>
+          <p>Link papers to the datasets they utilize:</p>
+          <pre><code>from researcharcade import GraphDB
+
+# Initialize database connection
+db = GraphDB()
+
+# Create uses_dataset edge
+uses_dataset = db.create_edge(
+    from_node=paper_id,
+    to_node=dataset_id,
+    edge_type="USES_DATASET",
+    properties={
+        "purpose": "evaluation",  # or "training", "validation"
+        "subset": "test",
+        "metrics_reported": ["BLEU", "accuracy"]
+    }
+)
+
+print(f"Created uses_dataset relationship with ID: {uses_dataset.id}")</code></pre>
+        </div>
       </div>
 
       <!-- Batch Operations -->
@@ -125,9 +862,52 @@
         <p>
           For efficiency when adding multiple entities, use batch operations:
         </p>
-        <pre><code># Code example placeholder
-# Add your Python/API code here for batch adding nodes and edges
-</code></pre>
+        <pre><code>from researcharcade import GraphDB
+
+# Initialize database connection
+db = GraphDB()
+
+# Batch create multiple nodes
+authors = db.create_nodes_batch([
+    {
+        "node_type": "Author",
+        "properties": {"name": "Author 1", "affiliation": "University A"}
+    },
+    {
+        "node_type": "Author",
+        "properties": {"name": "Author 2", "affiliation": "University B"}
+    },
+    {
+        "node_type": "Author",
+        "properties": {"name": "Author 3", "affiliation": "University C"}
+    }
+])
+
+print(f"Created {len(authors)} authors")
+
+# Batch create edges
+edges = db.create_edges_batch([
+    {
+        "from_node": authors[0].id,
+        "to_node": paper_id,
+        "edge_type": "AUTHORED",
+        "properties": {"author_position": 1}
+    },
+    {
+        "from_node": authors[1].id,
+        "to_node": paper_id,
+        "edge_type": "AUTHORED",
+        "properties": {"author_position": 2}
+    },
+    {
+        "from_node": authors[2].id,
+        "to_node": paper_id,
+        "edge_type": "AUTHORED",
+        "properties": {"author_position": 3}
+    }
+])
+
+print(f"Created {len(edges)} authorship edges")</code></pre>
       </div>
 
       <!-- Validation and Error Handling -->
@@ -136,9 +916,42 @@
         <p>
           Best practices for validating data before insertion and handling errors:
         </p>
-        <pre><code># Code example placeholder
-# Add your Python/API code here for validation and error handling
-</code></pre>
+        <pre><code>from researcharcade import GraphDB
+from researcharcade.exceptions import ValidationError, DuplicateNodeError
+
+# Initialize database connection
+db = GraphDB()
+
+try:
+    # Validate before creating
+    if not paper_data.get("title"):
+        raise ValidationError("Paper title is required")
+    
+    # Check for duplicates
+    existing = db.find_nodes(
+        node_type="Paper",
+        filters={"doi": paper_data["doi"]}
+    )
+    
+    if existing:
+        raise DuplicateNodeError(f"Paper with DOI {paper_data['doi']} already exists")
+    
+    # Create the node
+    paper = db.create_node(
+        node_type="Paper",
+        properties=paper_data
+    )
+    
+    print(f"Successfully created paper: {paper.id}")
+    
+except ValidationError as e:
+    print(f"Validation error: {e}")
+except DuplicateNodeError as e:
+    print(f"Duplicate found: {e}")
+except Exception as e:
+    print(f"Unexpected error: {e}")
+    # Rollback transaction if needed
+    db.rollback()</code></pre>
       </div>
 
       <!-- Best Practices -->
@@ -151,6 +964,10 @@
           <li>Check for existing entities to avoid duplicates</li>
           <li>Use transactions when adding multiple related entities</li>
           <li>Follow naming conventions for entity types and relationship types</li>
+          <li>Include timestamps for tracking creation and modification dates</li>
+          <li>Use consistent property names across similar node types</li>
+          <li>Add indices on frequently queried properties</li>
+          <li>Document custom properties and their expected data types</li>
         </ul>
       </div>
 
@@ -229,6 +1046,58 @@
       </div>
     </div>
   </footer>
+
+  <script>
+    // Node type selector functionality
+    const nodeSelect = document.getElementById('nodeTypeSelect');
+    const nodePlaceholder = document.getElementById('nodePlaceholder');
+    const nodeContainers = document.querySelectorAll('[id^="node-"]');
+
+    nodeSelect.addEventListener('change', function() {
+      const selectedValue = this.value;
+      
+      // Hide all node containers
+      nodeContainers.forEach(container => {
+        container.classList.remove('is-active');
+      });
+      
+      // Show placeholder or selected container
+      if (selectedValue === '') {
+        nodePlaceholder.style.display = 'block';
+      } else {
+        nodePlaceholder.style.display = 'none';
+        const selectedContainer = document.getElementById('node-' + selectedValue);
+        if (selectedContainer) {
+          selectedContainer.classList.add('is-active');
+        }
+      }
+    });
+
+    // Edge type selector functionality
+    const edgeSelect = document.getElementById('edgeTypeSelect');
+    const edgePlaceholder = document.getElementById('edgePlaceholder');
+    const edgeContainers = document.querySelectorAll('[id^="edge-"]');
+
+    edgeSelect.addEventListener('change', function() {
+      const selectedValue = this.value;
+      
+      // Hide all edge containers
+      edgeContainers.forEach(container => {
+        container.classList.remove('is-active');
+      });
+      
+      // Show placeholder or selected container
+      if (selectedValue === '') {
+        edgePlaceholder.style.display = 'block';
+      } else {
+        edgePlaceholder.style.display = 'none';
+        const selectedContainer = document.getElementById('edge-' + selectedValue);
+        if (selectedContainer) {
+          selectedContainer.classList.add('is-active');
+        }
+      }
+    });
+  </script>
 
 </body>
 </html>
