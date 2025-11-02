@@ -34,7 +34,7 @@ class CSVArxivSections:
         df.to_csv(self.csv_path, index=False)
 
 
-    def insert_section(self, content, title, is_appendix, paper_arxiv_id):
+    def insert_section(self, content, title, appendix, paper_arxiv_id, section_in_paper_id):
         """Insert a section. Returns the generated section id."""
         df = self._load_data()
         
@@ -44,8 +44,9 @@ class CSVArxivSections:
             'id': new_id,
             'content': content,
             'title': title,
-            'appendix': is_appendix,
-            'paper_arxiv_id': paper_arxiv_id
+            'appendix': appendix,
+            'paper_arxiv_id': paper_arxiv_id,
+            'section_in_paper_id': section_in_paper_id
         }])
         
         df = pd.concat([df, new_row], ignore_index=True)
@@ -159,3 +160,11 @@ class CSVArxivSections:
         
         print(f"Successfully imported {len(external_df)} sections from {csv_file}")
         return True
+    
+    def get_all_sections(self, is_all_features=True):
+        df = self._load_data()
+        
+        if df.empty:
+            return None
+        
+        return df.copy()

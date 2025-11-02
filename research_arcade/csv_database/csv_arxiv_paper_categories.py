@@ -37,3 +37,10 @@ class CSVArxivPaperCategory:
         self._save_data(df)
         return True
 
+    def get_all_categories(self):
+        df = self._load_data()
+        
+        if df.empty:
+            return None
+        
+        return df.copy()

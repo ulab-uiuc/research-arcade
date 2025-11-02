@@ -595,7 +595,7 @@ class ResearchArcade:
             self.openreview_paragraphs.construct_paragraphs_table_from_csv(**config)
         else:
             print(f"Table {table} does not support construction from CSV")
-            
+    
     def construct_table_from_json(self, table: str, config: dict) -> Optional[pd.DataFrame]:
         if table == "openreview_papers":
             self.openreview_papers.construct_papers_table_from_json(**config)

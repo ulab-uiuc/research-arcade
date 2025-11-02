@@ -61,14 +61,14 @@ class CSVArxivAuthors:
         self._save_data(df)
         return True
 
-    def update_author(self, id, semantic_scholar_id=None, name=None, homepage=None):
+    def update_author(self, semantic_scholar_id=None, name=None, homepage=None):
         """Update an author by id. Returns True if updated, False if not found."""
         df = self._load_data()
         
-        if id not in df['id'].values:
+        if semantic_scholar_id not in df['semantic_scholar_id'].values:
             return False
         
-        mask = df['id'] == id
+        mask = df['semantic_scholar_id'] == semantic_scholar_id
         
         if semantic_scholar_id is not None:
             df.loc[mask, 'semantic_scholar_id'] = semantic_scholar_id
@@ -80,14 +80,14 @@ class CSVArxivAuthors:
         self._save_data(df)
         return True
 
-    def get_author_by_id(self, id: int) -> Optional[pd.DataFrame]:
+    def get_author_by_id(self, semantic_scholar_id: int) -> Optional[pd.DataFrame]:
         """Get an author by its id. Returns a DataFrame with the author or None if not found."""
         df = self._load_data()
         
-        if df.empty or id not in df['id'].values:
+        if df.empty or semantic_scholar_id not in df['id'].values:
             return None
         
-        author = df[df['id'] == id]
+        author = df[df['id'] == semantic_scholar_id]
         return author
 
     def check_author_exists(self, id: int) -> bool:
@@ -135,3 +135,11 @@ class CSVArxivAuthors:
 
         print(f"Successfully imported {len(external_df)} authors from {csv_file}")
         return True
+    
+    def get_all_authors(self, is_all_features=True):
+        df = self._load_data()
+        
+        if df.empty:
+            return None
+        
+        return df.copy()

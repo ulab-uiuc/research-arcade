@@ -34,14 +34,8 @@ class CSVArxivTable:
 
     def insert_table(self, paper_arxiv_id, path=None, caption=None, label=None, table_text=None):
 
-        # TODO: name is undefined:
-        name = None
-
         df = self._load_data()
-        
-        if name in df['name'].values:
-            return None
-        
+
         new_id = df['id'].max() + 1 if not df.empty else 1
         
         new_row = pd.DataFrame([{
@@ -131,3 +125,11 @@ class CSVArxivTable:
         
         print(f"Successfully imported {len(external_df)} tables from {csv_file}")
         return True
+    
+    def get_all_tables(self, is_all_features=True):
+        df = self._load_data()
+        
+        if df.empty:
+            return None
+        
+        return df.copy()

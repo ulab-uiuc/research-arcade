@@ -65,7 +65,7 @@ class CSVArxivPapers:
         self._save_data(df)
         return new_id
     
-    def delete_paper_by_arxiv_id(self, arxiv_id):
+    def delete_paper_by_id(self, arxiv_id):
         """Delete a paper by its arxiv_id. Returns True if deleted, False if not found."""
         df = self._load_data()
         
@@ -93,7 +93,28 @@ class CSVArxivPapers:
         
         self._save_data(df)
         return deleted_count
+    def get_all_papers(self, is_all_features=True) -> Optional[pd.DataFrame]:
+        df = self._load_data()
+        
+        if df.empty:
+            return None
+        
+        return df.copy()
     
+    def get_paper_by_id(self, arxiv_id) -> Optional[pd.DataFrame]:
+
+        df = self._load_data()
+        
+        mask = df['arxiv_id'] == arxiv_id
+        result = df[mask].copy()
+        
+        if result.empty:
+            print(f"No author found with author_openreview_id {arxiv_id}.")
+            return None
+        
+        return result
+
+
     def update_paper(self, arxiv_id, base_arxiv_id=None, version=None, title=None, abstract=None, submit_date=None, metadata=None):
         """Update a paper by arxiv_id. Returns True if updated, False if not found."""
         df = self._load_data()
@@ -183,3 +204,4 @@ class CSVArxivPapers:
         
         print(f"Successfully imported {len(external_df)} papers from {csv_file}")
         return True
+    

@@ -32,7 +32,7 @@ class CSVArxivParagraphs:
         df.to_csv(self.csv_path, index=False)
 
 
-    def insert_paragraph(self, paragraph_id, content, paper_arxiv_id, paper_section):
+    def insert_paragraph(self, paragraph_id, content, paper_arxiv_id, paper_section, section_id, paragraph_in_paper_id):
         df = self._load_data()
         
         conflict = df[
@@ -50,7 +50,9 @@ class CSVArxivParagraphs:
             'paragraph_id': paragraph_id,
             'content': content,
             'paper_arxiv_id': paper_arxiv_id,
-            'paper_section': paper_section
+            'paper_section': paper_section,
+            'section_id': section_id,
+            'paragraph_in_paper_id': paragraph_in_paper_id
         }])
         
         df = pd.concat([df, new_row], ignore_index=True)
@@ -184,3 +186,12 @@ class CSVArxivParagraphs:
         
         print(f"Successfully imported {len(external_df)} paragraphs from {csv_file}")
         return True
+
+
+    def get_all_paragraphs(self, is_all_features=True):
+        df = self._load_data()
+        
+        if df.empty:
+            return None
+        
+        return df.copy()

@@ -36,3 +36,11 @@ class CSVArxivPaperFigure:
         df = pd.concat([df, new_row], ignore_index=True)
         self._save_data(df)
         return True
+
+    def get_all_figures(self):
+        df = self._load_data()
+        
+        if df.empty:
+            return None
+        
+        return df.copy()

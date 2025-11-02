@@ -127,3 +127,12 @@ class CSVArxivFigure:
         
         print(f"Successfully imported {len(external_df)} figures from {csv_file}")
         return True
+    
+
+    def get_all_figures(self, is_all_features=True):
+        df = self._load_data()
+        
+        if df.empty:
+            return None
+        
+        return df.copy()

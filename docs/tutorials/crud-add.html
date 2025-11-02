@@ -99,8 +99,7 @@
         <h2 class="title is-3">Prerequisites</h2>
         <ul>
           <li>ResearchArcade installed and configured (see <a href="./setup.html">Getting Started</a>)</li>
-          <li>Active database connection</li>
-          <li>Basic understanding of graph database concepts</li>
+          <li>Active database connection if SQL db is selected</li>
         </ul>
       </div>
 
@@ -117,18 +116,19 @@
             <div class="select select-full-width is-medium">
               <select id="nodeTypeSelect">
                 <option value="">-- Choose a node type --</option>
-                <option value="paper">Paper</option>
-                <option value="author">Author</option>
-                <option value="section">Section</option>
-                <option value="paragraph">Paragraph</option>
-                <option value="figure">Figure</option>
-                <option value="table">Table</option>
-                <option value="equation">Equation</option>
-                <option value="review">Review</option>
-                <option value="venue">Venue</option>
-                <option value="institution">Institution</option>
-                <option value="keyword">Keyword</option>
-                <option value="dataset">Dataset</option>
+                <option value="arxiv_papers">arxiv_papers</option>
+                <option value="arxiv_authors">arxiv_authors</option>
+                <option value="arxiv_categories">arxiv_categories</option>
+                <option value="arxiv_sections">arxiv_sections</option>
+                <option value="arxiv_paragraphs">arxiv_paragraphs</option>
+                <option value="arxiv_figures">arxiv_figures</option>
+                <option value="arxiv_tables">arxiv_tables</option>
+                <option value="openreview_authors">openreview_authors</option>
+                <option value="openreview_papers">openreview_papers</option>
+                <option value="openreview_reviews">openreview_reviews</option>
+                <option value="openreview_revisions">openreview_revisions</option>
+                <option value="openreview_paragraphs">openreview_paragraphs</option>
+                <option value="openreview_arxiv">openreview_arxiv</option>
               </select>
             </div>
           </div>
@@ -143,117 +143,169 @@
         <div id="node-paper" class="code-container">
           <h3 class="title is-5">Creating a Paper Node</h3>
           <p>Add a new research paper with metadata such as title, abstract, publication date, and DOI:</p>
-          <pre><code>from researcharcade import GraphDB
+          <pre><code># Example 1: Insert the famous "Attention is All You Need" paper
+new_paper = {
+    'arxiv_id': '1706.03762v7',
+    'base_arxiv_id': '1706.03762',
+    'version': 7,
+    'title': 'Attention Is All You Need',
+    'abstract': 'The dominant sequence transduction models are based on complex recurrent or convolutional neural networks in an encoder-decoder configuration. The best performing models also connect the encoder and decoder through an attention mechanism. We propose a new simple network architecture, the Transformer, based solely on attention mechanisms, dispensing with recurrence and convolutions entirely. Experiments on two machine translation tasks show these models to be superior in quality while being more parallelizable and requiring significantly less time to train. Our model achieves 28.4 BLEU on the WMT 2014 English-to-German translation task, improving over the existing best results, including ensembles by over 2 BLEU. On the WMT 2014 English-to-French translation task, our model establishes a new single-model state-of-the-art BLEU score of 41.8 after training for 3.5 days on eight GPUs, a small fraction of the training costs of the best models from the literature. We show that the Transformer generalizes well to other tasks by applying it successfully to English constituency parsing both with large and limited training data.',
+    'submit_date': '2017-06-12',
+    'metadata': {'venue': 'NeurIPS 2017', 'pdf_url': 'https://arxiv.org/pdf/1706.03762.pdf'}
+}
 
-# Initialize database connection
-db = GraphDB()
-
-# Create a new paper node
-paper = db.create_node(
-    node_type="Paper",
-    properties={
-        "title": "Attention Is All You Need",
-        "abstract": "The dominant sequence transduction models are based on complex recurrent or convolutional neural networks...",
-        "year": 2017,
-        "doi": "10.48550/arXiv.1706.03762",
-        "arxiv_id": "1706.03762",
-        "venue": "NeurIPS",
-        "pdf_url": "https://arxiv.org/pdf/1706.03762.pdf",
-        "created_at": "2024-01-15T10:30:00Z"
-    }
-)
-
-print(f"Created paper with ID: {paper.id}")</code></pre>
+research_arcade.insert_node("arxiv_papers", node_features=new_paper)
+print("Paper inserted successfully!")
+</code></pre>
         </div>
 
         <!-- Author Node -->
         <div id="node-author" class="code-container">
           <h3 class="title is-5">Creating an Author Node</h3>
           <p>Add an author with their name, affiliation, and contact information:</p>
-          <pre><code>from researcharcade import GraphDB
-
-# Initialize database connection
-db = GraphDB()
-
-# Create a new author node
-author = db.create_node(
-    node_type="Author",
-    properties={
-        "name": "Ashish Vaswani",
-        "email": "avaswani@google.com",
-        "affiliation": "Google Brain",
-        "orcid": "0000-0002-1234-5678",
-        "h_index": 45,
-        "total_citations": 125000,
-        "research_interests": ["Deep Learning", "NLP", "Transformers"],
-        "homepage": "https://ashishvaswani.com"
+          <pre><code># Insert authors from the Transformer paper
+authors = [
+    {
+        'semantic_scholar_id': 'ss_ashish_vaswani',
+        'name': 'Ashish Vaswani',
+        'homepage': 'https://scholar.google.com/citations?user=oR9sCGYAAAAJ'
+    },
+    {
+        'semantic_scholar_id': 'ss_noam_shazeer',
+        'name': 'Noam Shazeer',
+        'homepage': 'https://scholar.google.com/citations?user=oR9sCGYAAAAJ'
+    },
+    {
+        'semantic_scholar_id': 'ss_niki_parmar',
+        'name': 'Niki Parmar',
+        'homepage': 'https://scholar.google.com/citations?user=oR9sCGYAAAAJ'
+    },
+    {
+        'semantic_scholar_id': 'ss_jakob_uszkoreit',
+        'name': 'Jakob Uszkoreit',
+        'homepage': 'https://scholar.google.com/citations?user=oR9sCGYAAAAJ'
+    },
+    {
+        'semantic_scholar_id': 'ss_llion_jones',
+        'name': 'Llion Jones',
+        'homepage': 'https://scholar.google.com/citations?user=oR9sCGYAAAAJ'
     }
-)
+]
 
-print(f"Created author with ID: {author.id}")</code></pre>
+for author in authors:
+    research_arcade.insert_node("arxiv_authors", node_features=author)
+    print(f"Inserted author: {author['name']}")
+</code></pre>
         </div>
 
         <!-- Section Node -->
         <div id="node-section" class="code-container">
           <h3 class="title is-5">Creating a Section Node</h3>
           <p>Add a section that belongs to a paper (e.g., Introduction, Methods, Results):</p>
-          <pre><code>from researcharcade import GraphDB
-
-# Initialize database connection
-db = GraphDB()
-
-# Create a new section node
-section = db.create_node(
-    node_type="Section",
-    properties={
-        "title": "Introduction",
-        "section_number": "1",
-        "content": "Full text content of the introduction section...",
-        "word_count": 850,
-        "order": 1
+          <pre><code># Insert sections for the Transformer paper
+sections = [
+    {
+        'content': 'The dominant sequence transduction models are based on complex recurrent or convolutional neural networks that include an encoder and a decoder...',
+        'title': 'Introduction',
+        'appendix': False,
+        'paper_arxiv_id': '1706.03762v7',
+        'section_in_paper_id': 1
+    },
+    {
+        'content': 'Most competitive neural sequence transduction models have an encoder-decoder structure. Here, the encoder maps an input sequence of symbol representations...',
+        'title': 'Background',
+        'appendix': False,
+        'paper_arxiv_id': '1706.03762v7',
+        'section_in_paper_id': 2
+    },
+    {
+        'content': 'Most neural sequence transduction models have an encoder-decoder structure. The Transformer follows this overall architecture using stacked self-attention and point-wise, fully connected layers...',
+        'title': 'Model Architecture',
+        'appendix': False,
+        'paper_arxiv_id': '1706.03762v7',
+        'section_in_paper_id': 3
+    },
+    {
+        'content': 'In this section we describe the training regime for our models...',
+        'title': 'Training',
+        'appendix': False,
+        'paper_arxiv_id': '1706.03762v7',
+        'section_in_paper_id': 4
+    },
+    {
+        'content': 'On the WMT 2014 English-to-German translation task, the big transformer model outperforms the best previously reported models...',
+        'title': 'Results',
+        'appendix': False,
+        'paper_arxiv_id': '1706.03762v7',
+        'section_in_paper_id': 5
+    },
+    {
+        'content': 'In this work, we presented the Transformer, the first sequence transduction model based entirely on attention, replacing the recurrent layers...',
+        'title': 'Conclusion',
+        'appendix': False,
+        'paper_arxiv_id': '1706.03762v7',
+        'section_in_paper_id': 6
     }
-)
+]
 
-# Link section to its parent paper
-db.create_edge(
-    from_node=paper_id,
-    to_node=section.id,
-    edge_type="HAS_SECTION",
-    properties={"order": 1}
-)
-
-print(f"Created section with ID: {section.id}")</code></pre>
+for section in sections:
+    research_arcade.insert_node("arxiv_sections", node_features=section)
+    print(f"Inserted section: {section['title']}")
+</code></pre>
         </div>
 
         <!-- Paragraph Node -->
         <div id="node-paragraph" class="code-container">
           <h3 class="title is-5">Creating a Paragraph Node</h3>
           <p>Add a paragraph within a section:</p>
-          <pre><code>from researcharcade import GraphDB
-
-# Initialize database connection
-db = GraphDB()
-
-# Create a new paragraph node
-paragraph = db.create_node(
-    node_type="Paragraph",
-    properties={
-        "text": "Machine learning has revolutionized natural language processing...",
-        "order": 1,
-        "word_count": 125,
-        "has_citation": True
+          <pre><code># Insert paragraphs from the Introduction section
+paragraphs = [
+    {
+        'paragraph_id': 1,
+        'content': 'Recurrent neural networks, long short-term memory and gated recurrent neural networks in particular, have been firmly established as state of the art approaches in sequence modeling and transduction problems such as language modeling and machine translation.',
+        'paper_arxiv_id': '1706.03762v7',
+        'paper_section': 'Introduction',
+        'section_id': 1,
+        'paragraph_in_paper_id': 1
+    },
+    {
+        'paragraph_id': 2,
+        'content': 'Numerous efforts have since continued to push the boundaries of recurrent language models and encoder-decoder architectures. Recurrent models typically factor computation along the symbol positions of the input and output sequences.',
+        'paper_arxiv_id': '1706.03762v7',
+        'paper_section': 'Introduction',
+        'section_id': 1,
+        'paragraph_in_paper_id': 2
+    },
+    {
+        'paragraph_id': 3,
+        'content': 'Aligning the positions to steps in computation time, they generate a sequence of hidden states h_t, as a function of the previous hidden state h_{t-1} and the input for position t. This inherently sequential nature precludes parallelization within training examples, which becomes critical at longer sequence lengths, as memory constraints limit batching across examples.',
+        'paper_arxiv_id': '1706.03762v7',
+        'paper_section': 'Introduction',
+        'section_id': 1,
+        'paragraph_in_paper_id': 3
+    },
+    {
+        'paragraph_id': 4,
+        'content': 'Attention mechanisms have become an integral part of compelling sequence modeling and transduction models in various tasks, allowing modeling of dependencies without regard to their distance in the input or output sequences.',
+        'paper_arxiv_id': '1706.03762v7',
+        'paper_section': 'Introduction',
+        'section_id': 1,
+        'paragraph_in_paper_id': 4
+    },
+    {
+        'paragraph_id': 5,
+        'content': 'In this work we propose the Transformer, a model architecture eschewing recurrence and instead relying entirely on an attention mechanism to draw global dependencies between input and output. The Transformer allows for significantly more parallelization and can reach a new state of the art in translation quality after being trained for as little as twelve hours on eight P100 GPUs.',
+        'paper_arxiv_id': '1706.03762v7',
+        'paper_section': 'Introduction',
+        'section_id': 1,
+        'paragraph_in_paper_id': 5
     }
-)
+]
 
-# Link paragraph to its parent section
-db.create_edge(
-    from_node=section_id,
-    to_node=paragraph.id,
-    edge_type="HAS_PARAGRAPH",
-    properties={"order": 1}
-)
-
-print(f"Created paragraph with ID: {paragraph.id}")</code></pre>
+for paragraph in paragraphs:
+    research_arcade.insert_node("arxiv_paragraphs", node_features=paragraph)
+    print(f"Inserted paragraph {paragraph['paragraph_id']} from {paragraph['paper_section']}")
+</code></pre>
         </div>
 
         <!-- Figure Node -->
@@ -541,18 +593,17 @@ print(f"Created dataset with ID: {dataset.id}")</code></pre>
             <div class="select select-full-width is-medium">
               <select id="edgeTypeSelect">
                 <option value="">-- Choose an edge type --</option>
-                <option value="authorship">Authorship (Author → Paper)</option>
-                <option value="citation">Citation (Paper → Paper)</option>
-                <option value="has_section">Has Section (Paper → Section)</option>
-                <option value="has_paragraph">Has Paragraph (Section → Paragraph)</option>
-                <option value="references">References (Paragraph → Paper)</option>
-                <option value="collaboration">Collaboration (Author → Author)</option>
-                <option value="supervision">Supervision (Author → Author)</option>
-                <option value="reviews">Reviews (Review → Paper)</option>
-                <option value="published_in">Published In (Paper → Venue)</option>
-                <option value="affiliated_with">Affiliated With (Author → Institution)</option>
-                <option value="has_keyword">Has Keyword (Paper → Keyword)</option>
-                <option value="uses_dataset">Uses Dataset (Paper → Dataset)</option>
+                <option value="arxiv_paper_author">arxiv_paper_author (Author → Paper)</option>
+                <option value="arxiv_paper_category">arxiv_paper_category</option>
+                <option value="arxiv_citation">arxiv_citation</option>
+                <option value="arxiv_paper_figures">arxiv_paper_figures</option>
+                <option value="arxiv_paper_tables">arxiv_paper_tables</option>
+                <option value="arxiv_paragraph_citations">arxiv_paragraph_citations</option>
+                <option value="arxiv_paragraph_references">arxiv_paragraph_references</option>
+                <option value="openreview_papers_authors">openreview_papers_authors</option>
+                <option value="openreview_papers_reviews">openreview_papers_reviews</option>
+                <option value="openreview_papers_revisions">openreview_papers_revisions</option>
+                <option value="openreview_revisions_reviews">openreview_revisions_reviews</option>
               </select>
             </div>
           </div>
@@ -567,25 +618,39 @@ print(f"Created dataset with ID: {dataset.id}")</code></pre>
         <div id="edge-authorship" class="code-container">
           <h3 class="title is-5">Creating Authorship Relationships</h3>
           <p>Connect authors to papers they have written:</p>
-          <pre><code>from researcharcade import GraphDB
-
-# Initialize database connection
-db = GraphDB()
-
-# Create authorship edge
-authorship = db.create_edge(
-    from_node=author_id,
-    to_node=paper_id,
-    edge_type="AUTHORED",
-    properties={
-        "author_position": 1,  # First author
-        "contribution_percentage": 35,
-        "is_corresponding": True,
-        "affiliation_at_time": "Google Brain"
+          <pre><code># Create authorship relationships for the Transformer paper
+paper_authors = [
+    {
+        'paper_arxiv_id': '1706.03762v7',
+        'author_id': 'ss_ashish_vaswani',
+        'author_sequence': 1
+    },
+    {
+        'paper_arxiv_id': '1706.03762v7',
+        'author_id': 'ss_noam_shazeer',
+        'author_sequence': 2
+    },
+    {
+        'paper_arxiv_id': '1706.03762v7',
+        'author_id': 'ss_niki_parmar',
+        'author_sequence': 3
+    },
+    {
+        'paper_arxiv_id': '1706.03762v7',
+        'author_id': 'ss_jakob_uszkoreit',
+        'author_sequence': 4
+    },
+    {
+        'paper_arxiv_id': '1706.03762v7',
+        'author_id': 'ss_llion_jones',
+        'author_sequence': 5
     }
-)
+]
 
-print(f"Created authorship relationship with ID: {authorship.id}")</code></pre>
+for relation in paper_authors:
+    research_arcade.insert_edge("arxiv_paper_authors", edge_features=relation)
+    print(f"Linked author {relation['author_id']} to paper (position {relation['author_sequence']})")
+</code></pre>
         </div>
 
         <!-- Citation Edge -->
@@ -856,120 +921,6 @@ print(f"Created uses_dataset relationship with ID: {uses_dataset.id}")</code></p
         </div>
       </div>
 
-      <!-- Batch Operations -->
-      <div class="content mt-6">
-        <h2 class="title is-3">Batch Operations</h2>
-        <p>
-          For efficiency when adding multiple entities, use batch operations:
-        </p>
-        <pre><code>from researcharcade import GraphDB
-
-# Initialize database connection
-db = GraphDB()
-
-# Batch create multiple nodes
-authors = db.create_nodes_batch([
-    {
-        "node_type": "Author",
-        "properties": {"name": "Author 1", "affiliation": "University A"}
-    },
-    {
-        "node_type": "Author",
-        "properties": {"name": "Author 2", "affiliation": "University B"}
-    },
-    {
-        "node_type": "Author",
-        "properties": {"name": "Author 3", "affiliation": "University C"}
-    }
-])
-
-print(f"Created {len(authors)} authors")
-
-# Batch create edges
-edges = db.create_edges_batch([
-    {
-        "from_node": authors[0].id,
-        "to_node": paper_id,
-        "edge_type": "AUTHORED",
-        "properties": {"author_position": 1}
-    },
-    {
-        "from_node": authors[1].id,
-        "to_node": paper_id,
-        "edge_type": "AUTHORED",
-        "properties": {"author_position": 2}
-    },
-    {
-        "from_node": authors[2].id,
-        "to_node": paper_id,
-        "edge_type": "AUTHORED",
-        "properties": {"author_position": 3}
-    }
-])
-
-print(f"Created {len(edges)} authorship edges")</code></pre>
-      </div>
-
-      <!-- Validation and Error Handling -->
-      <div class="content mt-6">
-        <h2 class="title is-3">Validation and Error Handling</h2>
-        <p>
-          Best practices for validating data before insertion and handling errors:
-        </p>
-        <pre><code>from researcharcade import GraphDB
-from researcharcade.exceptions import ValidationError, DuplicateNodeError
-
-# Initialize database connection
-db = GraphDB()
-
-try:
-    # Validate before creating
-    if not paper_data.get("title"):
-        raise ValidationError("Paper title is required")
-    
-    # Check for duplicates
-    existing = db.find_nodes(
-        node_type="Paper",
-        filters={"doi": paper_data["doi"]}
-    )
-    
-    if existing:
-        raise DuplicateNodeError(f"Paper with DOI {paper_data['doi']} already exists")
-    
-    # Create the node
-    paper = db.create_node(
-        node_type="Paper",
-        properties=paper_data
-    )
-    
-    print(f"Successfully created paper: {paper.id}")
-    
-except ValidationError as e:
-    print(f"Validation error: {e}")
-except DuplicateNodeError as e:
-    print(f"Duplicate found: {e}")
-except Exception as e:
-    print(f"Unexpected error: {e}")
-    # Rollback transaction if needed
-    db.rollback()</code></pre>
-      </div>
-
-      <!-- Best Practices -->
-      <div class="content mt-6">
-        <h2 class="title is-3">Best Practices</h2>
-        <ul>
-          <li>Always validate data before insertion to maintain data integrity</li>
-          <li>Use batch operations when adding multiple entities to improve performance</li>
-          <li>Set appropriate properties for all required fields</li>
-          <li>Check for existing entities to avoid duplicates</li>
-          <li>Use transactions when adding multiple related entities</li>
-          <li>Follow naming conventions for entity types and relationship types</li>
-          <li>Include timestamps for tracking creation and modification dates</li>
-          <li>Use consistent property names across similar node types</li>
-          <li>Add indices on frequently queried properties</li>
-          <li>Document custom properties and their expected data types</li>
-        </ul>
-      </div>
 
       <!-- Next Steps -->
       <div class="content mt-6">
