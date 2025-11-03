@@ -6,6 +6,8 @@ from typing import Optional
 from pathlib import Path
 import json
 # from ..data import *
+from ..arxiv_utils.multi_input.multi_download import MultiDownload
+from ..arxiv_utils.graph_constructor.node_processor import NodeConstructor
 
 # TODO: refactor the original ArxivCrawler into the ArxivCrawler file
 
@@ -204,4 +206,55 @@ class CSVArxivPapers:
         
         print(f"Successfully imported {len(external_df)} papers from {csv_file}")
         return True
+    
+    def construct_papers_table_from_api(self, arxiv_ids, dest_dir):
+
+        # Check if papers already exists in the directory
+        downloaded_paper_ids = []
+        for arxiv_id in arxiv_ids:
+            paper_dir = f"{dest_dir}/{arxiv_id}/{arxiv_id}_metadata.json"
+
+            if not os.path.exists(paper_dir):
+                downloaded_paper_ids.append(arxiv_id)
+
+        for arxiv_id in downloaded_paper_ids:
+            md = MultiDownload()
+            try:
+                md.download_arxiv(input=arxiv_id, input_type = "id", output_type="latex", dest_dir=self.dest_dir)
+                print(f"paper with id {arxiv_id} downloaded")
+                downloaded_paper_ids.append(arxiv_id)
+            except RuntimeError as e:
+                print(f"[ERROR] Failed to download {arxiv_id}: {e}")
+                continue
+        
+        # Then collect information into databases
+        nc = NodeConstructor()
+        for arxiv_id in arxiv_ids:
+            # add metadata
+            # read paper information
+
+            base_arxiv_id, version = nc.arxiv_id_processor(arxiv_id=arxiv_id)
+            # Read metadata from path specified
+
+            try:
+                metadata_path = f"{dest_dir}/{arxiv_id}/{arxiv_id}_metadata.json"
+                with open(metadata_path, 'r') as f:
+                    metadata = json.load(f)  # Use json.load(), not json.loads()
+                
+                # Validate required fields
+                required_fields = ['title', 'abstract', 'published']
+                if not all(field in metadata for field in required_fields):
+                    raise ValueError(f"Missing required fields in metadata for {arxiv_id}")
+                
+                self.insert_paper(
+                    arxiv_id=arxiv_id,
+                    base_arxiv_id=base_arxiv_id,
+                    version=version,
+                    title=metadata['title'],
+                    abstract=metadata['abstract'],
+                    submit_date=metadata['published'],
+                    metadata=metadata
+                )
+            except Exception:
+                print(f"Paper {arxiv_id} does not have metadata downloaded")
     

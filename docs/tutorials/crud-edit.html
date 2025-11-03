@@ -6,22 +6,52 @@
   <title>Edit Nodes & Edges • ResearchArcade Tutorials</title>
   
   <meta name="description" content="Learn how to update entity properties and modify relationship attributes in ResearchArcade." />
-  <meta property="og:title" content="Edit Nodes & Edges • ResearchArcade Tutorials" />
-  <meta property="og:description" content="Learn how to update entity properties and modify relationship attributes in ResearchArcade." />
-  <meta property="og:image" content="../static/images/your_banner_image.png" />
-  <meta property="og:type" content="website" />
-  <meta name="twitter:card" content="summary_large_image" />
-
   <link rel="icon" type="image/x-icon" href="../static/images/favicon.ico" />
   <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet" />
   <link rel="stylesheet" href="../static/css/bulma.min.css" />
   <link rel="stylesheet" href="../static/css/fontawesome.all.min.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <link rel="stylesheet" href="../static/css/index.css" />
+  
+  <style>
+    .code-container {
+      display: none;
+      margin-top: 1rem;
+    }
+    .code-container.is-active {
+      display: block;
+    }
+    .select-full-width {
+      width: 100%;
+    }
+    .select-full-width select {
+      width: 100%;
+    }
+    pre {
+      background-color: #f5f5f5;
+      padding: 1.25rem 1.5rem;
+      overflow-x: auto;
+    }
+    code {
+      background-color: transparent;
+      color: #363636;
+      font-size: 0.875em;
+      font-weight: normal;
+      padding: 0;
+    }
+    .placeholder-text {
+      color: #7a7a7a;
+      font-style: italic;
+      padding: 2rem;
+      text-align: center;
+      background-color: #fafafa;
+      border: 2px dashed #dbdbdb;
+      border-radius: 4px;
+    }
+  </style>
 </head>
 <body>
 
-  <!-- Hero -->
   <section class="hero is-white">
     <div class="hero-body">
       <div class="container is-max-desktop">
@@ -38,11 +68,9 @@
     </div>
   </section>
 
-  <!-- Tutorial Content -->
   <section class="section">
     <div class="container is-max-desktop">
       
-      <!-- Overview -->
       <div class="content">
         <h2 class="title is-3">Overview</h2>
         <p>
@@ -52,7 +80,6 @@
         </p>
       </div>
 
-      <!-- Prerequisites -->
       <div class="content mt-5">
         <h2 class="title is-3">Prerequisites</h2>
         <ul>
@@ -62,147 +89,218 @@
         </ul>
       </div>
 
-      <!-- Editing Nodes -->
       <div class="content mt-6">
         <h2 class="title is-3">Editing Nodes</h2>
+        <p>Select a node type below to see the code example for updating that entity:</p>
         
-        <h3 class="title is-4 mt-5">Updating Single Properties</h3>
-        <p>
-          Modify individual properties of a node:
-        </p>
-        <pre><code># Code example placeholder
-# Add your Python/API code here for updating single properties
-</code></pre>
+        <div class="field mt-4">
+          <label class="label">Select Node Type:</label>
+          <div class="control">
+            <div class="select select-full-width is-medium">
+              <select id="nodeTypeSelect">
+                <option value="">-- Choose a node type --</option>
+                <option value="arxiv_papers">arxiv_papers</option>
+                <option value="arxiv_authors">arxiv_authors</option>
+                <option value="arxiv_categories">arxiv_categories</option>
+                <option value="arxiv_sections">arxiv_sections</option>
+                <option value="arxiv_paragraphs">arxiv_paragraphs</option>
+                <option value="arxiv_figures">arxiv_figures</option>
+                <option value="arxiv_tables">arxiv_tables</option>
+                <option value="openreview_authors">openreview_authors</option>
+                <option value="openreview_papers">openreview_papers</option>
+                <option value="openreview_reviews">openreview_reviews</option>
+                <option value="openreview_revisions">openreview_revisions</option>
+                <option value="openreview_paragraphs">openreview_paragraphs</option>
+                <option value="openreview_arxiv">openreview_arxiv</option>
+              </select>
+            </div>
+          </div>
+        </div>
 
-        <h3 class="title is-4 mt-5">Updating Multiple Properties</h3>
-        <p>
-          Update several properties in a single operation:
-        </p>
-        <pre><code># Code example placeholder
-# Add your Python/API code here for updating multiple properties
-</code></pre>
+        <div id="nodePlaceholder" class="placeholder-text">
+          <i class="fas fa-hand-pointer fa-2x mb-3"></i>
+          <p>Select a node type from the dropdown above to view the code example.</p>
+        </div>
 
-        <h3 class="title is-4 mt-5">Adding New Properties</h3>
-        <p>
-          Extend nodes with additional properties:
-        </p>
-        <pre><code># Code example placeholder
-# Add your Python/API code here for adding new properties
-</code></pre>
+        <div id="node-arxiv_papers" class="code-container">
+          <h3 class="title is-5">Updating arxiv_papers Nodes</h3>
+          
+          <h4 class="title is-6 mt-4">Update Paper Metadata</h4>
+          <p>Modify metadata for a paper:</p>
+          <pre><code># Update metadata for a paper
+updated_paper = {
+    'arxiv_id': '1706.03762v7',
+    'metadata': {
+        'venue': 'NeurIPS 2017',
+        'pdf_url': 'https://arxiv.org/pdf/1706.03762.pdf',
+        'citations': 75000,
+        'influential': True
+    }
+}
 
-        <h3 class="title is-4 mt-5">Removing Properties</h3>
-        <p>
-          Delete properties from a node:
-        </p>
-        <pre><code># Code example placeholder
-# Add your Python/API code here for removing properties
+research_arcade.update_node("arxiv_papers", node_features=updated_paper)
+print("Paper updated successfully!")
 </code></pre>
+        </div>
+
+        <div id="node-arxiv_authors" class="code-container">
+          <h3 class="title is-5">Updating arxiv_authors Nodes</h3>
+          
+          <h4 class="title is-6 mt-4">Update Author Homepage</h4>
+          <p>Update an author's homepage URL:</p>
+          <pre><code>updated_author = {
+    'semantic_scholar_id': 'ss_ashish_vaswani',
+    'homepage': 'https://ashishvaswani.com'
+}
+
+research_arcade.update_node("arxiv_authors", node_features=updated_author)
+print("Author updated successfully!")
+</code></pre>
+        </div>
+
+        <div id="node-arxiv_categories" class="code-container">
+          <h3 class="title is-5">Updating arxiv_categories Nodes</h3>
+          <p>Code example placeholder - Add your Python/API code here for updating arxiv_categories nodes</p>
+        </div>
+
+        <div id="node-arxiv_sections" class="code-container">
+          <h3 class="title is-5">Updating arxiv_sections Nodes</h3>
+          <p>Code example placeholder - Add your Python/API code here for updating arxiv_sections nodes</p>
+        </div>
+
+        <div id="node-arxiv_paragraphs" class="code-container">
+          <h3 class="title is-5">Updating arxiv_paragraphs Nodes</h3>
+          <p>Code example placeholder - Add your Python/API code here for updating arxiv_paragraphs nodes</p>
+        </div>
+
+        <div id="node-arxiv_figures" class="code-container">
+          <h3 class="title is-5">Updating arxiv_figures Nodes</h3>
+          <p>Code example placeholder - Add your Python/API code here for updating arxiv_figures nodes</p>
+        </div>
+
+        <div id="node-arxiv_tables" class="code-container">
+          <h3 class="title is-5">Updating arxiv_tables Nodes</h3>
+          <p>Code example placeholder - Add your Python/API code here for updating arxiv_tables nodes</p>
+        </div>
+
+        <div id="node-openreview_authors" class="code-container">
+          <h3 class="title is-5">Updating openreview_authors Nodes</h3>
+          <p>Code example placeholder - Add your Python/API code here for updating openreview_authors nodes</p>
+        </div>
+
+        <div id="node-openreview_papers" class="code-container">
+          <h3 class="title is-5">Updating openreview_papers Nodes</h3>
+          <p>Code example placeholder - Add your Python/API code here for updating openreview_papers nodes</p>
+        </div>
+
+        <div id="node-openreview_reviews" class="code-container">
+          <h3 class="title is-5">Updating openreview_reviews Nodes</h3>
+          <p>Code example placeholder - Add your Python/API code here for updating openreview_reviews nodes</p>
+        </div>
+
+        <div id="node-openreview_revisions" class="code-container">
+          <h3 class="title is-5">Updating openreview_revisions Nodes</h3>
+          <p>Code example placeholder - Add your Python/API code here for updating openreview_revisions nodes</p>
+        </div>
+
+        <div id="node-openreview_paragraphs" class="code-container">
+          <h3 class="title is-5">Updating openreview_paragraphs Nodes</h3>
+          <p>Code example placeholder - Add your Python/API code here for updating openreview_paragraphs nodes</p>
+        </div>
+
+        <div id="node-openreview_arxiv" class="code-container">
+          <h3 class="title is-5">Updating openreview_arxiv Nodes</h3>
+          <p>Code example placeholder - Add your Python/API code here for updating openreview_arxiv nodes</p>
+        </div>
       </div>
 
-      <!-- Editing Edges -->
       <div class="content mt-6">
         <h2 class="title is-3">Editing Edges</h2>
+        <p>Select an edge type below to see the code example for updating that relationship:</p>
         
-        <h3 class="title is-4 mt-5">Updating Edge Properties</h3>
-        <p>
-          Modify metadata associated with relationships:
-        </p>
-        <pre><code># Code example placeholder
-# Add your Python/API code here for updating edge properties
-</code></pre>
+        <div class="field mt-4">
+          <label class="label">Select Edge Type:</label>
+          <div class="control">
+            <div class="select select-full-width is-medium">
+              <select id="edgeTypeSelect">
+                <option value="">-- Choose an edge type --</option>
+                <option value="arxiv_paper_author">arxiv_paper_author</option>
+                <option value="arxiv_paper_category">arxiv_paper_category</option>
+                <option value="arxiv_citation">arxiv_citation</option>
+                <option value="arxiv_paper_figures">arxiv_paper_figures</option>
+                <option value="arxiv_paper_tables">arxiv_paper_tables</option>
+                <option value="arxiv_paragraph_citations">arxiv_paragraph_citations</option>
+                <option value="arxiv_paragraph_references">arxiv_paragraph_references</option>
+                <option value="openreview_papers_authors">openreview_papers_authors</option>
+                <option value="openreview_papers_reviews">openreview_papers_reviews</option>
+                <option value="openreview_papers_revisions">openreview_papers_revisions</option>
+                <option value="openreview_revisions_reviews">openreview_revisions_reviews</option>
+              </select>
+            </div>
+          </div>
+        </div>
 
-        <h3 class="title is-4 mt-5">Changing Edge Direction</h3>
-        <p>
-          Reverse or redirect relationships between nodes:
-        </p>
-        <pre><code># Code example placeholder
-# Add your Python/API code here for changing edge direction
-</code></pre>
+        <div id="edgePlaceholder" class="placeholder-text">
+          <i class="fas fa-hand-pointer fa-2x mb-3"></i>
+          <p>Select an edge type from the dropdown above to view the code example.</p>
+        </div>
 
-        <h3 class="title is-4 mt-5">Replacing Edges</h3>
-        <p>
-          Remove an existing edge and create a new one:
-        </p>
-        <pre><code># Code example placeholder
-# Add your Python/API code here for replacing edges
-</code></pre>
+        <div id="edge-arxiv_paper_author" class="code-container">
+          <h3 class="title is-5">Updating arxiv_paper_author Edges</h3>
+          <p>Code example placeholder - Add your Python/API code here for updating arxiv_paper_author edges</p>
+        </div>
+
+        <div id="edge-arxiv_paper_category" class="code-container">
+          <h3 class="title is-5">Updating arxiv_paper_category Edges</h3>
+          <p>Code example placeholder - Add your Python/API code here for updating arxiv_paper_category edges</p>
+        </div>
+
+        <div id="edge-arxiv_citation" class="code-container">
+          <h3 class="title is-5">Updating arxiv_citation Edges</h3>
+          <p>Code example placeholder - Add your Python/API code here for updating arxiv_citation edges</p>
+        </div>
+
+        <div id="edge-arxiv_paper_figures" class="code-container">
+          <h3 class="title is-5">Updating arxiv_paper_figures Edges</h3>
+          <p>Code example placeholder - Add your Python/API code here for updating arxiv_paper_figures edges</p>
+        </div>
+
+        <div id="edge-arxiv_paper_tables" class="code-container">
+          <h3 class="title is-5">Updating arxiv_paper_tables Edges</h3>
+          <p>Code example placeholder - Add your Python/API code here for updating arxiv_paper_tables edges</p>
+        </div>
+
+        <div id="edge-arxiv_paragraph_citations" class="code-container">
+          <h3 class="title is-5">Updating arxiv_paragraph_citations Edges</h3>
+          <p>Code example placeholder - Add your Python/API code here for updating arxiv_paragraph_citations edges</p>
+        </div>
+
+        <div id="edge-arxiv_paragraph_references" class="code-container">
+          <h3 class="title is-5">Updating arxiv_paragraph_references Edges</h3>
+          <p>Code example placeholder - Add your Python/API code here for updating arxiv_paragraph_references edges</p>
+        </div>
+
+        <div id="edge-openreview_papers_authors" class="code-container">
+          <h3 class="title is-5">Updating openreview_papers_authors Edges</h3>
+          <p>Code example placeholder - Add your Python/API code here for updating openreview_papers_authors edges</p>
+        </div>
+
+        <div id="edge-openreview_papers_reviews" class="code-container">
+          <h3 class="title is-5">Updating openreview_papers_reviews Edges</h3>
+          <p>Code example placeholder - Add your Python/API code here for updating openreview_papers_reviews edges</p>
+        </div>
+
+        <div id="edge-openreview_papers_revisions" class="code-container">
+          <h3 class="title is-5">Updating openreview_papers_revisions Edges</h3>
+          <p>Code example placeholder - Add your Python/API code here for updating openreview_papers_revisions edges</p>
+        </div>
+
+        <div id="edge-openreview_revisions_reviews" class="code-container">
+          <h3 class="title is-5">Updating openreview_revisions_reviews Edges</h3>
+          <p>Code example placeholder - Add your Python/API code here for updating openreview_revisions_reviews edges</p>
+        </div>
       </div>
 
-      <!-- Batch Updates -->
-      <div class="content mt-6">
-        <h2 class="title is-3">Batch Updates</h2>
-        
-        <h3 class="title is-4 mt-5">Updating Multiple Nodes</h3>
-        <p>
-          Apply changes to multiple nodes matching certain criteria:
-        </p>
-        <pre><code># Code example placeholder
-# Add your Python/API code here for batch node updates
-</code></pre>
-
-        <h3 class="title is-4 mt-5">Bulk Edge Modifications</h3>
-        <p>
-          Update properties across multiple relationships:
-        </p>
-        <pre><code># Code example placeholder
-# Add your Python/API code here for bulk edge updates
-</code></pre>
-      </div>
-
-      <!-- Validation and Constraints -->
-      <div class="content mt-6">
-        <h2 class="title is-3">Validation and Constraints</h2>
-        
-        <h3 class="title is-4 mt-5">Enforcing Data Integrity</h3>
-        <p>
-          Validate updates before applying them:
-        </p>
-        <pre><code># Code example placeholder
-# Add your Python/API code here for validation
-</code></pre>
-
-        <h3 class="title is-4 mt-5">Handling Constraint Violations</h3>
-        <p>
-          Manage conflicts and constraint errors during updates:
-        </p>
-        <pre><code># Code example placeholder
-# Add your Python/API code here for handling constraint violations
-</code></pre>
-      </div>
-
-      <!-- Versioning and History -->
-      <div class="content mt-6">
-        <h2 class="title is-3">Versioning and History</h2>
-        
-        <h3 class="title is-4 mt-5">Tracking Changes</h3>
-        <p>
-          Maintain an audit trail of modifications:
-        </p>
-        <pre><code># Code example placeholder
-# Add your Python/API code here for tracking changes
-</code></pre>
-
-        <h3 class="title is-4 mt-5">Reverting Changes</h3>
-        <p>
-          Roll back to previous versions of entities:
-        </p>
-        <pre><code># Code example placeholder
-# Add your Python/API code here for reverting changes
-</code></pre>
-      </div>
-
-      <!-- Transactions -->
-      <div class="content mt-6">
-        <h2 class="title is-3">Using Transactions</h2>
-        <p>
-          Ensure atomic updates across multiple entities:
-        </p>
-        <pre><code># Code example placeholder
-# Add your Python/API code here for transactional updates
-</code></pre>
-      </div>
-
-      <!-- Best Practices -->
       <div class="content mt-6">
         <h2 class="title is-3">Best Practices</h2>
         <ul>
@@ -217,32 +315,9 @@
         </ul>
       </div>
 
-      <!-- Common Update Scenarios -->
-      <div class="content mt-6">
-        <h2 class="title is-3">Common Update Scenarios</h2>
-        
-        <h3 class="title is-4 mt-5">Updating Paper Metadata</h3>
-        <pre><code># Code example placeholder
-# Update title, abstract, or publication date
-</code></pre>
-
-        <h3 class="title is-4 mt-5">Modifying Author Affiliations</h3>
-        <pre><code># Code example placeholder
-# Update author institution or contact information
-</code></pre>
-
-        <h3 class="title is-4 mt-5">Revising Review Scores</h3>
-        <pre><code># Code example placeholder
-# Update review ratings or comments
-</code></pre>
-      </div>
-
-      <!-- Next Steps -->
       <div class="content mt-6">
         <h2 class="title is-3">Next Steps</h2>
-        <p>
-          Now that you can update your data, explore these related tutorials:
-        </p>
+        <p>Now that you can update your data, explore these related tutorials:</p>
         <div class="columns is-multiline mt-4">
           <div class="column is-half">
             <a class="box" href="./crud-delete.html">
@@ -257,7 +332,6 @@
               </article>
             </a>
           </div>
-
           <div class="column is-half">
             <a class="box" href="./import-csv.html">
               <article class="media">
@@ -274,15 +348,12 @@
         </div>
       </div>
 
-      <!-- Navigation -->
       <hr class="mt-6" />
       <nav class="level">
         <div class="level-left">
           <div class="level-item">
             <a href="./crud-read.html" class="button is-light">
-              <span class="icon is-small">
-                <i class="fas fa-arrow-left"></i>
-              </span>
+              <span class="icon is-small"><i class="fas fa-arrow-left"></i></span>
               <span>Previous: Read Nodes & Edges</span>
             </a>
           </div>
@@ -291,9 +362,7 @@
           <div class="level-item">
             <a href="./crud-delete.html" class="button is-link">
               <span>Next: Delete Nodes & Edges</span>
-              <span class="icon is-small">
-                <i class="fas fa-arrow-right"></i>
-              </span>
+              <span class="icon is-small"><i class="fas fa-arrow-right"></i></span>
             </a>
           </div>
         </div>
@@ -301,17 +370,44 @@
     </div>
   </section>
 
-  <!-- Footer -->
   <footer class="footer">
     <div class="container">
       <div class="content has-text-centered is-size-7">
-        <p>
-          Built with the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a>.
-          Licensed under <a href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC BY-SA 4.0</a>.
-        </p>
+        <p>Built with the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a>. Licensed under <a href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC BY-SA 4.0</a>.</p>
       </div>
     </div>
   </footer>
+
+  <script>
+    const nodeSelect = document.getElementById('nodeTypeSelect');
+    const nodePlaceholder = document.getElementById('nodePlaceholder');
+    const nodeContainers = document.querySelectorAll('[id^="node-"]');
+    nodeSelect.addEventListener('change', function() {
+      const selectedValue = this.value;
+      nodeContainers.forEach(container => container.classList.remove('is-active'));
+      if (selectedValue === '') {
+        nodePlaceholder.style.display = 'block';
+      } else {
+        nodePlaceholder.style.display = 'none';
+        const selectedContainer = document.getElementById('node-' + selectedValue);
+        if (selectedContainer) selectedContainer.classList.add('is-active');
+      }
+    });
+    const edgeSelect = document.getElementById('edgeTypeSelect');
+    const edgePlaceholder = document.getElementById('edgePlaceholder');
+    const edgeContainers = document.querySelectorAll('[id^="edge-"]');
+    edgeSelect.addEventListener('change', function() {
+      const selectedValue = this.value;
+      edgeContainers.forEach(container => container.classList.remove('is-active'));
+      if (selectedValue === '') {
+        edgePlaceholder.style.display = 'block';
+      } else {
+        edgePlaceholder.style.display = 'none';
+        const selectedContainer = document.getElementById('edge-' + selectedValue);
+        if (selectedContainer) selectedContainer.classList.add('is-active');
+      }
+    });
+  </script>
 
 </body>
 </html>

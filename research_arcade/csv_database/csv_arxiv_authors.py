@@ -2,6 +2,12 @@ import pandas as pd
 import os
 from typing import Optional
 from pathlib import Path
+import sys
+from semanticscholar import SemanticScholar
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from ..arxiv_utils.multi_input.multi_download import MultiDownload
+from ..arxiv_utils.graph_constructor.node_processor import NodeConstructor
 
 class CSVArxivAuthors:
     def __init__(self, csv_dir: str):
@@ -143,3 +149,30 @@ class CSVArxivAuthors:
             return None
         
         return df.copy()
+
+    
+    def construct_authors_table_from_api(self, arxiv_ids, dest_dir):
+        """
+        Given arxiv ids, find the semantic scholar ids and pages of the authors
+        """
+        # Search for authors online
+        sch = SemanticScholar()
+        nc = NodeConstructor()
+        for arxiv_id in arxiv_ids:
+            base_arxiv_id, version = nc.arxiv_id_processor(arxiv_id=arxiv_id)(arxiv_id)
+            print(f"base_arxiv_id: {base_arxiv_id}")
+            try:
+                paper_sch = self.sch.get_paper(f"ARXIV:{base_arxiv_id}")
+                authors = paper_sch.authors
+                for author in authors:
+                    semantic_scholar_id = author.authorId
+                    author_r = sch.get_author(semantic_scholar_id)
+                    name = author_r.name
+                    url = author_r.url
+
+                    self.insert_author(semantic_scholar_id=semantic_scholar_id, name=name, homepage=url)
+            except Exception as e:
+                print(f"Paper with arxiv id {base_arxiv_id} not found on semantic scholar: {e}")
+                return False
+
+

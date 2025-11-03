@@ -2,7 +2,9 @@ import pandas as pd
 import os
 from typing import Optional
 from pathlib import Path
-
+from ..arxiv_utils.multi_input.multi_download import MultiDownload
+from ..arxiv_utils.graph_constructor.node_processor import NodeConstructor
+import json
 
 class CSVArxivSections:
     def __init__(self, csv_dir: str):
@@ -168,3 +170,62 @@ class CSVArxivSections:
             return None
         
         return df.copy()
+
+
+    def construct_tables_table_from_api(self, arxiv_ids, dest_dir):
+        # Check if papers already exists in the directory
+        downloaded_paper_ids = []
+        for arxiv_id in arxiv_ids:
+            paper_dir = f"{dest_dir}/{arxiv_id}/{arxiv_id}_metadata.json"
+
+            if not os.path.exists(paper_dir):
+                downloaded_paper_ids.append(arxiv_id)
+
+        for arxiv_id in downloaded_paper_ids:
+            md = MultiDownload()
+            try:
+                md.download_arxiv(input=arxiv_id, input_type = "id", output_type="latex", dest_dir=self.dest_dir)
+                print(f"paper with id {arxiv_id} downloaded")
+                downloaded_paper_ids.append(arxiv_id)
+            except RuntimeError as e:
+                print(f"[ERROR] Failed to download {arxiv_id}: {e}")
+                continue
+        
+        for arxiv_id in arxiv_ids:
+            # Search if the corresponding paper graph exists
+
+            json_path = f"{dest_dir}/output/{arxiv_id}.json"
+            if not os.path.exists(json_path):
+                # arxiv_id_graph.append(arxiv_id)
+                try:
+                    # Build corresponding graph
+                    md.build_paper_graph(
+                        input=arxiv_id,
+                        input_type="id",
+                        dest_dir=dest_dir
+                    )
+                except Exception as e:
+                    print(f"[Warning] Failed to process papers: {e}")
+                    continue
+
+            try:
+                with open(json_path, 'r') as file:
+                    file_json = json.load(file)
+                    section_jsons = file_json['sections']
+
+                    i = 0
+                    for title, section_json in section_jsons.items():
+                        i += 1
+                        is_appendix = section_json['appendix'] == 'true'
+                        content = section_json['content']
+                        self.insert_section(content=content, title=title, appendix=is_appendix, paper_arxiv_id=arxiv_id, section_in_paper_id=i)
+
+            except FileNotFoundError:
+                print(f"Error: The file '{file_json}' was not found.")
+                continue
+            except json.JSONDecodeError:
+                print(f"Error: Could not decode JSON from '{file_json}'. Check if the file contains valid JSON.")
+                continue
+            except Exception as e:
+                print(f"An unexpected error occurred: {e}")
+                continue

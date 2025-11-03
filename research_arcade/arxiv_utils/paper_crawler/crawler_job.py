@@ -31,7 +31,7 @@ class CrawlerJob:
         data_dir_path = f"{dest_dir}/output"
         figures_dir_path = f"{dest_dir}/output/images"
         output_dir_path = f"{dest_dir}/output/paragraphs"
-
+        
         self.tdb = TaskDatabase()
         self.db = Database()
         self.nc = NodeConstructor()
@@ -46,7 +46,7 @@ class CrawlerJob:
     
     def drop_task_database(self):
         self.tdb.drop_paper_task_table()
-    
+
     def crawl_recent_arxiv_paper_new(self, start_date, end_date=None, path=None):
         save_path = download_with_time(start_date=start_date, end_date=end_date, save_path=path)
         arxiv_ids = extract_arxiv_ids(file_path=save_path)
@@ -68,7 +68,7 @@ class CrawlerJob:
             sort_order  = arxiv.SortOrder.Descending,
             max_results = max_result
         )
-
+        
         recent_ids = []
         iterator = search.results()
 
@@ -177,7 +177,7 @@ class CrawlerJob:
         #     else:
         #         print(f"[+] Task for {arxiv_id} initialized.")
         # return added_arxiv_ids
-
+    
     def download_papers(self, arxiv_ids):
         """
         Download the paper with specified arxiv id from arxiv and save metadata to JSON
@@ -201,7 +201,7 @@ class CrawlerJob:
                 )
                 print(f"[ERROR] Failed to download {arxiv_id}: {e}")
                 continue
-
+    
     def add_existing_paper_graphs(self):
         """
         Given current paper graph json files, add them into the database.
@@ -402,7 +402,7 @@ class CrawlerJob:
         author_added_paper_ids = []
 
         for arxiv_id in arxiv_ids:
-
+            
             added = self.nc.author_processor(arxiv_id)
             if added:
                 self.tdb.set_states(paper_arxiv_id=arxiv_id, semantic_scholar=added)

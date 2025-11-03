@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Add Nodes & Edges • ResearchArcade Tutorials</title>
-  
+
   <meta name="description" content="Learn how to create new entities and relationships in the ResearchArcade graph database." />
   <meta property="og:title" content="Add Nodes & Edges • ResearchArcade Tutorials" />
   <meta property="og:description" content="Learn how to create new entities and relationships in the ResearchArcade graph database." />
@@ -139,11 +139,11 @@
           <p>Select a node type from the dropdown above to view the code example.</p>
         </div>
 
-        <!-- Paper Node -->
-        <div id="node-paper" class="code-container">
-          <h3 class="title is-5">Creating a Paper Node</h3>
+        <!-- arxiv_papers Node -->
+        <div id="node-arxiv_papers" class="code-container">
+          <h3 class="title is-5">Creating an ArXiv Papers Node</h3>
           <p>Add a new research paper with metadata such as title, abstract, publication date, and DOI:</p>
-          <pre><code># Example 1: Insert the famous "Attention is All You Need" paper
+          <pre><code># Example: Insert the famous "Attention is All You Need" paper
 new_paper = {
     'arxiv_id': '1706.03762v7',
     'base_arxiv_id': '1706.03762',
@@ -159,9 +159,9 @@ print("Paper inserted successfully!")
 </code></pre>
         </div>
 
-        <!-- Author Node -->
-        <div id="node-author" class="code-container">
-          <h3 class="title is-5">Creating an Author Node</h3>
+        <!-- arxiv_authors Node -->
+        <div id="node-arxiv_authors" class="code-container">
+          <h3 class="title is-5">Creating an ArXiv Authors Node</h3>
           <p>Add an author with their name, affiliation, and contact information:</p>
           <pre><code># Insert authors from the Transformer paper
 authors = [
@@ -198,9 +198,38 @@ for author in authors:
 </code></pre>
         </div>
 
-        <!-- Section Node -->
-        <div id="node-section" class="code-container">
-          <h3 class="title is-5">Creating a Section Node</h3>
+        <!-- arxiv_categories Node -->
+        <div id="node-arxiv_categories" class="code-container">
+          <h3 class="title is-5">Creating an ArXiv Categories Node</h3>
+          <p>Add a category to classify papers:</p>
+          <pre><code># Insert ArXiv categories
+categories = [
+    {
+        'category_id': 'cs.CL',
+        'category_name': 'Computation and Language',
+        'description': 'Covers natural language processing, computational linguistics, and related areas.'
+    },
+    {
+        'category_id': 'cs.LG',
+        'category_name': 'Machine Learning',
+        'description': 'Papers on machine learning, neural networks, and statistical learning.'
+    },
+    {
+        'category_id': 'cs.AI',
+        'category_name': 'Artificial Intelligence',
+        'description': 'Covers all areas of AI except Vision, Robotics, Machine Learning, Multiagent Systems, and Computation and Language.'
+    }
+]
+
+for category in categories:
+    research_arcade.insert_node("arxiv_categories", node_features=category)
+    print(f"Inserted category: {category['category_name']}")
+</code></pre>
+        </div>
+
+        <!-- arxiv_sections Node -->
+        <div id="node-arxiv_sections" class="code-container">
+          <h3 class="title is-5">Creating an ArXiv Sections Node</h3>
           <p>Add a section that belongs to a paper (e.g., Introduction, Methods, Results):</p>
           <pre><code># Insert sections for the Transformer paper
 sections = [
@@ -254,9 +283,9 @@ for section in sections:
 </code></pre>
         </div>
 
-        <!-- Paragraph Node -->
-        <div id="node-paragraph" class="code-container">
-          <h3 class="title is-5">Creating a Paragraph Node</h3>
+        <!-- arxiv_paragraphs Node -->
+        <div id="node-arxiv_paragraphs" class="code-container">
+          <h3 class="title is-5">Creating an ArXiv Paragraphs Node</h3>
           <p>Add a paragraph within a section:</p>
           <pre><code># Insert paragraphs from the Introduction section
 paragraphs = [
@@ -308,275 +337,215 @@ for paragraph in paragraphs:
 </code></pre>
         </div>
 
-        <!-- Figure Node -->
-        <div id="node-figure" class="code-container">
-          <h3 class="title is-5">Creating a Figure Node</h3>
+        <!-- arxiv_figures Node -->
+        <div id="node-arxiv_figures" class="code-container">
+          <h3 class="title is-5">Creating an ArXiv Figures Node</h3>
           <p>Add a figure with its caption and metadata:</p>
-          <pre><code>from researcharcade import GraphDB
-
-# Initialize database connection
-db = GraphDB()
-
-# Create a new figure node
-figure = db.create_node(
-    node_type="Figure",
-    properties={
-        "figure_number": "1",
-        "caption": "The Transformer model architecture showing encoder and decoder stacks.",
-        "image_url": "https://example.com/figures/transformer_architecture.png",
-        "image_format": "PNG",
-        "width": 800,
-        "height": 600,
-        "file_size_kb": 245
+          <pre><code># Insert figures from the Transformer paper
+figures = [
+    {
+        'figure_id': 1,
+        'paper_arxiv_id': '1706.03762v7',
+        'caption': 'The Transformer - model architecture.',
+        'figure_path': 'figures/transformer_architecture.png',
+        'page_number': 3
+    },
+    {
+        'figure_id': 2,
+        'paper_arxiv_id': '1706.03762v7',
+        'caption': '(left) Scaled Dot-Product Attention. (right) Multi-Head Attention consists of several attention layers running in parallel.',
+        'figure_path': 'figures/attention_mechanism.png',
+        'page_number': 4
     }
-)
+]
 
-# Link figure to its paper
-db.create_edge(
-    from_node=paper_id,
-    to_node=figure.id,
-    edge_type="HAS_FIGURE",
-    properties={"figure_number": 1}
-)
-
-print(f"Created figure with ID: {figure.id}")</code></pre>
+for figure in figures:
+    research_arcade.insert_node("arxiv_figures", node_features=figure)
+    print(f"Inserted figure {figure['figure_id']}: {figure['caption'][:50]}...")
+</code></pre>
         </div>
 
-        <!-- Table Node -->
-        <div id="node-table" class="code-container">
-          <h3 class="title is-5">Creating a Table Node</h3>
+        <!-- arxiv_tables Node -->
+        <div id="node-arxiv_tables" class="code-container">
+          <h3 class="title is-5">Creating an ArXiv Tables Node</h3>
           <p>Add a table with structured data:</p>
-          <pre><code>from researcharcade import GraphDB
-
-# Initialize database connection
-db = GraphDB()
-
-# Create a new table node
-table = db.create_node(
-    node_type="Table",
-    properties={
-        "table_number": "1",
-        "caption": "Comparison of model performance on WMT 2014 English-German translation.",
-        "num_rows": 5,
-        "num_columns": 4,
-        "data": [
-            ["Model", "BLEU", "Parameters", "Training Time"],
-            ["Transformer Base", "27.3", "65M", "12 hours"],
-            ["Transformer Big", "28.4", "213M", "3.5 days"]
-        ]
+          <pre><code># Insert tables from the Transformer paper
+tables = [
+    {
+        'table_id': 1,
+        'paper_arxiv_id': '1706.03762v7',
+        'caption': 'Maximum path lengths, per-layer complexity and minimum number of sequential operations for different layer types.',
+        'content': 'Self-Attention | O(n^2·d) | O(1) | O(n^2·d)\nRecurrent | O(n·d^2) | O(n) | O(n·d^2)\nConvolutional | O(k·n·d^2) | O(1) | O(k·n·d^2)',
+        'page_number': 5
+    },
+    {
+        'table_id': 2,
+        'paper_arxiv_id': '1706.03762v7',
+        'caption': 'The Transformer achieves better BLEU scores than previous state-of-the-art models on the English-to-German and English-to-French newstest2014 tests.',
+        'content': 'Model | EN-DE BLEU | EN-FR BLEU\nTransformer (base) | 27.3 | 38.1\nTransformer (big) | 28.4 | 41.8',
+        'page_number': 8
     }
-)
+]
 
-# Link table to its paper
-db.create_edge(
-    from_node=paper_id,
-    to_node=table.id,
-    edge_type="HAS_TABLE",
-    properties={"table_number": 1}
-)
-
-print(f"Created table with ID: {table.id}")</code></pre>
+for table in tables:
+    research_arcade.insert_node("arxiv_tables", node_features=table)
+    print(f"Inserted table {table['table_id']}: {table['caption'][:50]}...")
+</code></pre>
         </div>
 
-        <!-- Equation Node -->
-        <div id="node-equation" class="code-container">
-          <h3 class="title is-5">Creating an Equation Node</h3>
-          <p>Add a mathematical equation:</p>
-          <pre><code>from researcharcade import GraphDB
-
-# Initialize database connection
-db = GraphDB()
-
-# Create a new equation node
-equation = db.create_node(
-    node_type="Equation",
-    properties={
-        "equation_number": "1",
-        "latex": "\\text{Attention}(Q, K, V) = \\text{softmax}(\\frac{QK^T}{\\sqrt{d_k}})V",
-        "description": "Scaled dot-product attention mechanism",
-        "variables": ["Q", "K", "V", "d_k"]
+        <!-- openreview_authors Node -->
+        <div id="node-openreview_authors" class="code-container">
+          <h3 class="title is-5">Creating an OpenReview Authors Node</h3>
+          <p>Add an author from OpenReview:</p>
+          <pre><code># Insert OpenReview authors
+openreview_authors = [
+    {
+        'author_id': 'or_author_123',
+        'name': 'John Smith',
+        'profile_url': 'https://openreview.net/profile?id=~John_Smith1',
+        'email': 'john.smith@university.edu',
+        'institution': 'Stanford University'
+    },
+    {
+        'author_id': 'or_author_456',
+        'name': 'Jane Doe',
+        'profile_url': 'https://openreview.net/profile?id=~Jane_Doe1',
+        'email': 'jane.doe@university.edu',
+        'institution': 'MIT'
     }
-)
+]
 
-# Link equation to its paper or section
-db.create_edge(
-    from_node=section_id,
-    to_node=equation.id,
-    edge_type="HAS_EQUATION",
-    properties={"equation_number": 1}
-)
-
-print(f"Created equation with ID: {equation.id}")</code></pre>
+for author in openreview_authors:
+    research_arcade.insert_node("openreview_authors", node_features=author)
+    print(f"Inserted OpenReview author: {author['name']}")
+</code></pre>
         </div>
 
-        <!-- Review Node -->
-        <div id="node-review" class="code-container">
-          <h3 class="title is-5">Creating a Review Node</h3>
-          <p>Add a peer review or commentary on a paper:</p>
-          <pre><code>from researcharcade import GraphDB
-
-# Initialize database connection
-db = GraphDB()
-
-# Create a new review node
-review = db.create_node(
-    node_type="Review",
-    properties={
-        "rating": 8,
-        "confidence": 4,
-        "summary": "This paper presents a novel architecture that significantly advances the field...",
-        "strengths": "Clear presentation, strong empirical results, thorough ablation studies",
-        "weaknesses": "Limited discussion of computational costs",
-        "recommendation": "Accept",
-        "reviewer_id": "reviewer_123",
-        "review_date": "2017-05-15",
-        "is_public": False
+        <!-- openreview_papers Node -->
+        <div id="node-openreview_papers" class="code-container">
+          <h3 class="title is-5">Creating an OpenReview Papers Node</h3>
+          <p>Add a paper from OpenReview:</p>
+          <pre><code># Insert OpenReview papers
+openreview_papers = [
+    {
+        'paper_id': 'rJl0r3R9KX',
+        'title': 'BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding',
+        'abstract': 'We introduce a new language representation model called BERT, which stands for Bidirectional Encoder Representations from Transformers...',
+        'venue': 'ICLR 2019',
+        'submission_date': '2018-10-25',
+        'decision': 'Accept (Oral)',
+        'url': 'https://openreview.net/forum?id=rJl0r3R9KX'
     }
-)
+]
 
-# Link review to the paper
-db.create_edge(
-    from_node=review.id,
-    to_node=paper_id,
-    edge_type="REVIEWS",
-    properties={"review_date": "2017-05-15"}
-)
-
-print(f"Created review with ID: {review.id}")</code></pre>
+for paper in openreview_papers:
+    research_arcade.insert_node("openreview_papers", node_features=paper)
+    print(f"Inserted OpenReview paper: {paper['title']}")
+</code></pre>
         </div>
 
-        <!-- Venue Node -->
-        <div id="node-venue" class="code-container">
-          <h3 class="title is-5">Creating a Venue Node</h3>
-          <p>Add a publication venue (conference or journal):</p>
-          <pre><code>from researcharcade import GraphDB
-
-# Initialize database connection
-db = GraphDB()
-
-# Create a new venue node
-venue = db.create_node(
-    node_type="Venue",
-    properties={
-        "name": "Neural Information Processing Systems",
-        "short_name": "NeurIPS",
-        "type": "Conference",
-        "year": 2017,
-        "location": "Long Beach, CA, USA",
-        "url": "https://nips.cc/Conferences/2017",
-        "acceptance_rate": 0.21,
-        "h5_index": 332
+        <!-- openreview_reviews Node -->
+        <div id="node-openreview_reviews" class="code-container">
+          <h3 class="title is-5">Creating an OpenReview Reviews Node</h3>
+          <p>Add a peer review from OpenReview:</p>
+          <pre><code># Insert OpenReview reviews
+openreview_reviews = [
+    {
+        'review_id': 'BklXx2C9tX',
+        'paper_id': 'rJl0r3R9KX',
+        'rating': 8,
+        'confidence': 4,
+        'summary': 'This paper presents BERT, a new method for pre-training language representations...',
+        'strengths': 'Novel approach, strong empirical results, well-written paper',
+        'weaknesses': 'Computational cost is high, limited analysis of failure cases',
+        'recommendation': 'Accept',
+        'reviewer_name': 'Reviewer_ABC',
+        'review_date': '2018-11-20'
     }
-)
+]
 
-# Link paper to venue
-db.create_edge(
-    from_node=paper_id,
-    to_node=venue.id,
-    edge_type="PUBLISHED_IN",
-    properties={"year": 2017}
-)
-
-print(f"Created venue with ID: {venue.id}")</code></pre>
+for review in openreview_reviews:
+    research_arcade.insert_node("openreview_reviews", node_features=review)
+    print(f"Inserted OpenReview review: {review['review_id']}")
+</code></pre>
         </div>
 
-        <!-- Institution Node -->
-        <div id="node-institution" class="code-container">
-          <h3 class="title is-5">Creating an Institution Node</h3>
-          <p>Add an academic or research institution:</p>
-          <pre><code>from researcharcade import GraphDB
-
-# Initialize database connection
-db = GraphDB()
-
-# Create a new institution node
-institution = db.create_node(
-    node_type="Institution",
-    properties={
-        "name": "Google Brain",
-        "type": "Research Lab",
-        "parent_organization": "Google",
-        "country": "USA",
-        "city": "Mountain View, CA",
-        "url": "https://research.google/teams/brain/",
-        "founded": 2011
+        <!-- openreview_revisions Node -->
+        <div id="node-openreview_revisions" class="code-container">
+          <h3 class="title is-5">Creating an OpenReview Revisions Node</h3>
+          <p>Add a paper revision from OpenReview:</p>
+          <pre><code># Insert OpenReview revisions
+openreview_revisions = [
+    {
+        'revision_id': 'rev_001',
+        'paper_id': 'rJl0r3R9KX',
+        'revision_number': 1,
+        'submission_date': '2018-10-25',
+        'changes': 'Initial submission',
+        'pdf_url': 'https://openreview.net/pdf?id=rJl0r3R9KX'
+    },
+    {
+        'revision_id': 'rev_002',
+        'paper_id': 'rJl0r3R9KX',
+        'revision_number': 2,
+        'submission_date': '2018-12-01',
+        'changes': 'Added ablation studies, fixed typos, improved figures',
+        'pdf_url': 'https://openreview.net/pdf?id=rJl0r3R9KX'
     }
-)
+]
 
-# Link author to institution
-db.create_edge(
-    from_node=author_id,
-    to_node=institution.id,
-    edge_type="AFFILIATED_WITH",
-    properties={"start_date": "2015-01-01"}
-)
-
-print(f"Created institution with ID: {institution.id}")</code></pre>
+for revision in openreview_revisions:
+    research_arcade.insert_node("openreview_revisions", node_features=revision)
+    print(f"Inserted OpenReview revision {revision['revision_number']} for paper {revision['paper_id']}")
+</code></pre>
         </div>
 
-        <!-- Keyword Node -->
-        <div id="node-keyword" class="code-container">
-          <h3 class="title is-5">Creating a Keyword Node</h3>
-          <p>Add a keyword or research topic:</p>
-          <pre><code>from researcharcade import GraphDB
-
-# Initialize database connection
-db = GraphDB()
-
-# Create a new keyword node
-keyword = db.create_node(
-    node_type="Keyword",
-    properties={
-        "term": "Attention Mechanism",
-        "category": "Deep Learning",
-        "definition": "A technique allowing neural networks to focus on relevant parts of input",
-        "aliases": ["Self-Attention", "Attention Layer"]
+        <!-- openreview_paragraphs Node -->
+        <div id="node-openreview_paragraphs" class="code-container">
+          <h3 class="title is-5">Creating an OpenReview Paragraphs Node</h3>
+          <p>Add paragraphs from an OpenReview paper:</p>
+          <pre><code># Insert OpenReview paragraphs
+openreview_paragraphs = [
+    {
+        'paragraph_id': 1,
+        'paper_id': 'rJl0r3R9KX',
+        'section': 'Introduction',
+        'content': 'Language model pre-training has been shown to be effective for improving many natural language processing tasks...',
+        'paragraph_number': 1
+    },
+    {
+        'paragraph_id': 2,
+        'paper_id': 'rJl0r3R9KX',
+        'section': 'Introduction',
+        'content': 'There are two existing strategies for applying pre-trained language representations to downstream tasks: feature-based and fine-tuning...',
+        'paragraph_number': 2
     }
-)
+]
 
-# Link paper to keyword
-db.create_edge(
-    from_node=paper_id,
-    to_node=keyword.id,
-    edge_type="HAS_KEYWORD",
-    properties={"relevance_score": 0.95}
-)
-
-print(f"Created keyword with ID: {keyword.id}")</code></pre>
+for paragraph in openreview_paragraphs:
+    research_arcade.insert_node("openreview_paragraphs", node_features=paragraph)
+    print(f"Inserted OpenReview paragraph {paragraph['paragraph_number']} from {paragraph['section']}")
+</code></pre>
         </div>
 
-        <!-- Dataset Node -->
-        <div id="node-dataset" class="code-container">
-          <h3 class="title is-5">Creating a Dataset Node</h3>
-          <p>Add a research dataset:</p>
-          <pre><code>from researcharcade import GraphDB
-
-# Initialize database connection
-db = GraphDB()
-
-# Create a new dataset node
-dataset = db.create_node(
-    node_type="Dataset",
-    properties={
-        "name": "WMT 2014 English-German",
-        "description": "Workshop on Machine Translation 2014 translation dataset",
-        "size": "4.5M sentence pairs",
-        "url": "https://www.statmt.org/wmt14/",
-        "license": "CC BY-SA 4.0",
-        "format": "parallel text",
-        "domain": "news"
+        <!-- openreview_arxiv Node -->
+        <div id="node-openreview_arxiv" class="code-container">
+          <h3 class="title is-5">Creating an OpenReview ArXiv Link Node</h3>
+          <p>Link OpenReview papers to their ArXiv versions:</p>
+          <pre><code># Insert OpenReview-ArXiv links
+openreview_arxiv_links = [
+    {
+        'openreview_paper_id': 'rJl0r3R9KX',
+        'arxiv_id': '1810.04805',
+        'link_type': 'same_paper',
+        'verified': True
     }
-)
+]
 
-# Link paper to dataset
-db.create_edge(
-    from_node=paper_id,
-    to_node=dataset.id,
-    edge_type="USES_DATASET",
-    properties={"purpose": "evaluation"}
-)
-
-print(f"Created dataset with ID: {dataset.id}")</code></pre>
+for link in openreview_arxiv_links:
+    research_arcade.insert_node("openreview_arxiv", node_features=link)
+    print(f"Linked OpenReview paper {link['openreview_paper_id']} to ArXiv {link['arxiv_id']}")
+</code></pre>
         </div>
       </div>
 
@@ -593,7 +562,7 @@ print(f"Created dataset with ID: {dataset.id}")</code></pre>
             <div class="select select-full-width is-medium">
               <select id="edgeTypeSelect">
                 <option value="">-- Choose an edge type --</option>
-                <option value="arxiv_paper_author">arxiv_paper_author (Author → Paper)</option>
+                <option value="arxiv_paper_author">arxiv_paper_author</option>
                 <option value="arxiv_paper_category">arxiv_paper_category</option>
                 <option value="arxiv_citation">arxiv_citation</option>
                 <option value="arxiv_paper_figures">arxiv_paper_figures</option>
@@ -614,9 +583,9 @@ print(f"Created dataset with ID: {dataset.id}")</code></pre>
           <p>Select an edge type from the dropdown above to view the code example.</p>
         </div>
 
-        <!-- Authorship Edge -->
-        <div id="edge-authorship" class="code-container">
-          <h3 class="title is-5">Creating Authorship Relationships</h3>
+        <!-- arxiv_paper_author Edge -->
+        <div id="edge-arxiv_paper_author" class="code-container">
+          <h3 class="title is-5">Creating ArXiv Paper Author Relationships</h3>
           <p>Connect authors to papers they have written:</p>
           <pre><code># Create authorship relationships for the Transformer paper
 paper_authors = [
@@ -648,276 +617,260 @@ paper_authors = [
 ]
 
 for relation in paper_authors:
-    research_arcade.insert_edge("arxiv_paper_authors", edge_features=relation)
+    research_arcade.insert_edge("arxiv_paper_author", edge_features=relation)
     print(f"Linked author {relation['author_id']} to paper (position {relation['author_sequence']})")
 </code></pre>
         </div>
 
-        <!-- Citation Edge -->
-        <div id="edge-citation" class="code-container">
-          <h3 class="title is-5">Creating Citation Relationships</h3>
+        <!-- arxiv_paper_category Edge -->
+        <div id="edge-arxiv_paper_category" class="code-container">
+          <h3 class="title is-5">Creating ArXiv Paper Category Relationships</h3>
+          <p>Link papers to their categories:</p>
+          <pre><code># Create paper-category relationships
+paper_categories = [
+    {
+        'paper_arxiv_id': '1706.03762v7',
+        'category_id': 'cs.CL',
+        'is_primary': True
+    },
+    {
+        'paper_arxiv_id': '1706.03762v7',
+        'category_id': 'cs.LG',
+        'is_primary': False
+    },
+    {
+        'paper_arxiv_id': '1706.03762v7',
+        'category_id': 'cs.AI',
+        'is_primary': False
+    }
+]
+
+for relation in paper_categories:
+    research_arcade.insert_edge("arxiv_paper_category", edge_features=relation)
+    print(f"Linked paper to category {relation['category_id']} (primary: {relation['is_primary']})")
+</code></pre>
+        </div>
+
+        <!-- arxiv_citation Edge -->
+        <div id="edge-arxiv_citation" class="code-container">
+          <h3 class="title is-5">Creating ArXiv Citation Relationships</h3>
           <p>Link papers together through citations:</p>
-          <pre><code>from researcharcade import GraphDB
-
-# Initialize database connection
-db = GraphDB()
-
-# Create citation edge (citing_paper cites cited_paper)
-citation = db.create_edge(
-    from_node=citing_paper_id,
-    to_node=cited_paper_id,
-    edge_type="CITES",
-    properties={
-        "citation_context": "We build upon the architecture proposed by Vaswani et al...",
-        "section": "Related Work",
-        "citation_count": 1,
-        "is_self_citation": False
+          <pre><code># Create citation relationships
+citations = [
+    {
+        'citing_paper_arxiv_id': '1810.04805v2',  # BERT paper
+        'cited_paper_arxiv_id': '1706.03762v7',   # Transformer paper
+        'citation_context': 'We build upon the Transformer architecture proposed by Vaswani et al.',
+        'section': 'Model Architecture'
+    },
+    {
+        'citing_paper_arxiv_id': '1910.10683v1',  # BART paper
+        'cited_paper_arxiv_id': '1706.03762v7',   # Transformer paper
+        'citation_context': 'Following Vaswani et al., we use a standard sequence-to-sequence Transformer.',
+        'section': 'Introduction'
     }
-)
+]
 
-print(f"Created citation with ID: {citation.id}")</code></pre>
+for citation in citations:
+    research_arcade.insert_edge("arxiv_citation", edge_features=citation)
+    print(f"Created citation from {citation['citing_paper_arxiv_id']} to {citation['cited_paper_arxiv_id']}")
+</code></pre>
         </div>
 
-        <!-- Has Section Edge -->
-        <div id="edge-has_section" class="code-container">
-          <h3 class="title is-5">Creating Has Section Relationships</h3>
-          <p>Define the hierarchical structure between papers and their sections:</p>
-          <pre><code>from researcharcade import GraphDB
-
-# Initialize database connection
-db = GraphDB()
-
-# Create has_section edge
-has_section = db.create_edge(
-    from_node=paper_id,
-    to_node=section_id,
-    edge_type="HAS_SECTION",
-    properties={
-        "order": 2,  # Second section in the paper
-        "section_type": "methods"
+        <!-- arxiv_paper_figures Edge -->
+        <div id="edge-arxiv_paper_figures" class="code-container">
+          <h3 class="title is-5">Creating ArXiv Paper Figures Relationships</h3>
+          <p>Link papers to their figures:</p>
+          <pre><code># Create paper-figure relationships
+paper_figures = [
+    {
+        'paper_arxiv_id': '1706.03762v7',
+        'figure_id': 1,
+        'figure_position': 1
+    },
+    {
+        'paper_arxiv_id': '1706.03762v7',
+        'figure_id': 2,
+        'figure_position': 2
     }
-)
+]
 
-print(f"Created has_section relationship with ID: {has_section.id}")</code></pre>
+for relation in paper_figures:
+    research_arcade.insert_edge("arxiv_paper_figures", edge_features=relation)
+    print(f"Linked figure {relation['figure_id']} to paper at position {relation['figure_position']}")
+</code></pre>
         </div>
 
-        <!-- Has Paragraph Edge -->
-        <div id="edge-has_paragraph" class="code-container">
-          <h3 class="title is-5">Creating Has Paragraph Relationships</h3>
-          <p>Connect sections to their constituent paragraphs:</p>
-          <pre><code>from researcharcade import GraphDB
-
-# Initialize database connection
-db = GraphDB()
-
-# Create has_paragraph edge
-has_paragraph = db.create_edge(
-    from_node=section_id,
-    to_node=paragraph_id,
-    edge_type="HAS_PARAGRAPH",
-    properties={
-        "order": 3,  # Third paragraph in the section
-        "character_offset": 450
+        <!-- arxiv_paper_tables Edge -->
+        <div id="edge-arxiv_paper_tables" class="code-container">
+          <h3 class="title is-5">Creating ArXiv Paper Tables Relationships</h3>
+          <p>Link papers to their tables:</p>
+          <pre><code># Create paper-table relationships
+paper_tables = [
+    {
+        'paper_arxiv_id': '1706.03762v7',
+        'table_id': 1,
+        'table_position': 1
+    },
+    {
+        'paper_arxiv_id': '1706.03762v7',
+        'table_id': 2,
+        'table_position': 2
     }
-)
+]
 
-print(f"Created has_paragraph relationship with ID: {has_paragraph.id}")</code></pre>
+for relation in paper_tables:
+    research_arcade.insert_edge("arxiv_paper_tables", edge_features=relation)
+    print(f"Linked table {relation['table_id']} to paper at position {relation['table_position']}")
+</code></pre>
         </div>
 
-        <!-- References Edge -->
-        <div id="edge-references" class="code-container">
-          <h3 class="title is-5">Creating References Relationships</h3>
-          <p>Link specific paragraphs to papers they reference:</p>
-          <pre><code>from researcharcade import GraphDB
-
-# Initialize database connection
-db = GraphDB()
-
-# Create references edge
-references = db.create_edge(
-    from_node=paragraph_id,
-    to_node=referenced_paper_id,
-    edge_type="REFERENCES",
-    properties={
-        "citation_number": 15,
-        "citation_text": "[15]",
-        "character_position": 234
+        <!-- arxiv_paragraph_citations Edge -->
+        <div id="edge-arxiv_paragraph_citations" class="code-container">
+          <h3 class="title is-5">Creating ArXiv Paragraph Citations Relationships</h3>
+          <p>Link paragraphs to the citations they contain:</p>
+          <pre><code># Create paragraph-citation relationships
+paragraph_citations = [
+    {
+        'paragraph_id': 10,
+        'cited_paper_arxiv_id': '1409.0473v7',  # Bahdanau attention paper
+        'citation_number': 1,
+        'citation_marker': '[1]'
+    },
+    {
+        'paragraph_id': 15,
+        'cited_paper_arxiv_id': '1508.04025v5',  # Luong attention paper
+        'citation_number': 2,
+        'citation_marker': '[2]'
     }
-)
+]
 
-print(f"Created references relationship with ID: {references.id}")</code></pre>
+for relation in paragraph_citations:
+    research_arcade.insert_edge("arxiv_paragraph_citations", edge_features=relation)
+    print(f"Linked paragraph {relation['paragraph_id']} to citation {relation['citation_marker']}")
+</code></pre>
         </div>
 
-        <!-- Collaboration Edge -->
-        <div id="edge-collaboration" class="code-container">
-          <h3 class="title is-5">Creating Collaboration Relationships</h3>
-          <p>Connect authors who have collaborated on papers:</p>
-          <pre><code>from researcharcade import GraphDB
-
-# Initialize database connection
-db = GraphDB()
-
-# Create collaboration edge
-collaboration = db.create_edge(
-    from_node=author1_id,
-    to_node=author2_id,
-    edge_type="COLLABORATED_WITH",
-    properties={
-        "num_papers": 5,
-        "first_collaboration_year": 2015,
-        "last_collaboration_year": 2023,
-        "shared_papers": ["paper_id_1", "paper_id_2", "paper_id_3"]
+        <!-- arxiv_paragraph_references Edge -->
+        <div id="edge-arxiv_paragraph_references" class="code-container">
+          <h3 class="title is-5">Creating ArXiv Paragraph References Relationships</h3>
+          <p>Link paragraphs to the references they mention:</p>
+          <pre><code># Create paragraph-reference relationships
+paragraph_references = [
+    {
+        'paragraph_id': 5,
+        'referenced_paper_arxiv_id': '1409.0473v7',
+        'reference_type': 'methodology',
+        'character_position': 145
+    },
+    {
+        'paragraph_id': 8,
+        'referenced_paper_arxiv_id': '1508.04025v5',
+        'reference_type': 'comparison',
+        'character_position': 89
     }
-)
+]
 
-print(f"Created collaboration relationship with ID: {collaboration.id}")</code></pre>
+for relation in paragraph_references:
+    research_arcade.insert_edge("arxiv_paragraph_references", edge_features=relation)
+    print(f"Linked paragraph {relation['paragraph_id']} to reference ({relation['reference_type']})")
+</code></pre>
         </div>
 
-        <!-- Supervision Edge -->
-        <div id="edge-supervision" class="code-container">
-          <h3 class="title is-5">Creating Supervision Relationships</h3>
-          <p>Represent advisor-advisee or mentor-mentee relationships:</p>
-          <pre><code>from researcharcade import GraphDB
-
-# Initialize database connection
-db = GraphDB()
-
-# Create supervision edge
-supervision = db.create_edge(
-    from_node=advisor_id,
-    to_node=student_id,
-    edge_type="SUPERVISES",
-    properties={
-        "relationship_type": "PhD Advisor",
-        "start_date": "2018-09-01",
-        "end_date": "2023-06-15",
-        "institution": "Stanford University"
+        <!-- openreview_papers_authors Edge -->
+        <div id="edge-openreview_papers_authors" class="code-container">
+          <h3 class="title is-5">Creating OpenReview Papers Authors Relationships</h3>
+          <p>Connect OpenReview papers to their authors:</p>
+          <pre><code># Create OpenReview paper-author relationships
+openreview_paper_authors = [
+    {
+        'paper_id': 'rJl0r3R9KX',
+        'author_id': 'or_author_123',
+        'author_order': 1
+    },
+    {
+        'paper_id': 'rJl0r3R9KX',
+        'author_id': 'or_author_456',
+        'author_order': 2
     }
-)
+]
 
-print(f"Created supervision relationship with ID: {supervision.id}")</code></pre>
+for relation in openreview_paper_authors:
+    research_arcade.insert_edge("openreview_papers_authors", edge_features=relation)
+    print(f"Linked OpenReview author {relation['author_id']} to paper (position {relation['author_order']})")
+</code></pre>
         </div>
 
-        <!-- Reviews Edge -->
-        <div id="edge-reviews" class="code-container">
-          <h3 class="title is-5">Creating Reviews Relationships</h3>
-          <p>Connect reviews to the papers they evaluate:</p>
-          <pre><code>from researcharcade import GraphDB
-
-# Initialize database connection
-db = GraphDB()
-
-# Create reviews edge
-reviews = db.create_edge(
-    from_node=review_id,
-    to_node=paper_id,
-    edge_type="REVIEWS",
-    properties={
-        "review_round": 1,
-        "review_date": "2017-05-15",
-        "decision": "accept"
+        <!-- openreview_papers_reviews Edge -->
+        <div id="edge-openreview_papers_reviews" class="code-container">
+          <h3 class="title is-5">Creating OpenReview Papers Reviews Relationships</h3>
+          <p>Connect OpenReview papers to their reviews:</p>
+          <pre><code># Create OpenReview paper-review relationships
+openreview_paper_reviews = [
+    {
+        'paper_id': 'rJl0r3R9KX',
+        'review_id': 'BklXx2C9tX',
+        'review_round': 1
+    },
+    {
+        'paper_id': 'rJl0r3R9KX',
+        'review_id': 'HyeXx2C9tY',
+        'review_round': 1
     }
-)
+]
 
-print(f"Created reviews relationship with ID: {reviews.id}")</code></pre>
+for relation in openreview_paper_reviews:
+    research_arcade.insert_edge("openreview_papers_reviews", edge_features=relation)
+    print(f"Linked OpenReview review {relation['review_id']} to paper (round {relation['review_round']})")
+</code></pre>
         </div>
 
-        <!-- Published In Edge -->
-        <div id="edge-published_in" class="code-container">
-          <h3 class="title is-5">Creating Published In Relationships</h3>
-          <p>Link papers to their publication venues:</p>
-          <pre><code>from researcharcade import GraphDB
-
-# Initialize database connection
-db = GraphDB()
-
-# Create published_in edge
-published_in = db.create_edge(
-    from_node=paper_id,
-    to_node=venue_id,
-    edge_type="PUBLISHED_IN",
-    properties={
-        "year": 2017,
-        "volume": "30",
-        "pages": "5998-6008",
-        "presentation_type": "oral"
+        <!-- openreview_papers_revisions Edge -->
+        <div id="edge-openreview_papers_revisions" class="code-container">
+          <h3 class="title is-5">Creating OpenReview Papers Revisions Relationships</h3>
+          <p>Connect OpenReview papers to their revisions:</p>
+          <pre><code># Create OpenReview paper-revision relationships
+openreview_paper_revisions = [
+    {
+        'paper_id': 'rJl0r3R9KX',
+        'revision_id': 'rev_001',
+        'is_latest': False
+    },
+    {
+        'paper_id': 'rJl0r3R9KX',
+        'revision_id': 'rev_002',
+        'is_latest': True
     }
-)
+]
 
-print(f"Created published_in relationship with ID: {published_in.id}")</code></pre>
+for relation in openreview_paper_revisions:
+    research_arcade.insert_edge("openreview_papers_revisions", edge_features=relation)
+    print(f"Linked OpenReview revision {relation['revision_id']} to paper (latest: {relation['is_latest']})")
+</code></pre>
         </div>
 
-        <!-- Affiliated With Edge -->
-        <div id="edge-affiliated_with" class="code-container">
-          <h3 class="title is-5">Creating Affiliated With Relationships</h3>
-          <p>Connect authors to their institutional affiliations:</p>
-          <pre><code>from researcharcade import GraphDB
-
-# Initialize database connection
-db = GraphDB()
-
-# Create affiliated_with edge
-affiliated_with = db.create_edge(
-    from_node=author_id,
-    to_node=institution_id,
-    edge_type="AFFILIATED_WITH",
-    properties={
-        "start_date": "2015-01-01",
-        "end_date": None,  # Still affiliated
-        "position": "Senior Research Scientist",
-        "is_primary": True
+        <!-- openreview_revisions_reviews Edge -->
+        <div id="edge-openreview_revisions_reviews" class="code-container">
+          <h3 class="title is-5">Creating OpenReview Revisions Reviews Relationships</h3>
+          <p>Connect OpenReview revisions to their reviews:</p>
+          <pre><code># Create OpenReview revision-review relationships
+openreview_revision_reviews = [
+    {
+        'revision_id': 'rev_001',
+        'review_id': 'BklXx2C9tX',
+        'review_applies_to_revision': True
+    },
+    {
+        'revision_id': 'rev_002',
+        'review_id': 'HyeXx2C9tY',
+        'review_applies_to_revision': True
     }
-)
+]
 
-print(f"Created affiliated_with relationship with ID: {affiliated_with.id}")</code></pre>
-        </div>
-
-        <!-- Has Keyword Edge -->
-        <div id="edge-has_keyword" class="code-container">
-          <h3 class="title is-5">Creating Has Keyword Relationships</h3>
-          <p>Tag papers with relevant keywords:</p>
-          <pre><code>from researcharcade import GraphDB
-
-# Initialize database connection
-db = GraphDB()
-
-# Create has_keyword edge
-has_keyword = db.create_edge(
-    from_node=paper_id,
-    to_node=keyword_id,
-    edge_type="HAS_KEYWORD",
-    properties={
-        "relevance_score": 0.95,
-        "source": "author_provided",  # or "auto_extracted"
-        "confidence": 0.98
-    }
-)
-
-print(f"Created has_keyword relationship with ID: {has_keyword.id}")</code></pre>
-        </div>
-
-        <!-- Uses Dataset Edge -->
-        <div id="edge-uses_dataset" class="code-container">
-          <h3 class="title is-5">Creating Uses Dataset Relationships</h3>
-          <p>Link papers to the datasets they utilize:</p>
-          <pre><code>from researcharcade import GraphDB
-
-# Initialize database connection
-db = GraphDB()
-
-# Create uses_dataset edge
-uses_dataset = db.create_edge(
-    from_node=paper_id,
-    to_node=dataset_id,
-    edge_type="USES_DATASET",
-    properties={
-        "purpose": "evaluation",  # or "training", "validation"
-        "subset": "test",
-        "metrics_reported": ["BLEU", "accuracy"]
-    }
-)
-
-print(f"Created uses_dataset relationship with ID: {uses_dataset.id}")</code></pre>
+for relation in openreview_revision_reviews:
+    research_arcade.insert_edge("openreview_revisions_reviews", edge_features=relation)
+    print(f"Linked OpenReview review {relation['review_id']} to revision {relation['revision_id']}")
+</code></pre>
         </div>
       </div>
 

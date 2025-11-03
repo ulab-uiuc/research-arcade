@@ -569,6 +569,26 @@ class ResearchArcade:
             if config["pdf_dir"] is None:
                 config["pdf_dir"] = os.getenv("PDF_FOLDER_PATH")
             self.openreview_paragraphs.construct_paragraphs_table_from_api(**config)
+        elif table == "arxiv_papers":
+            self.openreview_papers.construct_papers_table_from_api(**config)
+            pass
+        elif table == "arxiv_authors":
+            pass
+        elif table == "arxiv_categories":
+            pass
+        elif table == "arxiv_figures":
+            pass
+        elif table == "arxiv_tables":
+            pass
+        elif table == "arxiv_sections":
+            pass
+        elif table == "arxiv_paragraphs":
+            pass
+        elif table == "arxiv_paragraphs":
+            pass
+        elif table == "arxiv_paragraphs":
+            pass
+
         else:
             print(f"Table {table} does not support construction from API")
             
