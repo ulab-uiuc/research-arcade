@@ -3,9 +3,11 @@ import os
 from typing import Optional
 from pathlib import Path
 import json
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from ..arxiv_utils.multi_input.multi_download import MultiDownload
 from ..arxiv_utils.graph_constructor.node_processor import NodeConstructor
-
+from ..arxiv_utils.utils import arxiv_id_processor, figure_iteration_recursive
 class CSVArxivFigure:
     def __init__(self, csv_dir: str):
         csv_path = f"{csv_dir}/arxiv_figures.csv"
@@ -14,8 +16,7 @@ class CSVArxivFigure:
         if not os.path.exists(csv_path):
             self.create_figures_table()
         # self.arxiv_crawler = ArxivCrawler()
-    
-    
+
     def create_figures_table(self):
         if not os.path.exists(self.csv_path):
             df = pd.DataFrame(columns=[
@@ -141,7 +142,7 @@ class CSVArxivFigure:
 
 
     def construct_figures_table_from_api(self, arxiv_ids, dest_dir):
-        nc = NodeConstructor()
+
         # Check if papers already exists in the directory
         downloaded_paper_ids = []
         for arxiv_id in arxiv_ids:
@@ -183,7 +184,7 @@ class CSVArxivFigure:
                 figure_jsons = file_json['figure']
                 for figure_json in figure_jsons:
 
-                    figures = nc.figure_iteration_recursive(figure_json=figure_json)
+                    figures = figure_iteration_recursive(figure_json=figure_json)
                     for figure in figures:
                         path, caption, label = figure
                         self.insert_figure(paper_arxiv_id=arxiv_id, path=path, caption=caption,label=label)

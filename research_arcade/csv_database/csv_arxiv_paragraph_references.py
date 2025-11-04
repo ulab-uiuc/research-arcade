@@ -1,7 +1,7 @@
 import pandas as pd
 import os
 from pathlib import Path
-
+from typing import Optional
 
 class CSVArxivParagraphReference:
     def __init__(self, csv_dir: str):
@@ -36,5 +36,95 @@ class CSVArxivParagraphReference:
         self._save_data(df)
         return new_id
 
+    def get_all_paragraph_references(self):
+        df = self._load_data()
+        
+        if df.empty:
+            return None
+        
+        return df.copy()
+    
+
+    def get_paragraph_neighboring_references(self, paragraph_id: int) -> Optional[pd.DataFrame]:
+
+        df = self._load_data()
+        
+        if df.empty:
+            return None
+        
+        result = df[df['paragraph_id'] == paragraph_id].copy()
+        
+        if result.empty:
+            return None
+        
+        return result.reset_index(drop=True)
 
 
+    def get_reference_neighboring_paragraphs(self, reference_id: int) -> Optional[pd.DataFrame]:
+
+        df = self._load_data()
+        
+        if df.empty:
+            return None
+        
+        result = df[df['id'] == reference_id].copy()
+        
+        if result.empty:
+            return None
+        
+        return result.reset_index(drop=True)
+
+
+    def delete_paragraph_reference_by_id(self, paragraph_id: int, reference_id: int) -> bool:
+        df = self._load_data()
+        
+        if df.empty:
+            return False
+        
+        mask = (df['paragraph_id'] == paragraph_id) & (df['id'] == reference_id)
+        
+        if not mask.any():
+            return False
+        
+        df = df[~mask]
+        self._save_data(df)
+        
+        return True
+
+
+    def delete_paragraph_reference_by_paragraph_id(self, paragraph_id: int) -> int:
+
+        df = self._load_data()
+        
+        if df.empty:
+            return 0
+        
+        mask = df['paragraph_id'] == paragraph_id
+        count = mask.sum()
+        
+        if count == 0:
+            return 0
+        
+        df = df[~mask]
+        self._save_data(df)
+        
+        return count
+
+
+    def delete_paragraph_reference_by_reference_id(self, reference_id: int) -> int:
+
+        df = self._load_data()
+        
+        if df.empty:
+            return 0
+        
+        mask = df['id'] == reference_id
+        count = mask.sum()
+        
+        if count == 0:
+            return 0
+        
+        df = df[~mask]
+        self._save_data(df)
+        
+        return count

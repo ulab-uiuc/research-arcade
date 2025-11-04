@@ -2,10 +2,12 @@ import pandas as pd
 import os
 from typing import Optional
 from pathlib import Path
-from ..arxiv_utils.multi_input.multi_download import MultiDownload
-from ..arxiv_utils.graph_constructor.node_processor import NodeConstructor
 import json
-from ..paper_collector.paper_graph_processor import PaperGraphProcessor
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from ..arxiv_utils.multi_input.multi_download import MultiDownload
+from ..arxiv_utils.paper_collector.paper_graph_processor import PaperGraphProcessor
+from ..arxiv_utils.utils import get_paragraph_num
 
 class CSVArxivParagraphs:
     def __init__(self, csv_dir: str):
@@ -35,7 +37,7 @@ class CSVArxivParagraphs:
         df.to_csv(self.csv_path, index=False)
 
 
-    def insert_paragraph(self, paragraph_id, content, paper_arxiv_id, paper_section, section_id, paragraph_in_paper_id):
+    def insert_paragraph(self, paragraph_id, content, paper_arxiv_id, paper_section, section_id=None, paragraph_in_paper_id=None):
         df = self._load_data()
         
         conflict = df[
@@ -190,8 +192,8 @@ class CSVArxivParagraphs:
         print(f"Successfully imported {len(external_df)} paragraphs from {csv_file}")
         return True
 
-
     def get_all_paragraphs(self, is_all_features=True):
+        
         df = self._load_data()
         
         if df.empty:
@@ -199,11 +201,16 @@ class CSVArxivParagraphs:
         
         return df.copy()
 
-
     def construct_paragraphs_table_from_api(self, arxiv_ids, dest_dir):
         # Check if papers already exists in the directory
+        """
+        section id and paragraph order required further
+        Or maybe we can write a incremental method to process such information
+        TODO
+        """
         downloaded_paper_ids = []
-                
+        md = MultiDownload()
+        
         data_dir_path = f"{dest_dir}/output"
         figures_dir_path = f"{dest_dir}/output/images"
         output_dir_path = f"{dest_dir}/output/paragraphs"
@@ -217,7 +224,6 @@ class CSVArxivParagraphs:
                 downloaded_paper_ids.append(arxiv_id)
 
         for arxiv_id in downloaded_paper_ids:
-            md = MultiDownload()
             try:
                 md.download_arxiv(input=arxiv_id, input_type = "id", output_type="latex", dest_dir=self.dest_dir)
                 print(f"paper with id {arxiv_id} downloaded")
@@ -249,7 +255,7 @@ class CSVArxivParagraphs:
         # We first build paper node
         # We loop through the provided arxiv ids of paper.
         for arxiv_id in papers:
-            paper_paths.append(f"{self.dest_dir}/output/{arxiv_id}.json")
+            paper_paths.append(f"{dest_dir}/output/{arxiv_id}.json")
         pgp.process_papers(paper_paths)
 
         # Build the paragraphs
@@ -267,7 +273,7 @@ class CSVArxivParagraphs:
         for paragraph in data:
             paragraph_id = paragraph.get('id')
             # Extract paragraph_id
-            id_number = self.get_paragraph_num(paragraph_id)
+            id_number = get_paragraph_num(paragraph_id)
             paper_arxiv_id = paragraph.get('paper_id')
             paper_section = paragraph.get('section')
             if (paper_arxiv_id, paper_section) not in section_min_paragraph:
@@ -275,20 +281,18 @@ class CSVArxivParagraphs:
             else:
                 section_min_paragraph[(paper_arxiv_id, paper_section)] = min(section_min_paragraph[(paper_arxiv_id, paper_section)], int(id_number))
 
-
-        
         for paragraph in data:
             paragraph_id = paragraph.get('id')
             content = paragraph.get('content')
             paper_arxiv_id = paragraph.get('paper_id')
             paper_section = paragraph.get('section')
-            id_number = self.get_paragraph_num(paragraph_id)
+            id_number = get_paragraph_num(paragraph_id)
             id_zero_based = id_number - section_min_paragraph[(paper_arxiv_id, paper_section)]
             self.insert_paragraph(paragraph_id=id_zero_based, content=content, paper_arxiv_id=paper_arxiv_id, paper_section=paper_section)
 
-            paragraph_cite_bib_keys = paragraph.get('cites')
-            for bib_key in paragraph_cite_bib_keys:
-                self.db.insert_paragraph_citations(paragraph_id=id_zero_based, paper_section=paper_section, citing_arxiv_id=paper_arxiv_id, bib_key=bib_key)
+            # paragraph_cite_bib_keys = paragraph.get('cites')
+            # for bib_key in paragraph_cite_bib_keys:
+            #     self.db.insert_paragraph_citations(paragraph_id=id_zero_based, paper_section=paper_section, citing_arxiv_id=paper_arxiv_id, bib_key=bib_key)
 
 
             # paragraph_ref_labels = paragraph.get('ref_labels')

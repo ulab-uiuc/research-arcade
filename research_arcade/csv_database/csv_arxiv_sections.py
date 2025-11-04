@@ -2,9 +2,11 @@ import pandas as pd
 import os
 from typing import Optional
 from pathlib import Path
+import json
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from ..arxiv_utils.multi_input.multi_download import MultiDownload
 from ..arxiv_utils.graph_constructor.node_processor import NodeConstructor
-import json
 
 class CSVArxivSections:
     def __init__(self, csv_dir: str):
@@ -15,8 +17,6 @@ class CSVArxivSections:
         Path(csv_path).parent.mkdir(parents=True, exist_ok=True)
         if not os.path.exists(csv_path):
             self.create_sections_table()
-        # self.arxiv_crawler = ArxivCrawler()
-
 
     def create_sections_table(self):
         if not os.path.exists(self.csv_path):
@@ -172,8 +172,9 @@ class CSVArxivSections:
         return df.copy()
 
 
-    def construct_tables_table_from_api(self, arxiv_ids, dest_dir):
+    def construct_sections_table_from_api(self, arxiv_ids, dest_dir):
         # Check if papers already exists in the directory
+        md = MultiDownload()
         downloaded_paper_ids = []
         for arxiv_id in arxiv_ids:
             paper_dir = f"{dest_dir}/{arxiv_id}/{arxiv_id}_metadata.json"
@@ -182,7 +183,6 @@ class CSVArxivSections:
                 downloaded_paper_ids.append(arxiv_id)
 
         for arxiv_id in downloaded_paper_ids:
-            md = MultiDownload()
             try:
                 md.download_arxiv(input=arxiv_id, input_type = "id", output_type="latex", dest_dir=self.dest_dir)
                 print(f"paper with id {arxiv_id} downloaded")

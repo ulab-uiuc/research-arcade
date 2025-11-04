@@ -40,3 +40,91 @@ class CSVArxivPaperAuthor:
         self._save_data(df)
         return True
 
+    
+    def get_all_authors(self, is_all_features=True):
+        df = self._load_data()
+        
+        if df.empty:
+            return None
+        
+        return df.copy()
+        
+    def get_paper_neighboring_authors(self, paper_arxiv_id: str) -> Optional[pd.DataFrame]:
+        df = self._load_data()
+        
+        if df.empty:
+            return None
+        
+        result = df[df['paper_arxiv_id'] == paper_arxiv_id].copy()
+        
+        if result.empty:
+            return None
+        
+        result = result.sort_values('author_sequence', ascending=True)
+        
+        return result.reset_index(drop=True)
+
+    def get_author_neighboring_papers(self, author_id: str) -> Optional[pd.DataFrame]:
+        df = self._load_data()
+        
+        if df.empty:
+            return None
+        
+        result = df[df['author_id'] == author_id].copy()
+        
+        if result.empty:
+            return None
+        
+        return result.reset_index(drop=True)
+
+def delete_paper_author_by_id(self, paper_arxiv_id: str, author_id: str) -> bool:
+    df = self._load_data()
+    
+    if df.empty:
+        return False
+    
+    mask = (df['paper_arxiv_id'] == paper_arxiv_id) & (df['author_id'] == author_id)
+    
+    if not mask.any():
+        return False
+    
+    df = df[~mask]
+    self._save_data(df)
+    
+    return True
+
+
+def delete_paper_author_by_paper_id(self, paper_arxiv_id: str) -> int:
+    df = self._load_data()
+    
+    if df.empty:
+        return 0
+    
+    mask = df['paper_arxiv_id'] == paper_arxiv_id
+    count = mask.sum()
+    
+    if count == 0:
+        return 0
+    
+    df = df[~mask]
+    self._save_data(df)
+    
+    return count
+
+
+def delete_paper_author_by_author_id(self, author_id: str) -> int:
+    df = self._load_data()
+    
+    if df.empty:
+        return 0
+    
+    mask = df['author_id'] == author_id
+    count = mask.sum()
+    
+    if count == 0:
+        return 0
+    
+    df = df[~mask]
+    self._save_data(df)
+    
+    return count

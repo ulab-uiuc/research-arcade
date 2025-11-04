@@ -6,6 +6,12 @@ import pandas as pd
 import json
 
 
+
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from ..arxiv_utils.multi_input.multi_download import MultiDownload
+from ..arxiv_utils.graph_constructor.node_processor import NodeConstructor
+from ..arxiv_utils.utils import arxiv_id_processor
 class SQLArxivCitation:
     def __init__(self, host: str, dbname: str, user: str, password: str, port: str):
         self.host = host
@@ -324,3 +330,67 @@ class SQLArxivCitation:
 
         print(f"Successfully imported {len(rows)} citations from {csv_file}")
         return True
+
+
+    def construct_tables_table_from_api(self, arxiv_ids, dest_dir):
+        # Check if papers already exists in the directory
+        downloaded_paper_ids = []
+        for arxiv_id in arxiv_ids:
+            paper_dir = f"{dest_dir}/{arxiv_id}/{arxiv_id}_metadata.json"
+
+            if not os.path.exists(paper_dir):
+                downloaded_paper_ids.append(arxiv_id)
+
+        for arxiv_id in downloaded_paper_ids:
+            md = MultiDownload()
+            try:
+                md.download_arxiv(input=arxiv_id, input_type = "id", output_type="latex", dest_dir=self.dest_dir)
+                print(f"paper with id {arxiv_id} downloaded")
+                downloaded_paper_ids.append(arxiv_id)
+            except RuntimeError as e:
+                print(f"[ERROR] Failed to download {arxiv_id}: {e}")
+                continue
+
+        for arxiv_id in arxiv_ids:
+            # Search if the corresponding paper graph exists
+
+            json_path = f"{dest_dir}/output/{arxiv_id}.json"
+            if not os.path.exists(json_path):
+                # arxiv_id_graph.append(arxiv_id)
+                try:
+                    # Build corresponding graph
+                    md.build_paper_graph(
+                        input=arxiv_id,
+                        input_type="id",
+                        dest_dir=dest_dir
+                    )
+                except Exception as e:
+                    print(f"[Warning] Failed to process papers: {e}")
+                    continue
+
+            try:
+                with open(json_path, 'r') as file:
+                    file_json = json.load(file)
+                    for citation in file_json['citations'].values():
+                        # print(f"Citation: {citation}")
+                        cited_arxiv_id = citation.get('arxiv_id')
+                        bib_key = citation.get('bib_key')
+                        bib_title = citation.get('bib_title')
+                        bib_author = citation.get('bib_author ')
+                        contexts = citation.get('context')
+                        citing_sections = set()
+                        for context in contexts:
+                            citing_section = context['section']
+                            citing_sections.add(citing_section)
+                        
+                        self.insert_citation(citing_arxiv_id=arxiv_id, cited_arxiv_id=cited_arxiv_id, citing_sections=list(citing_section), bib_title=bib_title, bib_key=bib_key, author_cited_paper=bib_author)
+
+            except FileNotFoundError:
+                print(f"Error: The file '{file_json}' was not found.")
+                continue
+            except json.JSONDecodeError:
+                print(f"Error: Could not decode JSON from '{file_json}'. Check if the file contains valid JSON.")
+                continue
+            except Exception as e:
+                print(f"An unexpected error occurred: {e}")
+                continue

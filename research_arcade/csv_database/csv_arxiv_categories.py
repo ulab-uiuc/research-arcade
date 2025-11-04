@@ -3,6 +3,8 @@ import os
 from typing import Optional
 from pathlib import Path
 import json
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from ..arxiv_utils.multi_input.multi_download import MultiDownload
 from ..arxiv_utils.graph_constructor.node_processor import NodeConstructor
 
@@ -144,7 +146,7 @@ class CSVArxivCategory:
         return df.copy()
 
     def construct_category_table_from_api(self, arxiv_ids, dest_dir):
-
+        
         # Check if papers already exists in the directory
         downloaded_paper_ids = []
         for arxiv_id in arxiv_ids:
@@ -158,7 +160,6 @@ class CSVArxivCategory:
             try:
                 md.download_arxiv(input=arxiv_id, input_type = "id", output_type="latex", dest_dir=self.dest_dir)
                 print(f"paper with id {arxiv_id} downloaded")
-                downloaded_paper_ids.append(arxiv_id)
             except RuntimeError as e:
                 print(f"[ERROR] Failed to download {arxiv_id}: {e}")
                 continue
@@ -168,12 +169,16 @@ class CSVArxivCategory:
                 metadata_path = f"{dest_dir}/{arxiv_id}/{arxiv_id}_metadata.json"
                 with open(metadata_path, 'r') as f:
                     metadata = json.load(f)  # Use json.load(), not json.loads()
+                    print(metadata)
                 
                 # Validate required fields
-                required_fields = ['category']
+                required_fields = ['categories']
                 if not all(field in metadata for field in required_fields):
                     raise ValueError(f"Missing category for {arxiv_id}")
                 
-                self.insert_category(name=metadata['category'])
-            except Exception:
+                categories = metadata['categories']
+                for category in categories:
+                    self.insert_category(name=category)
+            except Exception as e:
+                print(e)
                 print(f"Paper {arxiv_id} does not have category found")

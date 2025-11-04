@@ -359,9 +359,9 @@ class ResearchArcade:
                 return None
         elif table == 'arxiv_paper_author':
             # Expect keys: 'paper_id' and/or 'author_id'
-            if "paper_id" in primary_key and "author_id" in primary_key:
+            if "paper_arxiv_id" in primary_key and "author_id" in primary_key:
                 return self.arxiv_paper_author.delete_paper_author_by_id(**primary_key)
-            elif "paper_id" in primary_key:
+            elif "paper_arxiv_id" in primary_key:
                 return self.arxiv_paper_author.delete_paper_author_by_paper_id(**primary_key)
             elif "author_id" in primary_key:
                 return self.arxiv_paper_author.delete_paper_author_by_author_id(**primary_key)
@@ -370,9 +370,9 @@ class ResearchArcade:
                 return None
         elif table == 'arxiv_paper_category':
             # Expect keys: 'paper_id' and/or 'category_id'
-            if "paper_id" in primary_key and "category_id" in primary_key:
+            if "paper_arxiv_id" in primary_key and "category_id" in primary_key:
                 return self.arxiv_paper_category.delete_paper_category_by_id(**primary_key)
-            elif "paper_id" in primary_key:
+            elif "paper_arxiv_id" in primary_key:
                 return self.arxiv_paper_category.delete_paper_category_by_paper_id(**primary_key)
             elif "category_id" in primary_key:
                 return self.arxiv_paper_category.delete_paper_category_by_category_id(**primary_key)
@@ -381,9 +381,9 @@ class ResearchArcade:
                 return None
         elif table == 'arxiv_paper_figure':
             # Expect keys: 'paper_id' and/or 'figure_id'
-            if "paper_id" in primary_key and "figure_id" in primary_key:
+            if "paper_arxiv_id" in primary_key and "figure_id" in primary_key:
                 return self.arxiv_paper_figure.delete_paper_figure_by_id(**primary_key)
-            elif "paper_id" in primary_key:
+            elif "paper_arxiv_id" in primary_key:
                 return self.arxiv_paper_figure.delete_paper_figure_by_paper_id(**primary_key)
             elif "figure_id" in primary_key:
                 return self.arxiv_paper_figure.delete_paper_figure_by_figure_id(**primary_key)
@@ -392,9 +392,9 @@ class ResearchArcade:
                 return None
         elif table == 'arxiv_paper_table':
             # Expect keys: 'paper_id' and/or 'table_id'
-            if "paper_id" in primary_key and "table_id" in primary_key:
+            if "paper_arxiv_id" in primary_key and "table_id" in primary_key:
                 return self.arxiv_paper_table.delete_paper_table_by_id(**primary_key)
-            elif "paper_id" in primary_key:
+            elif "paper_arxiv_id" in primary_key:
                 return self.arxiv_paper_table.delete_paper_table_by_paper_id(**primary_key)
             elif "table_id" in primary_key:
                 return self.arxiv_paper_table.delete_paper_table_by_table_id(**primary_key)
@@ -500,7 +500,7 @@ class ResearchArcade:
                 print("For arxiv_citation, provide 'citing_paper_id' or 'cited_paper_id'.")
                 return None
         elif table == 'arxiv_paper_author':
-            if "paper_id" in primary_key:
+            if "paper_arxiv_id" in primary_key:
                 return self.arxiv_paper_author.get_paper_neighboring_authors(**primary_key)
             elif "author_id" in primary_key:
                 return self.arxiv_paper_author.get_author_neighboring_papers(**primary_key)
@@ -508,7 +508,7 @@ class ResearchArcade:
                 print("For arxiv_paper_author, provide 'paper_id' or 'author_id'.")
                 return None
         elif table == 'arxiv_paper_category':
-            if "paper_id" in primary_key:
+            if "paper_arxiv_id" in primary_key:
                 return self.arxiv_paper_category.get_paper_neighboring_categories(**primary_key)
             elif "category_id" in primary_key:
                 return self.arxiv_paper_category.get_category_neighboring_papers(**primary_key)
@@ -516,7 +516,7 @@ class ResearchArcade:
                 print("For arxiv_paper_category, provide 'paper_id' or 'category_id'.")
                 return None
         elif table == 'arxiv_paper_figure':
-            if "paper_id" in primary_key:
+            if "paper_arxiv_id" in primary_key:
                 return self.arxiv_paper_figure.get_paper_neighboring_figures(**primary_key)
             elif "figure_id" in primary_key:
                 return self.arxiv_paper_figure.get_figure_neighboring_papers(**primary_key)
@@ -524,7 +524,7 @@ class ResearchArcade:
                 print("For arxiv_paper_figure, provide 'paper_id' or 'figure_id'.")
                 return None
         elif table == 'arxiv_paper_table':
-            if "paper_id" in primary_key:
+            if "paper_arxiv_id" in primary_key:
                 return self.arxiv_paper_table.get_paper_neighboring_tables(**primary_key)
             elif "table_id" in primary_key:
                 return self.arxiv_paper_table.get_table_neighboring_papers(**primary_key)
@@ -543,7 +543,7 @@ class ResearchArcade:
         else:
             print(f"Table {table} not found.")
             return None
-        
+
     def construct_table_from_api(self, table: str, config: dict) -> Optional[pd.DataFrame]:
         if table == "openreview_papers":
             self.openreview_papers.construct_papers_table_from_api(**config)
@@ -570,25 +570,33 @@ class ResearchArcade:
                 config["pdf_dir"] = os.getenv("PDF_FOLDER_PATH")
             self.openreview_paragraphs.construct_paragraphs_table_from_api(**config)
         elif table == "arxiv_papers":
-            self.openreview_papers.construct_papers_table_from_api(**config)
-            pass
+            self.arxiv_papers.construct_papers_table_from_api(**config)
         elif table == "arxiv_authors":
-            pass
+            self.arxiv_authors.construct_authors_table_from_api(**config)
         elif table == "arxiv_categories":
-            pass
+            self.arxiv_categories.construct_category_table_from_api(**config)
         elif table == "arxiv_figures":
-            pass
+            self.arxiv_figures.construct_figures_table_from_api(**config)
         elif table == "arxiv_tables":
-            pass
+            self.arxiv_tables.construct_tables_table_from_api(**config)
         elif table == "arxiv_sections":
-            pass
+            self.arxiv_sections.construct_sections_table_from_api(**config)
         elif table == "arxiv_paragraphs":
-            pass
-        elif table == "arxiv_paragraphs":
-            pass
-        elif table == "arxiv_paragraphs":
-            pass
-
+            self.arxiv_paragraphs.construct_paragraphs_table_from_api(**config)
+        elif table == "arxiv_categories":
+            self.arxiv_categories.construct_category_table_from_api(**config)
+        elif table == "arxiv_paper_authors":
+            self.arxiv_paper_authors.construct_papers_table_from_api(**config)
+        elif table == "arxiv_paper_figures":
+            self.arxiv_paper_figures.construct_papers_table_from_api(**config)
+        elif table == "arxiv_paper_tables":
+            self.arxiv_paper_tables.construct_papers_table_from_api(**config)
+        elif table == "arxiv_paper_categories":
+            self.arxiv_paper_tables.construct_papers_table_from_api(**config)
+        elif table == "arxiv_citations":
+            self.arxiv_citations.construct_papers_table_from_api(**config)
+        elif table == "arxiv_paragraph_references":
+            self.arxiv_paragraph_references.construct_papers_table_from_api(**config)
         else:
             print(f"Table {table} does not support construction from API")
             

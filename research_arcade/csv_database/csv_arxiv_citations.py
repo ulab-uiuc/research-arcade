@@ -3,6 +3,8 @@ import os
 from pathlib import Path
 from typing import Optional
 import json
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from ..arxiv_utils.multi_input.multi_download import MultiDownload
 from ..arxiv_utils.graph_constructor.node_processor import NodeConstructor
 
@@ -71,7 +73,6 @@ class CSVArxivCitation:
                 continue
         
         for arxiv_id in arxiv_ids:
-            # Search if the corresponding paper graph exists
 
             json_path = f"{dest_dir}/output/{arxiv_id}.json"
             if not os.path.exists(json_path):

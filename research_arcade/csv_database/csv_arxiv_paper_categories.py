@@ -44,3 +44,98 @@ class CSVArxivPaperCategory:
             return None
         
         return df.copy()
+    
+    def get_all_paper_categories(self):
+
+        df = self._load_data()
+        
+        if df.empty:
+            return None
+        
+        return df.copy()
+    
+
+    def get_paper_neighboring_categories(self, paper_arxiv_id: str) -> Optional[pd.DataFrame]:
+
+        df = self._load_data()
+        
+        if df.empty:
+            return None
+        
+        result = df[df['paper_arxiv_id'] == paper_arxiv_id].copy()
+        
+        if result.empty:
+            return None
+        
+        return result.reset_index(drop=True)
+
+
+    def get_category_neighboring_papers(self, category_id: str) -> Optional[pd.DataFrame]:
+
+        df = self._load_data()
+        
+        if df.empty:
+            return None
+        
+        result = df[df['category_id'] == category_id].copy()
+        
+        if result.empty:
+            return None
+        
+        return result.reset_index(drop=True)
+
+
+    def delete_paper_category_by_id(self, paper_arxiv_id: str, category_id: str) -> bool:
+
+        df = self._load_data()
+        
+        if df.empty:
+            return False
+        
+        mask = (df['paper_arxiv_id'] == paper_arxiv_id) & (df['category_id'] == category_id)
+        
+        if not mask.any():
+            return False
+        
+        df = df[~mask]
+        self._save_data(df)
+        
+        return True
+
+
+    def delete_paper_category_by_paper_id(self, paper_arxiv_id: str) -> int:
+
+        df = self._load_data()
+        
+        if df.empty:
+            return 0
+        
+        mask = df['paper_arxiv_id'] == paper_arxiv_id
+        count = mask.sum()
+        
+        if count == 0:
+            return 0
+        
+        df = df[~mask]
+        self._save_data(df)
+        
+        return count
+
+
+    def delete_paper_category_by_category_id(self, category_id: str) -> int:
+
+        df = self._load_data()
+        
+        if df.empty:
+            return 0
+        
+        mask = df['category_id'] == category_id
+        count = mask.sum()
+        
+        if count == 0:
+            return 0
+        
+        df = df[~mask]
+        self._save_data(df)
+        
+        return count

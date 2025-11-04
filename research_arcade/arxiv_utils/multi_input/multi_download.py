@@ -60,7 +60,7 @@ class MultiDownload:
             os.makedirs(dest_dir, exist_ok=True)
             with open(f"{dest_dir}/{arxiv_id}_metadata.json", "w", encoding="utf-8") as f:
                 json.dump(metadata, f, ensure_ascii=False, indent=2)
-
+        
         if output_type == "pdf":
             pdf_path = paper.download_pdf(filename = filename_pdf, dirpath = dest_dir)
             
@@ -73,7 +73,7 @@ class MultiDownload:
         if output_type == "both":
             latex_path = paper.download_source(filename = filename_latex, dirpath = dest_dir)
             pdf_path = paper.download_pdf(filename = filename_pdf, dirpath = dest_dir)
-        pdf_path = pdf_path
+        
 
 
     def download_papers_by_field_and_date(

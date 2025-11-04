@@ -143,7 +143,7 @@ openreview.authorship
 openreview.submitted_to</code></pre>
         </div>
 
-        <h3 class="title is-4 mt-5">Querying Across Schemas</h3>
+        <!-- <h3 class="title is-4 mt-5">Querying Across Schemas</h3>
         <pre><code>-- Example: Join papers from both sources
 SELECT 
     a.paper_id, 
@@ -162,7 +162,7 @@ SELECT
 FROM arxiv.papers a
 JOIN openreview.papers o ON a.arxiv_id = o.arxiv_id
 JOIN openreview.submitted_to st ON o.paper_id = st.paper_id
-JOIN openreview.venues v ON st.venue_id = v.venue_id;</code></pre>
+JOIN openreview.venues v ON st.venue_id = v.venue_id;</code></pre> -->
       </div>
 
       <!-- CSV Directory Structure -->
@@ -199,7 +199,7 @@ JOIN openreview.venues v ON st.venue_id = v.venue_id;</code></pre>
     └── submitted_to.csv</code></pre>
         </div>
 
-        <h3 class="title is-4 mt-5">Loading and Joining CSV Data</h3>
+        <!-- <h3 class="title is-4 mt-5">Loading and Joining CSV Data</h3>
         <pre><code>import pandas as pd
 
 # Load data from both sources
@@ -219,11 +219,11 @@ with_reviews = merged.merge(
     reviews, 
     left_on='paper_id_openreview',
     right_on='paper_id'
-)</code></pre>
+)</code></pre> -->
       </div>
 
       <!-- Cross-Source Linking -->
-      <div class="content mt-6">
+      <!-- <div class="content mt-6">
         <h2 class="title is-3">Cross-Source Linking</h2>
         <p>
           Papers can exist in both ArXiv and OpenReview datasets. ResearchArcade provides stable identifiers for linking data across sources.
@@ -261,9 +261,9 @@ with_reviews = merged.merge(
               </tr>
             </tbody>
           </table>
-        </div>
+        </div> -->
 
-        <h3 class="title is-4 mt-5">Linking Strategy</h3>
+        <!-- <h3 class="title is-4 mt-5">Linking Strategy</h3>
         <div class="box">
           <h4 class="title is-6">1. Primary Match: ArXiv ID</h4>
           <p>The most reliable method. OpenReview papers often include ArXiv IDs, enabling direct joins.</p>
@@ -277,11 +277,11 @@ with_reviews = merged.merge(
         <div class="box">
           <h4 class="title is-6">3. Tertiary Match: Title + Author Matching</h4>
           <p>Fuzzy matching on title and author names when identifiers are unavailable. Requires validation.</p>
-        </div>
-      </div>
+        </div> -->
+      <!-- </div> -->
 
       <!-- Entity Overlap -->
-      <div class="content mt-6">
+      <!-- <div class="content mt-6">
         <h2 class="title is-3">Entity Distribution</h2>
         <p>
           Different entity types are available in each schema based on the data source characteristics.
@@ -368,10 +368,10 @@ with_reviews = merged.merge(
             </tbody>
           </table>
         </div>
-      </div>
+      </div> -->
 
       <!-- Naming Conventions -->
-      <div class="content mt-6">
+      <!-- <div class="content mt-6">
         <h2 class="title is-3">Naming Conventions</h2>
         
         <h3 class="title is-4 mt-5">Table/File Naming</h3>
@@ -423,10 +423,10 @@ with_reviews = merged.merge(
             </tbody>
           </table>
         </div>
-      </div>
+      </div> -->
 
       <!-- Best Practices -->
-      <div class="content mt-6">
+      <!-- <div class="content mt-6">
         <h2 class="title is-3">Best Practices</h2>
         
         <div class="notification is-warning is-light">
@@ -442,7 +442,7 @@ with_reviews = merged.merge(
       </div>
 
       <!-- Example Queries -->
-      <div class="content mt-6">
+      <!-- <div class="content mt-6">
         <h2 class="title is-3">Example Cross-Schema Queries</h2>
 
         <h3 class="title is-4 mt-5">Papers with Both ArXiv and OpenReview Data</h3>
@@ -485,7 +485,7 @@ JOIN openreview.papers p ON st.paper_id = p.paper_id
 LEFT JOIN openreview.decisions d ON p.paper_id = d.paper_id
 GROUP BY v.venue_id, v.name, v.year
 ORDER BY v.year DESC, v.name;</code></pre>
-      </div>
+      </div> -->
 
       <!-- Related Resources -->
       <div class="content mt-6">

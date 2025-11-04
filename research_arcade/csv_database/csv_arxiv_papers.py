@@ -5,9 +5,12 @@ import os
 from typing import Optional
 from pathlib import Path
 import json
+import sys
 # from ..data import *
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from ..arxiv_utils.multi_input.multi_download import MultiDownload
 from ..arxiv_utils.graph_constructor.node_processor import NodeConstructor
+from ..arxiv_utils.utils import arxiv_id_processor
 
 # TODO: refactor the original ArxivCrawler into the ArxivCrawler file
 
@@ -203,10 +206,10 @@ class CSVArxivPapers:
         # Concatenate and save
         combined_df = pd.concat([current_df, external_df], ignore_index=True)
         self._save_data(combined_df)
-        
+
         print(f"Successfully imported {len(external_df)} papers from {csv_file}")
         return True
-    
+
     def construct_papers_table_from_api(self, arxiv_ids, dest_dir):
 
         # Check if papers already exists in the directory
@@ -220,7 +223,7 @@ class CSVArxivPapers:
         for arxiv_id in downloaded_paper_ids:
             md = MultiDownload()
             try:
-                md.download_arxiv(input=arxiv_id, input_type = "id", output_type="latex", dest_dir=self.dest_dir)
+                md.download_arxiv(input=arxiv_id, input_type = "id", output_type="latex", dest_dir=dest_dir)
                 print(f"paper with id {arxiv_id} downloaded")
                 downloaded_paper_ids.append(arxiv_id)
             except RuntimeError as e:
@@ -228,12 +231,11 @@ class CSVArxivPapers:
                 continue
         
         # Then collect information into databases
-        nc = NodeConstructor()
         for arxiv_id in arxiv_ids:
             # add metadata
             # read paper information
 
-            base_arxiv_id, version = nc.arxiv_id_processor(arxiv_id=arxiv_id)
+            base_arxiv_id, version = arxiv_id_processor(arxiv_id=arxiv_id)
             # Read metadata from path specified
 
             try:

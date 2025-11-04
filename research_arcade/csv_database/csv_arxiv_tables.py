@@ -3,7 +3,6 @@ import os
 from typing import Optional
 from pathlib import Path
 from ..arxiv_utils.multi_input.multi_download import MultiDownload
-from ..arxiv_utils.graph_constructor.node_processor import NodeConstructor
 import json
 
 class CSVArxivTable:
@@ -138,6 +137,7 @@ class CSVArxivTable:
 
     def construct_tables_table_from_api(self, arxiv_ids, dest_dir):
         # Check if papers already exists in the directory
+        md = MultiDownload()
         downloaded_paper_ids = []
         for arxiv_id in arxiv_ids:
             paper_dir = f"{dest_dir}/{arxiv_id}/{arxiv_id}_metadata.json"
@@ -146,7 +146,6 @@ class CSVArxivTable:
                 downloaded_paper_ids.append(arxiv_id)
 
         for arxiv_id in downloaded_paper_ids:
-            md = MultiDownload()
             try:
                 md.download_arxiv(input=arxiv_id, input_type = "id", output_type="latex", dest_dir=self.dest_dir)
                 print(f"paper with id {arxiv_id} downloaded")

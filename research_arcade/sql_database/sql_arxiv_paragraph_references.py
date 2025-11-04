@@ -4,6 +4,11 @@ import psycopg2
 import psycopg2.extras
 import pandas as pd  # used only for CSV import
 
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from ..arxiv_utils.multi_input.multi_download import MultiDownload
+from ..arxiv_utils.graph_constructor.node_processor import NodeConstructor
+from ..arxiv_utils.utils import arxiv_id_processor
 class SQLArxivParagraphReference:
     def __init__(self, host: str, dbname: str, user: str, password: str, port: str):
         self.host = host
