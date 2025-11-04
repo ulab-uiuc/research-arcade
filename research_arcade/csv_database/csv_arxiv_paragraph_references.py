@@ -43,7 +43,7 @@ class CSVArxivParagraphReference:
             return None
         
         return df.copy()
-    
+
 
     def get_paragraph_neighboring_references(self, paragraph_id: int) -> Optional[pd.DataFrame]:
 
@@ -109,7 +109,6 @@ class CSVArxivParagraphReference:
         self._save_data(df)
         
         return count
-
 
     def delete_paragraph_reference_by_reference_id(self, reference_id: int) -> int:
 

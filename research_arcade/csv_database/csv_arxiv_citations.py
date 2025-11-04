@@ -20,7 +20,7 @@ class CSVArxivCitation:
     def create_citations_table(self):
         df = pd.DataFrame(columns=[
             'id', 'citing_arxiv_id', 'cited_arxiv_id',
-            'bib_title', 'bib_key', 'author_cited_paper',
+            'bib_title', 'bib_key',
             'citing_sections', 'citing_paragraphs'
         ])
         df.to_csv(self.csv_path, index=False)
@@ -31,7 +31,7 @@ class CSVArxivCitation:
     def _save_data(self, df): 
         df.to_csv(self.csv_path, index=False)
 
-    def insert_citation(self, citing_arxiv_id, cited_arxiv_id, bib_title, bib_key, author_cited_paper, citing_sections=None):
+    def insert_citation(self, citing_arxiv_id, cited_arxiv_id, bib_title, bib_key, citing_sections=None):
         if citing_arxiv_id == cited_arxiv_id:
             return False
         df = self._load_data()
@@ -46,7 +46,7 @@ class CSVArxivCitation:
         new_row = pd.DataFrame([{
             'id': new_id, 'citing_arxiv_id': citing_arxiv_id,
             'cited_arxiv_id': cited_arxiv_id, 'bib_title': bib_title,
-            'bib_key': bib_key, 'author_cited_paper': author_cited_paper,
+            'bib_key': bib_key, 
             'citing_sections': citing_sections_str, 'citing_paragraphs': '[]'
         }])
         df = pd.concat([df, new_row], ignore_index=True)
@@ -114,3 +114,22 @@ class CSVArxivCitation:
             except Exception as e:
                 print(f"An unexpected error occurred: {e}")
                 continue
+
+
+    def delete_citation_by_id(self, citing_paper_id, cited_paper_id):
+        pass
+    
+    def get_all_citations(self, is_all_features=True):
+        df = self._load_data()
+        
+        if df.empty:
+            return None
+        
+        return df.copy()
+
+
+    def get_citing_neighboring_cited(self, citing_paper_id):
+        pass
+
+    def get_cited_neighboring_citing(self, cited_paper_id):
+        pass

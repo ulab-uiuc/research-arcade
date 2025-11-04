@@ -137,7 +137,7 @@ class ResearchArcade:
         else:
             print(f"Table {table} not found.")
             return None
-    
+
     def delete_node_by_id(self, table: str, primary_key: dict) -> Optional[pd.DataFrame]:
         # Tables in openreview dataset
         if table == 'openreview_authors':
@@ -198,7 +198,7 @@ class ResearchArcade:
         else:
             print(f"Table {table} not found.")
             return None
-    
+
     def get_node_features_by_id(self, table: str, primary_key: dict) -> Optional[pd.DataFrame]:
         # Tables in openreview dataset
         if table == 'openreview_authors':
@@ -292,7 +292,7 @@ class ResearchArcade:
         else:
             print(f"Table {table} not found.")
             return None
-    
+
     def delete_edge_by_id(self, table: str, primary_key: dict) -> Optional[pd.DataFrame]:
         # Openreview
         if table == 'openreview_arxiv':
@@ -539,7 +539,7 @@ class ResearchArcade:
             else:
                 print("For arxiv_paragraph_reference, provide 'paragraph_id' or 'reference_id'.")
                 return None
-        
+
         else:
             print(f"Table {table} not found.")
             return None

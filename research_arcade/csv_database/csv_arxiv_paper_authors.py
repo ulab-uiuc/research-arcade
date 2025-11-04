@@ -41,7 +41,7 @@ class CSVArxivPaperAuthor:
         return True
 
     
-    def get_all_authors(self, is_all_features=True):
+    def get_all_paper_authors(self, is_all_features=True):
         df = self._load_data()
         
         if df.empty:
