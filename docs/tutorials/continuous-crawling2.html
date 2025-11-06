@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Continuous Crawling • ResearchArcade Tutorials</title>
+  
+  <meta name="description" content="Learn how to set up automated, continuous web crawling pipelines for ongoing data collection in ResearchArcade." />
+  <meta property="og:title" content="Continuous Crawling • ResearchArcade Tutorials" />
+  <meta property="og:description" content="Learn how to set up automated, continuous web crawling pipelines for ongoing data collection in ResearchArcade." />
+  <meta property="og:image" content="../static/images/your_banner_image.png" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="icon" type="image/x-icon" href="../static/images/favicon.ico" />
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet" />
+  <link rel="stylesheet" href="../static/css/bulma.min.css" />
+  <link rel="stylesheet" href="../static/css/fontawesome.all.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="../static/css/index.css" />
+</head>
+<body>
+
+  <!-- Hero -->
+  <section class="hero is-white">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <nav class="breadcrumb" aria-label="breadcrumbs">
+          <ul>
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="./index.html">Tutorials</a></li>
+            <li class="is-active"><a aria-current="page">Continuous Crawling</a></li>
+          </ul>
+        </nav>
+        <h1 class="title is-2">Continuous Crawling</h1>
+        <p class="subtitle is-5">Set up automated, continuous web crawling pipelines for ongoing data collection and updates.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tutorial Content -->
+  <section class="section">
+    <div class="container is-max-desktop">
+      
+      <!-- Overview -->
+      <div class="content">
+        <h2 class="title is-3">Overview</h2>
+        <p>
+          This tutorial covers setting up continuous web crawling systems for ResearchArcade. 
+          You'll learn how to design crawling architectures, implement scheduling strategies, 
+          handle incremental updates, manage crawler state, monitor crawl health, 
+          and ensure ethical and efficient long-running data collection operations.
+        </p>
+      </div>
+
+      <!-- Crawling Architecture -->
+      <div class="content mt-6">
+        <h2 class="title is-3">Crawling Architecture</h2>
+        
+        <h3 class="title is-4 mt-5">Understanding Continuous Crawling</h3>
+        <p>
+          Learn the principles of ongoing automated data collection:
+        </p>
+        <ul>
+          <li>Scheduled crawls vs real-time monitoring</li>
+          <li>Incremental vs full recrawl strategies</li>
+          <li>Distributed vs centralized architectures</li>
+          <li>Queue-based vs direct crawling approaches</li>
+        </ul>
+
+        <h3 class="title is-4 mt-5">Designing a Crawling Pipeline</h3>
+        <p>
+          Build a robust pipeline for continuous data collection:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for pipeline design
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Crawler Components</h3>
+        <p>
+          Set up essential crawler components:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for crawler components
+</code></pre>
+      </div>
+
+      <!-- Scheduling Strategies -->
+      <div class="content mt-6">
+        <h2 class="title is-3">Scheduling Strategies</h2>
+        
+        <h3 class="title is-4 mt-5">Time-Based Scheduling</h3>
+        <p>
+          Schedule crawls at regular intervals using cron or task schedulers:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for time-based scheduling
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Priority-Based Crawling</h3>
+        <p>
+          Prioritize important sources for more frequent updates:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for priority crawling
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Adaptive Scheduling</h3>
+        <p>
+          Adjust crawl frequency based on update patterns:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for adaptive scheduling
+</code></pre>
+      </div>
+
+      <!-- URL Management -->
+      <div class="content mt-6">
+        <h2 class="title is-3">URL Queue Management</h2>
+        
+        <h3 class="title is-4 mt-5">Building a URL Queue</h3>
+        <p>
+          Maintain a queue of URLs to crawl:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for URL queue
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Deduplication</h3>
+        <p>
+          Prevent crawling the same URL multiple times:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for deduplication
+</code></pre>
+
+        <h3 class="title is-4 mt-5">URL Normalization</h3>
+        <p>
+          Standardize URLs for consistent tracking:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for URL normalization
+</code></pre>
+      </div>
+
+      <!-- State Management -->
+      <div class="content mt-6">
+        <h2 class="title is-3">Crawler State Management</h2>
+        
+        <h3 class="title is-4 mt-5">Tracking Crawl Progress</h3>
+        <p>
+          Maintain state across crawl sessions:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for state tracking
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Checkpoint and Resume</h3>
+        <p>
+          Save progress and resume from interruptions:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for checkpointing
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Persistent Storage for State</h3>
+        <p>
+          Store crawler state in databases or files:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for persistent storage
+</code></pre>
+      </div>
+
+      <!-- Change Detection -->
+      <div class="content mt-6">
+        <h2 class="title is-3">Change Detection</h2>
+        
+        <h3 class="title is-4 mt-5">Content Fingerprinting</h3>
+        <p>
+          Detect changes in crawled pages using hashing:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for fingerprinting
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Incremental Updates</h3>
+        <p>
+          Update only changed content in the database:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for incremental updates
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Diff Detection</h3>
+        <p>
+          Compare versions to identify specific changes:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for diff detection
+</code></pre>
+      </div>
+
+      <!-- Rate Limiting and Politeness -->
+      <div class="content mt-6">
+        <h2 class="title is-3">Rate Limiting and Politeness</h2>
+        
+        <h3 class="title is-4 mt-5">Respecting robots.txt</h3>
+        <p>
+          Honor website crawling policies:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for robots.txt
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Implementing Delays</h3>
+        <p>
+          Add delays between requests to avoid overloading servers:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for request delays
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Distributed Rate Limiting</h3>
+        <p>
+          Coordinate rate limits across multiple crawlers:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for distributed rate limiting
+</code></pre>
+      </div>
+
+      <!-- Error Handling -->
+      <div class="content mt-6">
+        <h2 class="title is-3">Error Handling and Recovery</h2>
+        
+        <h3 class="title is-4 mt-5">Handling Network Errors</h3>
+        <p>
+          Manage timeouts, connection errors, and retries:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for network error handling
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Retry Strategies</h3>
+        <p>
+          Implement exponential backoff and retry limits:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for retry strategies
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Dead Link Management</h3>
+        <p>
+          Handle and track permanently unavailable URLs:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for dead link management
+</code></pre>
+      </div>
+
+      <!-- Monitoring and Logging -->
+      <div class="content mt-6">
+        <h2 class="title is-3">Monitoring and Logging</h2>
+        
+        <h3 class="title is-4 mt-5">Crawler Metrics</h3>
+        <p>
+          Track key performance indicators:
+        </p>
+        <ul>
+          <li>Pages crawled per hour</li>
+          <li>Success and error rates</li>
+          <li>Average response times</li>
+          <li>Queue depth and processing rate</li>
+          <li>Data extraction success rates</li>
+        </ul>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for metrics tracking
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Logging Best Practices</h3>
+        <p>
+          Implement comprehensive logging for debugging:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for logging
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Alert Systems</h3>
+        <p>
+          Set up notifications for crawler issues:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for alerting
+</code></pre>
+      </div>
+
+      <!-- Distributed Crawling -->
+      <div class="content mt-6">
+        <h2 class="title is-3">Distributed Crawling</h2>
+        
+        <h3 class="title is-4 mt-5">Multi-Worker Architecture</h3>
+        <p>
+          Scale crawling with multiple worker processes:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for multi-worker setup
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Task Distribution</h3>
+        <p>
+          Distribute crawl tasks across workers efficiently:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for task distribution
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Coordination and Synchronization</h3>
+        <p>
+          Coordinate multiple crawlers to avoid conflicts:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for coordination
+</code></pre>
+      </div>
+
+      <!-- Data Storage -->
+      <div class="content mt-6">
+        <h2 class="title is-3">Data Storage Strategies</h2>
+        
+        <h3 class="title is-4 mt-5">Incremental Database Updates</h3>
+        <p>
+          Efficiently update the database with new data:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for incremental updates
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Version History</h3>
+        <p>
+          Maintain historical versions of crawled content:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for version history
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Archive Management</h3>
+        <p>
+          Archive old crawl data efficiently:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for archiving
+</code></pre>
+      </div>
+
+      <!-- Performance Optimization -->
+      <div class="content mt-6">
+        <h2 class="title is-3">Performance Optimization</h2>
+        
+        <h3 class="title is-4 mt-5">Concurrent Requests</h3>
+        <p>
+          Use async or threading for parallel crawling:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for concurrent requests
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Connection Pooling</h3>
+        <p>
+          Reuse connections for improved performance:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for connection pooling
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Resource Management</h3>
+        <p>
+          Manage memory and network resources efficiently:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for resource management
+</code></pre>
+      </div>
+
+      <!-- Best Practices -->
+      <div class="content mt-6">
+        <h2 class="title is-3">Best Practices</h2>
+        <ul>
+          <li>Always respect robots.txt and website terms of service</li>
+          <li>Implement appropriate delays between requests (1-2 seconds minimum)</li>
+          <li>Use a descriptive User-Agent header identifying your crawler</li>
+          <li>Monitor crawler health and set up alerts for failures</li>
+          <li>Implement graceful shutdown and state persistence</li>
+          <li>Log all errors and unusual responses for debugging</li>
+          <li>Use exponential backoff for retrying failed requests</li>
+          <li>Detect and handle changes efficiently to minimize redundant crawling</li>
+          <li>Scale horizontally with distributed crawling when needed</li>
+          <li>Regularly review and update your crawl targets and priorities</li>
+        </ul>
+      </div>
+
+      <!-- Common Crawling Scenarios -->
+      <div class="content mt-6">
+        <h2 class="title is-3">Common Crawling Scenarios</h2>
+        
+        <h3 class="title is-4 mt-5">Academic Paper Repository Monitoring</h3>
+        <pre><code># Code example placeholder
+# Continuously monitor arXiv or institutional repositories for new papers
+</code></pre>
+
+        <h3 class="title is-4 mt-5">News and Blog Aggregation</h3>
+        <pre><code># Code example placeholder
+# Crawl news sites and research blogs for updates
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Citation Network Updates</h3>
+        <pre><code># Code example placeholder
+# Monitor citation databases for new references
+</code></pre>
+      </div>
+
+      <!-- Ethical Considerations -->
+      <div class="content mt-6">
+        <h2 class="title is-3">Ethical Considerations</h2>
+        
+        <h3 class="title is-4 mt-5">Respecting Website Resources</h3>
+        <p>
+          Guidelines for responsible crawling:
+        </p>
+        <ul>
+          <li>Never overload target servers with excessive requests</li>
+          <li>Honor opt-out requests and remove data when requested</li>
+          <li>Respect copyright and intellectual property</li>
+          <li>Be transparent about your crawler's purpose</li>
+          <li>Provide contact information in your User-Agent</li>
+        </ul>
+
+        <h3 class="title is-4 mt-5">Legal Compliance</h3>
+        <p>
+          Ensure your crawling activities are legal:
+        </p>
+        <ul>
+          <li>Review terms of service for each website</li>
+          <li>Comply with data protection regulations (GDPR, CCPA)</li>
+          <li>Avoid crawling password-protected or private areas</li>
+          <li>Respect geographical restrictions and access policies</li>
+        </ul>
+
+        <h3 class="title is-4 mt-5">Data Privacy</h3>
+        <p>
+          Handle collected data responsibly:
+        </p>
+        <pre><code># Code example placeholder
+# Implement privacy protections and data anonymization
+</code></pre>
+      </div>
+
+      <!-- Troubleshooting -->
+      <div class="content mt-6">
+        <h2 class="title is-3">Troubleshooting</h2>
+        
+        <h3 class="title is-4 mt-5">Common Issues</h3>
+        <ul>
+          <li><strong>Crawler getting blocked:</strong> Reduce request rate, use proper User-Agent, rotate IPs if ethical</li>
+          <li><strong>Memory leaks:</strong> Properly close connections, implement garbage collection</li>
+          <li><strong>Queue growing indefinitely:</strong> Implement queue size limits and priority pruning</li>
+          <li><strong>Stale data:</strong> Review change detection logic and update frequency</li>
+          <li><strong>Inconsistent state:</strong> Use transactions and implement proper error recovery</li>
+        </ul>
+
+        <h3 class="title is-4 mt-5">Debugging Strategies</h3>
+        <pre><code># Code example placeholder
+# Add debugging tools and techniques
+</code></pre>
+      </div>
+
+      <!-- Advanced Topics -->
+      <div class="content mt-6">
+        <h2 class="title is-3">Advanced Topics</h2>
+        
+        <h3 class="title is-4 mt-5">JavaScript Rendering</h3>
+        <p>
+          Crawl dynamic content using headless browsers:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for JavaScript rendering
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Machine Learning for Crawl Optimization</h3>
+        <p>
+          Use ML to predict update patterns and optimize scheduling:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for ML optimization
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Real-Time Crawling with Webhooks</h3>
+        <p>
+          Combine scheduled crawling with real-time notifications:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for webhook integration
+</code></pre>
+      </div>
+
+      <!-- Maintenance -->
+      <div class="content mt-6">
+        <h2 class="title is-3">Maintenance and Operations</h2>
+        
+        <h3 class="title is-4 mt-5">Health Checks</h3>
+        <p>
+          Implement regular crawler health monitoring:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for health checks
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Updating Crawler Logic</h3>
+        <p>
+          Deploy updates without disrupting ongoing crawls:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for zero-downtime updates
+</code></pre>
+
+        <h3 class="title is-4 mt-5">Cleanup and Housekeeping</h3>
+        <p>
+          Regular maintenance tasks for crawler systems:
+        </p>
+        <pre><code># Code example placeholder
+# Add your Python/API code here for maintenance tasks
+</code></pre>
+      </div>
+
+      <!-- Next Steps -->
+      <div class="content mt-6">
+        <h2 class="title is-3">Next Steps</h2>
+        <p>
+          Continue learning about data collection and processing:
+        </p>
+        <div class="columns is-multiline mt-4">
+          <div class="column is-half">
+            <a class="box" href="./import-api.html">
+              <article class="media">
+                <figure class="media-left">
+                  <span class="icon is-large"><i class="fa-solid fa-cloud-arrow-down fa-2x"></i></span>
+                </figure>
+                <div class="media-content">
+                  <h3 class="title is-5">Import from API</h3>
+                  <p>Fetch data from external APIs.</p>
+                </div>
+              </article>
+            </a>
+          </div>
+
+          <div class="column is-half">
+            <a class="box" href="./task-missing-paragraph.html">
+              <article class="media">
+                <figure class="media-left">
+                  <span class="icon is-large"><i class="fa-solid fa-align-left fa-2x"></i></span>
+                </figure>
+                <div class="media-content">
+                  <h3 class="title is-5">Missing Paragraph Prediction</h3>
+                  <p>Run ML tasks on your dataset.</p>
+                </div>
+              </article>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation -->
+      <hr class="mt-6" />
+      <nav class="level">
+        <div class="level-left">
+          <div class="level-item">
+            <a href="./import-api.html" class="button is-light">
+              <span class="icon is-small">
+                <i class="fas fa-arrow-left"></i>
+              </span>
+              <span>Previous: Import from API</span>
+            </a>
+          </div>
+        </div>
+        <div class="level-right">
+          <div class="level-item">
+            <a href="./index.html" class="button is-light">
+              <span>Back to Tutorials</span>
+              <span class="icon is-small">
+                <i class="fas fa-arrow-right"></i>
+              </span>
+            </a>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="content has-text-centered is-size-7">
+        <p>
+          Built with the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a>.
+          Licensed under <a href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC BY-SA 4.0</a>.
+        </p>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

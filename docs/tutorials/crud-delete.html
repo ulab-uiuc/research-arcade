@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Delete Nodes & Edges • ResearchArcade Tutorials</title>
+  
+  <meta name="description" content="Learn how to remove entities and relationships with cascade handling and integrity checks in ResearchArcade." />
+  <link rel="icon" type="image/x-icon" href="../static/images/favicon.ico" />
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet" />
+  <link rel="stylesheet" href="../static/css/bulma.min.css" />
+  <link rel="stylesheet" href="../static/css/fontawesome.all.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="../static/css/index.css" />
+  
+  <style>
+    .code-container {
+      display: none;
+      margin-top: 1rem;
+    }
+    .code-container.is-active {
+      display: block;
+    }
+    .select-full-width {
+      width: 100%;
+    }
+    .select-full-width select {
+      width: 100%;
+    }
+    pre {
+      background-color: #f5f5f5;
+      padding: 1.25rem 1.5rem;
+      overflow-x: auto;
+    }
+    code {
+      background-color: transparent;
+      color: #363636;
+      font-size: 0.875em;
+      font-weight: normal;
+      padding: 0;
+    }
+    .placeholder-text {
+      color: #7a7a7a;
+      font-style: italic;
+      padding: 2rem;
+      text-align: center;
+      background-color: #fafafa;
+      border: 2px dashed #dbdbdb;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <section class="hero is-white">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <nav class="breadcrumb" aria-label="breadcrumbs">
+          <ul>
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="./index.html">Tutorials</a></li>
+            <li class="is-active"><a aria-current="page">Delete Nodes & Edges</a></li>
+          </ul>
+        </nav>
+        <h1 class="title is-2">Delete Nodes & Edges</h1>
+        <p class="subtitle is-5">Remove entities and relationships with cascade handling and integrity checks.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container is-max-desktop">
+      
+      <div class="content">
+        <h2 class="title is-3">Overview</h2>
+        <p>
+          This tutorial covers the safe deletion of nodes and edges from your ResearchArcade graph database. 
+          You'll learn how to remove individual entities, handle cascade deletions, maintain referential integrity, 
+          and implement soft deletion strategies for critical data.
+        </p>
+      </div>
+
+      <div class="content mt-6">
+        <h2 class="title is-3">Deleting Nodes</h2>
+        <p>Select a node type below to see the code example for deleting that entity:</p>
+        
+        <div class="field mt-4">
+          <label class="label">Select Node Type:</label>
+          <div class="control">
+            <div class="select select-full-width is-medium">
+              <select id="nodeTypeSelect">
+                <option value="">-- Choose a node type --</option>
+                <option value="arxiv_papers">arxiv_papers</option>
+                <option value="arxiv_authors">arxiv_authors</option>
+                <option value="arxiv_categories">arxiv_categories</option>
+                <option value="arxiv_sections">arxiv_sections</option>
+                <option value="arxiv_paragraphs">arxiv_paragraphs</option>
+                <option value="arxiv_figures">arxiv_figures</option>
+                <option value="arxiv_tables">arxiv_tables</option>
+                <option value="openreview_authors">openreview_authors</option>
+                <option value="openreview_papers">openreview_papers</option>
+                <option value="openreview_reviews">openreview_reviews</option>
+                <option value="openreview_revisions">openreview_revisions</option>
+                <option value="openreview_paragraphs">openreview_paragraphs</option>
+                <option value="openreview_arxiv">openreview_arxiv</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div id="nodePlaceholder" class="placeholder-text">
+          <i class="fas fa-hand-pointer fa-2x mb-3"></i>
+          <p>Select a node type from the dropdown above to view the code example.</p>
+        </div>
+
+        <div id="node-arxiv_papers" class="code-container">
+          <h3 class="title is-5">Deleting a ArXiv Papers Node</h3>
+          <p>Example code for deleting a arxiv papers entry:</p>
+          <pre><code># Delete a paper by ID
+paper_id = {&quot;arxiv_id&quot;: &quot;1706.03762v7&quot;}
+deleted_paper = research_arcade.delete_node_by_id(&quot;arxiv_papers&quot;, paper_id)
+print(&quot;Deleted paper:&quot;)
+print(deleted_paper)</code></pre>
+        </div>
+
+        <div id="node-arxiv_authors" class="code-container">
+          <div class="placeholder-text">
+            <i class="fas fa-info-circle fa-2x mb-3"></i>
+            <p>No example code available for this operation in the tutorial.</p>
+          </div>
+        </div>
+
+        <div id="node-arxiv_categories" class="code-container">
+          <div class="placeholder-text">
+            <i class="fas fa-info-circle fa-2x mb-3"></i>
+            <p>No example code available for this operation in the tutorial.</p>
+          </div>
+        </div>
+
+        <div id="node-arxiv_sections" class="code-container">
+          <div class="placeholder-text">
+            <i class="fas fa-info-circle fa-2x mb-3"></i>
+            <p>No example code available for this operation in the tutorial.</p>
+          </div>
+        </div>
+
+        <div id="node-arxiv_paragraphs" class="code-container">
+          <div class="placeholder-text">
+            <i class="fas fa-info-circle fa-2x mb-3"></i>
+            <p>No example code available for this operation in the tutorial.</p>
+          </div>
+        </div>
+
+        <div id="node-arxiv_figures" class="code-container">
+          <div class="placeholder-text">
+            <i class="fas fa-info-circle fa-2x mb-3"></i>
+            <p>No example code available for this operation in the tutorial.</p>
+          </div>
+        </div>
+
+        <div id="node-arxiv_tables" class="code-container">
+          <div class="placeholder-text">
+            <i class="fas fa-info-circle fa-2x mb-3"></i>
+            <p>No example code available for this operation in the tutorial.</p>
+          </div>
+        </div>
+
+        <div id="node-openreview_authors" class="code-container">
+          <h3 class="title is-5">Deleting a OpenReview Authors Node</h3>
+          <p>Example code for deleting a openreview authors entry:</p>
+          <pre><code>author_id = {&quot;author_openreview_id&quot;: &quot;~ishmam_zabir1&quot;}
+author_features = research_arcade.delete_node_by_id(&quot;openreview_authors&quot;, author_id)
+print(author_features.to_dict(orient=&quot;records&quot;)[0])</code></pre>
+        </div>
+
+        <div id="node-openreview_papers" class="code-container">
+          <h3 class="title is-5">Deleting a OpenReview Papers Node</h3>
+          <p>Example code for deleting a openreview papers entry:</p>
+          <pre><code>paper_id = {&quot;paper_openreview_id&quot;: &quot;zGej22CBnS&quot;}
+paper_features = research_arcade.delete_node_by_id(&quot;openreview_papers&quot;, paper_id)
+print(paper_features.to_dict(orient=&quot;records&quot;)[0])</code></pre>
+        </div>
+
+        <div id="node-openreview_reviews" class="code-container">
+          <h3 class="title is-5">Deleting a OpenReview Reviews Node</h3>
+          <p>Example code for deleting a openreview reviews entry:</p>
+          <pre><code>review_id = {&quot;review_openreview_id&quot;: &quot;DHwZxFryth&quot;}
+review_features = research_arcade.delete_node_by_id(&quot;openreview_reviews&quot;, review_id)
+print(review_features.to_dict(orient=&quot;records&quot;)[0])</code></pre>
+        </div>
+
+        <div id="node-openreview_revisions" class="code-container">
+          <h3 class="title is-5">Deleting a OpenReview Revisions Node</h3>
+          <p>Example code for deleting a openreview revisions entry:</p>
+          <pre><code>revision_id = {&quot;revision_openreview_id&quot;: &quot;yfHQOp5zWc&quot;}
+revision_feature = research_arcade.delete_node_by_id(&quot;openreview_revisions&quot;, revision_id)
+print(revision_feature.to_dict(orient=&quot;records&quot;)[0])</code></pre>
+        </div>
+
+        <div id="node-openreview_paragraphs" class="code-container">
+          <h3 class="title is-5">Deleting a OpenReview Paragraphs Node</h3>
+          <p>Example code for deleting a openreview paragraphs entry:</p>
+          <pre><code>paper_id = {&quot;paper_openreview_id&quot;: &quot;xujj_test&quot;}
+paragraph_feature = research_arcade.delete_node_by_id(&quot;openreview_paragraphs&quot;, paper_id)
+print(len(paragraph_feature))
+print(paragraph_feature.to_dict(orient=&quot;records&quot;)[0])</code></pre>
+        </div>
+
+        <div id="node-openreview_arxiv" class="code-container">
+          <h3 class="title is-5">Deleting a OpenReview-ArXiv Link Node</h3>
+          <p>Example code for deleting a openreview-arxiv link entry:</p>
+          <pre><code>openreview_id = {&quot;paper_openreview_id&quot;: &quot;zkNCWtw2fd&quot;}
+openreview_arxiv_df = research_arcade.delete_edge_by_id(&quot;openreview_arxiv&quot;, openreview_id)
+print(openreview_arxiv_df.to_dict(orient=&quot;records&quot;)[0])
+
+arxiv_id = {&quot;arxiv_id&quot;: &quot;http://arxiv.org/abs/2408.10536v1&quot;}
+openreview_arxiv_df = research_arcade.delete_edge_by_id(&quot;openreview_arxiv&quot;, arxiv_id)
+print(openreview_arxiv_df.to_dict(orient=&quot;records&quot;)[0])
+
+openreview_arxiv_id = {&quot;paper_openreview_id&quot;: &quot;zkNCWtw2fd&quot;, &quot;arxiv_id&quot;: &quot;http://arxiv.org/abs/2408.10536v1&quot;}
+openreview_arxiv_df = research_arcade.delete_edge_by_id(&quot;openreview_arxiv&quot;, openreview_arxiv_id)
+print(openreview_arxiv_df.to_dict(orient=&quot;records&quot;)[0])</code></pre>
+        </div>
+      </div>
+
+      <div class="content mt-6">
+        <h2 class="title is-3">Deleting Edges</h2>
+        <p>Select an edge type below to see the code example for deleting that relationship:</p>
+        
+        <div class="field mt-4">
+          <label class="label">Select Edge Type:</label>
+          <div class="control">
+            <div class="select select-full-width is-medium">
+              <select id="edgeTypeSelect">
+                <option value="">-- Choose an edge type --</option>
+                <option value="arxiv_paper_author">arxiv_paper_author</option>
+                <option value="arxiv_paper_category">arxiv_paper_category</option>
+                <option value="arxiv_citation">arxiv_citation</option>
+                <option value="arxiv_paper_figures">arxiv_paper_figures</option>
+                <option value="arxiv_paper_tables">arxiv_paper_tables</option>
+                <option value="arxiv_paragraph_citations">arxiv_paragraph_citations</option>
+                <option value="arxiv_paragraph_references">arxiv_paragraph_references</option>
+                <option value="openreview_papers_authors">openreview_papers_authors</option>
+                <option value="openreview_papers_reviews">openreview_papers_reviews</option>
+                <option value="openreview_papers_revisions">openreview_papers_revisions</option>
+                <option value="openreview_revisions_reviews">openreview_revisions_reviews</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div id="edgePlaceholder" class="placeholder-text">
+          <i class="fas fa-hand-pointer fa-2x mb-3"></i>
+          <p>Select an edge type from the dropdown above to view the code example.</p>
+        </div>
+
+        <div id="edge-arxiv_paper_author" class="code-container">
+          <h3 class="title is-5">Deleting an ArXiv Author-Paper Relationship</h3>
+          <p>Example code for deleting a arxiv author-paper entry:</p>
+          <pre><code>relation_id = {&#x27;paper_arxiv_id&#x27;: &#x27;1706.03762v7&#x27;, &#x27;author_id&#x27;: &#x27;ss_ashish_vaswani&#x27;}
+research_arcade.delete_edge_by_id(&quot;arxiv_paper_author&quot;, primary_key=relation_id)
+print(&quot;Relationship deleted!&quot;)</code></pre>
+        </div>
+
+        <div id="edge-arxiv_paper_category" class="code-container">
+          <h3 class="title is-5">Deleting a ArXiv Paper-Category Relationship</h3>
+          <p>Example code for deleting a arxiv paper-category entry:</p>
+          <pre><code>relation_id = {&#x27;paper_arxiv_id&#x27;: &#x27;1706.03762v7&#x27;, &#x27;category_id&#x27;: &#x27;cs.AI&#x27;}
+research_arcade.delete_edge_by_id(&quot;arxiv_paper_category&quot;, primary_key=relation_id)
+print(&quot;Relationship deleted!&quot;)</code></pre>
+        </div>
+
+        <div id="edge-arxiv_citation" class="code-container">
+          <h3 class="title is-5">Deleting a ArXiv Citation</h3>
+          <p>Example code for deleting a arxiv citation entry:</p>
+          <pre><code>citation_id = {
+    &#x27;citing_paper_id&#x27;: &#x27;1810.04805v2&#x27;,
+    &#x27;cited_paper_id&#x27;: &#x27;1706.03762v7&#x27;
+}
+research_arcade.delete_edge_by_id(&quot;arxiv_citation&quot;, primary_key=citation_id)
+print(&quot;Citation deleted!&quot;)</code></pre>
+        </div>
+
+        <div id="edge-arxiv_paper_figures" class="code-container">
+          <div class="placeholder-text">
+            <i class="fas fa-info-circle fa-2x mb-3"></i>
+            <p>No example code available for this operation in the tutorial.</p>
+          </div>
+        </div>
+
+        <div id="edge-arxiv_paper_tables" class="code-container">
+          <div class="placeholder-text">
+            <i class="fas fa-info-circle fa-2x mb-3"></i>
+            <p>No example code available for this operation in the tutorial.</p>
+          </div>
+        </div>
+
+        <div id="edge-arxiv_paragraph_citations" class="code-container">
+          <h3 class="title is-5">Deleting arxiv_paragraph_citations Edges</h3>
+          <p>Code example placeholder - Add your Python/API code here for deleting arxiv_paragraph_citations edges</p>
+        </div>
+
+        <div id="edge-arxiv_paragraph_references" class="code-container">
+          <div class="placeholder-text">
+            <i class="fas fa-info-circle fa-2x mb-3"></i>
+            <p>No example code available for this operation in the tutorial.</p>
+          </div>
+        </div>
+
+        <div id="edge-openreview_papers_authors" class="code-container">
+          <h3 class="title is-5">Deleting a OpenReview Papers-Authors Relationship</h3>
+          <p>Example code for deleting a openreview papers-authors entry:</p>
+          <pre><code>paper_id = {&quot;paper_openreview_id&quot;: &quot;00SnKBGTsz&quot;}
+openreview_papers_authors = research_arcade.delete_edge_by_id(&quot;openreview_papers_authors&quot;, paper_id)
+print(openreview_papers_authors.to_dict(orient=&quot;records&quot;))</code></pre>
+        </div>
+
+        <div id="edge-openreview_papers_reviews" class="code-container">
+          <h3 class="title is-5">Deleting a OpenReview Papers-Reviews Relationship</h3>
+          <p>Example code for deleting a openreview papers-reviews entry:</p>
+          <pre><code>paper_review_id = {&quot;paper_openreview_id&quot;: &quot;00SnKBGTsz&quot;, &quot;review_openreview_id&quot;: &quot;13mj0Rtn5W&quot;}
+openreview_papers_reviews = research_arcade.delete_edge_by_id(&quot;openreview_papers_reviews&quot;, paper_review_id)
+print(openreview_papers_reviews.to_dict(orient=&quot;records&quot;))</code></pre>
+        </div>
+
+        <div id="edge-openreview_papers_revisions" class="code-container">
+          <h3 class="title is-5">Deleting a OpenReview Papers-Revisions Relationship</h3>
+          <p>Example code for deleting a openreview papers-revisions entry:</p>
+          <pre><code>paper_revision_id = {&quot;paper_openreview_id&quot;: &quot;00SnKBGTsz&quot;, &quot;revision_openreview_id&quot;: &quot;Cn0twOEX1T&quot;}
+openreview_papers_revisions = research_arcade.delete_edge_by_id(&quot;openreview_papers_revisions&quot;, paper_revision_id)
+print(openreview_papers_revisions.to_dict(orient=&quot;records&quot;))</code></pre>
+        </div>
+
+        <div id="edge-openreview_revisions_reviews" class="code-container">
+          <h3 class="title is-5">Deleting a OpenReview Revisions-Reviews Relationship</h3>
+          <p>Example code for deleting a openreview revisions-reviews entry:</p>
+          <pre><code>revision_review_id = {&quot;revision_openreview_id&quot;: &quot;Cn0twOEX1T&quot;, &quot;review_openreview_id&quot;: &quot;13mj0Rtn5W&quot;}
+openreview_revisions_reviews = research_arcade.delete_edge_by_id(&quot;openreview_revisions_reviews&quot;, revision_review_id)
+print(openreview_revisions_reviews.to_dict(orient=&quot;records&quot;))</code></pre>
+        </div>
+      </div>
+
+      <div class="content mt-6">
+        <h2 class="title is-3">Next Steps</h2>
+        <p>Now that you understand CRUD operations, explore data import and analysis:</p>
+        <div class="columns is-multiline mt-4">
+          <div class="column is-half">
+            <a class="box" href="./import-csv.html">
+              <article class="media">
+                <figure class="media-left">
+                  <span class="icon is-large"><i class="fa-solid fa-file-csv fa-2x"></i></span>
+                </figure>
+                <div class="media-content">
+                  <h3 class="title is-5">Import from CSV</h3>
+                  <p>Load bulk data into your database.</p>
+                </div>
+              </article>
+            </a>
+          </div>
+          <div class="column is-half">
+            <a class="box" href="./task-missing-paragraph.html">
+              <article class="media">
+                <figure class="media-left">
+                  <span class="icon is-large"><i class="fa-solid fa-align-left fa-2x"></i></span>
+                </figure>
+                <div class="media-content">
+                  <h3 class="title is-5">Missing Paragraph Prediction</h3>
+                  <p>Run ML tasks on your dataset.</p>
+                </div>
+              </article>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <hr class="mt-6" />
+      <nav class="level">
+        <div class="level-left">
+          <div class="level-item">
+            <a href="./crud-edit.html" class="button is-light">
+              <span class="icon is-small"><i class="fas fa-arrow-left"></i></span>
+              <span>Previous: Edit Nodes & Edges</span>
+            </a>
+          </div>
+        </div>
+        <div class="level-right">
+          <div class="level-item">
+            <a href="./index.html" class="button is-light">
+              <span>Back to Tutorials</span>
+              <span class="icon is-small"><i class="fas fa-arrow-right"></i></span>
+            </a>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="content has-text-centered is-size-7">
+        <p>Built with the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a>. Licensed under <a href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC BY-SA 4.0</a>.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const nodeSelect = document.getElementById('nodeTypeSelect');
+    const nodePlaceholder = document.getElementById('nodePlaceholder');
+    const nodeContainers = document.querySelectorAll('[id^="node-"]');
+    nodeSelect.addEventListener('change', function() {
+      const selectedValue = this.value;
+      nodeContainers.forEach(container => container.classList.remove('is-active'));
+      if (selectedValue === '') {
+        nodePlaceholder.style.display = 'block';
+      } else {
+        nodePlaceholder.style.display = 'none';
+        const selectedContainer = document.getElementById('node-' + selectedValue);
+        if (selectedContainer) selectedContainer.classList.add('is-active');
+      }
+    });
+    const edgeSelect = document.getElementById('edgeTypeSelect');
+    const edgePlaceholder = document.getElementById('edgePlaceholder');
+    const edgeContainers = document.querySelectorAll('[id^="edge-"]');
+    edgeSelect.addEventListener('change', function() {
+      const selectedValue = this.value;
+      edgeContainers.forEach(container => container.classList.remove('is-active'));
+      if (selectedValue === '') {
+        edgePlaceholder.style.display = 'block';
+      } else {
+        edgePlaceholder.style.display = 'none';
+        const selectedContainer = document.getElementById('edge-' + selectedValue);
+        if (selectedContainer) selectedContainer.classList.add('is-active');
+      }
+    });
+  </script>
+
+</body>
+</html>

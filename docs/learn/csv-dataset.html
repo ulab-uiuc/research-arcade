@@ -124,13 +124,11 @@
         <h2 class="title is-3">File Structure</h2>
         <p>
           The CSV dataset represents <a href="../learn/entities.html">entities</a> and <a href="../learn/relations.html">relations</a> as separate CSV files.
-
-          Below, each file corresponds to one specific entity or relation defined in the linked documentation.
-
+          Each file corresponds to one specific entity or relation defined in the linked documentation.
           Each row represents a single entity or relationship instance with consistent column headers.
         </p>
 
-        <h3 class="title is-4 mt-5">Core Entity Files</h3>
+        <h3 class="title is-4 mt-5">ArXiv Entity Files</h3>
         <div class="table-container">
           <table class="table is-striped is-fullwidth">
             <thead>
@@ -142,55 +140,45 @@
             </thead>
             <tbody>
               <tr>
-                <td><code>papers.csv</code></td>
-                <td>Academic papers from ArXiv and OpenReview</td>
-                <td>paper_id, title, abstract, publish_date, source</td>
+                <td><code>arxiv_papers.csv</code></td>
+                <td>Academic papers from ArXiv with version tracking</td>
+                <td>id, arxiv_id, base_arxiv_id, version, title, abstract, submit_date, metadata</td>
               </tr>
               <tr>
-                <td><code>authors.csv</code></td>
-                <td>Paper authors and their affiliations</td>
-                <td>author_id, name, email, affiliation, orcid</td>
+                <td><code>arxiv_authors.csv</code></td>
+                <td>Authors with Semantic Scholar integration</td>
+                <td>id, semantic_scholar_id, name, homepage</td>
               </tr>
               <tr>
-                <td><code>sections.csv</code></td>
-                <td>Hierarchical paper sections</td>
-                <td>section_id, paper_id, title, section_type, depth</td>
+                <td><code>arxiv_categories.csv</code></td>
+                <td>ArXiv subject categories</td>
+                <td>id, name, description</td>
               </tr>
               <tr>
-                <td><code>paragraphs.csv</code></td>
-                <td>Text content at paragraph level</td>
-                <td>paragraph_id, section_id, text, position, word_count</td>
+                <td><code>arxiv_sections.csv</code></td>
+                <td>Paper sections with full content</td>
+                <td>id, content, title, appendix, paper_arxiv_id, section_in_paper_id</td>
               </tr>
               <tr>
-                <td><code>figures.csv</code></td>
-                <td>Paper figures and images</td>
-                <td>figure_id, paper_id, caption, file_path, position</td>
+                <td><code>arxiv_paragraphs.csv</code></td>
+                <td>Individual paragraphs within sections</td>
+                <td>id, section_id, content, paragraph_in_section_id</td>
               </tr>
               <tr>
-                <td><code>tables.csv</code></td>
-                <td>Paper tables and data</td>
-                <td>table_id, paper_id, caption, content, position</td>
+                <td><code>arxiv_figures.csv</code></td>
+                <td>Paper figures with captions and labels</td>
+                <td>id, paper_arxiv_id, path, caption, label, name</td>
               </tr>
               <tr>
-                <td><code>reviews.csv</code></td>
-                <td>Peer reviews from OpenReview</td>
-                <td>review_id, paper_id, reviewer_id, rating, confidence</td>
-              </tr>
-              <tr>
-                <td><code>decisions.csv</code></td>
-                <td>Editorial decisions on papers</td>
-                <td>decision_id, paper_id, decision_type, decision_date</td>
-              </tr>
-              <tr>
-                <td><code>venues.csv</code></td>
-                <td>Publication venues and conferences</td>
-                <td>venue_id, name, abbreviation, venue_type, year</td>
+                <td><code>arxiv_tables.csv</code></td>
+                <td>Paper tables with content</td>
+                <td>id, paper_arxiv_id, path, caption, label, table_text</td>
               </tr>
             </tbody>
           </table>
         </div>
 
-        <h3 class="title is-4 mt-5">Relationship Files</h3>
+        <h3 class="title is-4 mt-5">OpenReview Entity Files</h3>
         <div class="table-container">
           <table class="table is-striped is-fullwidth">
             <thead>
@@ -202,29 +190,114 @@
             </thead>
             <tbody>
               <tr>
-                <td><code>authorship.csv</code></td>
-                <td>Links papers to their authors</td>
-                <td>paper_id, author_id, position</td>
+                <td><code>openreview_papers.csv</code></td>
+                <td>Papers submitted to OpenReview venues</td>
+                <td>venue, paper_openreview_id, title, abstract, paper_decision, paper_pdf_link</td>
               </tr>
               <tr>
-                <td><code>citations.csv</code></td>
-                <td>Paper-to-paper citation relationships</td>
-                <td>citing_paper_id, cited_paper_id</td>
+                <td><code>openreview_authors.csv</code></td>
+                <td>Authors with affiliation information</td>
+                <td>venue, author_openreview_id, author_full_name, email, affiliation, homepage, dblp</td>
               </tr>
               <tr>
-                <td><code>references.csv</code></td>
-                <td>Paragraph-level citation contexts</td>
-                <td>paragraph_id, cited_paper_id, context</td>
+                <td><code>openreview_paragraphs.csv</code></td>
+                <td>Paragraph-level content from papers</td>
+                <td>venue, paper_openreview_id, paragraph_idx, section, content</td>
               </tr>
               <tr>
-                <td><code>revisions.csv</code></td>
+                <td><code>openreview_reviews.csv</code></td>
+                <td>Peer reviews with structured content</td>
+                <td>venue, review_openreview_id, replyto_openreview_id, writer, title, content, time</td>
+              </tr>
+              <tr>
+                <td><code>openreview_revisions.csv</code></td>
                 <td>Paper revision history</td>
-                <td>paper_id, version, revision_date</td>
+                <td>venue, original_openreview_id, revision_openreview_id, content, time</td>
               </tr>
               <tr>
-                <td><code>rebuttals.csv</code></td>
-                <td>Author responses to reviews</td>
-                <td>rebuttal_id, review_id, content</td>
+                <td><code>openreview_arxiv.csv</code></td>
+                <td>Cross-platform links to ArXiv papers</td>
+                <td>venue, paper_openreview_id, arxiv_id, title</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="title is-4 mt-5">ArXiv Relationship Files</h3>
+        <div class="table-container">
+          <table class="table is-striped is-fullwidth">
+            <thead>
+              <tr>
+                <th>File Name</th>
+                <th>Description</th>
+                <th>Key Columns</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>arxiv_citations.csv</code></td>
+                <td>Paper-to-paper citations with context</td>
+                <td>id, citing_arxiv_id, cited_arxiv_id, bib_title, bib_key, citing_sections, citing_paragraphs</td>
+              </tr>
+              <tr>
+                <td><code>arxiv_paper_authors.csv</code></td>
+                <td>Paper-author relationships with ordering</td>
+                <td>paper_arxiv_id, author_id, author_sequence</td>
+              </tr>
+              <tr>
+                <td><code>arxiv_paper_category.csv</code></td>
+                <td>Paper categorization</td>
+                <td>paper_arxiv_id, category_id</td>
+              </tr>
+              <tr>
+                <td><code>arxiv_paper_figures.csv</code></td>
+                <td>Paper-figure containment</td>
+                <td>paper_arxiv_id, figure_id</td>
+              </tr>
+              <tr>
+                <td><code>arxiv_paper_tables.csv</code></td>
+                <td>Paper-table containment</td>
+                <td>paper_arxiv_id, table_id</td>
+              </tr>
+              <tr>
+                <td><code>arxiv_paragraph_references.csv</code></td>
+                <td>Internal references to figures/tables</td>
+                <td>id, paragraph_id, paper_section, paper_arxiv_id, reference_label, reference_type</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="title is-4 mt-5">OpenReview Relationship Files</h3>
+        <div class="table-container">
+          <table class="table is-striped is-fullwidth">
+            <thead>
+              <tr>
+                <th>File Name</th>
+                <th>Description</th>
+                <th>Key Columns</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>openreview_papers_authors.csv</code></td>
+                <td>Paper-author associations</td>
+                <td>venue, paper_openreview_id, author_openreview_id</td>
+              </tr>
+              <tr>
+                <td><code>openreview_papers_reviews.csv</code></td>
+                <td>Paper-review relationships</td>
+                <td>venue, paper_openreview_id, review_openreview_id, title, time</td>
+              </tr>
+              <tr>
+                <td><code>openreview_papers_revisions.csv</code></td>
+                <td>Paper revision tracking</td>
+                <td>venue, paper_openreview_id, revision_openreview_id, title, time</td>
+              </tr>
+              <tr>
+                <td><code>openreview_revisions_reviews.csv</code></td>
+                <td>Links revisions to reviews</td>
+                <td>venue, revision_openreview_id, review_openreview_id</td>
               </tr>
             </tbody>
           </table>
@@ -232,53 +305,6 @@
       </div>
 
       <div class="content mt-6">
-        <h2 class="title is-3">Usage Examples</h2>
-        <p>
-          Load and analyze CSV files using pandas and common data science workflows.
-        </p>
-
-        <h3 class="title is-4 mt-5">Loading Data</h3>
-        <pre><code>import pandas as pd
-
-# Load individual CSV files
-papers = pd.read_csv('papers.csv')
-authors = pd.read_csv('authors.csv')
-authorship = pd.read_csv('authorship.csv')
-
-# Display basic information
-print(papers.head())
-print(papers.info())
-print(papers.describe())</code></pre>
-
-        <h3 class="title is-4 mt-5">Basic Analysis</h3>
-        <pre><code># Papers by publication year
-papers['year'] = pd.to_datetime(papers['publish_date']).dt.year
-year_counts = papers.groupby('year').size()
-
-# Top authors by paper count
-author_papers = authorship.groupby('author_id').size().sort_values(ascending=False)
-top_authors = author_papers.head(10).merge(authors, on='author_id')
-
-# Papers with most citations
-citation_counts = citations.groupby('cited_paper_id').size()
-most_cited = papers.merge(citation_counts, left_on='paper_id', 
-                          right_index=True).nlargest(20, 0)</code></pre>
-
-        <h3 class="title is-4 mt-5">Joining Data</h3>
-        <pre><code># Papers with their authors
-paper_authors = papers.merge(authorship, on='paper_id') \
-                      .merge(authors, on='author_id') \
-                      [['paper_id', 'title', 'name', 'position']]
-
-# Papers with reviews and decisions
-paper_reviews = papers.merge(reviews, on='paper_id', how='left') \
-                      .merge(decisions, on='paper_id', how='left')
-
-# Average rating per paper
-avg_ratings = reviews.groupby('paper_id')['rating'].mean() \
-                     .reset_index(name='avg_rating')</code></pre>
-
-            More examples can be found in the <a href="../tutorials/index.html">tutorial</a> part.
       <!-- Data Statistics -->
       <div class="content mt-6">
         <h2 class="title is-3">Dataset Statistics</h2>
@@ -286,31 +312,37 @@ avg_ratings = reviews.groupby('paper_id')['rating'].mean() \
           <div class="column is-one-quarter">
             <div class="box has-text-centered">
               <p class="heading">Papers</p>
-              <p class="title is-4">40000+</p>
+              <p class="title is-4">40,000+</p>
+              <p class="subtitle is-6">ArXiv & OpenReview</p>
             </div>
           </div>
           <div class="column is-one-quarter">
             <div class="box has-text-centered">
-              <p class="heading">Authors</p>
-              <p class="title is-4">Placeholder</p>
-            </div>
-          </div>
-          <div class="column is-one-quarter">
-            <div class="box has-text-centered">
-              <p class="heading">Citations</p>
-              <p class="title is-4">Placeholder</p>
+              <p class="heading">Paragraphs</p>
+              <p class="title is-4">5M+</p>
+              <p class="subtitle is-6">Fine-grained content</p>
             </div>
           </div>
           <div class="column is-one-quarter">
             <div class="box has-text-centered">
               <p class="heading">Reviews</p>
-              <p class="title is-4">Placeholder</p>
+              <p class="title is-4">Comprehensive</p>
+              <p class="subtitle is-6">OpenReview venues</p>
+            </div>
+          </div>
+          <div class="column is-one-quarter">
+            <div class="box has-text-centered">
+              <p class="heading">Citations</p>
+              <p class="title is-4">Tracked</p>
+              <p class="subtitle is-6">With context</p>
             </div>
           </div>
         </div>
       </div>
 
       <!-- Best Practices -->
+      <div class="content mt-6">
+        
 
       <!-- Format Conversion -->
       <div class="content mt-6">
