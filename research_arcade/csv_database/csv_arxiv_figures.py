@@ -190,10 +190,10 @@ class CSVArxivFigure:
                         self.insert_figure(paper_arxiv_id=arxiv_id, path=path, caption=caption,label=label)
 
             except FileNotFoundError:
-                print(f"Error: The file '{file_json}' was not found.")
+                print(f"Error: The file with path '{json_path}' was not found.")
                 continue
             except json.JSONDecodeError:
-                print(f"Error: Could not decode JSON from '{file_json}'. Check if the file contains valid JSON.")
+                print(f"Error: Could not decode JSON from path '{json_path}'. Check if the file contains valid JSON.")
                 continue
             except Exception as e:
                 print(f"An unexpected error occurred: {e}")
