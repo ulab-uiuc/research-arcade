@@ -10,13 +10,15 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from ..arxiv_utils.multi_input.multi_download import MultiDownload
 from ..arxiv_utils.graph_constructor.node_processor import NodeConstructor
 from ..arxiv_utils.utils import arxiv_id_processor
+
+
 class SQLArxivPapers:
     def __init__(self, host: str, dbname: str, user: str, password: str, port: str):
         self.host = host
         self.dbname = dbname
         self.user = user
         self.password = password
-        self.autocommit = port
+        self.port = port
         self.autocommit = True
 
     def _get_connection(self):
@@ -208,6 +210,21 @@ class SQLArxivPapers:
         finally:
             conn.close()
 
+    def get_all_papers(self, is_all_features=True):
+        """Get all papers from the database."""
+        conn = self._get_connection()
+        try:
+            cur = conn.cursor()
+            cur.execute(
+                "SELECT id, arxiv_id, base_arxiv_id, version, title, abstract, submit_date, metadata "
+                "FROM arxiv_papers"
+            )
+            rows = cur.fetchall()
+            cur.close()
+            return rows if rows else None
+        finally:
+            conn.close()
+
     # -------------------------
     # Bulk import from CSV
     # -------------------------
@@ -298,7 +315,122 @@ class SQLArxivPapers:
         print(f"Successfully imported {len(rows)} papers from {csv_file}")
         return True
 
+    def construct_table_from_csv(self, csv_file: str) -> bool:
+        """Alias for construct_papers_table_from_csv for consistency."""
+        return self.construct_papers_table_from_csv(csv_file)
 
+    def construct_table_from_json(self, json_file):
+        """
+        Construct the papers table from an external JSON file.
+        
+        Args:
+            json_file: Path to the JSON file containing paper data
+            
+        Expected JSON format:
+            [
+                {
+                    "arxiv_id": "1706.03762v7",
+                    "base_arxiv_id": "1706.03762",
+                    "version": 7,
+                    "title": "Attention Is All You Need",
+                    "abstract": "...",
+                    "submit_date": "2017-06-12",
+                    "metadata": {"venue": "NeurIPS 2017"}
+                },
+                ...
+            ]
+            
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        if not os.path.exists(json_file):
+            print(f"Error: JSON file {json_file} does not exist.")
+            return False
+
+        try:
+            # Load JSON data
+            with open(json_file, 'r', encoding='utf-8') as f:
+                json_data = json.load(f)
+            
+            # Handle different JSON structures
+            if isinstance(json_data, dict):
+                if 'papers' in json_data:
+                    papers_list = json_data['papers']
+                else:
+                    papers_list = [json_data]
+            elif isinstance(json_data, list):
+                papers_list = json_data
+            else:
+                print("Error: JSON file must contain either a list or a dictionary")
+                return False
+            
+            if not papers_list:
+                print("Error: No paper data found in JSON file")
+                return False
+            
+            # Convert to list of tuples for bulk insert
+            rows = []
+            for paper in papers_list:
+                if 'arxiv_id' not in paper or 'base_arxiv_id' not in paper or 'version' not in paper or 'title' not in paper:
+                    print(f"Warning: Skipping paper missing required fields: {paper}")
+                    continue
+                
+                # Handle metadata - keep as dict for psycopg2.Json
+                metadata = paper.get('metadata', None)
+                
+                rows.append((
+                    paper['arxiv_id'],
+                    paper['base_arxiv_id'],
+                    paper['version'],
+                    paper['title'],
+                    paper.get('abstract', None),
+                    paper.get('submit_date', None),
+                    metadata
+                ))
+
+            if not rows:
+                print("No valid paper records to import")
+                return False
+
+            conn = self._get_connection()
+            try:
+                cur = conn.cursor()
+                psycopg2.extras.execute_values(
+                    cur,
+                    """
+                    INSERT INTO arxiv_papers
+                      (arxiv_id, base_arxiv_id, version, title, abstract, submit_date, metadata)
+                    VALUES %s
+                    ON CONFLICT (arxiv_id) DO NOTHING
+                    """,
+                    [
+                        (
+                            arxiv_id,
+                            base_arxiv_id,
+                            version,
+                            title,
+                            abstract,
+                            submit_date,
+                            psycopg2.extras.Json(metadata) if metadata is not None else None
+                        )
+                        for (arxiv_id, base_arxiv_id, version, title, abstract, submit_date, metadata)
+                        in rows
+                    ],
+                    page_size=1000
+                )
+                cur.close()
+            finally:
+                conn.close()
+
+            print(f"Successfully imported {len(rows)} papers from {json_file}")
+            return True
+            
+        except json.JSONDecodeError as e:
+            print(f"Error: Invalid JSON file - {e}")
+            return False
+        except Exception as e:
+            print(f"Error importing papers from JSON: {e}")
+            return False
 
     def construct_papers_table_from_api(self, arxiv_ids, dest_dir):
 
@@ -349,5 +481,3 @@ class SQLArxivPapers:
                 )
             except Exception:
                 print(f"Paper {arxiv_id} does not have metadata downloaded")
-    
-    

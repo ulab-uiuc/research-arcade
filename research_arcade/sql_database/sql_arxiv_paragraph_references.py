@@ -2,20 +2,23 @@ import os
 from typing import Optional, List, Tuple
 import psycopg2
 import psycopg2.extras
-import pandas as pd  # used only for CSV import
+import pandas as pd
+import json
 
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from ..arxiv_utils.multi_input.multi_download import MultiDownload
 from ..arxiv_utils.graph_constructor.node_processor import NodeConstructor
 from ..arxiv_utils.utils import arxiv_id_processor
+
+
 class SQLArxivParagraphReference:
     def __init__(self, host: str, dbname: str, user: str, password: str, port: str):
         self.host = host
         self.dbname = dbname
         self.user = user
         self.password = password
-        self.autocommit = port
+        self.port = port
         self.autocommit = True
 
     def _get_connection(self):
@@ -171,6 +174,83 @@ class SQLArxivParagraphReference:
         finally:
             conn.close()
 
+    def get_all_paragraph_references(self):
+        """Get all paragraph references from the database."""
+        conn = self._get_connection()
+        try:
+            cur = conn.cursor()
+            cur.execute(
+                "SELECT id, paragraph_id, paper_section, paper_arxiv_id, reference_label, reference_type "
+                "FROM arxiv_paragraph_references"
+            )
+            rows = cur.fetchall()
+            cur.close()
+            return rows if rows else None
+        finally:
+            conn.close()
+
+    def get_paragraph_neighboring_references(self, paragraph_id: int):
+        """Get all references for a given paragraph."""
+        conn = self._get_connection()
+        try:
+            cur = conn.cursor()
+            cur.execute(
+                "SELECT id, paragraph_id, paper_section, paper_arxiv_id, reference_label, reference_type "
+                "FROM arxiv_paragraph_references WHERE paragraph_id = %s",
+                (paragraph_id,)
+            )
+            rows = cur.fetchall()
+            cur.close()
+            return rows if rows else None
+        finally:
+            conn.close()
+
+    def get_reference_neighboring_paragraphs(self, reference_id: int):
+        """Get all paragraphs that reference a given reference_id."""
+        conn = self._get_connection()
+        try:
+            cur = conn.cursor()
+            cur.execute(
+                "SELECT id, paragraph_id, paper_section, paper_arxiv_id, reference_label, reference_type "
+                "FROM arxiv_paragraph_references WHERE id = %s",
+                (reference_id,)
+            )
+            rows = cur.fetchall()
+            cur.close()
+            return rows if rows else None
+        finally:
+            conn.close()
+
+    def delete_paragraph_reference_by_paragraph_id(self, paragraph_id: int) -> int:
+        """Delete all references for a given paragraph. Returns count of deleted rows."""
+        conn = self._get_connection()
+        try:
+            cur = conn.cursor()
+            cur.execute(
+                "DELETE FROM arxiv_paragraph_references WHERE paragraph_id = %s",
+                (paragraph_id,)
+            )
+            count = cur.rowcount
+            cur.close()
+            return count
+        finally:
+            conn.close()
+
+    def delete_paragraph_reference_by_reference_id(self, reference_id: int) -> int:
+        """Delete a reference by its id. Returns count of deleted rows."""
+        conn = self._get_connection()
+        try:
+            cur = conn.cursor()
+            cur.execute(
+                "DELETE FROM arxiv_paragraph_references WHERE id = %s",
+                (reference_id,)
+            )
+            count = cur.rowcount
+            cur.close()
+            return count
+        finally:
+            conn.close()
+
     def check_paragraph_reference_exists(self, id: int) -> bool:
         """
         Returns True if a paragraph reference with the given id exists.
@@ -230,3 +310,100 @@ class SQLArxivParagraphReference:
 
         print(f"Successfully imported {len(rows)} paragraph references from {csv_file}")
         return True
+
+    def construct_table_from_csv(self, csv_file: str) -> bool:
+        """Alias for construct_paragraph_references_table_from_csv for consistency."""
+        return self.construct_paragraph_references_table_from_csv(csv_file)
+
+    def construct_table_from_json(self, json_file):
+        """
+        Construct the paragraph-reference relationships from an external JSON file.
+        
+        Args:
+            json_file: Path to the JSON file
+            
+        Expected JSON format:
+            [
+                {
+                    "paragraph_id": 1,
+                    "paper_section": "introduction",
+                    "paper_arxiv_id": "1706.03762v7",
+                    "reference_label": "fig:1",
+                    "reference_type": "figure"
+                },
+                ...
+            ]
+            
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        if not os.path.exists(json_file):
+            print(f"Error: JSON file {json_file} does not exist.")
+            return False
+
+        try:
+            # Load JSON data
+            with open(json_file, 'r', encoding='utf-8') as f:
+                json_data = json.load(f)
+            
+            # Handle different JSON structures
+            if isinstance(json_data, dict):
+                if 'paragraph_references' in json_data:
+                    relations_list = json_data['paragraph_references']
+                else:
+                    relations_list = [json_data]
+            elif isinstance(json_data, list):
+                relations_list = json_data
+            else:
+                print("Error: JSON file must contain either a list or a dictionary")
+                return False
+            
+            if not relations_list:
+                print("Error: No paragraph-reference data found in JSON file")
+                return False
+            
+            # Convert to list of tuples for bulk insert
+            rows = []
+            for relation in relations_list:
+                if 'paragraph_id' not in relation or 'paper_section' not in relation or 'paper_arxiv_id' not in relation or 'reference_label' not in relation or 'reference_type' not in relation:
+                    print(f"Warning: Skipping relation missing required fields: {relation}")
+                    continue
+                    
+                rows.append((
+                    relation['paragraph_id'],
+                    relation['paper_section'],
+                    relation['paper_arxiv_id'],
+                    relation['reference_label'],
+                    relation['reference_type']
+                ))
+
+            if not rows:
+                print("No valid paragraph-reference records to import")
+                return False
+
+            conn = self._get_connection()
+            try:
+                cur = conn.cursor()
+                psycopg2.extras.execute_values(
+                    cur,
+                    """
+                    INSERT INTO arxiv_paragraph_references
+                    (paragraph_id, paper_section, paper_arxiv_id, reference_label, reference_type)
+                    VALUES %s
+                    """,
+                    rows,
+                    page_size=1000
+                )
+                cur.close()
+            finally:
+                conn.close()
+
+            print(f"Successfully imported {len(rows)} paragraph-reference relationships from {json_file}")
+            return True
+            
+        except json.JSONDecodeError as e:
+            print(f"Error: Invalid JSON file - {e}")
+            return False
+        except Exception as e:
+            print(f"Error importing paragraph-reference relationships from JSON: {e}")
+            return False

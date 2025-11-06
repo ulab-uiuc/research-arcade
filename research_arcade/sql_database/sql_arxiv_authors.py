@@ -1,8 +1,10 @@
 import psycopg2
+import psycopg2.extras
 from semanticscholar import SemanticScholar
 
 import os
 import json
+import pandas as pd
 
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -16,7 +18,7 @@ class SQLArxivAuthors:
         self.dbname = dbname
         self.user = user
         self.password = password
-        self.autocommit = port
+        self.port = port
         self.autocommit = True
 
     def _get_connection(self):
@@ -139,40 +141,203 @@ class SQLArxivAuthors:
         finally:
             conn.close()
 
-    def construct_category_table_from_api(self, arxiv_ids, dest_dir):
-        
-        # Check if papers already exists in the directory
-        downloaded_paper_ids = []
-        for arxiv_id in arxiv_ids:
-            paper_dir = f"{dest_dir}/{arxiv_id}/{arxiv_id}_metadata.json"
+    def get_all_authors(self, is_all_features=True):
+        """Get all authors from the database."""
+        conn = self._get_connection()
+        try:
+            cur = conn.cursor()
+            cur.execute("SELECT id, semantic_scholar_id, name, homepage FROM authors")
+            rows = cur.fetchall()
+            cur.close()
+            return rows if rows else None
+        finally:
+            conn.close()
 
-            if not os.path.exists(paper_dir):
-                downloaded_paper_ids.append(arxiv_id)
-
-        for arxiv_id in downloaded_paper_ids:
-            md = MultiDownload()
-            try:
-                md.download_arxiv(input=arxiv_id, input_type = "id", output_type="latex", dest_dir=self.dest_dir)
-                print(f"paper with id {arxiv_id} downloaded")
-            except RuntimeError as e:
-                print(f"[ERROR] Failed to download {arxiv_id}: {e}")
-                continue
-        
+    def construct_authors_table_from_api(self, arxiv_ids, dest_dir):
+        """
+        Given arxiv ids, find the semantic scholar ids and pages of the authors
+        """
+        # Search for authors online
+        sch = SemanticScholar()
         for arxiv_id in arxiv_ids:
+            base_arxiv_id, version = arxiv_id_processor(arxiv_id=arxiv_id)
+            print(f"base_arxiv_id: {base_arxiv_id}")
             try:
-                metadata_path = f"{dest_dir}/{arxiv_id}/{arxiv_id}_metadata.json"
-                with open(metadata_path, 'r') as f:
-                    metadata = json.load(f)  # Use json.load(), not json.loads()
-                    print(metadata)
+                paper_sch = sch.get_paper(f"ARXIV:{base_arxiv_id}")
+                authors = paper_sch.authors
+                for author in authors:
+                    semantic_scholar_id = author.authorId
+                    author_r = sch.get_author(semantic_scholar_id)
+                    name = author_r.name
+                    url = author_r.url
                 
-                # Validate required fields
-                required_fields = ['categories']
-                if not all(field in metadata for field in required_fields):
-                    raise ValueError(f"Missing category for {arxiv_id}")
-                
-                categories = metadata['categories']
-                for category in categories:
-                    self.insert_category(name=category)
+                    self.insert_author(semantic_scholar_id=semantic_scholar_id, name=name, homepage=url)
             except Exception as e:
-                print(e)
-                print(f"Paper {arxiv_id} does not have category found")
+                print(f"Paper with arxiv id {base_arxiv_id} not found on semantic scholar: {e}")
+                continue
+
+    def construct_table_from_csv(self, csv_file):
+        """
+        Construct the authors table from an external CSV file.
+        
+        Args:
+            csv_file: Path to the CSV file
+            
+        Expected CSV format:
+            - Required columns: semantic_scholar_id, name
+            - Optional columns: homepage
+            
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        if not os.path.exists(csv_file):
+            print(f"Error: CSV file {csv_file} does not exist.")
+            return False
+    
+        try:
+            df = pd.read_csv(csv_file)
+
+            required_cols = ['semantic_scholar_id', 'name']
+            missing_cols = [col for col in required_cols if col not in df.columns]
+
+            if missing_cols:
+                print(f"Error: External CSV is missing required columns: {missing_cols}")
+                return False
+
+            # Add optional columns if they don't exist
+            if 'homepage' not in df.columns:
+                df['homepage'] = None
+
+            # Prepare rows for bulk insert
+            rows = list(df[['semantic_scholar_id', 'name', 'homepage']].itertuples(index=False, name=None))
+
+            if not rows:
+                print("No rows to import.")
+                return True
+
+            conn = self._get_connection()
+            try:
+                cur = conn.cursor()
+                psycopg2.extras.execute_values(
+                    cur,
+                    """
+                    INSERT INTO authors (semantic_scholar_id, name, homepage)
+                    VALUES %s
+                    ON CONFLICT (semantic_scholar_id) DO NOTHING
+                    """,
+                    rows,
+                    page_size=1000
+                )
+                cur.close()
+            finally:
+                conn.close()
+
+            print(f"Successfully imported {len(rows)} authors from {csv_file}")
+            return True
+            
+        except Exception as e:
+            print(f"Error importing authors from CSV: {e}")
+            return False
+
+    def construct_table_from_json(self, json_file):
+        """
+        Construct the authors table from an external JSON file.
+        
+        Args:
+            json_file: Path to the JSON file containing author data
+            
+        Expected JSON format (list of objects):
+            [
+                {
+                    "semantic_scholar_id": "123456",
+                    "name": "John Doe",
+                    "homepage": "https://example.com"  // optional
+                },
+                ...
+            ]
+            
+        Or (single object with authors array):
+            {
+                "authors": [
+                    {
+                        "semantic_scholar_id": "123456",
+                        "name": "John Doe",
+                        "homepage": "https://example.com"
+                    },
+                    ...
+                ]
+            }
+            
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        if not os.path.exists(json_file):
+            print(f"Error: JSON file {json_file} does not exist.")
+            return False
+
+        try:
+            # Load JSON data
+            with open(json_file, 'r', encoding='utf-8') as f:
+                json_data = json.load(f)
+            
+            # Handle different JSON structures
+            if isinstance(json_data, dict):
+                # If it's a dict, look for an 'authors' key
+                if 'authors' in json_data:
+                    authors_list = json_data['authors']
+                else:
+                    # Treat the dict as a single author record
+                    authors_list = [json_data]
+            elif isinstance(json_data, list):
+                authors_list = json_data
+            else:
+                print("Error: JSON file must contain either a list or a dictionary")
+                return False
+            
+            if not authors_list:
+                print("Error: No author data found in JSON file")
+                return False
+            
+            # Convert to list of tuples for bulk insert
+            rows = []
+            for author in authors_list:
+                if 'semantic_scholar_id' not in author or 'name' not in author:
+                    print(f"Warning: Skipping author record missing required fields: {author}")
+                    continue
+                    
+                rows.append((
+                    author['semantic_scholar_id'],
+                    author['name'],
+                    author.get('homepage', None)
+                ))
+
+            if not rows:
+                print("No valid author records to import")
+                return False
+
+            conn = self._get_connection()
+            try:
+                cur = conn.cursor()
+                psycopg2.extras.execute_values(
+                    cur,
+                    """
+                    INSERT INTO authors (semantic_scholar_id, name, homepage)
+                    VALUES %s
+                    ON CONFLICT (semantic_scholar_id) DO NOTHING
+                    """,
+                    rows,
+                    page_size=1000
+                )
+                cur.close()
+            finally:
+                conn.close()
+
+            print(f"Successfully imported {len(rows)} authors from {json_file}")
+            return True
+            
+        except json.JSONDecodeError as e:
+            print(f"Error: Invalid JSON file - {e}")
+            return False
+        except Exception as e:
+            print(f"Error importing authors from JSON: {e}")
+            return False

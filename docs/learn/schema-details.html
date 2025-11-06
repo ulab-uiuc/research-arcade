@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Schema Details • ResearchArcade</title>
+  <title>Data Layout • ResearchArcade</title>
 
   <!-- Open Graph / Twitter -->
   <meta name="description" content="Schema organization for ArXiv and OpenReview datasets - database structure, naming conventions, and cross-source linking." />
-  <meta property="og:title" content="Schema Details • ResearchArcade" />
-  <meta property="og:description" content="Schema organization for ArXiv and OpenReview datasets - database structure, naming conventions, and cross-source linking." />
+  <meta property="og:title" content="Data Layout • ResearchArcade" />
+  <meta property="og:description" content="Data organization for ArXiv and OpenReview datasets - database structure, naming conventions, and cross-source linking." />
   <meta property="og:image" content="../static/images/your_banner_image.png" />
   <meta property="og:type" content="website" />
   <meta name="twitter:card" content="summary_large_image" />
@@ -33,17 +33,17 @@
           <ul>
             <li><a href="../index.html">Home</a></li>
             <li><a href="../learn/index.html">Learn</a></li>
-            <li class="is-active"><a aria-current="page">Schema Details</a></li>
+            <li class="is-active"><a aria-current="page">Data Layout</a></li>
           </ul>
         </nav>
         <h1 class="title is-2">
           <span class="icon-text">
             <span class="icon"><i class="fa-solid fa-table-list"></i></span>
-            <span>Schema Details</span>
+            <span>Data Layout</span>
           </span>
         </h1>
         <p class="subtitle is-5">
-          Schema organization for <strong>ArXiv and OpenReview datasets</strong> - structure, naming, and linking.
+          Data organization for <strong>ArXiv and OpenReview datasets</strong> - structure, naming, and linking.
         </p>
       </div>
     </div>
@@ -55,21 +55,20 @@
       <div class="content">
         <h2 class="title is-3">Overview</h2>
         <p>
-          ResearchArcade manages two distinct but interconnected datasets: ArXiv and OpenReview. To maintain clarity and enable efficient querying, these datasets are organized using separate schemas in SQL databases or separate directories in file-based storage. This page explains the organizational structure, naming conventions, and how data from both sources can be linked together.
+          ResearchArcade manages two distinct but interconnected datasets: ArXiv and OpenReview. To maintain clarity and enable efficient querying, these datasets are organized using separate prefix in SQL databases or separate directories in file-based storage. This page explains the organizational structure, naming conventions, and how data from both sources can be linked together.
         </p>
         
         <div class="notification is-info is-light">
           <span class="icon"><i class="fa-solid fa-circle-info"></i></span>
           <strong>Key Concept:</strong> 
-          Separate schemas preserve data provenance while enabling cross-source queries and analysis.
+          Separate prefixes preserve data provenance while enabling cross-source queries and analysis.
         </div>
       </div>
 
-      <!-- Schema Organization -->
       <div class="content mt-6">
-        <h2 class="title is-3">Schema Organization</h2>
+        <h2 class="title is-3">Data Organization</h2>
         <p>
-          ResearchArcade uses two parallel schemas to organize data from different sources while maintaining a consistent data model.
+          ResearchArcade uses two parallel prefixes to organize data from different sources while maintaining a consistent data model.
         </p>
 
         <div class="columns is-multiline">
@@ -78,12 +77,12 @@
               <h3 class="title is-5">
                 <span class="icon-text">
                   <span class="icon has-text-info"><i class="fa-solid fa-folder"></i></span>
-                  <span>ArXiv Schema</span>
+                  <span>ArXiv Data</span>
                 </span>
               </h3>
               <p>Contains papers from ArXiv.org with full-text parsing, sections, paragraphs, figures, tables, and citation data.</p>
               <ul class="mt-3">
-                <li><strong>SQL:</strong> <code>arxiv</code> schema</li>
+                <li><strong>SQL:</strong> <code>arxiv</code> data</li>
                 <li><strong>CSV:</strong> <code>arxiv/</code> directory</li>
                 <li><strong>Focus:</strong> Content structure and citations</li>
               </ul>
@@ -95,12 +94,12 @@
               <h3 class="title is-5">
                 <span class="icon-text">
                   <span class="icon has-text-success"><i class="fa-solid fa-folder"></i></span>
-                  <span>OpenReview Schema</span>
+                  <span>OpenReview Data</span>
                 </span>
               </h3>
               <p>Contains papers from OpenReview with peer reviews, decisions, rebuttals, venues, and submission metadata.</p>
               <ul class="mt-3">
-                <li><strong>SQL:</strong> <code>openreview</code> schema</li>
+                <li><strong>SQL:</strong> <code>openreview</code> data</li>
                 <li><strong>CSV:</strong> <code>openreview/</code> directory</li>
                 <li><strong>Focus:</strong> Peer review process and decisions</li>
               </ul>
@@ -111,12 +110,12 @@
 
       <!-- SQL Schema Structure -->
       <div class="content mt-6">
-        <h2 class="title is-3">SQL Schema Structure</h2>
+        <h2 class="title is-3">SQL Data Structure</h2>
         <p>
           In SQL databases (PostgreSQL), data is organized into two schemas with identical table structures but different content sources.
         </p>
 
-        <h3 class="title is-4 mt-5">ArXiv Schema Tables</h3>
+        <h3 class="title is-4 mt-5">ArXiv Tables</h3>
         <div class="box has-background-light">
           <pre><code>arxiv.papers
 arxiv.authors
@@ -130,7 +129,7 @@ arxiv.references
 arxiv.revisions</code></pre>
         </div>
 
-        <h3 class="title is-4 mt-5">OpenReview Schema Tables</h3>
+        <h3 class="title is-4 mt-5">OpenReview Tables</h3>
         <div class="box has-background-light">
           <pre><code>openreview.papers
 openreview.authors
@@ -169,34 +168,37 @@ JOIN openreview.venues v ON st.venue_id = v.venue_id;</code></pre> -->
       <div class="content mt-6">
         <h2 class="title is-3">CSV Directory Structure</h2>
         <p>
-          In file-based storage, data is organized into separate directories with parallel file structures.
+          In file-based storage, data is organized with separate prefixes into the same directory.
         </p>
 
         <h3 class="title is-4 mt-5">Directory Layout</h3>
         <div class="box has-background-light">
           <pre><code>data/
-├── arxiv/
-│   ├── papers.csv
-│   ├── authors.csv
-│   ├── sections.csv
-│   ├── paragraphs.csv
-│   ├── figures.csv
-│   ├── tables.csv
-│   ├── authorship.csv
-│   ├── citations.csv
-│   ├── references.csv
-│   └── revisions.csv
-│
-└── openreview/
-    ├── papers.csv
-    ├── authors.csv
-    ├── reviews.csv
-    ├── decisions.csv
-    ├── rebuttals.csv
-    ├── venues.csv
-    ├── revisions.csv
-    ├── authorship.csv
-    └── submitted_to.csv</code></pre>
+└── dataset_name/
+    ├── arxiv_papers.csv
+    ├── arxiv_authors.csv
+    ├── arxiv_sections.csv
+    ├── arxiv_paragraphs.csv
+    ├── arxiv_figures.csv
+    ├── arxiv_tables.csv
+    ├── arxiv_citations.csv
+    ├── arxiv_categories.csv
+    ├── arxiv_paper_authors.csv
+    ├── arxiv_paper_figures.csv
+    ├── arxiv_paper_tables.csv
+    ├── arxiv_paper_categories.csv
+    ├── arxiv_paragraph_references.csv
+    ├── openreview_papers.csv
+    ├── openreview_paragraphs.csv
+    ├── openreview_authors.csv
+    ├── openreview_reviews.csv
+    ├── openreview_decisions.csv
+    ├── openreview_arxiv.csv
+    ├── openreview_revision.csv
+    ├── openreview_paper_author.csv
+    ├── openreview_paper_reviews.csv
+    └── openreview_revision_reviews.csv
+  </code></pre>
         </div>
 
         <!-- <h3 class="title is-4 mt-5">Loading and Joining CSV Data</h3>
