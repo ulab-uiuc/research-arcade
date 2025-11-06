@@ -316,3 +316,185 @@ class CSVArxivParagraphs:
             #     self.insert_paragraph(paragraph_id=id_zero_based, paper_section=paper_section, paper_arxiv_id=paper_arxiv_id, paper_section=paper_section, refe)
 
             #     self.db.insert_paragraph_reference(paragraph_id=id_zero_based, paper_section=paper_section, paper_arxiv_id=paper_arxiv_id, reference_label=ref_label, reference_type=ref_type)
+
+
+
+    def construct_table_from_csv(self, csv_file):
+        """
+        Construct the paragraphs table from an external CSV file.
+        
+        Args:
+            csv_file: Path to the CSV file containing paragraph data
+            
+        Expected CSV format:
+            - Required columns: paragraph_id, content, paper_arxiv_id, paper_section
+            - Optional columns: section_id, paragraph_in_paper_id
+            
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        if not os.path.exists(csv_file):
+            print(f"Error: CSV file {csv_file} does not exist.")
+            return False
+
+        try:
+            external_df = pd.read_csv(csv_file)
+            current_df = self._load_data()
+
+            required_cols = ['paragraph_id', 'content', 'paper_arxiv_id', 'paper_section']
+            missing_cols = [col for col in required_cols if col not in external_df.columns]
+
+            if missing_cols:
+                print(f"Error: External CSV is missing required columns: {missing_cols}")
+                return False
+
+            # Add optional columns if they don't exist
+            for col in ['section_id', 'paragraph_in_paper_id']:
+                if col not in external_df.columns:
+                    external_df[col] = None
+
+            # Generate IDs for new paragraphs
+            start_id = current_df['id'].max() + 1 if not current_df.empty else 1
+            external_df['id'] = range(start_id, start_id + len(external_df))
+
+            # Filter out paragraphs that already exist (based on paragraph_id, paper_arxiv_id, and paper_section)
+            if not current_df.empty:
+                existing_tuples = set(zip(
+                    current_df['paragraph_id'], 
+                    current_df['paper_arxiv_id'], 
+                    current_df['paper_section']
+                ))
+                external_df['_tuple'] = list(zip(
+                    external_df['paragraph_id'],
+                    external_df['paper_arxiv_id'],
+                    external_df['paper_section']
+                ))
+                external_df = external_df[~external_df['_tuple'].isin(existing_tuples)]
+                external_df = external_df.drop(columns=['_tuple'])
+
+            if external_df.empty:
+                print("No new paragraphs to import (all paragraphs already exist)")
+                return True
+
+            # Ensure correct column order
+            external_df = external_df[['id', 'paragraph_id', 'content', 'paper_arxiv_id', 'paper_section', 'section_id', 'paragraph_in_paper_id']]
+
+            # Combine and save
+            combined_df = pd.concat([current_df, external_df], ignore_index=True)
+            self._save_data(combined_df)
+
+            print(f"Successfully imported {len(external_df)} paragraphs from {csv_file}")
+            return True
+            
+        except Exception as e:
+            print(f"Error importing paragraphs from CSV: {e}")
+            return False
+
+
+    def construct_table_from_json(self, json_file):
+        """
+        Construct the paragraphs table from an external JSON file.
+        
+        Args:
+            json_file: Path to the JSON file containing paragraph data
+            
+        Expected JSON format:
+            [
+                {
+                    "paragraph_id": 0,
+                    "content": "This paper introduces the Transformer...",
+                    "paper_arxiv_id": "1706.03762v7",
+                    "paper_section": "introduction",
+                    "section_id": 1,
+                    "paragraph_in_paper_id": 0
+                },
+                ...
+            ]
+            
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        if not os.path.exists(json_file):
+            print(f"Error: JSON file {json_file} does not exist.")
+            return False
+
+        try:
+            # Load JSON data
+            with open(json_file, 'r', encoding='utf-8') as f:
+                json_data = json.load(f)
+            
+            # Handle different JSON structures
+            if isinstance(json_data, dict):
+                if 'paragraphs' in json_data:
+                    paragraphs_list = json_data['paragraphs']
+                else:
+                    paragraphs_list = [json_data]
+            elif isinstance(json_data, list):
+                paragraphs_list = json_data
+            else:
+                print("Error: JSON file must contain either a list or a dictionary")
+                return False
+            
+            if not paragraphs_list:
+                print("Error: No paragraph data found in JSON file")
+                return False
+            
+            # Convert to DataFrame
+            external_df = pd.DataFrame(paragraphs_list)
+            current_df = self._load_data()
+
+            # Check for required columns
+            required_cols = ['paragraph_id', 'content', 'paper_arxiv_id', 'paper_section']
+            missing_cols = [col for col in required_cols if col not in external_df.columns]
+
+            if missing_cols:
+                print(f"Error: JSON data is missing required fields: {missing_cols}")
+                return False
+
+            # Add optional columns if they don't exist
+            for col in ['section_id', 'paragraph_in_paper_id']:
+                if col not in external_df.columns:
+                    external_df[col] = None
+
+            # Generate IDs for new paragraphs
+            start_id = current_df['id'].max() + 1 if not current_df.empty else 1
+            external_df['id'] = range(start_id, start_id + len(external_df))
+
+            # Filter out paragraphs that already exist
+            if not current_df.empty:
+                existing_tuples = set(zip(
+                    current_df['paragraph_id'],
+                    current_df['paper_arxiv_id'],
+                    current_df['paper_section']
+                ))
+                external_df['_tuple'] = list(zip(
+                    external_df['paragraph_id'],
+                    external_df['paper_arxiv_id'],
+                    external_df['paper_section']
+                ))
+                external_df = external_df[~external_df['_tuple'].isin(existing_tuples)]
+                external_df = external_df.drop(columns=['_tuple'])
+
+            if external_df.empty:
+                print("No new paragraphs to import (all paragraphs already exist)")
+                return True
+
+            # Ensure correct column order
+            external_df = external_df[['id', 'paragraph_id', 'content', 'paper_arxiv_id', 'paper_section', 'section_id', 'paragraph_in_paper_id']]
+            
+            # Combine and save
+            combined_df = pd.concat([current_df, external_df], ignore_index=True)
+            self._save_data(combined_df)
+
+            print(f"Successfully imported {len(external_df)} paragraphs from {json_file}")
+            return True
+            
+        except json.JSONDecodeError as e:
+            print(f"Error: Invalid JSON file - {e}")
+            return False
+        except Exception as e:
+            print(f"Error importing paragraphs from JSON: {e}")
+            return False
+
+
+

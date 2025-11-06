@@ -175,4 +175,153 @@ class CSVArxivAuthors:
                 # return False
                 continue
 
+    def construct_table_from_csv(self, csv_file):
+        if not os.path.exists(csv_file):
+            print(f"Error: CSV file {csv_file} does not exist.")
+            return False
+    
+        try:
+            external_df = pd.read_csv(csv_file)
+            current_df = self._load_data()
 
+            required_cols = ['semantic_scholar_id', 'name']
+            missing_cols = [col for col in required_cols if col not in external_df.columns]
+
+            if missing_cols:
+                print(f"Error: External CSV is missing required columns: {missing_cols}")
+                return False
+
+            # Add optional columns if they don't exist
+            if 'homepage' not in external_df.columns:
+                external_df['homepage'] = None
+
+            # Generate IDs for new authors
+            start_id = current_df['id'].max() + 1 if not current_df.empty else 1
+            external_df['id'] = range(start_id, start_id + len(external_df))
+
+            # Filter out authors that already exist (based on semantic_scholar_id)
+            if not current_df.empty:
+                existing_ids = set(current_df['semantic_scholar_id'].values)
+                external_df = external_df[~external_df['semantic_scholar_id'].isin(existing_ids)]
+
+            if external_df.empty:
+                print("No new authors to import (all authors already exist)")
+                return True
+
+            # Combine and save
+            combined_df = pd.concat([current_df, external_df], ignore_index=True)
+            self._save_data(combined_df)
+
+            print(f"Successfully imported {len(external_df)} authors from {csv_file}")
+            return True
+            
+        except Exception as e:
+            print(f"Error importing authors from CSV: {e}")
+            return False
+
+    def construct_table_from_json(self, json_file):
+        """
+        Construct the authors table from an external JSON file.
+        
+        Args:
+            json_file: Path to the JSON file containing author data
+            
+        Expected JSON format (list of objects):
+            [
+                {
+                    "semantic_scholar_id": "123456",
+                    "name": "John Doe",
+                    "homepage": "https://example.com"  // optional
+                },
+                ...
+            ]
+            
+        Or (single object with authors array):
+            {
+                "authors": [
+                    {
+                        "semantic_scholar_id": "123456",
+                        "name": "John Doe",
+                        "homepage": "https://example.com"
+                    },
+                    ...
+                ]
+            }
+            
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        if not os.path.exists(json_file):
+            print(f"Error: JSON file {json_file} does not exist.")
+            return False
+
+        try:
+            import json
+            
+            # Load JSON data
+            with open(json_file, 'r', encoding='utf-8') as f:
+                json_data = json.load(f)
+            
+            # Handle different JSON structures
+            if isinstance(json_data, dict):
+                # If it's a dict, look for an 'authors' key
+                if 'authors' in json_data:
+                    authors_list = json_data['authors']
+                else:
+                    # Treat the dict as a single author record
+                    authors_list = [json_data]
+            elif isinstance(json_data, list):
+                authors_list = json_data
+            else:
+                print("Error: JSON file must contain either a list or a dictionary")
+                return False
+            
+            if not authors_list:
+                print("Error: No author data found in JSON file")
+                return False
+            
+            # Convert to DataFrame
+            external_df = pd.DataFrame(authors_list)
+            current_df = self._load_data()
+
+            # Check for required columns
+            required_cols = ['semantic_scholar_id', 'name']
+            missing_cols = [col for col in required_cols if col not in external_df.columns]
+
+            if missing_cols:
+                print(f"Error: JSON data is missing required fields: {missing_cols}")
+                return False
+
+            # Add optional columns if they don't exist
+            if 'homepage' not in external_df.columns:
+                external_df['homepage'] = None
+
+            # Generate IDs for new authors
+            start_id = current_df['id'].max() + 1 if not current_df.empty else 1
+            external_df['id'] = range(start_id, start_id + len(external_df))
+
+            # Filter out authors that already exist (based on semantic_scholar_id)
+            if not current_df.empty:
+                existing_ids = set(current_df['semantic_scholar_id'].values)
+                external_df = external_df[~external_df['semantic_scholar_id'].isin(existing_ids)]
+
+            if external_df.empty:
+                print("No new authors to import (all authors already exist)")
+                return True
+
+            # Ensure correct column order and data types
+            external_df = external_df[['id', 'semantic_scholar_id', 'name', 'homepage']]
+            
+            # Combine and save
+            combined_df = pd.concat([current_df, external_df], ignore_index=True)
+            self._save_data(combined_df)
+
+            print(f"Successfully imported {len(external_df)} authors from {json_file}")
+            return True
+            
+        except json.JSONDecodeError as e:
+            print(f"Error: Invalid JSON file - {e}")
+            return False
+        except Exception as e:
+            print(f"Error importing authors from JSON: {e}")
+            return False

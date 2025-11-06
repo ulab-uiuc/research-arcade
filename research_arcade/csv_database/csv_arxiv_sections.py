@@ -229,3 +229,143 @@ class CSVArxivSections:
             except Exception as e:
                 print(f"An unexpected error occurred: {e}")
                 continue
+
+
+    def construct_table_from_csv(self, csv_file):
+        """
+        Construct the sections table from an external CSV file.
+        
+        Args:
+            csv_file: Path to the CSV file containing section data
+            
+        Expected CSV format:
+            - Required columns: content, title, appendix, paper_arxiv_id
+            - Optional columns: section_in_paper_id
+            
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        if not os.path.exists(csv_file):
+            print(f"Error: CSV file {csv_file} does not exist.")
+            return False
+
+        try:
+            external_df = pd.read_csv(csv_file)
+            current_df = self._load_data()
+
+            required_cols = ['content', 'title', 'appendix', 'paper_arxiv_id']
+            missing_cols = [col for col in required_cols if col not in external_df.columns]
+
+            if missing_cols:
+                print(f"Error: External CSV is missing required columns: {missing_cols}")
+                return False
+
+            # Add optional columns if they don't exist
+            if 'section_in_paper_id' not in external_df.columns:
+                external_df['section_in_paper_id'] = None
+
+            # Generate IDs for new sections
+            start_id = current_df['id'].max() + 1 if not current_df.empty else 1
+            external_df['id'] = range(start_id, start_id + len(external_df))
+
+            # Note: Not filtering for duplicates as sections can be re-imported
+
+            # Ensure correct column order
+            external_df = external_df[['id', 'content', 'title', 'appendix', 'paper_arxiv_id', 'section_in_paper_id']]
+
+            # Combine and save
+            combined_df = pd.concat([current_df, external_df], ignore_index=True)
+            self._save_data(combined_df)
+
+            print(f"Successfully imported {len(external_df)} sections from {csv_file}")
+            return True
+            
+        except Exception as e:
+            print(f"Error importing sections from CSV: {e}")
+            return False
+
+
+    def construct_table_from_json(self, json_file):
+        """
+        Construct the sections table from an external JSON file.
+        
+        Args:
+            json_file: Path to the JSON file containing section data
+            
+        Expected JSON format:
+            [
+                {
+                    "content": "Section content...",
+                    "title": "Introduction",
+                    "appendix": false,
+                    "paper_arxiv_id": "1706.03762v7",
+                    "section_in_paper_id": 1
+                },
+                ...
+            ]
+            
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        if not os.path.exists(json_file):
+            print(f"Error: JSON file {json_file} does not exist.")
+            return False
+
+        try:
+            # Load JSON data
+            with open(json_file, 'r', encoding='utf-8') as f:
+                json_data = json.load(f)
+            
+            # Handle different JSON structures
+            if isinstance(json_data, dict):
+                if 'sections' in json_data:
+                    sections_list = json_data['sections']
+                else:
+                    sections_list = [json_data]
+            elif isinstance(json_data, list):
+                sections_list = json_data
+            else:
+                print("Error: JSON file must contain either a list or a dictionary")
+                return False
+            
+            if not sections_list:
+                print("Error: No section data found in JSON file")
+                return False
+            
+            # Convert to DataFrame
+            external_df = pd.DataFrame(sections_list)
+            current_df = self._load_data()
+
+            # Check for required columns
+            required_cols = ['content', 'title', 'appendix', 'paper_arxiv_id']
+            missing_cols = [col for col in required_cols if col not in external_df.columns]
+
+            if missing_cols:
+                print(f"Error: JSON data is missing required fields: {missing_cols}")
+                return False
+
+            # Add optional columns if they don't exist
+            if 'section_in_paper_id' not in external_df.columns:
+                external_df['section_in_paper_id'] = None
+
+            # Generate IDs for new sections
+            start_id = current_df['id'].max() + 1 if not current_df.empty else 1
+            external_df['id'] = range(start_id, start_id + len(external_df))
+
+            # Ensure correct column order
+            external_df = external_df[['id', 'content', 'title', 'appendix', 'paper_arxiv_id', 'section_in_paper_id']]
+            
+            # Combine and save
+            combined_df = pd.concat([current_df, external_df], ignore_index=True)
+            self._save_data(combined_df)
+
+            print(f"Successfully imported {len(external_df)} sections from {json_file}")
+            return True
+            
+        except json.JSONDecodeError as e:
+            print(f"Error: Invalid JSON file - {e}")
+            return False
+        except Exception as e:
+            print(f"Error importing sections from JSON: {e}")
+            return False
+

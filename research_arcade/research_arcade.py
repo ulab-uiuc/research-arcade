@@ -600,7 +600,11 @@ class ResearchArcade:
         else:
             print(f"Table {table} does not support construction from API")
             
+
+
+
     def construct_table_from_csv(self, table: str, config: dict) -> Optional[pd.DataFrame]:
+        # OpenReview tables
         if table == "openreview_papers":
             self.openreview_papers.construct_papers_table_from_csv(**config)
         elif table == "openreview_authors":
@@ -621,10 +625,39 @@ class ResearchArcade:
             self.openreview_arxiv.construct_openreview_arxiv_table_from_csv(**config)
         elif table == "openreview_paragraphs":
             self.openreview_paragraphs.construct_paragraphs_table_from_csv(**config)
+        # ArXiv tables - NODES
+        elif table == "arxiv_papers":
+            self.arxiv_papers.construct_table_from_csv(**config)
+        elif table == "arxiv_authors":
+            self.arxiv_authors.construct_table_from_csv(**config)
+        elif table == "arxiv_categories":
+            self.arxiv_categories.construct_table_from_csv(**config)
+        elif table == "arxiv_figures":
+            self.arxiv_figures.construct_table_from_csv(**config)
+        elif table == "arxiv_tables":
+            self.arxiv_tables.construct_table_from_csv(**config)
+        elif table == "arxiv_sections":
+            self.arxiv_sections.construct_table_from_csv(**config)
+        elif table == "arxiv_paragraphs":
+            self.arxiv_paragraphs.construct_table_from_csv(**config)
+        # ArXiv tables - EDGES
+        elif table == "arxiv_paper_citation":
+            self.arxiv_citation.construct_table_from_csv(**config)
+        elif table == "arxiv_paper_author":
+            self.arxiv_paper_author.construct_table_from_csv(**config)
+        elif table == "arxiv_paper_category":
+            self.arxiv_paper_category.construct_table_from_csv(**config)
+        elif table == "arxiv_paper_figure":
+            self.arxiv_paper_figure.construct_table_from_csv(**config)
+        elif table == "arxiv_paper_table":
+            self.arxiv_paper_table.construct_table_from_csv(**config)
+        elif table == "arxiv_paragraph_reference":
+            self.arxiv_paragraph_reference.construct_table_from_csv(**config)
         else:
             print(f"Table {table} does not support construction from CSV")
-    
+
     def construct_table_from_json(self, table: str, config: dict) -> Optional[pd.DataFrame]:
+        # OpenReview tables
         if table == "openreview_papers":
             self.openreview_papers.construct_papers_table_from_json(**config)
         elif table == "openreview_authors":
@@ -645,5 +678,33 @@ class ResearchArcade:
             self.openreview_arxiv.construct_openreview_arxiv_table_from_json(**config)
         elif table == "openreview_paragraphs":
             self.openreview_paragraphs.construct_paragraphs_table_from_json(**config)
+        # ArXiv tables - NODES
+        elif table == "arxiv_papers":
+            self.arxiv_papers.construct_table_from_json(**config)
+        elif table == "arxiv_authors":
+            self.arxiv_authors.construct_table_from_json(**config)
+        elif table == "arxiv_categories":
+            self.arxiv_categories.construct_table_from_json(**config)
+        elif table == "arxiv_figures":
+            self.arxiv_figures.construct_table_from_json(**config)
+        elif table == "arxiv_tables":
+            self.arxiv_tables.construct_table_from_json(**config)
+        elif table == "arxiv_sections":
+            self.arxiv_sections.construct_table_from_json(**config)
+        elif table == "arxiv_paragraphs":
+            self.arxiv_paragraphs.construct_table_from_json(**config)
+        # ArXiv tables - EDGES
+        elif table == "arxiv_paper_citation":
+            self.arxiv_citation.construct_table_from_json(**config)
+        elif table == "arxiv_paper_author":
+            self.arxiv_paper_author.construct_table_from_json(**config)
+        elif table == "arxiv_paper_category":
+            self.arxiv_paper_category.construct_table_from_json(**config)
+        elif table == "arxiv_paper_figure":
+            self.arxiv_paper_figure.construct_table_from_json(**config)
+        elif table == "arxiv_paper_table":
+            self.arxiv_paper_table.construct_table_from_json(**config)
+        elif table == "arxiv_paragraph_reference":
+            self.arxiv_paragraph_reference.construct_table_from_json(**config)
         else:
-            print(f"Table {table} does not support construction from JSON")       
+            print(f"Table {table} does not support construction from JSON")

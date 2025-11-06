@@ -127,3 +127,136 @@ class CSVArxivParagraphReference:
         self._save_data(df)
         
         return count
+
+
+
+    def construct_table_from_csv(self, csv_file):
+        """
+        Construct the paragraph-reference relationships from an external CSV file.
+        
+        Args:
+            csv_file: Path to the CSV file
+            
+        Expected CSV format:
+            - Required columns: paragraph_id, paper_section, paper_arxiv_id, reference_label, reference_type
+            
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        if not os.path.exists(csv_file):
+            print(f"Error: CSV file {csv_file} does not exist.")
+            return False
+
+        try:
+            external_df = pd.read_csv(csv_file)
+            current_df = self._load_data()
+
+            required_cols = ['paragraph_id', 'paper_section', 'paper_arxiv_id', 'reference_label', 'reference_type']
+            missing_cols = [col for col in required_cols if col not in external_df.columns]
+
+            if missing_cols:
+                print(f"Error: External CSV is missing required columns: {missing_cols}")
+                return False
+
+            # Generate IDs for new references
+            start_id = current_df['id'].max() + 1 if not current_df.empty else 1
+            external_df['id'] = range(start_id, start_id + len(external_df))
+
+            # Note: Not filtering duplicates as this table allows multiple references per paragraph
+
+            # Ensure correct column order
+            external_df = external_df[['id', 'paragraph_id', 'paper_section', 'paper_arxiv_id', 'reference_label', 'reference_type']]
+
+            # Combine and save
+            combined_df = pd.concat([current_df, external_df], ignore_index=True)
+            self._save_data(combined_df)
+
+            print(f"Successfully imported {len(external_df)} paragraph-reference relationships from {csv_file}")
+            return True
+            
+        except Exception as e:
+            print(f"Error importing paragraph-reference relationships from CSV: {e}")
+            return False
+
+
+    def construct_table_from_json(self, json_file):
+        """
+        Construct the paragraph-reference relationships from an external JSON file.
+        
+        Args:
+            json_file: Path to the JSON file
+            
+        Expected JSON format:
+            [
+                {
+                    "paragraph_id": 1,
+                    "paper_section": "introduction",
+                    "paper_arxiv_id": "1706.03762v7",
+                    "reference_label": "fig:1",
+                    "reference_type": "figure"
+                },
+                ...
+            ]
+            
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        if not os.path.exists(json_file):
+            print(f"Error: JSON file {json_file} does not exist.")
+            return False
+
+        try:
+            # Load JSON data
+            with open(json_file, 'r', encoding='utf-8') as f:
+                json_data = json.load(f)
+            
+            # Handle different JSON structures
+            if isinstance(json_data, dict):
+                if 'paragraph_references' in json_data:
+                    relations_list = json_data['paragraph_references']
+                else:
+                    relations_list = [json_data]
+            elif isinstance(json_data, list):
+                relations_list = json_data
+            else:
+                print("Error: JSON file must contain either a list or a dictionary")
+                return False
+            
+            if not relations_list:
+                print("Error: No paragraph-reference data found in JSON file")
+                return False
+            
+            # Convert to DataFrame
+            external_df = pd.DataFrame(relations_list)
+            current_df = self._load_data()
+
+            # Check for required columns
+            required_cols = ['paragraph_id', 'paper_section', 'paper_arxiv_id', 'reference_label', 'reference_type']
+            missing_cols = [col for col in required_cols if col not in external_df.columns]
+
+            if missing_cols:
+                print(f"Error: JSON data is missing required fields: {missing_cols}")
+                return False
+
+            # Generate IDs for new references
+            start_id = current_df['id'].max() + 1 if not current_df.empty else 1
+            external_df['id'] = range(start_id, start_id + len(external_df))
+
+            # Ensure correct column order
+            external_df = external_df[['id', 'paragraph_id', 'paper_section', 'paper_arxiv_id', 'reference_label', 'reference_type']]
+            
+            # Combine and save
+            combined_df = pd.concat([current_df, external_df], ignore_index=True)
+            self._save_data(combined_df)
+
+            print(f"Successfully imported {len(external_df)} paragraph-reference relationships from {json_file}")
+            return True
+            
+        except json.JSONDecodeError as e:
+            print(f"Error: Invalid JSON file - {e}")
+            return False
+        except Exception as e:
+            print(f"Error importing paragraph-reference relationships from JSON: {e}")
+            return False
+
+

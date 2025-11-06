@@ -117,7 +117,23 @@ class CSVArxivCitation:
 
 
     def delete_citation_by_id(self, citing_paper_id, cited_paper_id):
-        pass
+
+        df = self._load_data()
+        
+        if df.empty:
+            return False
+        
+        mask = (df['citing_arxiv_id'] == citing_paper_id) & (df['cited_arxiv_id'] == cited_paper_id)
+        
+        if not df[mask].empty:
+
+            df = df[~mask]
+            self._save_data(df)
+            print(f"Deleted citation: {citing_paper_id} -> {cited_paper_id}")
+            return True
+        else:
+            print(f"Citation not found: {citing_paper_id} -> {cited_paper_id}")
+            return False
     
     def get_all_citations(self, is_all_features=True):
         df = self._load_data()
@@ -127,9 +143,208 @@ class CSVArxivCitation:
         
         return df.copy()
 
-
+    
     def get_citing_neighboring_cited(self, citing_paper_id):
-        pass
+
+        df = self._load_data()
+        
+        if df.empty:
+            return None
+        
+        citing_citations = df[df['citing_arxiv_id'] == citing_paper_id].copy()
+        
+        if citing_citations.empty:
+            return None
+        
+        return citing_citations
 
     def get_cited_neighboring_citing(self, cited_paper_id):
-        pass
+        df = self._load_data()
+        
+        if df.empty:
+            return None
+        
+        cited_by = df[df['cited_arxiv_id'] == cited_paper_id].copy()
+        
+        if cited_by.empty:
+            return None
+        
+        return cited_by
+    
+
+
+
+    def construct_table_from_csv(self, csv_file):
+        """
+        Construct the citations table from an external CSV file.
+        
+        Args:
+            csv_file: Path to the CSV file containing citation data
+            
+        Expected CSV format:
+            - Required columns: citing_arxiv_id, cited_arxiv_id, bib_title, bib_key
+            - Optional columns: citing_sections, citing_paragraphs
+            
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        if not os.path.exists(csv_file):
+            print(f"Error: CSV file {csv_file} does not exist.")
+            return False
+
+        try:
+            external_df = pd.read_csv(csv_file)
+            current_df = self._load_data()
+
+            required_cols = ['citing_arxiv_id', 'cited_arxiv_id', 'bib_title', 'bib_key']
+            missing_cols = [col for col in required_cols if col not in external_df.columns]
+
+            if missing_cols:
+                print(f"Error: External CSV is missing required columns: {missing_cols}")
+                return False
+
+            # Add optional columns if they don't exist
+            if 'citing_sections' not in external_df.columns:
+                external_df['citing_sections'] = '[]'
+            if 'citing_paragraphs' not in external_df.columns:
+                external_df['citing_paragraphs'] = '[]'
+
+            # Generate IDs for new citations
+            start_id = current_df['id'].max() + 1 if not current_df.empty else 1
+            external_df['id'] = range(start_id, start_id + len(external_df))
+
+            # Filter out citations that already exist (based on citing and cited papers)
+            if not current_df.empty:
+                existing_pairs = set(zip(current_df['citing_arxiv_id'], current_df['cited_arxiv_id']))
+                external_df['_pair'] = list(zip(external_df['citing_arxiv_id'], external_df['cited_arxiv_id']))
+                external_df = external_df[~external_df['_pair'].isin(existing_pairs)]
+                external_df = external_df.drop(columns=['_pair'])
+
+            if external_df.empty:
+                print("No new citations to import (all citations already exist)")
+                return True
+
+            # Ensure correct column order
+            external_df = external_df[['id', 'citing_arxiv_id', 'cited_arxiv_id', 'bib_title', 'bib_key', 'citing_sections', 'citing_paragraphs']]
+
+            # Combine and save
+            combined_df = pd.concat([current_df, external_df], ignore_index=True)
+            self._save_data(combined_df)
+
+            print(f"Successfully imported {len(external_df)} citations from {csv_file}")
+            return True
+            
+        except Exception as e:
+            print(f"Error importing citations from CSV: {e}")
+            return False
+
+
+    def construct_table_from_json(self, json_file):
+        """
+        Construct the citations table from an external JSON file.
+        
+        Args:
+            json_file: Path to the JSON file containing citation data
+            
+        Expected JSON format:
+            [
+                {
+                    "citing_arxiv_id": "1706.03762v7",
+                    "cited_arxiv_id": "1409.0473v7",
+                    "bib_title": "Neural Machine Translation",
+                    "bib_key": "bahdanau2014neural",
+                    "citing_sections": ["introduction", "related_work"],
+                    "citing_paragraphs": []
+                },
+                ...
+            ]
+            
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        if not os.path.exists(json_file):
+            print(f"Error: JSON file {json_file} does not exist.")
+            return False
+
+        try:
+            # Load JSON data
+            with open(json_file, 'r', encoding='utf-8') as f:
+                json_data = json.load(f)
+            
+            # Handle different JSON structures
+            if isinstance(json_data, dict):
+                if 'citations' in json_data:
+                    citations_list = json_data['citations']
+                else:
+                    citations_list = [json_data]
+            elif isinstance(json_data, list):
+                citations_list = json_data
+            else:
+                print("Error: JSON file must contain either a list or a dictionary")
+                return False
+            
+            if not citations_list:
+                print("Error: No citation data found in JSON file")
+                return False
+            
+            # Convert to DataFrame
+            external_df = pd.DataFrame(citations_list)
+            current_df = self._load_data()
+
+            # Check for required columns
+            required_cols = ['citing_arxiv_id', 'cited_arxiv_id', 'bib_title', 'bib_key']
+            missing_cols = [col for col in required_cols if col not in external_df.columns]
+
+            if missing_cols:
+                print(f"Error: JSON data is missing required fields: {missing_cols}")
+                return False
+
+            # Handle optional columns
+            if 'citing_sections' not in external_df.columns:
+                external_df['citing_sections'] = '[]'
+            else:
+                # Convert lists to JSON strings
+                external_df['citing_sections'] = external_df['citing_sections'].apply(
+                    lambda x: json.dumps(x) if isinstance(x, list) else x
+                )
+            
+            if 'citing_paragraphs' not in external_df.columns:
+                external_df['citing_paragraphs'] = '[]'
+            else:
+                external_df['citing_paragraphs'] = external_df['citing_paragraphs'].apply(
+                    lambda x: json.dumps(x) if isinstance(x, list) else x
+                )
+
+            # Generate IDs for new citations
+            start_id = current_df['id'].max() + 1 if not current_df.empty else 1
+            external_df['id'] = range(start_id, start_id + len(external_df))
+
+            # Filter out citations that already exist
+            if not current_df.empty:
+                existing_pairs = set(zip(current_df['citing_arxiv_id'], current_df['cited_arxiv_id']))
+                external_df['_pair'] = list(zip(external_df['citing_arxiv_id'], external_df['cited_arxiv_id']))
+                external_df = external_df[~external_df['_pair'].isin(existing_pairs)]
+                external_df = external_df.drop(columns=['_pair'])
+
+            if external_df.empty:
+                print("No new citations to import (all citations already exist)")
+                return True
+
+            # Ensure correct column order
+            external_df = external_df[['id', 'citing_arxiv_id', 'cited_arxiv_id', 'bib_title', 'bib_key', 'citing_sections', 'citing_paragraphs']]
+            
+            # Combine and save
+            combined_df = pd.concat([current_df, external_df], ignore_index=True)
+            self._save_data(combined_df)
+
+            print(f"Successfully imported {len(external_df)} citations from {json_file}")
+            return True
+            
+        except json.JSONDecodeError as e:
+            print(f"Error: Invalid JSON file - {e}")
+            return False
+        except Exception as e:
+            print(f"Error importing citations from JSON: {e}")
+            return False
+
+
