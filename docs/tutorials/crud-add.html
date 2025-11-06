@@ -3,15 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Add Nodes & Edges • ResearchArcade Tutorials</title>
-
-  <meta name="description" content="Learn how to create new entities and relationships in the ResearchArcade graph database." />
-  <meta property="og:title" content="Add Nodes & Edges • ResearchArcade Tutorials" />
-  <meta property="og:description" content="Learn how to create new entities and relationships in the ResearchArcade graph database." />
-  <meta property="og:image" content="../static/images/your_banner_image.png" />
-  <meta property="og:type" content="website" />
-  <meta name="twitter:card" content="summary_large_image" />
-
+  <title>Read Nodes & Edges • ResearchArcade Tutorials</title>
+  
+  <meta name="description" content="Learn how to query and retrieve entities, traverse relationships, and filter results in ResearchArcade." />
   <link rel="icon" type="image/x-icon" href="../static/images/favicon.ico" />
   <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet" />
   <link rel="stylesheet" href="../static/css/bulma.min.css" />
@@ -24,25 +18,20 @@
       display: none;
       margin-top: 1rem;
     }
-    
     .code-container.is-active {
       display: block;
     }
-    
     .select-full-width {
       width: 100%;
     }
-    
     .select-full-width select {
       width: 100%;
     }
-    
     pre {
       background-color: #f5f5f5;
       padding: 1.25rem 1.5rem;
       overflow-x: auto;
     }
-    
     code {
       background-color: transparent;
       color: #363636;
@@ -50,7 +39,6 @@
       font-weight: normal;
       padding: 0;
     }
-    
     .placeholder-text {
       color: #7a7a7a;
       font-style: italic;
@@ -64,7 +52,6 @@
 </head>
 <body>
 
-  <!-- Hero -->
   <section class="hero is-white">
     <div class="hero-body">
       <div class="container is-max-desktop">
@@ -72,43 +59,39 @@
           <ul>
             <li><a href="../index.html">Home</a></li>
             <li><a href="./index.html">Tutorials</a></li>
-            <li class="is-active"><a aria-current="page">Add Nodes & Edges</a></li>
+            <li class="is-active"><a aria-current="page">Read Nodes & Edges</a></li>
           </ul>
         </nav>
-        <h1 class="title is-2">Add Nodes & Edges</h1>
-        <p class="subtitle is-5">Create new entities and relationships in the graph database.</p>
+        <h1 class="title is-2">Read Nodes & Edges</h1>
+        <p class="subtitle is-5">Query and retrieve entities, traverse relationships, and filter results.</p>
       </div>
     </div>
   </section>
 
-  <!-- Tutorial Content -->
   <section class="section">
     <div class="container is-max-desktop">
       
-      <!-- Overview -->
       <div class="content">
         <h2 class="title is-3">Overview</h2>
         <p>
-          This tutorial demonstrates how to add nodes (entities) and edges (relationships) to your ResearchArcade graph database. 
-          You'll learn the basic CRUD operations for creating papers, authors, citations, and other research entities.
+          This tutorial covers querying and retrieving data from your ResearchArcade graph database. 
+          You'll learn how to read individual nodes, traverse relationships, filter results, and perform complex queries 
+          to extract meaningful insights from your research data.
         </p>
       </div>
 
-      <!-- Prerequisites -->
       <div class="content mt-5">
         <h2 class="title is-3">Prerequisites</h2>
         <ul>
           <li>ResearchArcade installed and configured (see <a href="./setup.html">Getting Started</a>)</li>
-          <li>Active database connection if SQL db is selected</li>
+          <li>Database populated with nodes and edges (see <a href="./crud-add.html">Add Nodes & Edges</a>)</li>
+          <li>Basic understanding of graph queries</li>
         </ul>
       </div>
 
-      <!-- Adding Nodes -->
       <div class="content mt-6">
-        <h2 class="title is-3">Adding Nodes</h2>
-        <p>
-          Select a node type below to see the code example for creating that entity:
-        </p>
+        <h2 class="title is-3">Reading Nodes</h2>
+        <p>Select a node type below to see the code example for reading that entity:</p>
         
         <div class="field mt-4">
           <label class="label">Select Node Type:</label>
@@ -139,422 +122,154 @@
           <p>Select a node type from the dropdown above to view the code example.</p>
         </div>
 
-        <!-- arxiv_papers Node -->
         <div id="node-arxiv_papers" class="code-container">
-          <h3 class="title is-5">Creating an ArXiv Papers Node</h3>
-          <p>Add a new research paper with metadata such as title, abstract, publication date, and DOI:</p>
-          <pre><code># Example: Insert the famous "Attention is All You Need" paper
-new_paper = {
-    'arxiv_id': '1706.03762v7',
-    'base_arxiv_id': '1706.03762',
-    'version': 7,
-    'title': 'Attention Is All You Need',
-    'abstract': 'The dominant sequence transduction models are based on complex recurrent or convolutional neural networks in an encoder-decoder configuration. The best performing models also connect the encoder and decoder through an attention mechanism. We propose a new simple network architecture, the Transformer, based solely on attention mechanisms, dispensing with recurrence and convolutions entirely. Experiments on two machine translation tasks show these models to be superior in quality while being more parallelizable and requiring significantly less time to train. Our model achieves 28.4 BLEU on the WMT 2014 English-to-German translation task, improving over the existing best results, including ensembles by over 2 BLEU. On the WMT 2014 English-to-French translation task, our model establishes a new single-model state-of-the-art BLEU score of 41.8 after training for 3.5 days on eight GPUs, a small fraction of the training costs of the best models from the literature. We show that the Transformer generalizes well to other tasks by applying it successfully to English constituency parsing both with large and limited training data.',
-    'submit_date': '2017-06-12',
-    'metadata': {'venue': 'NeurIPS 2017', 'pdf_url': 'https://arxiv.org/pdf/1706.03762.pdf'}
-}
-
-research_arcade.insert_node("arxiv_papers", node_features=new_paper)
-print("Paper inserted successfully!")
-</code></pre>
+          <h3 class="title is-5">Reading ArXiv Papers Nodes</h3>
+          <p>Example code for retrieving arxiv papers data:</p>
+          <pre><code>arxiv_papers_df = research_arcade.get_all_node_features(&quot;arxiv_papers&quot;)
+print(f&quot;Total papers in database: {len(arxiv_papers_df)}&quot;)
+print(&quot;\nFirst 5 papers:&quot;)
+print(arxiv_papers_df.head())</code></pre>
         </div>
 
-        <!-- arxiv_authors Node -->
         <div id="node-arxiv_authors" class="code-container">
-          <h3 class="title is-5">Creating an ArXiv Authors Node</h3>
-          <p>Add an author with their name, affiliation, and contact information:</p>
-          <pre><code># Insert authors from the Transformer paper
-authors = [
-    {
-        'semantic_scholar_id': 'ss_ashish_vaswani',
-        'name': 'Ashish Vaswani',
-        'homepage': 'https://scholar.google.com/citations?user=oR9sCGYAAAAJ'
-    },
-    {
-        'semantic_scholar_id': 'ss_noam_shazeer',
-        'name': 'Noam Shazeer',
-        'homepage': 'https://scholar.google.com/citations?user=oR9sCGYAAAAJ'
-    },
-    {
-        'semantic_scholar_id': 'ss_niki_parmar',
-        'name': 'Niki Parmar',
-        'homepage': 'https://scholar.google.com/citations?user=oR9sCGYAAAAJ'
-    },
-    {
-        'semantic_scholar_id': 'ss_jakob_uszkoreit',
-        'name': 'Jakob Uszkoreit',
-        'homepage': 'https://scholar.google.com/citations?user=oR9sCGYAAAAJ'
-    },
-    {
-        'semantic_scholar_id': 'ss_llion_jones',
-        'name': 'Llion Jones',
-        'homepage': 'https://scholar.google.com/citations?user=oR9sCGYAAAAJ'
-    }
-]
-
-for author in authors:
-    research_arcade.insert_node("arxiv_authors", node_features=author)
-    print(f"Inserted author: {author['name']}")
-</code></pre>
+          <h3 class="title is-5">Reading ArXiv Authors Nodes</h3>
+          <p>Example code for retrieving arxiv authors data:</p>
+          <pre><code>authors_df = research_arcade.get_all_node_features(&quot;arxiv_authors&quot;)
+print(f&quot;Total authors in database: {len(authors_df)}&quot;)
+print(&quot;\nAll authors:&quot;)
+print(authors_df)</code></pre>
         </div>
 
-        <!-- arxiv_categories Node -->
         <div id="node-arxiv_categories" class="code-container">
-          <h3 class="title is-5">Creating an ArXiv Categories Node</h3>
-          <p>Add a category to classify papers:</p>
-          <pre><code># Insert ArXiv categories
-categories = [
-    {
-        'category_id': 'cs.CL',
-        'category_name': 'Computation and Language',
-        'description': 'Covers natural language processing, computational linguistics, and related areas.'
-    },
-    {
-        'category_id': 'cs.LG',
-        'category_name': 'Machine Learning',
-        'description': 'Papers on machine learning, neural networks, and statistical learning.'
-    },
-    {
-        'category_id': 'cs.AI',
-        'category_name': 'Artificial Intelligence',
-        'description': 'Covers all areas of AI except Vision, Robotics, Machine Learning, Multiagent Systems, and Computation and Language.'
-    }
-]
-
-for category in categories:
-    research_arcade.insert_node("arxiv_categories", node_features=category)
-    print(f"Inserted category: {category['category_name']}")
-</code></pre>
+          <h3 class="title is-5">Reading ArXiv Categories Nodes</h3>
+          <p>Example code for retrieving arxiv categories data:</p>
+          <pre><code>categories_df = research_arcade.get_all_node_features(&quot;arxiv_categories&quot;)
+print(f&quot;Total categories: {len(categories_df)}&quot;)
+print(&quot;\nAll categories:&quot;)
+print(categories_df)</code></pre>
         </div>
 
-        <!-- arxiv_sections Node -->
         <div id="node-arxiv_sections" class="code-container">
-          <h3 class="title is-5">Creating an ArXiv Sections Node</h3>
-          <p>Add a section that belongs to a paper (e.g., Introduction, Methods, Results):</p>
-          <pre><code># Insert sections for the Transformer paper
-sections = [
-    {
-        'content': 'The dominant sequence transduction models are based on complex recurrent or convolutional neural networks that include an encoder and a decoder...',
-        'title': 'Introduction',
-        'appendix': False,
-        'paper_arxiv_id': '1706.03762v7',
-        'section_in_paper_id': 1
-    },
-    {
-        'content': 'Most competitive neural sequence transduction models have an encoder-decoder structure. Here, the encoder maps an input sequence of symbol representations...',
-        'title': 'Background',
-        'appendix': False,
-        'paper_arxiv_id': '1706.03762v7',
-        'section_in_paper_id': 2
-    },
-    {
-        'content': 'Most neural sequence transduction models have an encoder-decoder structure. The Transformer follows this overall architecture using stacked self-attention and point-wise, fully connected layers...',
-        'title': 'Model Architecture',
-        'appendix': False,
-        'paper_arxiv_id': '1706.03762v7',
-        'section_in_paper_id': 3
-    },
-    {
-        'content': 'In this section we describe the training regime for our models...',
-        'title': 'Training',
-        'appendix': False,
-        'paper_arxiv_id': '1706.03762v7',
-        'section_in_paper_id': 4
-    },
-    {
-        'content': 'On the WMT 2014 English-to-German translation task, the big transformer model outperforms the best previously reported models...',
-        'title': 'Results',
-        'appendix': False,
-        'paper_arxiv_id': '1706.03762v7',
-        'section_in_paper_id': 5
-    },
-    {
-        'content': 'In this work, we presented the Transformer, the first sequence transduction model based entirely on attention, replacing the recurrent layers...',
-        'title': 'Conclusion',
-        'appendix': False,
-        'paper_arxiv_id': '1706.03762v7',
-        'section_in_paper_id': 6
-    }
-]
-
-for section in sections:
-    research_arcade.insert_node("arxiv_sections", node_features=section)
-    print(f"Inserted section: {section['title']}")
-</code></pre>
+          <h3 class="title is-5">Reading ArXiv Sections Nodes</h3>
+          <p>Example code for retrieving arxiv sections data:</p>
+          <pre><code>sections_df = research_arcade.get_all_node_features(&quot;arxiv_sections&quot;)
+print(f&quot;Total sections: {sections_df}&quot;)
+print(&quot;\nAll sections:&quot;)
+print(sections_df[[&#x27;title&#x27;, &#x27;section_in_paper_id&#x27;, &#x27;appendix&#x27;]])</code></pre>
         </div>
 
-        <!-- arxiv_paragraphs Node -->
         <div id="node-arxiv_paragraphs" class="code-container">
-          <h3 class="title is-5">Creating an ArXiv Paragraphs Node</h3>
-          <p>Add a paragraph within a section:</p>
-          <pre><code># Insert paragraphs from the Introduction section
-paragraphs = [
-    {
-        'paragraph_id': 1,
-        'content': 'Recurrent neural networks, long short-term memory and gated recurrent neural networks in particular, have been firmly established as state of the art approaches in sequence modeling and transduction problems such as language modeling and machine translation.',
-        'paper_arxiv_id': '1706.03762v7',
-        'paper_section': 'Introduction',
-        'section_id': 1,
-        'paragraph_in_paper_id': 1
-    },
-    {
-        'paragraph_id': 2,
-        'content': 'Numerous efforts have since continued to push the boundaries of recurrent language models and encoder-decoder architectures. Recurrent models typically factor computation along the symbol positions of the input and output sequences.',
-        'paper_arxiv_id': '1706.03762v7',
-        'paper_section': 'Introduction',
-        'section_id': 1,
-        'paragraph_in_paper_id': 2
-    },
-    {
-        'paragraph_id': 3,
-        'content': 'Aligning the positions to steps in computation time, they generate a sequence of hidden states h_t, as a function of the previous hidden state h_{t-1} and the input for position t. This inherently sequential nature precludes parallelization within training examples, which becomes critical at longer sequence lengths, as memory constraints limit batching across examples.',
-        'paper_arxiv_id': '1706.03762v7',
-        'paper_section': 'Introduction',
-        'section_id': 1,
-        'paragraph_in_paper_id': 3
-    },
-    {
-        'paragraph_id': 4,
-        'content': 'Attention mechanisms have become an integral part of compelling sequence modeling and transduction models in various tasks, allowing modeling of dependencies without regard to their distance in the input or output sequences.',
-        'paper_arxiv_id': '1706.03762v7',
-        'paper_section': 'Introduction',
-        'section_id': 1,
-        'paragraph_in_paper_id': 4
-    },
-    {
-        'paragraph_id': 5,
-        'content': 'In this work we propose the Transformer, a model architecture eschewing recurrence and instead relying entirely on an attention mechanism to draw global dependencies between input and output. The Transformer allows for significantly more parallelization and can reach a new state of the art in translation quality after being trained for as little as twelve hours on eight P100 GPUs.',
-        'paper_arxiv_id': '1706.03762v7',
-        'paper_section': 'Introduction',
-        'section_id': 1,
-        'paragraph_in_paper_id': 5
-    }
-]
-
-for paragraph in paragraphs:
-    research_arcade.insert_node("arxiv_paragraphs", node_features=paragraph)
-    print(f"Inserted paragraph {paragraph['paragraph_id']} from {paragraph['paper_section']}")
-</code></pre>
+          <h3 class="title is-5">Reading ArXiv Paragraphs Nodes</h3>
+          <p>Example code for retrieving arxiv paragraphs data:</p>
+          <pre><code>paragraphs_df = research_arcade.get_all_node_features(&quot;arxiv_paragraphs&quot;)
+print(f&quot;Total paragraphs: {len(paragraphs_df)}&quot;)
+print(&quot;\nFirst 3 paragraphs:&quot;)
+print(paragraphs_df[[&#x27;paragraph_id&#x27;, &#x27;paper_section&#x27;, &#x27;content&#x27;]].head(3))</code></pre>
         </div>
 
-        <!-- arxiv_figures Node -->
         <div id="node-arxiv_figures" class="code-container">
-          <h3 class="title is-5">Creating an ArXiv Figures Node</h3>
-          <p>Add a figure with its caption and metadata:</p>
-          <pre><code># Insert figures from the Transformer paper
-figures = [
-    {
-        'figure_id': 1,
-        'paper_arxiv_id': '1706.03762v7',
-        'caption': 'The Transformer - model architecture.',
-        'figure_path': 'figures/transformer_architecture.png',
-        'page_number': 3
-    },
-    {
-        'figure_id': 2,
-        'paper_arxiv_id': '1706.03762v7',
-        'caption': '(left) Scaled Dot-Product Attention. (right) Multi-Head Attention consists of several attention layers running in parallel.',
-        'figure_path': 'figures/attention_mechanism.png',
-        'page_number': 4
-    }
-]
-
-for figure in figures:
-    research_arcade.insert_node("arxiv_figures", node_features=figure)
-    print(f"Inserted figure {figure['figure_id']}: {figure['caption'][:50]}...")
-</code></pre>
+          <h3 class="title is-5">Reading ArXiv Figures Nodes</h3>
+          <p>Example code for retrieving arxiv figures data:</p>
+          <pre><code>figures_df = research_arcade.get_all_node_features(&quot;arxiv_figures&quot;)
+print(f&quot;Total figures: {len(figures_df)}&quot;)
+print(&quot;\nAll figures:&quot;)
+print(figures_df[[&#x27;name&#x27;, &#x27;caption&#x27;, &#x27;label&#x27;]])</code></pre>
         </div>
 
-        <!-- arxiv_tables Node -->
         <div id="node-arxiv_tables" class="code-container">
-          <h3 class="title is-5">Creating an ArXiv Tables Node</h3>
-          <p>Add a table with structured data:</p>
-          <pre><code># Insert tables from the Transformer paper
-tables = [
-    {
-        'table_id': 1,
-        'paper_arxiv_id': '1706.03762v7',
-        'caption': 'Maximum path lengths, per-layer complexity and minimum number of sequential operations for different layer types.',
-        'content': 'Self-Attention | O(n^2·d) | O(1) | O(n^2·d)\nRecurrent | O(n·d^2) | O(n) | O(n·d^2)\nConvolutional | O(k·n·d^2) | O(1) | O(k·n·d^2)',
-        'page_number': 5
-    },
-    {
-        'table_id': 2,
-        'paper_arxiv_id': '1706.03762v7',
-        'caption': 'The Transformer achieves better BLEU scores than previous state-of-the-art models on the English-to-German and English-to-French newstest2014 tests.',
-        'content': 'Model | EN-DE BLEU | EN-FR BLEU\nTransformer (base) | 27.3 | 38.1\nTransformer (big) | 28.4 | 41.8',
-        'page_number': 8
-    }
-]
-
-for table in tables:
-    research_arcade.insert_node("arxiv_tables", node_features=table)
-    print(f"Inserted table {table['table_id']}: {table['caption'][:50]}...")
-</code></pre>
+          <h3 class="title is-5">Reading ArXiv Tables Nodes</h3>
+          <p>Example code for retrieving arxiv tables data:</p>
+          <pre><code>categories_df = research_arcade.get_all_node_features(&quot;arxiv_categories&quot;)
+print(f&quot;Total categories: {len(categories_df)}&quot;)
+print(&quot;\nAll categories:&quot;)
+print(categories_df)</code></pre>
         </div>
 
-        <!-- openreview_authors Node -->
         <div id="node-openreview_authors" class="code-container">
-          <h3 class="title is-5">Creating an OpenReview Authors Node</h3>
-          <p>Add an author from OpenReview:</p>
-          <pre><code># Insert OpenReview authors
-openreview_authors = [
-    {
-        'author_id': 'or_author_123',
-        'name': 'John Smith',
-        'profile_url': 'https://openreview.net/profile?id=~John_Smith1',
-        'email': 'john.smith@university.edu',
-        'institution': 'Stanford University'
-    },
-    {
-        'author_id': 'or_author_456',
-        'name': 'Jane Doe',
-        'profile_url': 'https://openreview.net/profile?id=~Jane_Doe1',
-        'email': 'jane.doe@university.edu',
-        'institution': 'MIT'
-    }
-]
-
-for author in openreview_authors:
-    research_arcade.insert_node("openreview_authors", node_features=author)
-    print(f"Inserted OpenReview author: {author['name']}")
-</code></pre>
+          <h3 class="title is-5">Creating a OpenReview Authors Node</h3>
+          <p>Example code for creating a new openreview authors entry:</p>
+          <pre><code>new_author = {&#x27;venue&#x27;: &#x27;ICLR.cc/2025/Conference&#x27;, 
+              &#x27;author_openreview_id&#x27;: &#x27;~ishmam_zabir1&#x27;, 
+              &#x27;author_full_name&#x27;: &#x27;ishmam zabir&#x27;, 
+              &#x27;email&#x27;: &#x27;****@microsoft.com&#x27;, 
+              &#x27;affiliation&#x27;: &#x27;Microsoft&#x27;, 
+              &#x27;homepage&#x27;: &#x27;https://scholar.google.com/citations?user=X7bjzrUAAAAJ&amp;hl=en&amp;oi=ao&#x27;, 
+              &#x27;dblp&#x27;: &#x27;&#x27;}
+research_arcade.insert_node(&quot;openreview_authors&quot;, node_features=new_author)</code></pre>
         </div>
 
-        <!-- openreview_papers Node -->
         <div id="node-openreview_papers" class="code-container">
-          <h3 class="title is-5">Creating an OpenReview Papers Node</h3>
-          <p>Add a paper from OpenReview:</p>
-          <pre><code># Insert OpenReview papers
-openreview_papers = [
-    {
-        'paper_id': 'rJl0r3R9KX',
-        'title': 'BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding',
-        'abstract': 'We introduce a new language representation model called BERT, which stands for Bidirectional Encoder Representations from Transformers...',
-        'venue': 'ICLR 2019',
-        'submission_date': '2018-10-25',
-        'decision': 'Accept (Oral)',
-        'url': 'https://openreview.net/forum?id=rJl0r3R9KX'
-    }
-]
-
-for paper in openreview_papers:
-    research_arcade.insert_node("openreview_papers", node_features=paper)
-    print(f"Inserted OpenReview paper: {paper['title']}")
-</code></pre>
+          <h3 class="title is-5">Creating a OpenReview Papers Node</h3>
+          <p>Example code for creating a new openreview papers entry:</p>
+          <pre><code>paper_features = {&#x27;venue&#x27;: &#x27;ICLR.cc/2025/Conference&#x27;, 
+                  &#x27;paper_openreview_id&#x27;: &#x27;zGej22CBnS&#x27;, 
+                  &#x27;title&#x27;: &#x27;Exact Byte-Level Probabilities from Tokenized Language Models for FIM-Tasks and Model Ensembles&#x27;, 
+                  &#x27;abstract&#x27;: &quot;Tokenization is associated with many poorly understood shortcomings in language models (LMs), yet remains an important component for long sequence scaling purposes. This work studies  how tokenization impacts  model performance by analyzing and comparing the stochastic behavior of tokenized models with their byte-level, or token-free, counterparts. We discover that, even when the two models are statistically equivalent, their predictive distributions over the next byte can be substantially different, a phenomenon we term as ``tokenization bias&#x27;&#x27;. To fully characterize this phenomenon, we  introduce the Byte-Token Representation Lemma, a framework that establishes a mapping between the learned token distribution and its equivalent byte-level distribution.  From this result, we develop a next-byte sampling algorithm  that eliminates tokenization bias without requiring further training or optimization. In other words, this enables zero-shot conversion of tokenized LMs into statistically equivalent token-free ones. We demonstrate its broad applicability with two use cases: fill-in-the-middle (FIM) tasks and model ensembles. In FIM tasks where input prompts may terminate mid-token, leading to out-of-distribution tokenization, our method mitigates performance degradation and achieves 18\\% improvement in FIM coding benchmarks, while consistently outperforming the standard token healing fix. For model ensembles where each model employs a distinct vocabulary, our approach enables seamless integration, resulting in improved performance up to 3.7\\% over individual models across various standard baselines in reasoning, knowledge, and coding. Code is available at:https: //github.com/facebookresearch/Exact-Byte-Level-Probabilities-from-Tokenized-LMs.&quot;, 
+                  &#x27;paper_decision&#x27;: &#x27;ICLR 2025 Poster&#x27;, 
+                  &#x27;paper_pdf_link&#x27;: &#x27;/pdf/cdd2212a20c4034029874cba11a05e081bfdb83e.pdf&#x27;}
+research_arcade.insert_node(&quot;openreview_papers&quot;, node_features=paper_features)</code></pre>
         </div>
 
-        <!-- openreview_reviews Node -->
         <div id="node-openreview_reviews" class="code-container">
-          <h3 class="title is-5">Creating an OpenReview Reviews Node</h3>
-          <p>Add a peer review from OpenReview:</p>
-          <pre><code># Insert OpenReview reviews
-openreview_reviews = [
-    {
-        'review_id': 'BklXx2C9tX',
-        'paper_id': 'rJl0r3R9KX',
-        'rating': 8,
-        'confidence': 4,
-        'summary': 'This paper presents BERT, a new method for pre-training language representations...',
-        'strengths': 'Novel approach, strong empirical results, well-written paper',
-        'weaknesses': 'Computational cost is high, limited analysis of failure cases',
-        'recommendation': 'Accept',
-        'reviewer_name': 'Reviewer_ABC',
-        'review_date': '2018-11-20'
-    }
-]
-
-for review in openreview_reviews:
-    research_arcade.insert_node("openreview_reviews", node_features=review)
-    print(f"Inserted OpenReview review: {review['review_id']}")
-</code></pre>
+          <h3 class="title is-5">Creating a OpenReview Reviews Node</h3>
+          <p>Example code for creating a new openreview reviews entry:</p>
+          <pre><code>review_features = {&#x27;venue&#x27;: &#x27;ICLR.cc/2025/Conference&#x27;, 
+                   &#x27;review_openreview_id&#x27;: &#x27;DHwZxFryth&#x27;, 
+                   &#x27;replyto_openreview_id&#x27;: &#x27;Yqbllggrmw&#x27;, 
+                   &#x27;writer&#x27;: &#x27;Authors&#x27;, 
+                   &#x27;title&#x27;: &#x27;Response by Authors&#x27;, 
+                   &#x27;content&#x27;: {&#x27;Title&#x27;: &#x27;Response to Reviewer 7i95 (1/2)&#x27;, &#x27;Comment&#x27;: &#x27;&gt; The method does not improve much in the AlpacaEval 2.0 Score. The author should give a detailed explanation. And why not use metrics like length-controlled win rate?**Response:** Thank you for your careful observation and question. We would like to clarify that we are already using the length-controlled (LC) AlpacaEval 2.0 win-rate metric in our evaluations. We will make this clearer in the table header of Table 3.Regarding the fact that the AlpacaEval 2.0 scores on LLama-3 (8B) do not improve compared to the baselines, we believe this is because our base model, the instruction-finetuned LLama-3 (8B), is already trained to perform exceptionally well in terms of helpfulness, which is the focus of the AlpacaEval benchmark. Additionally, the preference dataset we used, UltraFeedback, may not provide significant further enhancement in the helpfulness aspect. This is supported by the slight decrease observed in the AlpacaEval score for the standard DPO baseline as well (see Table 3, results on LLama-3). Therefore, we think these AlpacaEval 2.0 results on LLama-3 (8B) may not indicate that SAIL is ineffective; it may be simply caused by an ill-suited combination of base model, finetuning dataset, and evaluation benchmark.We also further conducted experiments on the Zephyr (7B) model as the backbone, whose AlpacaEval 2.0 win-rate is lower. We still train on the UltraFeedback preference dataset and the other experiment setups are unchanged. In this experiment, we see a larger improvement of the SAIL method compared to the standard DPO baseline (Zephyr-7B-Beta).|             | AlpacaEval 2.0 (LC) Win-Rate ||--------------------|------------------------------|| Base (Zephyr-7B-SFT-Full) | 6.4 %                        || DPO (Zephyr-7B-Beta)   | 13.2 %                       || SAIL-PP  | 15.9 %                       |&gt; Authors should compare more advanced preference optimization algorithms like ORPO and SimPO. And current results are not impressive for the alignment community.**Response:** Thank you for raising this insightful point. We see ORPO and SimPO are two recent work which propose a different objective than the standard RLHF, and achieve remarkable improvements in terms of alignment performance and efficiency.Our work focus more on bringing standard RLHF to a bilevel optimization framework and propose an effective and efficient approximate algorithm on top of it. We can see some new preference optimization methods including ORPO and SimPO have one fundamental difference from our approach: they do not explicitly incorporate the KL regularization term. The absence of the KL regularization term allows these methods to optimize more aggressively for the reward function by deviating significantly from the reference model. In contrast, our approach is specifically grounded in the standard RLHF, where the KL regularization term ensures that the model remains aligned with the reference distribution while optimizing for the reward function. This distinction makes direct comparisons with ORPO or SimPO less meaningful theoretically, as those methods omit the KL regularization and adopt a fundamentally different optimization objective design.However, we think our work, although developed adhering to the standard RLHF setup, can be compatible and combined with some recent advanced preference optimization algorithms, despite their differences in optimization setups and objectives. This is because we can reformulate their alignment problem as bilevel optimization, and go through the derivation as done in the paper. Taking SimPO as an example, we can treat their reward model definition (Equation (4) in the SimPO paper) as the solution of the upper level optimization (replacing Equation (4) in our manuscript), and adopt their modified Bradley-Terry objective with reward margin (Equation (5) in the SimPO paper) to replace the standard one (Equation (10) in our manuscript). By applying these changes and rederiving the extra gradient terms, we can formulate an adaptation of our method to the SimPO objective. We will implement this combined algorithm, which adapt our methodology to the SimPO objective, and compare with the SimPO as a baseline.Recently many different alignment objectives and algorithms have emerged; it is an interesting question to discuss the compatibility and combination of our method with each objective. We will add more relevant discussions to the appendices, but due to the fact that the compatibility problem with each design is a non-trivial question, this process may incur considerably more work, and we hope the reviewer understands that this effort cannot be fully reflected by the rebuttal period. But we will continue to expand the discussion as the wide compatibility to other designs also strengthens our contribution to the community. We thank the reviewer for raising this insightful point.&#x27;}, 
+                   &#x27;time&#x27;: &#x27;2024-11-26 15:27:26&#x27;
+}
+research_arcade.insert_node(&quot;openreview_reviews&quot;, node_features=review_features)</code></pre>
         </div>
 
-        <!-- openreview_revisions Node -->
         <div id="node-openreview_revisions" class="code-container">
-          <h3 class="title is-5">Creating an OpenReview Revisions Node</h3>
-          <p>Add a paper revision from OpenReview:</p>
-          <pre><code># Insert OpenReview revisions
-openreview_revisions = [
-    {
-        'revision_id': 'rev_001',
-        'paper_id': 'rJl0r3R9KX',
-        'revision_number': 1,
-        'submission_date': '2018-10-25',
-        'changes': 'Initial submission',
-        'pdf_url': 'https://openreview.net/pdf?id=rJl0r3R9KX'
-    },
-    {
-        'revision_id': 'rev_002',
-        'paper_id': 'rJl0r3R9KX',
-        'revision_number': 2,
-        'submission_date': '2018-12-01',
-        'changes': 'Added ablation studies, fixed typos, improved figures',
-        'pdf_url': 'https://openreview.net/pdf?id=rJl0r3R9KX'
-    }
-]
-
-for revision in openreview_revisions:
-    research_arcade.insert_node("openreview_revisions", node_features=revision)
-    print(f"Inserted OpenReview revision {revision['revision_number']} for paper {revision['paper_id']}")
-</code></pre>
+          <h3 class="title is-5">Creating a OpenReview Revisions Node</h3>
+          <p>Example code for creating a new openreview revisions entry:</p>
+          <pre><code>revision_feature = {&#x27;venue&#x27;: &#x27;ICLR.cc/2025/Conference&#x27;, 
+                    &#x27;original_openreview_id&#x27;: &#x27;pbTVNlX8Ig&#x27;, 
+                    &#x27;revision_openreview_id&#x27;: &#x27;yfHQOp5zWc&#x27;, 
+                    &#x27;content&#x27;: [{&#x27;section&#x27;: &#x27;1 INTRODUCTION&#x27;, 
+                                 &#x27;after_section&#x27;: None, 
+                                 &#x27;context_after&#x27;: &#x27;2 RELATED WORK &#x27;, 
+                                 &#x27;paragraph_idx&#x27;: 9, 
+                                 &#x27;before_section&#x27;: None, 
+                                 &#x27;context_before&#x27;: &#x27;Published as a conference paper at ICLR 2025 tograd system in PyTorch, specifically tailored for our experimental setup, which is available at &#x27;, 
+                                 &#x27;modified_lines&#x27;: &#x27;https://github.com/stephane-rivaud/PETRA. &#x27;, 
+                                 &#x27;original_lines&#x27;: &#x27;https://github.com/streethagore/PETRA. &#x27;, 
+                                 &#x27;after_paragraph_idx&#x27;: None, 
+                                 &#x27;before_paragraph_idx&#x27;: None}], 
+                    &#x27;time&#x27;: &#x27;2025-03-14 15:35:37&#x27;}
+research_arcade.insert_node(&quot;openreview_revisions&quot;, node_features=revision_feature)</code></pre>
         </div>
 
-        <!-- openreview_paragraphs Node -->
         <div id="node-openreview_paragraphs" class="code-container">
-          <h3 class="title is-5">Creating an OpenReview Paragraphs Node</h3>
-          <p>Add paragraphs from an OpenReview paper:</p>
-          <pre><code># Insert OpenReview paragraphs
-openreview_paragraphs = [
-    {
-        'paragraph_id': 1,
-        'paper_id': 'rJl0r3R9KX',
-        'section': 'Introduction',
-        'content': 'Language model pre-training has been shown to be effective for improving many natural language processing tasks...',
-        'paragraph_number': 1
-    },
-    {
-        'paragraph_id': 2,
-        'paper_id': 'rJl0r3R9KX',
-        'section': 'Introduction',
-        'content': 'There are two existing strategies for applying pre-trained language representations to downstream tasks: feature-based and fine-tuning...',
-        'paragraph_number': 2
-    }
-]
-
-for paragraph in openreview_paragraphs:
-    research_arcade.insert_node("openreview_paragraphs", node_features=paragraph)
-    print(f"Inserted OpenReview paragraph {paragraph['paragraph_number']} from {paragraph['section']}")
-</code></pre>
+          <h3 class="title is-5">Creating a OpenReview Paragraphs Node</h3>
+          <p>Example code for creating a new openreview paragraphs entry:</p>
+          <pre><code>paragraph_feature = {&#x27;venue&#x27;: &#x27;xujj_test&#x27;, 
+                    &#x27;paper_openreview_id&#x27;: &#x27;xujj_test&#x27;, 
+                    &#x27;paragraph_idx&#x27;: 1, 
+                    &#x27;section&#x27;: &quot;xujj_test&quot;, 
+                    &#x27;content&#x27;: &quot;xujj_test&quot;}
+research_arcade.insert_node(&quot;openreview_paragraphs&quot;, node_features=paragraph_feature)</code></pre>
         </div>
 
-        <!-- openreview_arxiv Node -->
         <div id="node-openreview_arxiv" class="code-container">
-          <h3 class="title is-5">Creating an OpenReview ArXiv Link Node</h3>
-          <p>Link OpenReview papers to their ArXiv versions:</p>
-          <pre><code># Insert OpenReview-ArXiv links
-openreview_arxiv_links = [
-    {
-        'openreview_paper_id': 'rJl0r3R9KX',
-        'arxiv_id': '1810.04805',
-        'link_type': 'same_paper',
-        'verified': True
-    }
-]
-
-for link in openreview_arxiv_links:
-    research_arcade.insert_node("openreview_arxiv", node_features=link)
-    print(f"Linked OpenReview paper {link['openreview_paper_id']} to ArXiv {link['arxiv_id']}")
-</code></pre>
+          <h3 class="title is-5">Creating a OpenReview-ArXiv Link Node</h3>
+          <p>Example code for creating a new openreview-arxiv link entry:</p>
+          <pre><code>openreview_arxiv = {&#x27;venue&#x27;: &#x27;ICLR.cc/2025/Conference&#x27;, 
+                    &#x27;paper_openreview_id&#x27;: &#x27;zkNCWtw2fd&#x27;, 
+                    &#x27;arxiv_id&#x27;: &#x27;http://arxiv.org/abs/2408.10536v1&#x27;, 
+                    &#x27;title&#x27;: &#x27;Synergistic Approach for Simultaneous Optimization of Monolingual, Cross-lingual, and Multilingual Information Retrieval&#x27;
+}
+research_arcade.insert_edge(&quot;openreview_arxiv&quot;, openreview_arxiv)</code></pre>
         </div>
       </div>
 
-      <!-- Adding Edges -->
       <div class="content mt-6">
-        <h2 class="title is-3">Adding Edges</h2>
-        <p>
-          Select an edge type below to see the code example for creating that relationship:
-        </p>
+        <h2 class="title is-3">Reading Edges</h2>
+        <p>Select an edge type below to see the code example for reading that relationship:</p>
         
         <div class="field mt-4">
           <label class="label">Select Edge Type:</label>
@@ -583,319 +298,106 @@ for link in openreview_arxiv_links:
           <p>Select an edge type from the dropdown above to view the code example.</p>
         </div>
 
-        <!-- arxiv_paper_author Edge -->
         <div id="edge-arxiv_paper_author" class="code-container">
-          <h3 class="title is-5">Creating ArXiv Paper Author Relationships</h3>
-          <p>Connect authors to papers they have written:</p>
-          <pre><code># Create authorship relationships for the Transformer paper
-paper_authors = [
-    {
-        'paper_arxiv_id': '1706.03762v7',
-        'author_id': 'ss_ashish_vaswani',
-        'author_sequence': 1
-    },
-    {
-        'paper_arxiv_id': '1706.03762v7',
-        'author_id': 'ss_noam_shazeer',
-        'author_sequence': 2
-    },
-    {
-        'paper_arxiv_id': '1706.03762v7',
-        'author_id': 'ss_niki_parmar',
-        'author_sequence': 3
-    },
-    {
-        'paper_arxiv_id': '1706.03762v7',
-        'author_id': 'ss_jakob_uszkoreit',
-        'author_sequence': 4
-    },
-    {
-        'paper_arxiv_id': '1706.03762v7',
-        'author_id': 'ss_llion_jones',
-        'author_sequence': 5
-    }
-]
-
-for relation in paper_authors:
-    research_arcade.insert_edge("arxiv_paper_author", edge_features=relation)
-    print(f"Linked author {relation['author_id']} to paper (position {relation['author_sequence']})")
-</code></pre>
+          <h3 class="title is-5">Reading ArXiv Author-Paper Relationships</h3>
+          <p>Example code for retrieving arxiv author-paper data:</p>
+          <pre><code>all_relations = research_arcade.get_all_edge_features(&quot;arxiv_paper_author&quot;)
+print(f&quot;Total relationships: {len(all_relations)}&quot;)
+print(all_relations.head(10))</code></pre>
         </div>
 
-        <!-- arxiv_paper_category Edge -->
         <div id="edge-arxiv_paper_category" class="code-container">
-          <h3 class="title is-5">Creating ArXiv Paper Category Relationships</h3>
-          <p>Link papers to their categories:</p>
-          <pre><code># Create paper-category relationships
-paper_categories = [
-    {
-        'paper_arxiv_id': '1706.03762v7',
-        'category_id': 'cs.CL',
-        'is_primary': True
-    },
-    {
-        'paper_arxiv_id': '1706.03762v7',
-        'category_id': 'cs.LG',
-        'is_primary': False
-    },
-    {
-        'paper_arxiv_id': '1706.03762v7',
-        'category_id': 'cs.AI',
-        'is_primary': False
-    }
-]
-
-for relation in paper_categories:
-    research_arcade.insert_edge("arxiv_paper_category", edge_features=relation)
-    print(f"Linked paper to category {relation['category_id']} (primary: {relation['is_primary']})")
-</code></pre>
+          <h3 class="title is-5">Reading ArXiv Paper-Category Relationships</h3>
+          <p>Example code for retrieving arxiv paper-category data:</p>
+          <pre><code>all_relations = research_arcade.get_all_edge_features(&quot;arxiv_paper_category&quot;)
+print(f&quot;Total relationships: {len(all_relations)}&quot;)
+print(all_relations.head())</code></pre>
         </div>
 
-        <!-- arxiv_citation Edge -->
         <div id="edge-arxiv_citation" class="code-container">
-          <h3 class="title is-5">Creating ArXiv Citation Relationships</h3>
-          <p>Link papers together through citations:</p>
-          <pre><code># Create citation relationships
-citations = [
-    {
-        'citing_paper_arxiv_id': '1810.04805v2',  # BERT paper
-        'cited_paper_arxiv_id': '1706.03762v7',   # Transformer paper
-        'citation_context': 'We build upon the Transformer architecture proposed by Vaswani et al.',
-        'section': 'Model Architecture'
-    },
-    {
-        'citing_paper_arxiv_id': '1910.10683v1',  # BART paper
-        'cited_paper_arxiv_id': '1706.03762v7',   # Transformer paper
-        'citation_context': 'Following Vaswani et al., we use a standard sequence-to-sequence Transformer.',
-        'section': 'Introduction'
-    }
-]
-
-for citation in citations:
-    research_arcade.insert_edge("arxiv_citation", edge_features=citation)
-    print(f"Created citation from {citation['citing_paper_arxiv_id']} to {citation['cited_paper_arxiv_id']}")
-</code></pre>
+          <h3 class="title is-5">Reading ArXiv Citations</h3>
+          <p>Example code for retrieving arxiv citation data:</p>
+          <pre><code>all_citations = research_arcade.get_all_edge_features(&quot;arxiv_citation&quot;)
+print(f&quot;Total citations: {len(all_citations)}&quot;)
+print(all_citations.head())</code></pre>
         </div>
 
-        <!-- arxiv_paper_figures Edge -->
         <div id="edge-arxiv_paper_figures" class="code-container">
-          <h3 class="title is-5">Creating ArXiv Paper Figures Relationships</h3>
-          <p>Link papers to their figures:</p>
-          <pre><code># Create paper-figure relationships
-paper_figures = [
-    {
-        'paper_arxiv_id': '1706.03762v7',
-        'figure_id': 1,
-        'figure_position': 1
-    },
-    {
-        'paper_arxiv_id': '1706.03762v7',
-        'figure_id': 2,
-        'figure_position': 2
-    }
-]
-
-for relation in paper_figures:
-    research_arcade.insert_edge("arxiv_paper_figures", edge_features=relation)
-    print(f"Linked figure {relation['figure_id']} to paper at position {relation['figure_position']}")
-</code></pre>
+          <h3 class="title is-5">Reading ArXiv Paper-Figure Relationships</h3>
+          <p>Example code for retrieving arxiv paper-figure data:</p>
+          <pre><code>paper_id = {&#x27;paper_arxiv_id&#x27;: &#x27;1706.03762v7&#x27;}
+figures = research_arcade.get_neighborhood(&quot;arxiv_paper_figure&quot;, primary_key=paper_id)
+print(&quot;Figures:&quot;)
+print(figures)</code></pre>
         </div>
 
-        <!-- arxiv_paper_tables Edge -->
         <div id="edge-arxiv_paper_tables" class="code-container">
-          <h3 class="title is-5">Creating ArXiv Paper Tables Relationships</h3>
-          <p>Link papers to their tables:</p>
-          <pre><code># Create paper-table relationships
-paper_tables = [
-    {
-        'paper_arxiv_id': '1706.03762v7',
-        'table_id': 1,
-        'table_position': 1
-    },
-    {
-        'paper_arxiv_id': '1706.03762v7',
-        'table_id': 2,
-        'table_position': 2
-    }
-]
-
-for relation in paper_tables:
-    research_arcade.insert_edge("arxiv_paper_tables", edge_features=relation)
-    print(f"Linked table {relation['table_id']} to paper at position {relation['table_position']}")
-</code></pre>
+          <h3 class="title is-5">Reading ArXiv Paper-Table Relationships</h3>
+          <p>Example code for retrieving arxiv paper-table data:</p>
+          <pre><code>paper_id = {&#x27;paper_arxiv_id&#x27;: &#x27;1706.03762v7&#x27;}
+tables = research_arcade.get_neighborhood(&quot;arxiv_paper_table&quot;, primary_key=paper_id)
+print(&quot;Tables:&quot;)</code></pre>
         </div>
 
-        <!-- arxiv_paragraph_citations Edge -->
         <div id="edge-arxiv_paragraph_citations" class="code-container">
-          <h3 class="title is-5">Creating ArXiv Paragraph Citations Relationships</h3>
-          <p>Link paragraphs to the citations they contain:</p>
-          <pre><code># Create paragraph-citation relationships
-paragraph_citations = [
-    {
-        'paragraph_id': 10,
-        'cited_paper_arxiv_id': '1409.0473v7',  # Bahdanau attention paper
-        'citation_number': 1,
-        'citation_marker': '[1]'
-    },
-    {
-        'paragraph_id': 15,
-        'cited_paper_arxiv_id': '1508.04025v5',  # Luong attention paper
-        'citation_number': 2,
-        'citation_marker': '[2]'
-    }
-]
-
-for relation in paragraph_citations:
-    research_arcade.insert_edge("arxiv_paragraph_citations", edge_features=relation)
-    print(f"Linked paragraph {relation['paragraph_id']} to citation {relation['citation_marker']}")
-</code></pre>
+          <h3 class="title is-5">Reading arxiv_paragraph_citations Edges</h3>
+          <p>Code example placeholder - Add your Python/API code here for reading arxiv_paragraph_citations edges</p>
         </div>
 
-        <!-- arxiv_paragraph_references Edge -->
         <div id="edge-arxiv_paragraph_references" class="code-container">
-          <h3 class="title is-5">Creating ArXiv Paragraph References Relationships</h3>
-          <p>Link paragraphs to the references they mention:</p>
-          <pre><code># Create paragraph-reference relationships
-paragraph_references = [
-    {
-        'paragraph_id': 5,
-        'referenced_paper_arxiv_id': '1409.0473v7',
-        'reference_type': 'methodology',
-        'character_position': 145
-    },
-    {
-        'paragraph_id': 8,
-        'referenced_paper_arxiv_id': '1508.04025v5',
-        'reference_type': 'comparison',
-        'character_position': 89
-    }
-]
-
-for relation in paragraph_references:
-    research_arcade.insert_edge("arxiv_paragraph_references", edge_features=relation)
-    print(f"Linked paragraph {relation['paragraph_id']} to reference ({relation['reference_type']})")
-</code></pre>
+          <h3 class="title is-5">Reading ArXiv Paragraph-References</h3>
+          <p>Example code for retrieving arxiv paragraph-reference data:</p>
+          <pre><code>paragraph_id = {&#x27;paragraph_id&#x27;: 1}
+references = research_arcade.get_neighborhood(&quot;arxiv_paragraph_reference&quot;, primary_key=paragraph_id)
+print(&quot;References:&quot;)
+print(references)</code></pre>
         </div>
 
-        <!-- openreview_papers_authors Edge -->
         <div id="edge-openreview_papers_authors" class="code-container">
-          <h3 class="title is-5">Creating OpenReview Papers Authors Relationships</h3>
-          <p>Connect OpenReview papers to their authors:</p>
-          <pre><code># Create OpenReview paper-author relationships
-openreview_paper_authors = [
-    {
-        'paper_id': 'rJl0r3R9KX',
-        'author_id': 'or_author_123',
-        'author_order': 1
-    },
-    {
-        'paper_id': 'rJl0r3R9KX',
-        'author_id': 'or_author_456',
-        'author_order': 2
-    }
-]
-
-for relation in openreview_paper_authors:
-    research_arcade.insert_edge("openreview_papers_authors", edge_features=relation)
-    print(f"Linked OpenReview author {relation['author_id']} to paper (position {relation['author_order']})")
-</code></pre>
+          <h3 class="title is-5">Creating a OpenReview Papers-Authors Relationship</h3>
+          <p>Example code for creating a new openreview papers-authors entry:</p>
+          <pre><code>paper_authors = [{&#x27;venue&#x27;: &#x27;ICLR.cc/2025/Conference&#x27;, &#x27;paper_openreview_id&#x27;: &#x27;00SnKBGTsz&#x27;, &#x27;author_openreview_id&#x27;: &#x27;~Elias_Stengel-Eskin1&#x27;}, 
+                 {&#x27;venue&#x27;: &#x27;ICLR.cc/2025/Conference&#x27;, &#x27;paper_openreview_id&#x27;: &#x27;00SnKBGTsz&#x27;, &#x27;author_openreview_id&#x27;: &#x27;~Zaid_Khan1&#x27;}, 
+                 {&#x27;venue&#x27;: &#x27;ICLR.cc/2025/Conference&#x27;, &#x27;paper_openreview_id&#x27;: &#x27;00SnKBGTsz&#x27;, &#x27;author_openreview_id&#x27;: &#x27;~Jaemin_Cho1&#x27;}, 
+                 {&#x27;venue&#x27;: &#x27;ICLR.cc/2025/Conference&#x27;, &#x27;paper_openreview_id&#x27;: &#x27;00SnKBGTsz&#x27;, &#x27;author_openreview_id&#x27;: &#x27;~Mohit_Bansal2&#x27;}]
+for item in paper_authors:
+    research_arcade.insert_edge(&quot;openreview_papers_authors&quot;, item)</code></pre>
         </div>
 
-        <!-- openreview_papers_reviews Edge -->
         <div id="edge-openreview_papers_reviews" class="code-container">
-          <h3 class="title is-5">Creating OpenReview Papers Reviews Relationships</h3>
-          <p>Connect OpenReview papers to their reviews:</p>
-          <pre><code># Create OpenReview paper-review relationships
-openreview_paper_reviews = [
-    {
-        'paper_id': 'rJl0r3R9KX',
-        'review_id': 'BklXx2C9tX',
-        'review_round': 1
-    },
-    {
-        'paper_id': 'rJl0r3R9KX',
-        'review_id': 'HyeXx2C9tY',
-        'review_round': 1
-    }
-]
-
-for relation in openreview_paper_reviews:
-    research_arcade.insert_edge("openreview_papers_reviews", edge_features=relation)
-    print(f"Linked OpenReview review {relation['review_id']} to paper (round {relation['review_round']})")
-</code></pre>
+          <h3 class="title is-5">Creating a OpenReview Papers-Reviews Relationship</h3>
+          <p>Example code for creating a new openreview papers-reviews entry:</p>
+          <pre><code>paper_review = {&#x27;venue&#x27;: &#x27;ICLR.cc/2025/Conference&#x27;, 
+                &#x27;paper_openreview_id&#x27;: &#x27;00SnKBGTsz&#x27;, 
+                &#x27;review_openreview_id&#x27;: &#x27;13mj0Rtn5W&#x27;, 
+                &#x27;title&#x27;: &#x27;Response by Authors&#x27;, 
+                &#x27;time&#x27;: &#x27;2024-11-27 17:27:45&#x27;}
+research_arcade.insert_edge(&quot;openreview_papers_reviews&quot;, paper_review)</code></pre>
         </div>
 
-        <!-- openreview_papers_revisions Edge -->
         <div id="edge-openreview_papers_revisions" class="code-container">
-          <h3 class="title is-5">Creating OpenReview Papers Revisions Relationships</h3>
-          <p>Connect OpenReview papers to their revisions:</p>
-          <pre><code># Create OpenReview paper-revision relationships
-openreview_paper_revisions = [
-    {
-        'paper_id': 'rJl0r3R9KX',
-        'revision_id': 'rev_001',
-        'is_latest': False
-    },
-    {
-        'paper_id': 'rJl0r3R9KX',
-        'revision_id': 'rev_002',
-        'is_latest': True
-    }
-]
-
-for relation in openreview_paper_revisions:
-    research_arcade.insert_edge("openreview_papers_revisions", edge_features=relation)
-    print(f"Linked OpenReview revision {relation['revision_id']} to paper (latest: {relation['is_latest']})")
-</code></pre>
+          <h3 class="title is-5">Creating a OpenReview Papers-Revisions Relationship</h3>
+          <p>Example code for creating a new openreview papers-revisions entry:</p>
+          <pre><code>paper_revision = {&#x27;venue&#x27;: &#x27;ICLR.cc/2025/Conference&#x27;, 
+                  &#x27;paper_openreview_id&#x27;: &#x27;00SnKBGTsz&#x27;, 
+                  &#x27;revision_openreview_id&#x27;: &#x27;Cn0twOEX1T&#x27;}
+research_arcade.insert_edge(&quot;openreview_papers_revisions&quot;, paper_revision)</code></pre>
         </div>
 
-        <!-- openreview_revisions_reviews Edge -->
         <div id="edge-openreview_revisions_reviews" class="code-container">
-          <h3 class="title is-5">Creating OpenReview Revisions Reviews Relationships</h3>
-          <p>Connect OpenReview revisions to their reviews:</p>
-          <pre><code># Create OpenReview revision-review relationships
-openreview_revision_reviews = [
-    {
-        'revision_id': 'rev_001',
-        'review_id': 'BklXx2C9tX',
-        'review_applies_to_revision': True
-    },
-    {
-        'revision_id': 'rev_002',
-        'review_id': 'HyeXx2C9tY',
-        'review_applies_to_revision': True
-    }
-]
-
-for relation in openreview_revision_reviews:
-    research_arcade.insert_edge("openreview_revisions_reviews", edge_features=relation)
-    print(f"Linked OpenReview review {relation['review_id']} to revision {relation['revision_id']}")
-</code></pre>
+          <h3 class="title is-5">Creating a OpenReview Revisions-Reviews Relationship</h3>
+          <p>Example code for creating a new openreview revisions-reviews entry:</p>
+          <pre><code>revision_review = {&#x27;venue&#x27;: &#x27;ICLR.cc/2025/Conference&#x27;, 
+                    &#x27;revision_openreview_id&#x27;: &#x27;Cn0twOEX1T&#x27;, 
+                    &#x27;review_openreview_id&#x27;: &#x27;13mj0Rtn5W&#x27;}
+research_arcade.insert_edge(&quot;openreview_revisions_reviews&quot;, revision_review)</code></pre>
         </div>
       </div>
 
-
-      <!-- Next Steps -->
       <div class="content mt-6">
         <h2 class="title is-3">Next Steps</h2>
-        <p>
-          Now that you can add nodes and edges, explore these related tutorials:
-        </p>
+        <p>Now that you can query your data, explore these related tutorials:</p>
         <div class="columns is-multiline mt-4">
-          <div class="column is-half">
-            <a class="box" href="./crud-read.html">
-              <article class="media">
-                <figure class="media-left">
-                  <span class="icon is-large"><i class="fa-solid fa-book-open fa-2x"></i></span>
-                </figure>
-                <div class="media-content">
-                  <h3 class="title is-5">Read Nodes & Edges</h3>
-                  <p>Query and retrieve the entities you've created.</p>
-                </div>
-              </article>
-            </a>
-          </div>
-
           <div class="column is-half">
             <a class="box" href="./crud-edit.html">
               <article class="media">
@@ -909,29 +411,37 @@ for relation in openreview_revision_reviews:
               </article>
             </a>
           </div>
+          <div class="column is-half">
+            <a class="box" href="./crud-delete.html">
+              <article class="media">
+                <figure class="media-left">
+                  <span class="icon is-large"><i class="fa-solid fa-trash fa-2x"></i></span>
+                </figure>
+                <div class="media-content">
+                  <h3 class="title is-5">Delete Nodes & Edges</h3>
+                  <p>Remove entities and relationships safely.</p>
+                </div>
+              </article>
+            </a>
+          </div>
         </div>
       </div>
 
-      <!-- Navigation -->
       <hr class="mt-6" />
       <nav class="level">
         <div class="level-left">
           <div class="level-item">
-            <a href="./index.html" class="button is-light">
-              <span class="icon is-small">
-                <i class="fas fa-arrow-left"></i>
-              </span>
-              <span>Back to Tutorials</span>
+            <a href="./crud-add.html" class="button is-light">
+              <span class="icon is-small"><i class="fas fa-arrow-left"></i></span>
+              <span>Previous: Add Nodes & Edges</span>
             </a>
           </div>
         </div>
         <div class="level-right">
           <div class="level-item">
-            <a href="./crud-read.html" class="button is-link">
-              <span>Next: Read Nodes & Edges</span>
-              <span class="icon is-small">
-                <i class="fas fa-arrow-right"></i>
-              </span>
+            <a href="./crud-edit.html" class="button is-link">
+              <span>Next: Edit Nodes & Edges</span>
+              <span class="icon is-small"><i class="fas fa-arrow-right"></i></span>
             </a>
           </div>
         </div>
@@ -939,66 +449,41 @@ for relation in openreview_revision_reviews:
     </div>
   </section>
 
-  <!-- Footer -->
   <footer class="footer">
     <div class="container">
       <div class="content has-text-centered is-size-7">
-        <p>
-          Built with the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a>.
-          Licensed under <a href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC BY-SA 4.0</a>.
-        </p>
+        <p>Built with the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a>. Licensed under <a href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC BY-SA 4.0</a>.</p>
       </div>
     </div>
   </footer>
 
   <script>
-    // Node type selector functionality
     const nodeSelect = document.getElementById('nodeTypeSelect');
     const nodePlaceholder = document.getElementById('nodePlaceholder');
     const nodeContainers = document.querySelectorAll('[id^="node-"]');
-
     nodeSelect.addEventListener('change', function() {
       const selectedValue = this.value;
-      
-      // Hide all node containers
-      nodeContainers.forEach(container => {
-        container.classList.remove('is-active');
-      });
-      
-      // Show placeholder or selected container
+      nodeContainers.forEach(container => container.classList.remove('is-active'));
       if (selectedValue === '') {
         nodePlaceholder.style.display = 'block';
       } else {
         nodePlaceholder.style.display = 'none';
         const selectedContainer = document.getElementById('node-' + selectedValue);
-        if (selectedContainer) {
-          selectedContainer.classList.add('is-active');
-        }
+        if (selectedContainer) selectedContainer.classList.add('is-active');
       }
     });
-
-    // Edge type selector functionality
     const edgeSelect = document.getElementById('edgeTypeSelect');
     const edgePlaceholder = document.getElementById('edgePlaceholder');
     const edgeContainers = document.querySelectorAll('[id^="edge-"]');
-
     edgeSelect.addEventListener('change', function() {
       const selectedValue = this.value;
-      
-      // Hide all edge containers
-      edgeContainers.forEach(container => {
-        container.classList.remove('is-active');
-      });
-      
-      // Show placeholder or selected container
+      edgeContainers.forEach(container => container.classList.remove('is-active'));
       if (selectedValue === '') {
         edgePlaceholder.style.display = 'block';
       } else {
         edgePlaceholder.style.display = 'none';
         const selectedContainer = document.getElementById('edge-' + selectedValue);
-        if (selectedContainer) {
-          selectedContainer.classList.add('is-active');
-        }
+        if (selectedContainer) selectedContainer.classList.add('is-active');
       }
     });
   </script>
