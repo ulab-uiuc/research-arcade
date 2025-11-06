@@ -43,7 +43,7 @@
           </span>
         </h1>
         <p class="subtitle is-5">
-          ArXiv and OpenReview data stored in <strong>PostgreSQL</strong> relational dataset with schemas.
+          ArXiv and OpenReview data stored in <strong>PostgreSQL</strong> relational dataset with normalized schemas.
         </p>
       </div>
     </div>
@@ -55,13 +55,13 @@
       <div class="content">
         <h2 class="title is-3">Overview</h2>
         <p>
-          The SQL Dataset of ArXiv and OpenReview data provides a normalized relational database. Built on PostgreSQL, it offers efficient querying interfaces and maintains connectivity across entities.
+          The SQL Dataset of ArXiv and OpenReview data provides a normalized relational database. Built on PostgreSQL, it offers efficient querying with proper foreign key relationships and maintains data integrity across entities.
         </p>
         
         <div class="notification is-info is-light">
           <span class="icon"><i class="fa-solid fa-circle-info"></i></span>
           <strong>Best for:</strong> 
-          Complex queries with multiple conditions; joint queries across different tables.
+          Complex queries with multiple joins; transactional consistency; production applications requiring data integrity; advanced analytics with SQL.
         </div>
       </div>
 
@@ -77,7 +77,7 @@
                   <span>Normalized Schema</span>
                 </span>
               </h3>
-              <p>Fully normalized tables following 3NF principles with proper foreign key constraints and referential integrity.</p>
+              <p>Platform-specific schemas (arxiv.*, openreview.*) with proper foreign key constraints and referential integrity.</p>
             </div>
           </div>
 
@@ -89,7 +89,31 @@
                   <span>Rich Relationships</span>
                 </span>
               </h3>
-              <p>Models complex academic relationships.</p>
+              <p>Models complex academic relationships including citations, authorship, reviews, and revisions with proper cardinality.</p>
+            </div>
+          </div>
+
+          <div class="column is-half">
+            <div class="box">
+              <h3 class="title is-5">
+                <span class="icon-text">
+                  <span class="icon has-text-success"><i class="fa-solid fa-check-circle"></i></span>
+                  <span>Cross-Platform Links</span>
+                </span>
+              </h3>
+              <p>Direct connections between OpenReview and ArXiv papers through openreview.arxiv mapping table.</p>
+            </div>
+          </div>
+
+          <div class="column is-half">
+            <div class="box">
+              <h3 class="title is-5">
+                <span class="icon-text">
+                  <span class="icon has-text-success"><i class="fa-solid fa-check-circle"></i></span>
+                  <span>Optimized Queries</span>
+                </span>
+              </h3>
+              <p>Efficient indexing on primary keys, foreign keys, and frequently queried fields for fast data retrieval.</p>
             </div>
           </div>
         </div>
@@ -99,14 +123,12 @@
       <div class="content mt-6">
         <h2 class="title is-3">Database Schema</h2>
         <p>
-          The SQL dataset represents <a href="../learn/entities.html">entities</a> and <a href="../learn/relations.html">relations</a> in the form of PostgreSQL data.
-
-          Below, each table corresponds to one specific entities or relations defined in the link.
-
-          Each table has a primary key and/or foreign keys for references.
+          The SQL dataset represents <a href="../learn/entities.html">entities</a> and <a href="../learn/relations.html">relations</a> in separate PostgreSQL schemas.
+          Each table corresponds to one specific entity or relation type defined in the documentation.
+          Tables use proper primary keys and foreign key constraints.
         </p>
 
-        <h3 class="title is-4 mt-5">Core Entity Tables</h3>
+        <h3 class="title is-4 mt-5">ArXiv Schema (arxiv.*)</h3>
         <div class="table-container">
           <table class="table is-striped is-fullwidth">
             <thead>
@@ -120,97 +142,189 @@
             <tbody>
               <tr>
                 <td><code>arxiv.papers</code></td>
-                <td>Academic papers from ArXiv</td>
-                <td><code>paper_id</code></td>
-                <td>title, abstract, publish_date, source</td>
+                <td>ArXiv papers with version tracking</td>
+                <td><code>id</code></td>
+                <td>arxiv_id (unique), base_arxiv_id, version, title, abstract, submit_date, metadata (jsonb)</td>
               </tr>
               <tr>
                 <td><code>arxiv.authors</code></td>
-                <td>Paper authors and their affiliations</td>
-                <td><code>author_id</code></td>
-                <td>name, email, affiliation, orcid</td>
+                <td>Authors with Semantic Scholar IDs</td>
+                <td><code>id</code></td>
+                <td>semantic_scholar_id (unique), name, homepage</td>
+              </tr>
+              <tr>
+                <td><code>arxiv.categories</code></td>
+                <td>ArXiv subject categories</td>
+                <td><code>id</code></td>
+                <td>name (unique), description</td>
               </tr>
               <tr>
                 <td><code>arxiv.sections</code></td>
-                <td>Hierarchical paper sections</td>
-                <td><code>section_id</code></td>
-                <td>paper_id, title, section_type, depth</td>
+                <td>Paper sections with full text</td>
+                <td><code>id</code></td>
+                <td>paper_arxiv_id (FK), content, title, appendix, section_in_paper_id</td>
               </tr>
               <tr>
                 <td><code>arxiv.paragraphs</code></td>
-                <td>Text content at paragraph level</td>
-                <td><code>paragraph_id</code></td>
-                <td>section_id, text, position, word_count</td>
+                <td>Individual paragraphs</td>
+                <td><code>id</code></td>
+                <td>section_id (FK), content, paragraph_in_section_id</td>
               </tr>
               <tr>
                 <td><code>arxiv.figures</code></td>
-                <td>Paper figures and images</td>
-                <td><code>figure_id</code></td>
-                <td>paper_id, caption, file_path, position</td>
+                <td>Paper figures</td>
+                <td><code>id</code></td>
+                <td>paper_arxiv_id (FK), path, caption, label, name</td>
               </tr>
               <tr>
                 <td><code>arxiv.tables</code></td>
-                <td>Paper tables and data</td>
-                <td><code>table_id</code></td>
-                <td>paper_id, caption, content, position</td>
-              </tr>
-              <tr>
-                <td><code>openreview.reviews</code></td>
-                <td>Peer reviews from OpenReview</td>
-                <td><code>review_id</code></td>
-                <td>paper_id, reviewer_id, rating, confidence</td>
-              </tr>
-              <tr>
-                <td><code>openreview.decisions</code></td>
-                <td>Editorial decisions on papers</td>
-                <td><code>decision_id</code></td>
-                <td>paper_id, decision_type, decision_date</td>
-              </tr>
-              <tr>
-                <td><code>openreview.venues</code></td>
-                <td>Publication venues and conferences</td>
-                <td><code>venue_id</code></td>
-                <td>name, abbreviation, venue_type, year</td>
+                <td>Paper tables</td>
+                <td><code>id</code></td>
+                <td>paper_arxiv_id (FK), path, caption, label, table_text</td>
               </tr>
             </tbody>
           </table>
         </div>
 
-        <h3 class="title is-4 mt-5">Relationship Tables</h3>
+        <h3 class="title is-4 mt-5">ArXiv Relationship Tables</h3>
         <div class="table-container">
           <table class="table is-striped is-fullwidth">
             <thead>
               <tr>
                 <th>Table Name</th>
                 <th>Description</th>
+                <th>Composite Key</th>
                 <th>Foreign Keys</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td><code>authorship</code></td>
-                <td>Links papers to their authors</td>
-                <td>paper_id, author_id, position</td>
+                <td><code>arxiv.citations</code></td>
+                <td>Paper citations with context</td>
+                <td><code>id</code></td>
+                <td>citing_arxiv_id, cited_arxiv_id, bib_title, bib_key, citing_sections (jsonb), citing_paragraphs (jsonb)</td>
               </tr>
               <tr>
-                <td><code>citations</code></td>
-                <td>Paper-to-paper citation relationships</td>
-                <td>citing_paper_id, cited_paper_id</td>
+                <td><code>arxiv.paper_authors</code></td>
+                <td>Paper-author relationships</td>
+                <td>paper_arxiv_id, author_id</td>
+                <td>paper_arxiv_id (FK), author_id (FK), author_sequence</td>
               </tr>
               <tr>
-                <td><code>references</code></td>
-                <td>Paragraph-level citation contexts</td>
-                <td>paragraph_id, cited_paper_id, context</td>
+                <td><code>arxiv.paper_category</code></td>
+                <td>Paper categorization</td>
+                <td>paper_arxiv_id, category_id</td>
+                <td>paper_arxiv_id (FK), category_id (FK)</td>
               </tr>
               <tr>
-                <td><code>revisions</code></td>
-                <td>Paper revision history</td>
-                <td>paper_id, version, revision_date</td>
+                <td><code>arxiv.paper_figures</code></td>
+                <td>Paper-figure links</td>
+                <td>paper_arxiv_id, figure_id</td>
+                <td>paper_arxiv_id (FK), figure_id (FK)</td>
               </tr>
               <tr>
-                <td><code>rebuttals</code></td>
-                <td>Author responses to reviews</td>
-                <td>review_id, rebuttal_text</td>
+                <td><code>arxiv.paper_tables</code></td>
+                <td>Paper-table links</td>
+                <td>paper_arxiv_id, table_id</td>
+                <td>paper_arxiv_id (FK), table_id (FK)</td>
+              </tr>
+              <tr>
+                <td><code>arxiv.paragraph_references</code></td>
+                <td>Internal figure/table references</td>
+                <td><code>id</code></td>
+                <td>paragraph_id (FK), paper_arxiv_id (FK), paper_section, reference_label, reference_type</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="title is-4 mt-5">OpenReview Schema (openreview.*)</h3>
+        <div class="table-container">
+          <table class="table is-striped is-fullwidth">
+            <thead>
+              <tr>
+                <th>Table Name</th>
+                <th>Description</th>
+                <th>Composite Key</th>
+                <th>Key Columns</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>openreview.papers</code></td>
+                <td>OpenReview papers</td>
+                <td>venue, paper_openreview_id</td>
+                <td>title, abstract, paper_decision, paper_pdf_link</td>
+              </tr>
+              <tr>
+                <td><code>openreview.authors</code></td>
+                <td>Authors with profiles</td>
+                <td>venue, author_openreview_id</td>
+                <td>author_full_name, email, affiliation, homepage, dblp</td>
+              </tr>
+              <tr>
+                <td><code>openreview.paragraphs</code></td>
+                <td>Paragraph-level content</td>
+                <td>venue, paper_openreview_id, paragraph_idx</td>
+                <td>section, content</td>
+              </tr>
+              <tr>
+                <td><code>openreview.reviews</code></td>
+                <td>Peer reviews</td>
+                <td>venue, review_openreview_id</td>
+                <td>replyto_openreview_id (FK), writer, title, content (jsonb), time</td>
+              </tr>
+              <tr>
+                <td><code>openreview.revisions</code></td>
+                <td>Paper revisions</td>
+                <td>venue, revision_openreview_id</td>
+                <td>original_openreview_id (FK), content (jsonb), time</td>
+              </tr>
+              <tr>
+                <td><code>openreview.arxiv</code></td>
+                <td>OpenReview-ArXiv links</td>
+                <td>venue, paper_openreview_id</td>
+                <td>arxiv_id, title</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="title is-4 mt-5">OpenReview Relationship Tables</h3>
+        <div class="table-container">
+          <table class="table is-striped is-fullwidth">
+            <thead>
+              <tr>
+                <th>Table Name</th>
+                <th>Description</th>
+                <th>Composite Key</th>
+                <th>Columns</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>openreview.papers_authors</code></td>
+                <td>Paper-author associations</td>
+                <td>venue, paper_openreview_id, author_openreview_id</td>
+                <td>All three columns (composite FK)</td>
+              </tr>
+              <tr>
+                <td><code>openreview.papers_reviews</code></td>
+                <td>Paper-review links</td>
+                <td>venue, paper_openreview_id, review_openreview_id</td>
+                <td>title, time</td>
+              </tr>
+              <tr>
+                <td><code>openreview.papers_revisions</code></td>
+                <td>Paper revision tracking</td>
+                <td>venue, paper_openreview_id, revision_openreview_id</td>
+                <td>title, time</td>
+              </tr>
+              <tr>
+                <td><code>openreview.revisions_reviews</code></td>
+                <td>Revision-review temporal links</td>
+                <td>venue, revision_openreview_id, review_openreview_id</td>
+                <td>All three columns (composite FK)</td>
               </tr>
             </tbody>
           </table>
@@ -219,163 +333,8 @@
 
       <!-- Access Methods -->
       <div class="content mt-6">
-        <h2 class="title is-3">Access Methods</h2>
         
-        <!-- <h3 class="title is-4 mt-5">Connection Details</h3>
-        <div class="box">
-          <p><strong>Host:</strong> <code>db.researcharcade.com</code></p>
-          <p><strong>Port:</strong> <code>5432</code></p>
-          <p><strong>Database:</strong> <code>researcharcade</code></p>
-          <p><strong>Schema:</strong> <code>public</code></p>
-          <p class="mt-3">
-          </p>
-        </div> -->
 
-        <h3 class="title is-4 mt-5">Python Connection Example</h3>
-        <!-- <pre><code>import psycopg2
-import pandas as pd
-
-# Establish connection
-conn = psycopg2.connect(
-    host="db.researcharcade.com",
-    port=5432,
-    database="researcharcade",
-    user="your_username",
-    password="your_password"
-)
-
-# Query papers
-query = """
-SELECT p.paper_id, p.title, p.abstract, p.publish_date
-FROM papers p
-WHERE p.publish_date >= '2024-01-01'
-ORDER BY p.publish_date DESC
-LIMIT 100;
-"""
-
-# Load into pandas DataFrame
-df = pd.read_sql(query, conn)
-
-# Close connection
-conn.close()</code></pre> -->
-
-        <h3 class="title is-4 mt-5">SQL Alchemy Example</h3>
-        <!-- <pre><code>from sqlalchemy import create_engine, text
-
-# Create engine
-engine = create_engine(
-    'postgresql://username:password@db.researcharcade.com:5432/researcharcade'
-)
-
-# Query with SQLAlchemy
-with engine.connect() as conn:
-    result = conn.execute(text("""
-        SELECT a.name, COUNT(p.paper_id) as paper_count
-        FROM authors a
-        JOIN authorship au ON a.author_id = au.author_id
-        JOIN papers p ON au.paper_id = p.paper_id
-        GROUP BY a.author_id, a.name
-        ORDER BY paper_count DESC
-        LIMIT 50;
-    """))
-    
-    for row in result:
-        print(f"{row.name}: {row.paper_count} papers")</code></pre> -->
-      </div>
-
-      <!-- Example Queries -->
-      <div class="content mt-6">
-        <h2 class="title is-3">Example Queries</h2>
-
-        <h3 class="title is-4 mt-5">Find Papers with Reviews</h3>
-        <!-- <pre><code>SELECT 
-    p.paper_id,
-    p.title,
-    AVG(r.rating) as avg_rating,
-    COUNT(r.review_id) as review_count,
-    d.decision_type
-FROM papers p
-LEFT JOIN reviews r ON p.paper_id = r.paper_id
-LEFT JOIN decisions d ON p.paper_id = d.paper_id
-WHERE p.source = 'openreview'
-GROUP BY p.paper_id, p.title, d.decision_type
-HAVING COUNT(r.review_id) >= 3
-ORDER BY avg_rating DESC;</code></pre> -->
-
-        <h3 class="title is-4 mt-5">Citation Network Analysis</h3>
-        <!-- <pre><code>WITH citation_counts AS (
-    SELECT 
-        cited_paper_id,
-        COUNT(*) as citation_count
-    FROM citations
-    GROUP BY cited_paper_id
-)
-SELECT 
-    p.paper_id,
-    p.title,
-    p.publish_date,
-    COALESCE(cc.citation_count, 0) as citations,
-    STRING_AGG(a.name, ', ' ORDER BY au.position) as authors
-FROM papers p
-LEFT JOIN citation_counts cc ON p.paper_id = cc.cited_paper_id
-LEFT JOIN authorship au ON p.paper_id = au.paper_id
-LEFT JOIN authors a ON au.author_id = a.author_id
-WHERE p.publish_date >= '2023-01-01'
-GROUP BY p.paper_id, p.title, p.publish_date, cc.citation_count
-ORDER BY citations DESC
-LIMIT 100;</code></pre> -->
-
-        <h3 class="title is-4 mt-5">Full-Text Search</h3>
-        <!-- <pre><code>-- Papers mentioning specific concepts
-SELECT 
-    p.paper_id,
-    p.title,
-    ts_rank(to_tsvector('english', p.abstract), query) as relevance
-FROM papers p,
-     to_tsquery('english', 'transformer & attention & neural') as query
-WHERE to_tsvector('english', p.abstract) @@ query
-ORDER BY relevance DESC
-LIMIT 50;</code></pre> -->
-
-        <h3 class="title is-4 mt-5">Author Collaboration Network</h3>
-        <!-- <pre><code>SELECT 
-    a1.name as author1,
-    a2.name as author2,
-    COUNT(DISTINCT au1.paper_id) as collaboration_count
-FROM authorship au1
-JOIN authorship au2 ON au1.paper_id = au2.paper_id 
-    AND au1.author_id < au2.author_id
-JOIN authors a1 ON au1.author_id = a1.author_id
-JOIN authors a2 ON au2.author_id = a2.author_id
-GROUP BY a1.author_id, a1.name, a2.author_id, a2.name
-HAVING COUNT(DISTINCT au1.paper_id) >= 3
-ORDER BY collaboration_count DESC;</code></pre> -->
-      </div>
-
-      <!-- Performance Optimization -->
-      <!-- <div class="content mt-6">
-        <h2 class="title is-3">Performance Optimization</h2>
-
-        <h3 class="title is-4 mt-5">Indexes</h3>
-        <p>The database includes strategic indexes for common query patterns:</p>
-        <ul>
-          <li><strong>B-tree indexes:</strong> Primary keys, foreign keys, date columns</li>
-          <li><strong>GIN indexes:</strong> Full-text search on abstracts and text content</li>
-          <li><strong>Composite indexes:</strong> Multi-column queries (e.g., paper_id + publish_date)</li>
-          <li><strong>Partial indexes:</strong> Filtered indexes for specific data subsets</li>
-        </ul>
-
-        <h3 class="title is-4 mt-5">Query Tips</h3>
-        <div class="notification is-warning is-light">
-          <ul class="mb-0">
-            <li>Use <code>EXPLAIN ANALYZE</code> to understand query execution plans</li>
-            <li>Filter early with <code>WHERE</code> clauses before joins</li>
-            <li>Use <code>LIMIT</code> for exploratory queries</li>
-            <li>Consider materialized views for complex, frequently-run analytics</li>
-            <li>Batch inserts/updates for better write performance</li>
-          </ul>
-        </div>
-      </div> -->
 
       <!-- Data Statistics -->
       <div class="content mt-6">
@@ -384,25 +343,29 @@ ORDER BY collaboration_count DESC;</code></pre> -->
           <div class="column is-one-quarter">
             <div class="box has-text-centered">
               <p class="heading">Papers</p>
-              <p class="title is-4">40000+</p>
+              <p class="title is-4">40,000+</p>
+              <p class="subtitle is-6">ArXiv & OpenReview</p>
             </div>
           </div>
           <div class="column is-one-quarter">
             <div class="box has-text-centered">
-              <p class="heading">Authors</p>
-              <p class="title is-4">Placeholder</p>
-            </div>
-          </div>
-          <div class="column is-one-quarter">
-            <div class="box has-text-centered">
-              <p class="heading">Citations</p>
-              <p class="title is-4">Placeholder</p>
+              <p class="heading">Paragraphs</p>
+              <p class="title is-4">5M+</p>
+              <p class="subtitle is-6">Fine-grained content</p>
             </div>
           </div>
           <div class="column is-one-quarter">
             <div class="box has-text-centered">
               <p class="heading">Reviews</p>
-              <p class="title is-4">Placeholder</p>
+              <p class="title is-4">Comprehensive</p>
+              <p class="subtitle is-6">Multiple venues</p>
+            </div>
+          </div>
+          <div class="column is-one-quarter">
+            <div class="box has-text-centered">
+              <p class="heading">Citations</p>
+              <p class="title is-4">Tracked</p>
+              <p class="subtitle is-6">With context</p>
             </div>
           </div>
         </div>
