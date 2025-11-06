@@ -2,6 +2,7 @@ import pandas as pd
 import os
 from pathlib import Path
 from typing import Optional
+import json
 
 
 class CSVArxivPaperAuthor:
@@ -185,25 +186,7 @@ class CSVArxivPaperAuthor:
 
 
     def construct_table_from_json(self, json_file):
-        """
-        Construct the paper-author relationships from an external JSON file.
-        
-        Args:
-            json_file: Path to the JSON file
-            
-        Expected JSON format:
-            [
-                {
-                    "paper_arxiv_id": "1706.03762v7",
-                    "author_id": "ss_ashish_vaswani",
-                    "author_sequence": 1
-                },
-                ...
-            ]
-            
-        Returns:
-            bool: True if successful, False otherwise
-        """
+
         if not os.path.exists(json_file):
             print(f"Error: JSON file {json_file} does not exist.")
             return False

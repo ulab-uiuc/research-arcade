@@ -142,7 +142,8 @@ class CSVArxivFigure:
 
 
     def construct_figures_table_from_api(self, arxiv_ids, dest_dir):
-
+        md = MultiDownload()
+        
         # Check if papers already exists in the directory
         downloaded_paper_ids = []
         for arxiv_id in arxiv_ids:
@@ -152,7 +153,6 @@ class CSVArxivFigure:
                 downloaded_paper_ids.append(arxiv_id)
 
         for arxiv_id in downloaded_paper_ids:
-            md = MultiDownload()
             try:
                 md.download_arxiv(input=arxiv_id, input_type = "id", output_type="latex", dest_dir=self.dest_dir)
                 print(f"paper with id {arxiv_id} downloaded")

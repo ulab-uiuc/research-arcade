@@ -86,7 +86,7 @@ class CSVArxivAuthors:
         
         self._save_data(df)
         return True
-
+        
     def get_author_by_id(self, semantic_scholar_id: int) -> Optional[pd.DataFrame]:
         """Get an author by its id. Returns a DataFrame with the author or None if not found."""
         df = self._load_data()
@@ -94,17 +94,17 @@ class CSVArxivAuthors:
         if df.empty or semantic_scholar_id not in df['id'].values:
             return None
         
-        author = df[df['id'] == semantic_scholar_id]
+        author = df[df['semantic_scholar_id'] == semantic_scholar_id]
         return author
 
-    def check_author_exists(self, id: int) -> bool:
+    def check_author_exists(self, semantic_scholar_id: int) -> bool:
         """Check if an author exists by its id."""
         df = self._load_data()
 
         if df.empty:
             return False
 
-        return id in df['id'].values
+        return semantic_scholar_id in df['semantic_scholar_id'].values
 
     def construct_author_table_from_csv(self, csv_file: str):
         """
