@@ -12,7 +12,7 @@ class SQLArxivCategory:
         self.password = password
         self.autocommit = port
         self.autocommit = True
-
+    
     def _get_connection(self):
         conn = psycopg2.connect(
             host=self.host,

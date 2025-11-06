@@ -73,7 +73,7 @@ class ResearchArcade:
         elif db_type == 'sql':
             if config["host"] is None:
                 config["csv_dir"] = os.getenv('CSV_DATASET_FOLDER_PATH')
-                
+            
             """
             Below is the arxiv dataset
             """

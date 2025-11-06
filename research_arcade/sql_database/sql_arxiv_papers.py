@@ -11,7 +11,7 @@ class SQLArxivPapers:
         self.dbname = dbname
         self.user = user
         self.password = password
-        self.autocommit = port
+        self.port = port
         self.autocommit = True
 
     def _get_connection(self):
@@ -167,6 +167,25 @@ class SQLArxivPapers:
             return ok
         finally:
             conn.close()
+    
+    def get_all_papers(self, is_all_features: bool=True):
+
+        # if is_all_features:
+        sql_statement = """
+        SELECT * FROM papers;
+        """
+
+
+        conn = self._get_connection()
+        try:
+            cur = conn.cursor()
+            cur.execute(sql_statement)
+            rows = cur.fetchall()
+            cur.close()
+            return rows if rows else None
+        finally:
+            conn.close()
+    
 
     def get_paper_by_arxiv_id(self, arxiv_id: str, return_all: bool = False):
         """
