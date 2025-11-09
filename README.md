@@ -2,7 +2,8 @@
 
 <p align="center">
     <a href="https://ulab-uiuc.github.io/research-arcade/">🌐 Project Page</a> |
-    <a href="TODO">📜 arXiv</a>
+    <a href="TODO">📜 arXiv</a> |
+    <a href="https://huggingface.co/collections/ulab-ai/researcharcade">🔗 Dataset</a>
 <p>
 
 <div align="center">
@@ -119,7 +120,7 @@ pg_ctl -D $PGDATA restart
 
 #### 2. Configure Environment Variables
 
-To run the code, you’ll need to set up environment variables such as your **Semantic Scholar API key** and database configurations.
+To run the code, you’ll need to set up environment variables such as your **Semantic Scholar API key** and **Database Configurations**.
 
 Copy the template file into the project root directory:
 ```bash
