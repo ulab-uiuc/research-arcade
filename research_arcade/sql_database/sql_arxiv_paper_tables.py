@@ -7,6 +7,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from ..arxiv_utils.multi_input.multi_download import MultiDownload
 from ..arxiv_utils.graph_constructor.node_processor import NodeConstructor
 from ..arxiv_utils.utils import arxiv_id_processor
+import pandas as pd
 
 
 class SQLArxivPaperTable:
@@ -40,17 +41,14 @@ class SQLArxivPaperTable:
             cur.execute("""
                 CREATE TABLE IF NOT EXISTS arxiv_paper_tables (
                     paper_arxiv_id VARCHAR(100) NOT NULL,
-                    table_id INTEGER NOT NULL
+                    table_id INTEGER NOT NULL,
+                    CONSTRAINT ux_arxiv_paper_tables_unique UNIQUE (paper_arxiv_id, table_id)
                 )
-            """)
-            # Composite unique index mirrors CSV conflict check
-            cur.execute("""
-                CREATE UNIQUE INDEX IF NOT EXISTS ux_arxiv_paper_tables_unique
-                ON arxiv_paper_tables (paper_arxiv_id, table_id)
             """)
             cur.close()
         finally:
             conn.close()
+
 
     def insert_paper_table(self, paper_arxiv_id, table_id):
         """
@@ -177,6 +175,70 @@ class SQLArxivPaperTable:
             return count
         finally:
             conn.close()
+
+    
+    def construct_table_from_csv(self, csv_file):
+        """
+        Construct the paper-table relationships from an external CSV file.
+        
+        Args:
+            csv_file: Path to the CSV file
+            
+        Expected CSV format:
+            - Required columns: paper_arxiv_id, table_id
+            
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        if not os.path.exists(csv_file):
+            print(f"Error: CSV file {csv_file} does not exist.")
+            return False
+
+        try:
+            
+            # Read the CSV file
+            df = pd.read_csv(csv_file)
+            
+            # Check for required columns
+            required_cols = ['paper_arxiv_id', 'table_id']
+            missing_cols = [col for col in required_cols if col not in df.columns]
+
+            if missing_cols:
+                print(f"Error: External CSV is missing required columns: {missing_cols}")
+                return False
+
+            # Convert to list of tuples for bulk insert
+            rows = list(df[required_cols].itertuples(index=False, name=None))
+            
+            if not rows:
+                print("No rows to import.")
+                return True
+
+            # Bulk insert with conflict handling
+            conn = self._get_connection()
+            try:
+                cur = conn.cursor()
+                psycopg2.extras.execute_values(
+                    cur,
+                    """
+                    INSERT INTO arxiv_paper_tables (paper_arxiv_id, table_id)
+                    VALUES %s
+                    ON CONFLICT ON CONSTRAINT ux_arxiv_paper_tables_unique DO NOTHING
+                    """,
+                    rows,
+                    page_size=1000
+                )
+                cur.close()
+            finally:
+                conn.close()
+
+            print(f"Successfully imported {len(rows)} paper-table relationships from {csv_file}")
+            return True
+            
+        except Exception as e:
+            print(f"Error importing paper-table relationships from CSV: {e}")
+            return False
+                                    
 
     def construct_table_from_json(self, json_file):
         """

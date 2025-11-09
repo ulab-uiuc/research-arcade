@@ -46,7 +46,7 @@ class SQLArxivParagraphReference:
             cur.execute("""
                 CREATE TABLE IF NOT EXISTS arxiv_paragraph_references (
                     id SERIAL PRIMARY KEY,
-                    paragraph_id VARCHAR(255) NOT NULL,
+                    paragraph_id INT NOT NULL,
                     paper_section VARCHAR(255) NOT NULL,
                     paper_arxiv_id VARCHAR(100) NOT NULL,
                     reference_label VARCHAR(255),

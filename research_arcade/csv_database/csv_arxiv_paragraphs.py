@@ -215,7 +215,7 @@ class CSVArxivParagraphs:
         figures_dir_path = f"{dest_dir}/output/images"
         output_dir_path = f"{dest_dir}/output/paragraphs"
         pgp = PaperGraphProcessor(data_dir=data_dir_path, figures_dir=figures_dir_path, output_dir=output_dir_path)
-
+        
         papers = []
         for arxiv_id in arxiv_ids:
             paper_dir = f"{dest_dir}/{arxiv_id}/{arxiv_id}_metadata.json"

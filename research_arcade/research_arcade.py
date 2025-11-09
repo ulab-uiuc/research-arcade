@@ -213,7 +213,7 @@ class ResearchArcade:
             return self.openreview_paragraphs.get_paragraphs_by_paper_id(**primary_key)
         # Tables in arxiv dataset
         elif table == 'arxiv_authors':
-            return self.arxiv_authors.get_author_by_id(**primary_key)
+            return self.arxiv_authors.get_author_by_semantic_scholar_id(**primary_key)
         elif table == 'arxiv_categories':
             return self.arxiv_categories.get_category_by_id(**primary_key)
         elif table == 'arxiv_figures':
@@ -583,8 +583,6 @@ class ResearchArcade:
             self.arxiv_sections.construct_sections_table_from_api(**config)
         elif table == "arxiv_paragraphs":
             self.arxiv_paragraphs.construct_paragraphs_table_from_api(**config)
-        elif table == "arxiv_categories":
-            self.arxiv_categories.construct_category_table_from_api(**config)
         elif table == "arxiv_paper_authors":
             self.arxiv_paper_authors.construct_papers_table_from_api(**config)
         elif table == "arxiv_paper_figures":
@@ -599,7 +597,14 @@ class ResearchArcade:
             self.arxiv_paragraph_references.construct_papers_table_from_api(**config)
         else:
             print(f"Table {table} does not support construction from API")
-            
+    
+
+    def construct_arxiv_tables_from_api(self, config: dict) -> Optional[pd.DataFrame]:
+        table_names = ["arxiv_papers", "arxiv_authors", "arxiv_categories", "arxiv_sections", "arxiv_figures", "arxiv_tables",  "arxiv_paper_authors", "arxiv_paper_figures", "arxiv_paper_tables", "arxiv_paper_categories", "arxiv_citations", "arxiv_paragraphs", "arxiv_paragraph_references"]
+
+
+        for table_name in table_names:
+            self.construct_arxiv_tables_from_api(table= table_name, config=config)
 
 
 
@@ -708,3 +713,4 @@ class ResearchArcade:
             self.arxiv_paragraph_reference.construct_table_from_json(**config)
         else:
             print(f"Table {table} does not support construction from JSON")
+    

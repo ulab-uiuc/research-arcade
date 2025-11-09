@@ -45,18 +45,13 @@ class SQLArxivPaperCategory:
             cur.execute("""
                 CREATE TABLE IF NOT EXISTS arxiv_paper_category (
                     paper_arxiv_id VARCHAR(100) NOT NULL,
-                    category_id VARCHAR(100) NOT NULL
+                    category_id VARCHAR(100) NOT NULL,
+                    CONSTRAINT ux_arxiv_paper_category_unique UNIQUE (paper_arxiv_id, category_id)
                 )
-            """)
-            # Composite unique index for preventing duplicates
-            cur.execute("""
-                CREATE UNIQUE INDEX IF NOT EXISTS ux_arxiv_paper_category_unique
-                ON arxiv_paper_category (paper_arxiv_id, category_id)
             """)
             cur.close()
         finally:
             conn.close()
-
     # -------------------------
     # Insert
     # -------------------------

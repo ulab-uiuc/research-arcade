@@ -68,7 +68,7 @@ class SQLArxivSections:
                 VALUES (%s, %s, %s, %s)
                 RETURNING id
                 """,
-                (content, title, is_appendix, paper_arxiv_id)
+                (content, title, appendix, paper_arxiv_id)
             )
             res = cur.fetchone()
             cur.close()

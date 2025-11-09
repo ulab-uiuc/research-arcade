@@ -45,18 +45,14 @@ class SQLArxivPaperFigure:
             cur.execute("""
                 CREATE TABLE IF NOT EXISTS arxiv_paper_figures (
                     paper_arxiv_id VARCHAR(100) NOT NULL,
-                    figure_id INTEGER NOT NULL
+                    figure_id INTEGER NOT NULL,
+                    CONSTRAINT ux_arxiv_paper_figures_unique UNIQUE (paper_arxiv_id, figure_id)
                 )
-            """)
-            # Composite unique index for conflict prevention
-            cur.execute("""
-                CREATE UNIQUE INDEX IF NOT EXISTS ux_arxiv_paper_figures_unique
-                ON arxiv_paper_figures (paper_arxiv_id, figure_id)
             """)
             cur.close()
         finally:
-            conn.close()
-
+            conn.close()    
+            
     # -------------------------
     # Insert
     # -------------------------

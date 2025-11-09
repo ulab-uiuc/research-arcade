@@ -38,7 +38,7 @@ class SQLArxivAuthors:
         try:
             cur = conn.cursor()
             cur.execute("""
-            CREATE TABLE IF NOT EXISTS authors (
+            CREATE TABLE IF NOT EXISTS arxiv_authors (
                 id SERIAL PRIMARY KEY,
                 semantic_scholar_id VARCHAR(100) UNIQUE,
                 name VARCHAR(255) NOT NULL,
@@ -55,7 +55,7 @@ class SQLArxivAuthors:
         try:
             cur = conn.cursor()
             sql = """
-            INSERT INTO authors (semantic_scholar_id, name, homepage)
+            INSERT INTO arxiv_authors (semantic_scholar_id, name, homepage)
             VALUES (%s, %s, %s)
             ON CONFLICT (semantic_scholar_id) DO NOTHING
             RETURNING id
@@ -72,7 +72,7 @@ class SQLArxivAuthors:
         conn = self._get_connection()
         try:
             cur = conn.cursor()
-            cur.execute("DELETE FROM authors WHERE id = %s RETURNING id", (id,))
+            cur.execute("DELETE FROM arxiv_authors WHERE id = %s RETURNING id", (id,))
             deleted = cur.fetchone() is not None
             cur.close()
             return deleted
@@ -98,7 +98,7 @@ class SQLArxivAuthors:
         if not fields:
             return False  # Nothing to update
 
-        sql = f"UPDATE authors SET {', '.join(fields)} WHERE id = %s RETURNING id"
+        sql = f"UPDATE arxiv_authors SET {', '.join(fields)} WHERE id = %s RETURNING id"
         values.append(id)
 
         conn = self._get_connection()
@@ -121,7 +121,7 @@ class SQLArxivAuthors:
         try:
             cur = conn.cursor()
             cur.execute(
-                "SELECT id, semantic_scholar_id, name, homepage FROM authors WHERE semantic_scholar = %s",
+                "SELECT id, semantic_scholar_id, name, homepage FROM arxiv_authors WHERE semantic_scholar = %s",
                 (semantic_scholar,),
             )
             res = cur.fetchall() if return_all else cur.fetchone()
@@ -135,7 +135,7 @@ class SQLArxivAuthors:
         conn = self._get_connection()
         try:
             cur = conn.cursor()
-            cur.execute("SELECT 1 FROM authors WHERE id = %s LIMIT 1", (id,))
+            cur.execute("SELECT 1 FROM arxiv_authors WHERE id = %s LIMIT 1", (id,))
             exists = cur.fetchone() is not None
             cur.close()
             return exists
@@ -147,13 +147,13 @@ class SQLArxivAuthors:
         conn = self._get_connection()
         try:
             cur = conn.cursor()
-            cur.execute("SELECT id, semantic_scholar_id, name, homepage FROM authors")
+            cur.execute("SELECT id, semantic_scholar_id, name, homepage FROM arxiv_authors")
             rows = cur.fetchall()
             cur.close()
             return rows if rows else None
         finally:
             conn.close()
-
+    
     def construct_authors_table_from_api(self, arxiv_ids, dest_dir):
         """
         Given arxiv ids, find the semantic scholar ids and pages of the authors
@@ -222,7 +222,7 @@ class SQLArxivAuthors:
                 psycopg2.extras.execute_values(
                     cur,
                     """
-                    INSERT INTO authors (semantic_scholar_id, name, homepage)
+                    INSERT INTO arxiv_authors (semantic_scholar_id, name, homepage)
                     VALUES %s
                     ON CONFLICT (semantic_scholar_id) DO NOTHING
                     """,
@@ -233,11 +233,11 @@ class SQLArxivAuthors:
             finally:
                 conn.close()
 
-            print(f"Successfully imported {len(rows)} authors from {csv_file}")
+            print(f"Successfully imported {len(rows)} arxiv_authors from {csv_file}")
             return True
             
         except Exception as e:
-            print(f"Error importing authors from CSV: {e}")
+            print(f"Error importing arxiv_authors from CSV: {e}")
             return False
 
     def construct_table_from_json(self, json_file):
@@ -322,7 +322,7 @@ class SQLArxivAuthors:
                 psycopg2.extras.execute_values(
                     cur,
                     """
-                    INSERT INTO authors (semantic_scholar_id, name, homepage)
+                    INSERT INTO arxiv_authors (semantic_scholar_id, name, homepage)
                     VALUES %s
                     ON CONFLICT (semantic_scholar_id) DO NOTHING
                     """,
@@ -333,7 +333,7 @@ class SQLArxivAuthors:
             finally:
                 conn.close()
 
-            print(f"Successfully imported {len(rows)} authors from {json_file}")
+            print(f"Successfully imported {len(rows)} arxiv_authors from {json_file}")
             return True
             
         except json.JSONDecodeError as e:
@@ -355,7 +355,7 @@ class SQLArxivAuthors:
         try:
             cur = conn.cursor()
             cur.execute(
-                "SELECT id, semantic_scholar_id, name, homepage FROM authors WHERE semantic_scholar_id = %s",
+                "SELECT id, semantic_scholar_id, name, homepage FROM arxiv_authors WHERE semantic_scholar_id = %s",
                 (semantic_scholar_id,),
             )
             res = cur.fetchall() if return_all else cur.fetchone()
@@ -370,7 +370,7 @@ class SQLArxivAuthors:
         conn = self._get_connection()
         try:
             cur = conn.cursor()
-            cur.execute("SELECT 1 FROM authors WHERE semantic_scholar_id = %s LIMIT 1", (semantic_scholar_id,))
+            cur.execute("SELECT 1 FROM arxiv_authors WHERE semantic_scholar_id = %s LIMIT 1", (semantic_scholar_id,))
             exists = cur.fetchone() is not None
             cur.close()
             return exists
@@ -386,7 +386,7 @@ class SQLArxivAuthors:
         conn = self._get_connection()
         try:
             cur = conn.cursor()
-            cur.execute("SELECT id FROM authors WHERE semantic_scholar_id = %s", (semantic_scholar_id,))
+            cur.execute("SELECT id FROM arxiv_authors WHERE semantic_scholar_id = %s", (semantic_scholar_id,))
             result = cur.fetchone()
             cur.close()
             return result[0] if result else None
@@ -399,7 +399,7 @@ class SQLArxivAuthors:
         conn = self._get_connection()
         try:
             cur = conn.cursor()
-            cur.execute("DELETE FROM authors WHERE semantic_scholar_id = %s RETURNING id", (semantic_scholar_id,))
+            cur.execute("DELETE FROM arxiv_authors WHERE semantic_scholar_id = %s RETURNING id", (semantic_scholar_id,))
             deleted = cur.fetchone() is not None
             cur.close()
             return deleted
@@ -424,9 +424,9 @@ class SQLArxivAuthors:
         if not fields:
             return False  # Nothing to update
 
-        sql = f"UPDATE authors SET {', '.join(fields)} WHERE semantic_scholar_id = %s RETURNING id"
+        sql = f"UPDATE arxiv_authors SET {', '.join(fields)} WHERE semantic_scholar_id = %s RETURNING id"
         values.append(semantic_scholar_id)
-        
+
         conn = self._get_connection()
         try:
             cur = conn.cursor()
