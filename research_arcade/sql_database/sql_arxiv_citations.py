@@ -16,19 +16,12 @@ from ..arxiv_utils.utils import arxiv_id_processor
 
 class SQLArxivCitation:
     def __init__(self, host: str, dbname: str, user: str, password: str, port: str):
-<<<<<<< HEAD
-        self.csv_path = csv_path
-        Path(csv_path).parent.mkdir(parents=True, exist_ok=True)
-        if not os.path.exists(csv_path):
-            self.create_citations_table()
-=======
         self.host = host
         self.dbname = dbname
         self.user = user
         self.password = password
         self.port = port
         self.autocommit = True
->>>>>>> website_design
 
     def _get_connection(self):
         conn = psycopg2.connect(
