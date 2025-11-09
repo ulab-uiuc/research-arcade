@@ -46,7 +46,8 @@ Tables are classified into **node tables** (colored) or **edge tables** (black a
     - **ArXiv**: citationship (paper-paper), authorship (paper-author), paragraph-of-paper (paper-paragraph), figure-of-paper (paper-figure), table-of-paper (paper-table), etc.
 - **CRUD Operations**: Full support for Create, Read, Update, and Delete operations on all entities
 
-### ⚙️ Environment Requirements
+### Setup
+#### 1. Environment Setup
 - Python ≥ 3.9 (tested on 3.12)
 - PostgreSQL ≥ 14 (for SQL backend)
 - Conda ≥ 22.0 (recommended)
@@ -54,7 +55,8 @@ Tables are classified into **node tables** (colored) or **edge tables** (black a
   - Semantic Scholar API
   <!-- - Other APIs of user's choice/convenience -->
 
-```python
+##### Python Setup
+```bash
 # create a new environment
 conda create -n research_arcade python=3.12
 conda activate research_arcade
@@ -63,7 +65,59 @@ conda activate research_arcade
 pip install -r requirements.txt
 ```
 
-### Configure Environment Variables
+##### PostgreSQL Setup
+```bash
+# Download Source File
+wget https://ftp.postgresql.org/pub/source/v16.2/postgresql-16.2.tar.gz
+tar -xvzf postgresql-16.2.tar.gz
+cd postgresql-16.2
+
+# Set Installation Path
+export INSTALL_DIR=/YOUR/INSTALL/DICT
+mkdir -p $INSTALL_DIR
+
+# Compile and Install
+./configure --prefix=$INSTALL_DIR --without-icu --without-readline
+make
+make install
+
+# Add PostgreSQL to PATH
+export PATH=$INSTALL_DIR/bin:$PATH
+
+# Set the Data Directory
+export PGDATA=/YOUR/DATA/DICT
+mkdir -p $PGDATA
+
+# Initialize Database
+### WARNING: Initialize Again will Clean the Database ####
+initdb -D $PGDATA
+
+# Launch Database
+pg_ctl -D $PGDATA -l logfile start
+
+# Create Database
+createdb iclr_openreview_database
+psql iclr_openreview_database
+
+# Configure PostgreSQL to Python Access (Enable TCP Listening)
+nano $PGDATA/postgresql.conf
+### add at the end of the file ###
+listen_addresses = 'localhost'
+port = 5432
+### add at the end of the file ###
+
+# Allow TCP Connection Authentication
+nano $PGDATA/pg_hba.conf
+### add at the end of the file ###
+# Allow local TCP connections to use md5 password authentication
+host    all             all             127.0.0.1/32            md5
+### add at the end of the file ###
+
+# Restart Database when it Lost Connection
+pg_ctl -D $PGDATA restart
+```
+
+#### 2. Configure Environment Variables
 
 To run the code, you’ll need to set up environment variables such as your **Semantic Scholar API key** and database configurations.
 
@@ -72,9 +126,9 @@ Copy the template file into the project root directory:
 cp .env.template .env
 ```
 
-### Backend Selection
+#### 3. Backend Selection
 
-#### Initialize with CSV Backend
+##### Initialize with CSV Backend
 
 ```python
 from research_arcade import ResearchArcade
@@ -85,7 +139,7 @@ research_arcade = ResearchArcade(
 )
 ```
 
-#### Initialize with SQL Backend
+##### Initialize with SQL Backend
 
 ```python
 from research_arcade import ResearchArcade
