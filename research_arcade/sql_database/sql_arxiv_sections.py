@@ -19,6 +19,7 @@ class SQLArxivSections:
         self.password = password
         self.port = port
         self.autocommit = True
+        self.create_sections_table()
 
     def _get_connection(self):
         conn = psycopg2.connect(

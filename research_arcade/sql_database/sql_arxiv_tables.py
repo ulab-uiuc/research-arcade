@@ -19,6 +19,7 @@ class SQLArxivTable:
         self.password = password
         self.port = port
         self.autocommit = True
+        self.create_tables_table()
         
     def _get_connection(self):
         conn = psycopg2.connect(

@@ -19,6 +19,7 @@ class SQLArxivPaperAuthor:
         self.password = password
         self.port = port
         self.autocommit = True
+        self.create_paper_authors_table()
 
     def _get_connection(self):
         conn = psycopg2.connect(
