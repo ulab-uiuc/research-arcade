@@ -402,3 +402,112 @@ class SQLArxivFigure:
             except Exception as e:
                 print(f"An unexpected error occurred: {e}")
                 continue
+
+
+
+    def get_figure_by_name(self, name: str, return_all: bool = False):
+        """
+        Get a figure by its name (when name is not NULL).
+        - If return_all=False, returns a single tuple
+        (id, paper_arxiv_id, path, caption, label, name)
+        - If return_all=True, returns a list of such tuples.
+        Returns None if not found.
+        """
+        conn = self._get_connection()
+        try:
+            cur = conn.cursor()
+            cur.execute(
+                "SELECT id, paper_arxiv_id, path, caption, label, name "
+                "FROM arxiv_figures WHERE name = %s",
+                (name,)
+            )
+            rows = cur.fetchall() if return_all else cur.fetchone()
+            cur.close()
+            return rows if rows else None
+        finally:
+            conn.close()
+
+
+    def check_figure_exists_by_name(self, name: str) -> bool:
+        """
+        Returns True if a figure with the given name exists.
+        """
+        conn = self._get_connection()
+        try:
+            cur = conn.cursor()
+            cur.execute("SELECT 1 FROM arxiv_figures WHERE name = %s LIMIT 1", (name,))
+            ok = cur.fetchone() is not None
+            cur.close()
+            return ok
+        finally:
+            conn.close()
+
+
+    def get_figure_id_by_name(self, name: str) -> int:
+        """
+        Get the internal database id for a figure by name.
+        Returns None if not found.
+        """
+        conn = self._get_connection()
+        try:
+            cur = conn.cursor()
+            cur.execute("SELECT id FROM arxiv_figures WHERE name = %s", (name,))
+            result = cur.fetchone()
+            cur.close()
+            return result[0] if result else None
+        finally:
+            conn.close()
+
+
+    def delete_figure_by_name(self, name: str) -> bool:
+        """
+        Delete by name; returns True if a row was deleted.
+        """
+        conn = self._get_connection()
+        try:
+            cur = conn.cursor()
+            cur.execute("DELETE FROM arxiv_figures WHERE name = %s RETURNING id", (name,))
+            ok = cur.fetchone() is not None
+            cur.close()
+            return ok
+        finally:
+            conn.close()
+
+
+    def get_figures_by_paper(self, paper_arxiv_id: str):
+        """
+        Get all figures for a specific paper.
+        Returns a list of tuples (id, paper_arxiv_id, path, caption, label, name).
+        """
+        conn = self._get_connection()
+        try:
+            cur = conn.cursor()
+            cur.execute(
+                "SELECT id, paper_arxiv_id, path, caption, label, name "
+                "FROM arxiv_figures WHERE paper_arxiv_id = %s",
+                (paper_arxiv_id,)
+            )
+            rows = cur.fetchall()
+            cur.close()
+            return rows if rows else None
+        finally:
+            conn.close()
+
+
+    def delete_figures_by_paper(self, paper_arxiv_id: str) -> int:
+        """
+        Delete all figures for a specific paper.
+        Returns the count of deleted rows.
+        """
+        conn = self._get_connection()
+        try:
+            cur = conn.cursor()
+            cur.execute(
+                "DELETE FROM arxiv_figures WHERE paper_arxiv_id = %s",
+                (paper_arxiv_id,)
+            )
+            count = cur.rowcount
+            cur.close()
+            return count
+        finally:
+            conn.close()

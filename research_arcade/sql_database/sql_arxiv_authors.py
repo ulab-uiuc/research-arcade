@@ -342,3 +342,97 @@ class SQLArxivAuthors:
         except Exception as e:
             print(f"Error importing authors from JSON: {e}")
             return False
+
+
+    def get_author_by_semantic_scholar_id(self, semantic_scholar_id: str, return_all: bool = False):
+        """
+        Get an author by its semantic_scholar_id.
+        - If return_all=False, returns a single row tuple (id, semantic_scholar_id, name, homepage).
+        - If return_all=True, returns all matching rows as a list of tuples.
+        Returns None if not found.
+        """
+        conn = self._get_connection()
+        try:
+            cur = conn.cursor()
+            cur.execute(
+                "SELECT id, semantic_scholar_id, name, homepage FROM authors WHERE semantic_scholar_id = %s",
+                (semantic_scholar_id,),
+            )
+            res = cur.fetchall() if return_all else cur.fetchone()
+            cur.close()
+            return res if res else None
+        finally:
+            conn.close()
+
+
+    def check_author_exists_by_semantic_scholar_id(self, semantic_scholar_id: str) -> bool:
+        """Check if an author exists by its semantic_scholar_id."""
+        conn = self._get_connection()
+        try:
+            cur = conn.cursor()
+            cur.execute("SELECT 1 FROM authors WHERE semantic_scholar_id = %s LIMIT 1", (semantic_scholar_id,))
+            exists = cur.fetchone() is not None
+            cur.close()
+            return exists
+        finally:
+            conn.close()
+
+
+    def get_author_id_by_semantic_scholar_id(self, semantic_scholar_id: str) -> int:
+        """
+        Get the internal database id for an author by semantic_scholar_id.
+        Returns None if not found.
+        """
+        conn = self._get_connection()
+        try:
+            cur = conn.cursor()
+            cur.execute("SELECT id FROM authors WHERE semantic_scholar_id = %s", (semantic_scholar_id,))
+            result = cur.fetchone()
+            cur.close()
+            return result[0] if result else None
+        finally:
+            conn.close()
+
+
+    def delete_author_by_semantic_scholar_id(self, semantic_scholar_id: str) -> bool:
+        """Delete an author by its semantic_scholar_id. Returns True if deleted, False if not found."""
+        conn = self._get_connection()
+        try:
+            cur = conn.cursor()
+            cur.execute("DELETE FROM authors WHERE semantic_scholar_id = %s RETURNING id", (semantic_scholar_id,))
+            deleted = cur.fetchone() is not None
+            cur.close()
+            return deleted
+        finally:
+            conn.close()
+
+
+    def update_author_by_semantic_scholar_id(self, semantic_scholar_id: str, name=None, homepage=None) -> bool:
+        """
+        Update an author by semantic_scholar_id. Returns True if updated, False if not found or no fields provided.
+        """
+        fields = []
+        values = []
+        
+        if name is not None:
+            fields.append("name = %s")
+            values.append(name)
+        if homepage is not None:
+            fields.append("homepage = %s")
+            values.append(homepage)
+
+        if not fields:
+            return False  # Nothing to update
+
+        sql = f"UPDATE authors SET {', '.join(fields)} WHERE semantic_scholar_id = %s RETURNING id"
+        values.append(semantic_scholar_id)
+
+        conn = self._get_connection()
+        try:
+            cur = conn.cursor()
+            cur.execute(sql, tuple(values))
+            updated = cur.fetchone() is not None
+            cur.close()
+            return updated
+        finally:
+            conn.close()

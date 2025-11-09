@@ -349,3 +349,102 @@ class SQLArxivCategory:
         except Exception as e:
             print(f"Error importing categories from JSON: {e}")
             return False
+        
+
+    def get_category_by_name(self, name: str, return_all: bool = False):
+        """
+        Get a category by its name.
+        - If return_all=False, returns a single tuple (id, name, description)
+        - If return_all=True, returns a list of such tuples.
+        Returns None if not found.
+        """
+        conn = self._get_connection()
+        try:
+            cur = conn.cursor()
+            cur.execute(
+                "SELECT id, name, description FROM arxiv_categories WHERE name = %s",
+                (name,)
+            )
+            rows = cur.fetchall() if return_all else cur.fetchone()
+            cur.close()
+            return rows if rows else None
+        finally:
+            conn.close()
+
+
+    def check_category_exists_by_name(self, name: str) -> bool:
+        """
+        True if a category with the given name exists.
+        """
+        conn = self._get_connection()
+        try:
+            cur = conn.cursor()
+            cur.execute("SELECT 1 FROM arxiv_categories WHERE name = %s LIMIT 1", (name,))
+            ok = cur.fetchone() is not None
+            cur.close()
+            return ok
+        finally:
+            conn.close()
+
+
+    def get_category_id_by_name(self, name: str) -> int:
+        """
+        Get the internal database id for a category by name.
+        Returns None if not found.
+        """
+        conn = self._get_connection()
+        try:
+            cur = conn.cursor()
+            cur.execute("SELECT id FROM arxiv_categories WHERE name = %s", (name,))
+            result = cur.fetchone()
+            cur.close()
+            return result[0] if result else None
+        finally:
+            conn.close()
+
+
+    def delete_category_by_name(self, name: str) -> bool:
+        """
+        Delete by name; returns True if a row was deleted.
+        """
+        conn = self._get_connection()
+        try:
+            cur = conn.cursor()
+            cur.execute("DELETE FROM arxiv_categories WHERE name = %s RETURNING id", (name,))
+            ok = cur.fetchone() is not None
+            cur.close()
+            return ok
+        finally:
+            conn.close()
+
+
+    def update_category_by_name(self, name: str, new_name: str = None, description: str = None) -> bool:
+        """
+        Partial update by name. Only non-None fields are updated.
+        Returns True if a row was updated.
+        """
+        sets = []
+        vals = []
+        
+        if new_name is not None:
+            sets.append("name = %s")
+            vals.append(new_name)
+        if description is not None:
+            sets.append("description = %s")
+            vals.append(description)
+
+        if not sets:
+            return False
+
+        sql = f"UPDATE arxiv_categories SET {', '.join(sets)} WHERE name = %s RETURNING id"
+        vals.append(name)
+
+        conn = self._get_connection()
+        try:
+            cur = conn.cursor()
+            cur.execute(sql, tuple(vals))
+            ok = cur.fetchone() is not None
+            cur.close()
+            return ok
+        finally:
+            conn.close()

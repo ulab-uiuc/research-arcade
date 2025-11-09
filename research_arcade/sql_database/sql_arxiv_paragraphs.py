@@ -282,7 +282,7 @@ class SQLArxivParagraphs:
         if not os.path.exists(csv_file):
             print(f"Error: CSV file {csv_file} does not exist.")
             return False
-
+    
         df = pd.read_csv(csv_file)
         required_cols = ['paragraph_id', 'content', 'paper_arxiv_id', 'paper_section']
         missing = [c for c in required_cols if c not in df.columns]
