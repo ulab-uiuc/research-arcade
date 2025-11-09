@@ -81,7 +81,7 @@ class SQLArxivFigure:
                 """
                 INSERT INTO arxiv_figures (paper_arxiv_id, path, caption, label, name)
                 VALUES (%s, %s, %s, %s, %s)
-                ON CONFLICT ON CONSTRAINT ux_arxiv_figures_name_notnull DO NOTHING
+                ON CONFLICT (name) WHERE name IS NOT NULL DO NOTHING
                 RETURNING id
                 """,
                 (paper_arxiv_id, path, caption, label, name)

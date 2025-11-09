@@ -160,7 +160,7 @@ class ResearchArcade:
         elif table == 'arxiv_tables':
             return self.arxiv_tables.delete_table_by_id(**primary_key)
         elif table == 'arxiv_papers':
-            return self.arxiv_papers.delete_paper_by_id(**primary_key)
+            return self.arxiv_papers.delete_paper_by_arxiv_id(**primary_key)
         elif table == 'arxiv_paragraphs':
             return self.arxiv_paragraphs.delete_paragraph_by_id(**primary_key)
         elif table == 'arxiv_sections':
@@ -182,7 +182,7 @@ class ResearchArcade:
             return self.openreview_revisions.update_revision(**node_features)
         # Tables in arxiv dataset
         elif table == 'arxiv_authors':
-            return self.arxiv_authors.update_author(**node_features)
+            return self.arxiv_authors.update_author_by_semantic_scholar_id(**node_features)
         elif table == 'arxiv_categories':
             return self.arxiv_categories.update_category(**node_features)
         elif table == 'arxiv_figures':
@@ -221,7 +221,7 @@ class ResearchArcade:
         elif table == 'arxiv_tables':
             return self.arxiv_tables.get_table_by_id(**primary_key)
         elif table == 'arxiv_papers':
-            return self.arxiv_papers.get_paper_by_id(**primary_key)
+            return self.arxiv_papers.get_paper_by_arxiv_id(**primary_key)
         elif table == 'arxiv_paragraphs':
             return self.arxiv_paragraphs.get_paragraph_by_id(**primary_key)
         elif table == 'arxiv_sections':

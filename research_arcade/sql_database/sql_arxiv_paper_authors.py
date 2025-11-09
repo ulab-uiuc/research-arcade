@@ -46,13 +46,9 @@ class SQLArxivPaperAuthor:
                 CREATE TABLE IF NOT EXISTS arxiv_paper_authors (
                     paper_arxiv_id VARCHAR(100) NOT NULL,
                     author_id VARCHAR(100) NOT NULL,
-                    author_sequence INTEGER NOT NULL
+                    author_sequence INTEGER NOT NULL,
+                    CONSTRAINT ux_arxiv_paper_authors_unique UNIQUE (paper_arxiv_id, author_id)
                 )
-            """)
-            # Create composite unique index to prevent duplicates
-            cur.execute("""
-                CREATE UNIQUE INDEX IF NOT EXISTS ux_arxiv_paper_authors_unique
-                ON arxiv_paper_authors (paper_arxiv_id, author_id)
             """)
             cur.close()
         finally:

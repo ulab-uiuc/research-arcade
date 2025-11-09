@@ -111,7 +111,7 @@ class SQLArxivAuthors:
         finally:
             conn.close()
 
-    def get_author_by_id(self, id: int, return_all=False):
+    def get_author_by_id(self, semantic_scholar: int, return_all=False):
         """
         Get an author by its id.
         - If return_all=False, returns a single row tuple (id, semantic_scholar_id, name, homepage).
@@ -121,8 +121,8 @@ class SQLArxivAuthors:
         try:
             cur = conn.cursor()
             cur.execute(
-                "SELECT id, semantic_scholar_id, name, homepage FROM authors WHERE id = %s",
-                (id,),
+                "SELECT id, semantic_scholar_id, name, homepage FROM authors WHERE semantic_scholar = %s",
+                (semantic_scholar,),
             )
             res = cur.fetchall() if return_all else cur.fetchone()
             cur.close()
@@ -414,7 +414,7 @@ class SQLArxivAuthors:
         fields = []
         values = []
         
-        if name is not None:
+        if name is not None:    
             fields.append("name = %s")
             values.append(name)
         if homepage is not None:
@@ -426,7 +426,7 @@ class SQLArxivAuthors:
 
         sql = f"UPDATE authors SET {', '.join(fields)} WHERE semantic_scholar_id = %s RETURNING id"
         values.append(semantic_scholar_id)
-
+        
         conn = self._get_connection()
         try:
             cur = conn.cursor()

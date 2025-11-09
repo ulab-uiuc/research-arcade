@@ -52,18 +52,13 @@ class SQLArxivParagraphs:
                     paragraph_id VARCHAR(255) NOT NULL,
                     content TEXT,
                     paper_arxiv_id VARCHAR(100) NOT NULL,
-                    paper_section VARCHAR(255) NOT NULL
+                    paper_section VARCHAR(255) NOT NULL,
+                    CONSTRAINT ux_arxiv_paragraphs_unique UNIQUE (paragraph_id, paper_arxiv_id, paper_section)
                 )
-            """)
-            # Composite unique index for conflict prevention
-            cur.execute("""
-                CREATE UNIQUE INDEX IF NOT EXISTS ux_arxiv_paragraphs_unique
-                ON arxiv_paragraphs (paragraph_id, paper_arxiv_id, paper_section)
             """)
             cur.close()
         finally:
             conn.close()
-
     # -------------------------
     # CRUD
     # -------------------------

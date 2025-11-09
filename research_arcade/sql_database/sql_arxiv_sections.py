@@ -55,7 +55,7 @@ class SQLArxivSections:
     # -------------------------
     # CRUD
     # -------------------------
-    def insert_section(self, content, title, is_appendix, paper_arxiv_id, section_in_paper_id=None) -> Optional[int]:
+    def insert_section(self, content, title, appendix, paper_arxiv_id, section_in_paper_id=None) -> Optional[int]:
         """
         Insert a section; returns generated id or None.
         """

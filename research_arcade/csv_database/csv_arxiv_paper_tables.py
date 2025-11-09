@@ -1,182 +1,193 @@
-import psycopg2
-import psycopg2.extras
+import pandas as pd
 import os
-import sys
+from pathlib import Path
+from typing import Optional
 import json
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from ..arxiv_utils.multi_input.multi_download import MultiDownload
-from ..arxiv_utils.graph_constructor.node_processor import NodeConstructor
-from ..arxiv_utils.utils import arxiv_id_processor
 
-
-class SQLArxivPaperTable:
-    def __init__(self, host: str, dbname: str, user: str, password: str, port: str):
-        self.host = host
-        self.dbname = dbname
-        self.user = user
-        self.password = password
-        self.port = port
-        self.autocommit = True
-        self.create_paper_tables_table()
-
-    def _get_connection(self):
-        conn = psycopg2.connect(
-            host=self.host,
-            port=self.port,
-            dbname=self.dbname,
-            user=self.user,
-            password=self.password,
-        )
-        conn.autocommit = self.autocommit
-        return conn
+class CSVArxivPaperTable:
+    def __init__(self, csv_dir: str):
+        csv_path = f"{csv_dir}/arxiv_paper_tables.csv"
+        self.csv_path = csv_path
+        Path(csv_path).parent.mkdir(parents=True, exist_ok=True)
+        if not os.path.exists(csv_path):
+            self.create_paper_tables_table()
 
     def create_paper_tables_table(self):
-        """
-        Create the arxiv_paper_tables table with a composite uniqueness constraint.
-        """
-        conn = self._get_connection()
-        try:
-            cur = conn.cursor()
-            cur.execute("""
-                CREATE TABLE IF NOT EXISTS arxiv_paper_tables (
-                    paper_arxiv_id VARCHAR(100) NOT NULL,
-                    table_id INTEGER NOT NULL
-                )
-            """)
-            # Composite unique index mirrors CSV conflict check
-            cur.execute("""
-                CREATE UNIQUE INDEX IF NOT EXISTS ux_arxiv_paper_tables_unique
-                ON arxiv_paper_tables (paper_arxiv_id, table_id)
-            """)
-            cur.close()
-        finally:
-            conn.close()
+        df = pd.DataFrame(columns=['paper_arxiv_id', 'table_id'])
+        df.to_csv(self.csv_path, index=False)
+        print(f"Created paper_tables CSV at {self.csv_path}")
+
+    def _load_data(self): 
+        return pd.read_csv(self.csv_path) if os.path.exists(self.csv_path) else pd.DataFrame()
+    def _save_data(self, df): 
+        df.to_csv(self.csv_path, index=False)
 
     def insert_paper_table(self, paper_arxiv_id, table_id):
-        """
-        Insert a (paper_arxiv_id, table_id) edge.
-        Returns True if inserted, False if the pair already exists.
-        """
-        conn = self._get_connection()
-        try:
-            cur = conn.cursor()
-            cur.execute(
-                """
-                INSERT INTO arxiv_paper_tables (paper_arxiv_id, table_id)
-                VALUES (%s, %s)
-                ON CONFLICT ON CONSTRAINT ux_arxiv_paper_tables_unique DO NOTHING
-                """,
-                (paper_arxiv_id, table_id)
-            )
-            inserted = cur.rowcount > 0  # rowcount==1 if inserted, 0 if conflict
-            cur.close()
-            return inserted
-        finally:
-            conn.close()
+        df = self._load_data()
+        conflict = df[
+            (df['paper_arxiv_id'] == paper_arxiv_id) &
+            (df['table_id'] == table_id)
+        ]
+        if not conflict.empty:
+            return False
+        new_row = pd.DataFrame([{
+            'paper_arxiv_id': paper_arxiv_id,
+            'table_id': table_id
+        }])
+        df = pd.concat([df, new_row], ignore_index=True)
+        self._save_data(df)
+        return True
 
     def get_all_paper_tables(self):
-        """Get all paper-table relationships from the database."""
-        conn = self._get_connection()
-        try:
-            cur = conn.cursor()
-            cur.execute(
-                "SELECT paper_arxiv_id, table_id FROM arxiv_paper_tables"
-            )
-            rows = cur.fetchall()
-            cur.close()
-            return rows if rows else None
-        finally:
-            conn.close()
+        df = self._load_data()
+        
+        if df.empty:
+            return None
+        
+        return df.copy()
+    
 
-    def get_paper_neighboring_tables(self, paper_arxiv_id: str):
-        """
-        Get all tables for a specific paper.
-        Returns list of tuples: (paper_arxiv_id, table_id)
-        """
-        conn = self._get_connection()
-        try:
-            cur = conn.cursor()
-            cur.execute(
-                "SELECT paper_arxiv_id, table_id FROM arxiv_paper_tables WHERE paper_arxiv_id = %s",
-                (paper_arxiv_id,)
-            )
-            rows = cur.fetchall()
-            cur.close()
-            return rows if rows else None
-        finally:
-            conn.close()
+    def get_paper_neighboring_tables(self, paper_arxiv_id: str) -> Optional[pd.DataFrame]:
 
-    def get_table_neighboring_papers(self, table_id: int):
-        """
-        Get all papers that contain a specific table.
-        Returns list of tuples: (paper_arxiv_id, table_id)
-        """
-        conn = self._get_connection()
-        try:
-            cur = conn.cursor()
-            cur.execute(
-                "SELECT paper_arxiv_id, table_id FROM arxiv_paper_tables WHERE table_id = %s",
-                (table_id,)
-            )
-            rows = cur.fetchall()
-            cur.close()
-            return rows if rows else None
-        finally:
-            conn.close()
+        df = self._load_data()
+        
+        if df.empty:
+            return None
+        
+        # Filter for the specific paper
+        result = df[df['paper_arxiv_id'] == paper_arxiv_id].copy()
+        
+        if result.empty:
+            return None
+        
+        return result.reset_index(drop=True)
+
+
+    def get_table_neighboring_papers(self, table_id: int) -> Optional[pd.DataFrame]:
+
+        df = self._load_data()
+        
+        if df.empty:
+            return None
+        
+        result = df[df['table_id'] == table_id].copy()
+        
+        if result.empty:
+            return None
+        
+        return result.reset_index(drop=True)
+
 
     def delete_paper_table_by_id(self, paper_arxiv_id: str, table_id: int) -> bool:
-        """
-        Delete a specific paper-table relationship.
-        Returns True if deleted, False if not found.
-        """
-        conn = self._get_connection()
-        try:
-            cur = conn.cursor()
-            cur.execute(
-                "DELETE FROM arxiv_paper_tables WHERE paper_arxiv_id = %s AND table_id = %s RETURNING paper_arxiv_id",
-                (paper_arxiv_id, table_id)
-            )
-            deleted = cur.fetchone() is not None
-            cur.close()
-            return deleted
-        finally:
-            conn.close()
+
+        df = self._load_data()
+        
+        if df.empty:
+            return False
+        
+        mask = (df['paper_arxiv_id'] == paper_arxiv_id) & (df['table_id'] == table_id)
+        
+        if not mask.any():
+            return False
+        
+        df = df[~mask]
+        self._save_data(df)
+        
+        return True
+
 
     def delete_paper_table_by_paper_id(self, paper_arxiv_id: str) -> int:
-        """
-        Delete all table relationships for a specific paper.
-        Returns count of deleted rows.
-        """
-        conn = self._get_connection()
-        try:
-            cur = conn.cursor()
-            cur.execute(
-                "DELETE FROM arxiv_paper_tables WHERE paper_arxiv_id = %s",
-                (paper_arxiv_id,)
-            )
-            count = cur.rowcount
-            cur.close()
-            return count
-        finally:
-            conn.close()
+
+        df = self._load_data()
+        
+        if df.empty:
+            return 0
+        
+        mask = df['paper_arxiv_id'] == paper_arxiv_id
+        count = mask.sum()
+        
+        if count == 0:
+            return 0
+        
+        df = df[~mask]
+        self._save_data(df)
+        
+        return count
+
 
     def delete_paper_table_by_table_id(self, table_id: int) -> int:
+
+        df = self._load_data()
+        
+        if df.empty:
+            return 0
+        
+        mask = df['table_id'] == table_id
+        count = mask.sum()
+        
+        if count == 0:
+            return 0
+        
+        df = df[~mask]
+        self._save_data(df)
+        
+        return count
+
+
+
+    def construct_table_from_csv(self, csv_file):
         """
-        Delete all paper relationships for a specific table.
-        Returns count of deleted rows.
+        Construct the paper-table relationships from an external CSV file.
+        
+        Args:
+            csv_file: Path to the CSV file
+            
+        Expected CSV format:
+            - Required columns: paper_arxiv_id, table_id
+            
+        Returns:
+            bool: True if successful, False otherwise
         """
-        conn = self._get_connection()
+        if not os.path.exists(csv_file):
+            print(f"Error: CSV file {csv_file} does not exist.")
+            return False
+
         try:
-            cur = conn.cursor()
-            cur.execute(
-                "DELETE FROM arxiv_paper_tables WHERE table_id = %s",
-                (table_id,)
-            )
-            count = cur.rowcount
-            cur.close()
-            return count
-        finally:
-            conn.close()
+            external_df = pd.read_csv(csv_file)
+            current_df = self._load_data()
+
+            required_cols = ['paper_arxiv_id', 'table_id']
+            missing_cols = [col for col in required_cols if col not in external_df.columns]
+
+            if missing_cols:
+                print(f"Error: External CSV is missing required columns: {missing_cols}")
+                return False
+
+            # Filter out relationships that already exist
+            if not current_df.empty:
+                existing_pairs = set(zip(current_df['paper_arxiv_id'], current_df['table_id']))
+                external_df['_pair'] = list(zip(external_df['paper_arxiv_id'], external_df['table_id']))
+                external_df = external_df[~external_df['_pair'].isin(existing_pairs)]
+                external_df = external_df.drop(columns=['_pair'])
+
+            if external_df.empty:
+                print("No new paper-table relationships to import")
+                return True
+
+            # Ensure correct column order
+            external_df = external_df[['paper_arxiv_id', 'table_id']]
+
+            # Combine and save
+            combined_df = pd.concat([current_df, external_df], ignore_index=True)
+            self._save_data(combined_df)
+
+            print(f"Successfully imported {len(external_df)} paper-table relationships from {csv_file}")
+            return True
+            
+        except Exception as e:
+            print(f"Error importing paper-table relationships from CSV: {e}")
+            return False
+
 
     def construct_table_from_json(self, json_file):
         """
@@ -220,40 +231,37 @@ class SQLArxivPaperTable:
                 print("Error: No paper-table data found in JSON file")
                 return False
             
-            # Convert to list of tuples for bulk insert
-            rows = []
-            for relation in relations_list:
-                if 'paper_arxiv_id' not in relation or 'table_id' not in relation:
-                    print(f"Warning: Skipping relation missing required fields: {relation}")
-                    continue
-                    
-                rows.append((
-                    relation['paper_arxiv_id'],
-                    relation['table_id']
-                ))
+            # Convert to DataFrame
+            external_df = pd.DataFrame(relations_list)
+            current_df = self._load_data()
 
-            if not rows:
-                print("No valid paper-table records to import")
+            # Check for required columns
+            required_cols = ['paper_arxiv_id', 'table_id']
+            missing_cols = [col for col in required_cols if col not in external_df.columns]
+
+            if missing_cols:
+                print(f"Error: JSON data is missing required fields: {missing_cols}")
                 return False
 
-            conn = self._get_connection()
-            try:
-                cur = conn.cursor()
-                psycopg2.extras.execute_values(
-                    cur,
-                    """
-                    INSERT INTO arxiv_paper_tables (paper_arxiv_id, table_id)
-                    VALUES %s
-                    ON CONFLICT ON CONSTRAINT ux_arxiv_paper_tables_unique DO NOTHING
-                    """,
-                    rows,
-                    page_size=1000
-                )
-                cur.close()
-            finally:
-                conn.close()
+            # Filter out relationships that already exist
+            if not current_df.empty:
+                existing_pairs = set(zip(current_df['paper_arxiv_id'], current_df['table_id']))
+                external_df['_pair'] = list(zip(external_df['paper_arxiv_id'], external_df['table_id']))
+                external_df = external_df[~external_df['_pair'].isin(existing_pairs)]
+                external_df = external_df.drop(columns=['_pair'])
 
-            print(f"Successfully imported {len(rows)} paper-table relationships from {json_file}")
+            if external_df.empty:
+                print("No new paper-table relationships to import")
+                return True
+
+            # Ensure correct column order
+            external_df = external_df[['paper_arxiv_id', 'table_id']]
+            
+            # Combine and save
+            combined_df = pd.concat([current_df, external_df], ignore_index=True)
+            self._save_data(combined_df)
+
+            print(f"Successfully imported {len(external_df)} paper-table relationships from {json_file}")
             return True
             
         except json.JSONDecodeError as e:
@@ -262,3 +270,5 @@ class SQLArxivPaperTable:
         except Exception as e:
             print(f"Error importing paper-table relationships from JSON: {e}")
             return False
+
+
