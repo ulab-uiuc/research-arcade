@@ -3,7 +3,9 @@ import os
 from pathlib import Path
 from typing import Optional
 import json
-
+from ..arxiv_utils.multi_input.multi_download import MultiDownload
+from semanticscholar import SemanticScholar
+from ..arxiv_utils.utils import arxiv_id_processor
 
 class CSVArxivPaperAuthor:
     def __init__(self, csv_dir: str):
@@ -129,6 +131,31 @@ class CSVArxivPaperAuthor:
         self._save_data(df)
         
         return count
+
+    def construct_authors_table_from_api(self, arxiv_ids, dest_dir):
+        """
+        Given arxiv ids, find the semantic scholar ids and pages of the authors
+        """
+        # Search for authors online
+        sch = SemanticScholar()
+        for arxiv_id in arxiv_ids:
+            base_arxiv_id, version = arxiv_id_processor(arxiv_id=arxiv_id)
+            print(f"base_arxiv_id: {base_arxiv_id}")
+            try:
+                paper_sch = sch.get_paper(f"ARXIV:{base_arxiv_id}")
+                authors = paper_sch.authors
+                for author in authors:
+                    semantic_scholar_id = author.authorId
+                    author_r = sch.get_author(semantic_scholar_id)
+                    name = author_r.name
+                    url = author_r.url
+
+                    self.insert_paper_author(paper_arxiv_id=arxiv_id, author_id=semantic_scholar_id)
+                    
+            except Exception as e:
+                print(f"Paper with arxiv id {base_arxiv_id} not found on semantic scholar: {e}")
+                # return False
+                continue
 
 
     def construct_table_from_csv(self, csv_file):

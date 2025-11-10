@@ -90,6 +90,16 @@ class CSVArxivCategory:
         
         category = df[df['id'] == id]
         return category
+
+
+    def get_id_by_category(self, category: str) -> Optional[int]:  # Return int, not DataFrame
+        df = self._load_data()
+        
+        if df.empty or category not in df['name'].values:
+            return None
+        
+        result = df[df['name'] == category]
+        return result.iloc[0]['id'] if not result.empty else None
     
     def check_category_exists(self, id: int) -> bool:
         df = self._load_data()

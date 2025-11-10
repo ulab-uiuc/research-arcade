@@ -3,7 +3,8 @@ import os
 from pathlib import Path
 from typing import Optional
 import json
-
+from ..arxiv_utils.multi_input.multi_download import MultiDownload
+from ..csv_database.csv_arxiv_categories import CSVArxivCategory
 
 class CSVArxivPaperCategory:
     def __init__(self, csv_dir: str):
@@ -12,6 +13,7 @@ class CSVArxivPaperCategory:
         Path(csv_path).parent.mkdir(parents=True, exist_ok=True)
         if not os.path.exists(csv_path):
             self.create_paper_category_table()
+        self.csvac = CSVArxivCategory(csv_dir=csv_dir)
 
     def create_paper_category_table(self):
         df = pd.DataFrame(columns=['paper_arxiv_id', 'category_id'])
@@ -77,6 +79,49 @@ class CSVArxivPaperCategory:
             return None
         
         return result.reset_index(drop=True)
+
+    # def ?(self):
+    def construct_paper_categories_table_from_api(self, arxiv_ids, dest_dir):
+        # Check if papers already exists in the directory
+        md = MultiDownload()
+        downloaded_paper_ids = []
+        for arxiv_id in arxiv_ids:
+            paper_dir = f"{dest_dir}/{arxiv_id}/{arxiv_id}_metadata.json"
+
+            if not os.path.exists(paper_dir):
+                downloaded_paper_ids.append(arxiv_id)
+        
+        for arxiv_id in downloaded_paper_ids:
+            try:
+                md.download_arxiv(input=arxiv_id, input_type = "id", output_type="latex", dest_dir=self.dest_dir)
+                print(f"paper with id {arxiv_id} downloaded")
+                downloaded_paper_ids.append(arxiv_id)
+            except RuntimeError as e:
+                print(f"[ERROR] Failed to download {arxiv_id}: {e}")
+                continue
+        
+        for arxiv_id in arxiv_ids:
+            # Search if the corresponding paper graph exists
+            json_path = f"{dest_dir}/{arxiv_id}/{arxiv_id}_metadata.json"
+            
+            try:
+                with open(json_path, 'r') as file:
+                    file_json = json.load(file)
+                    categories = file_json['categories']
+                    # Search categories in dataset?
+                    for category in categories:
+                        category_id = self.csvac.get_id_by_category(category)
+                        self.insert_paper_category(paper_arxiv_id=arxiv_id, category_id=category_id)
+            
+            except FileNotFoundError:
+                print(f"Error: The file at path '{json_path}' was not found.")
+                continue
+            except json.JSONDecodeError:
+                print(f"Error: Could not decode JSON at path '{json_path}'. Check if the file contains valid JSON.")
+                continue
+            except Exception as e:
+                print(f"An unexpected error occurred: {e}")
+                continue
 
 
     def delete_paper_category_by_id(self, paper_arxiv_id: str, category_id: str) -> bool:

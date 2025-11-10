@@ -193,7 +193,7 @@ class CSVArxivSections:
         
         for arxiv_id in arxiv_ids:
             # Search if the corresponding paper graph exists
-
+            
             json_path = f"{dest_dir}/output/{arxiv_id}.json"
             if not os.path.exists(json_path):
                 # arxiv_id_graph.append(arxiv_id)

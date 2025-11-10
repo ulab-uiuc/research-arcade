@@ -290,6 +290,7 @@ class CSVArxivParagraphs:
             id_zero_based = id_number - section_min_paragraph[(paper_arxiv_id, paper_section)]
             self.insert_paragraph(paragraph_id=id_zero_based, content=content, paper_arxiv_id=paper_arxiv_id, paper_section=paper_section)
 
+
             # paragraph_cite_bib_keys = paragraph.get('cites')
             # for bib_key in paragraph_cite_bib_keys:
             #     self.db.insert_paragraph_citations(paragraph_id=id_zero_based, paper_section=paper_section, citing_arxiv_id=paper_arxiv_id, bib_key=bib_key)
@@ -298,7 +299,9 @@ class CSVArxivParagraphs:
             # paragraph_ref_labels = paragraph.get('ref_labels')
 
 
-            # # def insert_paragraph_reference(self, paragraph_id, paper_arxiv_id, reference_label, reference_type=None):
+            # def insert_paragraph_reference(self, paragraph_id, paper_arxiv_id, reference_label, reference_type=None):
+
+            # Also add the paragraph references information into the dataset.
 
             # for ref_label in paragraph_ref_labels:
 
@@ -306,7 +309,7 @@ class CSVArxivParagraphs:
             #     # First search bib_key in databases.
             #     # If presented in one of them, we can determine the type of reference
 
-            #     is_figure = self.db.check_exist_figure(bib_key=ref_label)
+                # is_figure = self.db.check_exist_figure(bib_key=ref_label)
             #     is_table = self.db.check_exist_table(bib_key=ref_label)
             #     if is_figure:
             #         ref_type = 'figure'

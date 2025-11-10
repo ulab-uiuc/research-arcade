@@ -8,6 +8,8 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from ..arxiv_utils.multi_input.multi_download import MultiDownload
 from ..arxiv_utils.graph_constructor.node_processor import NodeConstructor
 from ..arxiv_utils.utils import arxiv_id_processor, figure_iteration_recursive
+
+
 class CSVArxivFigure:
     def __init__(self, csv_dir: str):
         csv_path = f"{csv_dir}/arxiv_figures.csv"
@@ -97,7 +99,33 @@ class CSVArxivFigure:
         
         figure = df[df['id'] == id]
         return figure
+
+
+    def get_figure_id_by_arxiv_id_label(self, paper_arxiv_id, label) -> Optional[int]:
+        """
+        Get the figure ID by paper arxiv_id and label.
+        
+        Args:
+            paper_arxiv_id: The arxiv ID of the paper
+            label: The label of the figure (e.g., 'fig:architecture')
+        
+        Returns:
+            The figure ID if found, None otherwise
+        """
+        df = self._load_data()
+        
+        if df.empty:
+            return None
+        
+        # Filter by both paper_arxiv_id and label
+        result = df[(df['paper_arxiv_id'] == paper_arxiv_id) & (df['label'] == label)]
+        
+        if result.empty:
+            return None
     
+        return result.iloc[0]['id']   
+
+
     def check_figure_exists(self, id: int) -> bool:
         df = self._load_data()
         

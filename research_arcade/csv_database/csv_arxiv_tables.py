@@ -93,6 +93,31 @@ class CSVArxivTable:
         table = df[df['id'] == id]
         return table
     
+    def get_table_id_by_arxiv_id_label(self, arxiv_id, label) -> Optional[int]:
+        """
+        Get the table ID by paper arxiv_id and label.
+        
+        Args:
+            arxiv_id: The arxiv ID of the paper
+            label: The label of the table (e.g., 'tab:performance')
+        
+        Returns:
+            The table ID if found, None otherwise
+        """
+        df = self._load_data()
+        
+        if df.empty:
+            return None
+        
+        # Filter by both paper_arxiv_id and label
+        result = df[(df['paper_arxiv_id'] == arxiv_id) & (df['label'] == label)]
+        
+        if result.empty:
+            return None
+        
+        return result.iloc[0]['id']
+    
+    
     def check_table_exists(self, id: int) -> bool:
         df = self._load_data()
         

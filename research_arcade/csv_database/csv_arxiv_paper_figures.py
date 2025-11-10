@@ -3,6 +3,10 @@ import os
 from pathlib import Path
 from typing import Optional
 import json
+from ..arxiv_utils.multi_input.multi_download import MultiDownload
+from ..arxiv_utils.utils import arxiv_id_processor, figure_iteration_recursive
+
+from .csv_arxiv_figures import CSVArxivFigure
 
 class CSVArxivPaperFigure:
     def __init__(self, csv_dir: str):
@@ -11,6 +15,8 @@ class CSVArxivPaperFigure:
         Path(csv_path).parent.mkdir(parents=True, exist_ok=True)
         if not os.path.exists(csv_path):
             self.create_paper_figures_table()
+        
+        self.csvaf = CSVArxivFigure(csv_dir=csv_dir)
     
     def create_paper_figures_table(self):
         df = pd.DataFrame(columns=['paper_arxiv_id', 'figure_id'])
@@ -130,7 +136,66 @@ class CSVArxivPaperFigure:
         self._save_data(df)
         
         return count
-    
+
+    def construct_paper_figures_table_from_api(self, arxiv_ids, dest_dir):
+        md = MultiDownload()
+        
+        # Check if papers already exists in the directory
+        downloaded_paper_ids = []
+        for arxiv_id in arxiv_ids:
+            paper_dir = f"{dest_dir}/{arxiv_id}/{arxiv_id}_metadata.json"
+
+            if not os.path.exists(paper_dir):
+                downloaded_paper_ids.append(arxiv_id)
+
+        for arxiv_id in downloaded_paper_ids:
+            try:
+                md.download_arxiv(input=arxiv_id, input_type = "id", output_type="latex", dest_dir=self.dest_dir)
+                print(f"paper with id {arxiv_id} downloaded")
+                downloaded_paper_ids.append(arxiv_id)
+            except RuntimeError as e:
+                print(f"[ERROR] Failed to download {arxiv_id}: {e}")
+                continue
+        
+        for arxiv_id in arxiv_ids:
+            # Search if the corresponding paper graph exists
+
+            json_path = f"{dest_dir}/output/{arxiv_id}.json"
+            if not os.path.exists(json_path):
+                # arxiv_id_graph.append(arxiv_id)
+                try:
+                    # Build corresponding graph
+                    md.build_paper_graph(
+                        input=arxiv_id,
+                        input_type="id",
+                        dest_dir=dest_dir
+                    )
+                except Exception as e:
+                    print(f"[Warning] Failed to process papers: {e}")
+                    continue
+
+            try:
+                with open(json_path, 'r') as file:
+                    file_json = json.load(file)
+                figure_jsons = file_json['figure']
+                for figure_json in figure_jsons:
+
+                    figures = figure_iteration_recursive(figure_json=figure_json)
+                    for figure in figures:
+                        path, caption, label = figure
+                        figure_id = self.csvaf.get_figure_id_by_arxiv_id_label(paper_arxiv_id=arxiv_id, label=label)
+                        self.insert_paper_figure(paper_arxiv_id=arxiv_id, figure_id=figure_id)
+
+            except FileNotFoundError:
+                print(f"Error: The file with path '{json_path}' was not found.")
+                continue
+            except json.JSONDecodeError:
+                print(f"Error: Could not decode JSON from path '{json_path}'. Check if the file contains valid JSON.")
+                continue
+            except Exception as e:
+                print(f"An unexpected error occurred: {e}")
+                continue
+
 
 
 

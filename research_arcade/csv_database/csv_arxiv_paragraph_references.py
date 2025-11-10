@@ -2,6 +2,8 @@ import pandas as pd
 import os
 from pathlib import Path
 from typing import Optional
+import json
+from ..arxiv_utils.utils import get_paragraph_num
 
 class CSVArxivParagraphReference:
     def __init__(self, csv_dir: str):
@@ -127,6 +129,48 @@ class CSVArxivParagraphReference:
         self._save_data(df)
         
         return count
+
+    def construct_table_from_api(self, arxiv_ids, dest_dir):
+        """
+        Assume that the paragraph data for now is the same as what we had before.
+        """
+
+        paragraph_path = f"{dest_dir}/output/paragraphs/text_nodes.jsonl"
+        with open(paragraph_path) as f:
+            data = [json.loads(line) for line in f]
+
+        try:
+            section_min_paragraph = {}
+
+            for paragraph in data:
+
+                paragraph_id = paragraph.get('id')
+                id_number = get_paragraph_num(paragraph_id)
+                paper_arxiv_id = paragraph.get('paper_id')
+                paper_section = paragraph.get('section')
+                if (paper_arxiv_id, paper_section) not in section_min_paragraph:
+                    section_min_paragraph[(paper_arxiv_id, paper_section)] = int(id_number)
+                else:
+                    section_min_paragraph[(paper_arxiv_id, paper_section)] = min(section_min_paragraph[(paper_arxiv_id, paper_section)], int(id_number))
+
+            for paragraph in data:
+                paragraph_id = paragraph.get('id')
+                paper_arxiv_id = paragraph.get('paper_id')
+                paper_section = paragraph.get('section')
+
+                id_zero_based = id_number - section_min_paragraph[(paper_arxiv_id, paper_section)]
+
+                paragraph_ref_labels = paragraph.get('ref_labels')
+                for ref_label in paragraph_ref_labels:
+
+                    ref_type = None
+                    # First search bib_key in databases.
+                    # If presented in one of them, we can determine the type of reference
+                    # TODO
+                self.insert_paragraph_reference(paragraph_id=id_zero_based, paper_section=paper_section, paper_arxiv_id=paper_arxiv_id, reference_label=ref_label, reference_type=ref_type)
+
+        except Exception:
+            print("Cannot construct paragraph reference table from API")
 
 
 

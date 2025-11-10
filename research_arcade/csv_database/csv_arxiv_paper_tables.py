@@ -3,11 +3,14 @@ import os
 from pathlib import Path
 from typing import Optional
 import json
+from .csv_arxiv_tables import CSVArxivTable
+from ..arxiv_utils.multi_input.multi_download import MultiDownload
 
 class CSVArxivPaperTable:
     def __init__(self, csv_dir: str):
         csv_path = f"{csv_dir}/arxiv_paper_tables.csv"
         self.csv_path = csv_path
+        self.csvat = CSVArxivTable(csv_dir=csv_dir)
         Path(csv_path).parent.mkdir(parents=True, exist_ok=True)
         if not os.path.exists(csv_path):
             self.create_paper_tables_table()
@@ -133,6 +136,62 @@ class CSVArxivPaperTable:
         
         return count
 
+
+    def construct_paper_tables_table_from_api(self, arxiv_ids, dest_dir):
+        # Check if papers already exists in the directory
+        md = MultiDownload()
+        downloaded_paper_ids = []
+        for arxiv_id in arxiv_ids:
+            paper_dir = f"{dest_dir}/{arxiv_id}/{arxiv_id}_metadata.json"
+
+            if not os.path.exists(paper_dir):
+                downloaded_paper_ids.append(arxiv_id)
+
+        for arxiv_id in downloaded_paper_ids:
+            try:
+                md.download_arxiv(input=arxiv_id, input_type = "id", output_type="latex", dest_dir=self.dest_dir)
+                print(f"paper with id {arxiv_id} downloaded")
+                downloaded_paper_ids.append(arxiv_id)
+            except RuntimeError as e:
+                print(f"[ERROR] Failed to download {arxiv_id}: {e}")
+                continue
+        
+        for arxiv_id in arxiv_ids:
+            # Search if the corresponding paper graph exists
+
+            json_path = f"{dest_dir}/output/{arxiv_id}.json"
+            if not os.path.exists(json_path):
+                # arxiv_id_graph.append(arxiv_id)
+                try:
+                    # Build corresponding graph
+                    md.build_paper_graph(
+                        input=arxiv_id,
+                        input_type="id",
+                        dest_dir=dest_dir
+                    )
+                except Exception as e:
+                    print(f"[Warning] Failed to process papers: {e}")
+                    continue
+
+            try:
+                with open(json_path, 'r') as file:
+                    file_json = json.load(file)
+                    table_jsons = file_json['table']
+                    for table_json in table_jsons:
+
+                        label = table_json['label']
+                        id = self.csvat.get_table_id_by_arxiv_id_label(arxiv_id=arxiv_id, label=label)
+                        self.insert_paper_table(paper_arxiv_id=arxiv_id, table_id=id)
+
+            except FileNotFoundError:
+                print(f"Error: The file at path '{json_path}' was not found.")
+                continue
+            except json.JSONDecodeError:
+                print(f"Error: Could not decode JSON from '{json_path}'. Check if the file contains valid JSON.")
+                continue
+            except Exception as e:
+                print(f"An unexpected error occurred: {e}")
+                continue
 
 
     def construct_table_from_csv(self, csv_file):
