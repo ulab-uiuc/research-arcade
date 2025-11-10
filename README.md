@@ -42,6 +42,7 @@ Tables are classified into **node tables** (colored) or **edge tables** (black a
     - **OpenReview**: Support for papers, authors, reviews, revisions, paragraphs, and their interconnections
     - **ArXiv**: Support for papers, authors, paragraphs, sections, figures, tables and their interconnections
 - **Flexible Data Import**: Load data from OpenReview API, Arxiv API, CSV files, or JSON files
+- **Flexible Data Output**: The output data is in the format of `pd.Dataframe`, and they can be conveniently converted into CSV or JSON files.
 - **Graph-like Operations**: Navigate relationships between entities
     - **OpenReview**: authorship (paper-author), comment-under-paper (paper-review), revision-of-paper (paper-revision), revision-caused-by-review (revision-review), etc.
     - **ArXiv**: citationship (paper-paper), authorship (paper-author), paragraph-of-paper (paper-paragraph), figure-of-paper (paper-figure), table-of-paper (paper-table), etc.
