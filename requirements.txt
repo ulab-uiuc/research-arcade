@@ -1,4 +1,4 @@
-arxiv==2.2.0
+arxiv==2.3.0
 openreview==0.0.2
 openreview_py==1.51.2
 pandas==2.3.3
