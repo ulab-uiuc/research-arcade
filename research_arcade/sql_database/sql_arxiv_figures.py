@@ -443,7 +443,7 @@ class SQLArxivFigure:
             conn.close()
 
 
-    def get_figure_id_by_name(self, name: str) -> int:
+    def get_figure_id_by_arxiv_id_label(self, paper_arxiv_id, label):
         """
         Get the internal database id for a figure by name.
         Returns None if not found.
@@ -451,7 +451,7 @@ class SQLArxivFigure:
         conn = self._get_connection()
         try:
             cur = conn.cursor()
-            cur.execute("SELECT id FROM arxiv_figures WHERE name = %s", (name,))
+            cur.execute("SELECT id FROM arxiv_figures WHERE label = %s AND paper_arxiv_id = %s", (label, paper_arxiv_id))
             result = cur.fetchone()
             cur.close()
             return result[0] if result else None

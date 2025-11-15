@@ -150,6 +150,61 @@ class SQLArxivTable:
         finally:
             conn.close()
 
+    def get_table_id_by_arxiv_id_label(self, arxiv_id: str, label: str) -> Optional[int]:
+        """
+        Get the table ID by paper arxiv_id and label.
+        
+        Args:
+            arxiv_id: The arxiv ID of the paper
+            label: The label of the table (e.g., 'tab:performance')
+        
+        Returns:
+            The table ID if found, None otherwise
+        """
+        conn = self._get_connection()
+        try:
+            cur = conn.cursor()
+            cur.execute(
+                """
+                SELECT id FROM arxiv_tables 
+                WHERE paper_arxiv_id = %s AND label = %s
+                LIMIT 1
+                """,
+                (arxiv_id, label)
+            )
+            result = cur.fetchone()
+            cur.close()
+            return result[0] if result else None
+        finally:
+            conn.close()
+    
+    def get_table_id_by_arxiv_id_label(self, arxiv_id: str, label: str) -> Optional[int]:
+        """
+        Get the table ID by paper arxiv_id and label.
+        
+        Args:
+            arxiv_id: The arxiv ID of the paper
+            label: The label of the table (e.g., 'tab:performance')
+        
+        Returns:
+            The table ID if found, None otherwise
+        """
+        conn = self._get_connection()
+        try:
+            cur = conn.cursor()
+            cur.execute(
+                """
+                SELECT id FROM arxiv_tables 
+                WHERE paper_arxiv_id = %s AND label = %s
+                LIMIT 1
+                """,
+                (arxiv_id, label)
+            )
+            result = cur.fetchone()
+            cur.close()
+            return result[0] if result else None
+        finally:
+            conn.close()
     def get_all_tables(self, is_all_features=True):
         """Get all tables from the database."""
         conn = self._get_connection()
@@ -379,3 +434,4 @@ class SQLArxivTable:
             except Exception as e:
                 print(f"An unexpected error occurred: {e}")
                 continue
+    

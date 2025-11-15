@@ -1,5 +1,6 @@
 import psycopg2
 import psycopg2.extras
+import pandas as pd
 import os
 import sys
 import json
@@ -7,7 +8,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from ..arxiv_utils.multi_input.multi_download import MultiDownload
 from ..arxiv_utils.graph_constructor.node_processor import NodeConstructor
 from ..arxiv_utils.utils import arxiv_id_processor
-import pandas as pd
+from .sql_arxiv_tables import SQLArxivTable
 
 
 class SQLArxivPaperTable:
@@ -19,6 +20,7 @@ class SQLArxivPaperTable:
         self.port = port
         self.autocommit = True
         self.create_paper_tables_table()
+        self.sqlat = SQLArxivTable(host=host, dbanme=dbname, user=user, password=password, port=port)
 
     def _get_connection(self):
         conn = psycopg2.connect(
@@ -31,6 +33,9 @@ class SQLArxivPaperTable:
         conn.autocommit = self.autocommit
         return conn
 
+    # -------------------------
+    # DDL
+    # -------------------------
     def create_paper_tables_table(self):
         """
         Create the arxiv_paper_tables table with a composite uniqueness constraint.
@@ -41,16 +46,22 @@ class SQLArxivPaperTable:
             cur.execute("""
                 CREATE TABLE IF NOT EXISTS arxiv_paper_tables (
                     paper_arxiv_id VARCHAR(100) NOT NULL,
-                    table_id INTEGER NOT NULL,
-                    CONSTRAINT ux_arxiv_paper_tables_unique UNIQUE (paper_arxiv_id, table_id)
+                    table_id INTEGER NOT NULL
                 )
+            """)
+            # Composite unique index mirrors CSV conflict check
+            cur.execute("""
+                CREATE UNIQUE INDEX IF NOT EXISTS ux_arxiv_paper_tables_unique
+                ON arxiv_paper_tables (paper_arxiv_id, table_id)
             """)
             cur.close()
         finally:
             conn.close()
 
-
-    def insert_paper_table(self, paper_arxiv_id, table_id):
+    # -------------------------
+    # Insert
+    # -------------------------
+    def insert_paper_table(self, paper_arxiv_id, table_id) -> bool:
         """
         Insert a (paper_arxiv_id, table_id) edge.
         Returns True if inserted, False if the pair already exists.
@@ -72,6 +83,9 @@ class SQLArxivPaperTable:
         finally:
             conn.close()
 
+    # -------------------------
+    # Query
+    # -------------------------
     def get_all_paper_tables(self):
         """Get all paper-table relationships from the database."""
         conn = self._get_connection()
@@ -122,6 +136,9 @@ class SQLArxivPaperTable:
         finally:
             conn.close()
 
+    # -------------------------
+    # Delete
+    # -------------------------
     def delete_paper_table_by_id(self, paper_arxiv_id: str, table_id: int) -> bool:
         """
         Delete a specific paper-table relationship.
@@ -176,8 +193,10 @@ class SQLArxivPaperTable:
         finally:
             conn.close()
 
-    
-    def construct_table_from_csv(self, csv_file):
+    # -------------------------
+    # Bulk import from CSV
+    # -------------------------
+    def construct_table_from_csv(self, csv_file: str) -> bool:
         """
         Construct the paper-table relationships from an external CSV file.
         
@@ -195,11 +214,8 @@ class SQLArxivPaperTable:
             return False
 
         try:
-            
-            # Read the CSV file
             df = pd.read_csv(csv_file)
-            
-            # Check for required columns
+
             required_cols = ['paper_arxiv_id', 'table_id']
             missing_cols = [col for col in required_cols if col not in df.columns]
 
@@ -207,14 +223,11 @@ class SQLArxivPaperTable:
                 print(f"Error: External CSV is missing required columns: {missing_cols}")
                 return False
 
-            # Convert to list of tuples for bulk insert
             rows = list(df[required_cols].itertuples(index=False, name=None))
-            
             if not rows:
                 print("No rows to import.")
                 return True
 
-            # Bulk insert with conflict handling
             conn = self._get_connection()
             try:
                 cur = conn.cursor()
@@ -238,9 +251,11 @@ class SQLArxivPaperTable:
         except Exception as e:
             print(f"Error importing paper-table relationships from CSV: {e}")
             return False
-                                    
 
-    def construct_table_from_json(self, json_file):
+    # -------------------------
+    # Bulk import from JSON
+    # -------------------------
+    def construct_table_from_json(self, json_file: str) -> bool:
         """
         Construct the paper-table relationships from an external JSON file.
         
@@ -253,6 +268,14 @@ class SQLArxivPaperTable:
                 {"paper_arxiv_id": "1706.03762v7", "table_id": 2},
                 ...
             ]
+            
+        Or:
+            {
+                "paper_tables": [
+                    {"paper_arxiv_id": "1706.03762v7", "table_id": 1},
+                    ...
+                ]
+            }
             
         Returns:
             bool: True if successful, False otherwise
@@ -324,3 +347,82 @@ class SQLArxivPaperTable:
         except Exception as e:
             print(f"Error importing paper-table relationships from JSON: {e}")
             return False
+        
+
+
+    def construct_paper_tables_table_from_api(self, arxiv_ids, dest_dir):
+        """
+        Construct paper-table relationships from ArXiv API.
+        
+        Args:
+            arxiv_ids: List of arxiv IDs to process
+            dest_dir: Destination directory for downloads
+            tables_table: SQLArxivTable instance to query table IDs
+        """
+        md = MultiDownload()
+        
+        # Check if papers already exist in the directory
+        downloaded_paper_ids = []
+        for arxiv_id in arxiv_ids:
+            paper_dir = f"{dest_dir}/{arxiv_id}/{arxiv_id}_metadata.json"
+            if not os.path.exists(paper_dir):
+                downloaded_paper_ids.append(arxiv_id)
+
+        # Download papers that don't exist
+        for arxiv_id in downloaded_paper_ids:
+            try:
+                md.download_arxiv(input=arxiv_id, input_type="id", output_type="latex", dest_dir=dest_dir)
+                print(f"paper with id {arxiv_id} downloaded")
+            except RuntimeError as e:
+                print(f"[ERROR] Failed to download {arxiv_id}: {e}")
+                continue
+        
+        # Process each arxiv_id to extract paper-table relationships
+        for arxiv_id in arxiv_ids:
+            json_path = f"{dest_dir}/output/{arxiv_id}.json"
+            
+            # Build paper graph if it doesn't exist
+            if not os.path.exists(json_path):
+                try:
+                    md.build_paper_graph(
+                        input=arxiv_id,
+                        input_type="id",
+                        dest_dir=dest_dir
+                    )
+                except Exception as e:
+                    print(f"[Warning] Failed to process papers: {e}")
+                    continue
+
+            # Extract tables and insert relationships
+            try:
+                with open(json_path, 'r') as file:
+                    file_json = json.load(file)
+                    table_jsons = file_json.get('table', [])
+                    
+                    for table_json in table_jsons:
+                        # Get the label from the table
+                        label = table_json.get('label')
+                        if not label:
+                            continue
+                        
+                        # Get table_id from the tables table using arxiv_id and label
+                        table_id = self.sqlat.get_table_id_by_arxiv_id_label(
+                            arxiv_id=arxiv_id, 
+                            label=label
+                        )
+                        
+                        if table_id is not None:
+                            self.insert_paper_table(
+                                paper_arxiv_id=arxiv_id, 
+                                table_id=table_id
+                            )
+
+            except FileNotFoundError:
+                print(f"Error: The file at path '{json_path}' was not found.")
+                continue
+            except json.JSONDecodeError:
+                print(f"Error: Could not decode JSON from '{json_path}'. Check if the file contains valid JSON.")
+                continue
+            except Exception as e:
+                print(f"An unexpected error occurred: {e}")
+                continue

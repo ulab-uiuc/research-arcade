@@ -9,7 +9,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from ..arxiv_utils.multi_input.multi_download import MultiDownload
 from ..arxiv_utils.graph_constructor.node_processor import NodeConstructor
 from ..arxiv_utils.utils import arxiv_id_processor
-
+from .sql_arxiv_figures import SQLArxivFigure
 
 class SQLArxivPaperFigure:
     def __init__(self, host: str, dbname: str, user: str, password: str, port: str):
@@ -20,6 +20,7 @@ class SQLArxivPaperFigure:
         self.port = port
         self.autocommit = True
         self.create_paper_figures_table()
+        self.sqlaf = SQLArxivFigure(host=host, dbname=dbname, user=user, password=password, port=port)
 
     def _get_connection(self):
         conn = psycopg2.connect(
@@ -339,3 +340,82 @@ class SQLArxivPaperFigure:
         except Exception as e:
             print(f"Error importing paper-figure relationships from JSON: {e}")
             return False
+        
+
+
+    def construct_paper_figures_table_from_api(self, arxiv_ids, dest_dir):
+        """
+        Construct paper-figure relationships from ArXiv API.
+        
+        Args:
+            arxiv_ids: List of arxiv IDs to process
+            dest_dir: Destination directory for downloads
+            figures_table: SQLArxivFigure instance to query figure IDs
+        """
+        md = MultiDownload()
+        
+        # Check if papers already exist in the directory
+        downloaded_paper_ids = []
+        for arxiv_id in arxiv_ids:
+            paper_dir = f"{dest_dir}/{arxiv_id}/{arxiv_id}_metadata.json"
+            if not os.path.exists(paper_dir):
+                downloaded_paper_ids.append(arxiv_id)
+
+        # Download papers that don't exist
+        for arxiv_id in downloaded_paper_ids:
+            try:
+                md.download_arxiv(input=arxiv_id, input_type="id", output_type="latex", dest_dir=dest_dir)
+                print(f"paper with id {arxiv_id} downloaded")
+            except RuntimeError as e:
+                print(f"[ERROR] Failed to download {arxiv_id}: {e}")
+                continue
+        
+        # Process each arxiv_id to extract paper-figure relationships
+        for arxiv_id in arxiv_ids:
+            json_path = f"{dest_dir}/output/{arxiv_id}.json"
+            
+            # Build paper graph if it doesn't exist
+            if not os.path.exists(json_path):
+                try:
+                    md.build_paper_graph(
+                        input=arxiv_id,
+                        input_type="id",
+                        dest_dir=dest_dir
+                    )
+                except Exception as e:
+                    print(f"[Warning] Failed to process papers: {e}")
+                    continue
+
+            # Extract figures and insert relationships
+            try:
+                with open(json_path, 'r') as file:
+                    file_json = json.load(file)
+                    figure_jsons = file_json.get('figure', [])
+                    
+                    for figure_json in figure_jsons:
+                        # Get the label from the figure
+                        label = figure_json.get('label')
+                        if not label:
+                            continue
+                        
+                        # Get figure_id from the figures table using arxiv_id and label
+                        figure_id = self.sqlaf.get_figure_id_by_arxiv_id_label(
+                            arxiv_id=arxiv_id, 
+                            label=label
+                        )
+                    
+                        if figure_id is not None:
+                            self.insert_paper_figure(
+                                paper_arxiv_id=arxiv_id, 
+                                figure_id=figure_id
+                            )
+
+            except FileNotFoundError:
+                print(f"Error: The file with path '{json_path}' was not found.")
+                continue
+            except json.JSONDecodeError:
+                print(f"Error: Could not decode JSON from path '{json_path}'. Check if the file contains valid JSON.")
+                continue
+            except Exception as e:
+                print(f"An unexpected error occurred: {e}")
+                continue        
