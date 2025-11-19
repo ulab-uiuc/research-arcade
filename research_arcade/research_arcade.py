@@ -543,7 +543,7 @@ class ResearchArcade:
         else:
             print(f"Table {table} not found.")
             return None
-
+    
     def construct_table_from_api(self, table: str, config: dict) -> Optional[pd.DataFrame]:
         if table == "openreview_papers":
             self.openreview_papers.construct_papers_table_from_api(**config)
