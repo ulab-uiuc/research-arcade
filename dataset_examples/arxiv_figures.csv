@@ -1,0 +1,11 @@
+id,paper_arxiv_id,path,caption,label,name
+531880,2305.14683v4,progressivesharpening/vgg11/0.08/jacsoft.pdf,\caption{Jacobian norm},,
+341730,2504.15664,Figures/vit_wb_group.pdf,\caption{ViT/B-16 - \wb},,
+27762,2501.15847,Figures/Results/crop2_lr.jpg,,,
+683111,1907.00939,images/example_pred/284520e9947abb2c048ed176ae73ccfb_f0_r3_0_gt_depth_heatmap.pdf,,,
+590676,2508.08450v1,figs/appendix/nonlinear-data-non-contractive.pdf,\caption{Noncontractive SEM},\label{fig:non-contractive},
+836690,2408.05593,JFM_SPOD.png,"\caption{Real part of first SPOD mode calculated on the concatenated $\nabla b$ array over the final 72.5 minutes of BOS data at (a) $\omega = 0.042\omega_0$, (b) $\omega = 0.393\omega_0$, (c) $\omega = \omega_0$. SPOD is performed using two segments with 50\% overlap. In (a) we show $\phi_{1_x}$, in (b) and (c) we show $\phi_{1_z}$.}",\label{fig:spodmodes},
+416787,2505.19195,box_attention.png,,\label{fig:attention-quanti},
+239225,2210.03649v1,images/values_roc_curveAnt-v3_Dropconnect_ppo.png,\caption{MC Dropconnect},\label{fig:value_roc_dropconnect_ant},
+327816,2206.09670v3,figures/is_over_speed_train_highD_velocity_constraint_part_shadow.png,,,
+680609,1806.08734,figures/mnist_noise_freq_0_1_amp_var_val_ch_n.png,\caption{\small $k = 0.1$ \label{fig:mnistnoise_a}},,

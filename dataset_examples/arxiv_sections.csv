@@ -1,0 +1,796 @@
+id,content,title,appendix,paper_arxiv_id,section_in_paper_id
+305580,"\label{app:algorithm}
+\subsection{Algorithm for generating an initial solution}
+\begin{algorithm}[h]
+\caption{Generating an initial solution}
+\label{alg:initialization}
+\begin{algorithmic}[1]
+\State \textbf{Input}: task description $\mathcal{T}_\mathtt{task}$, datasets $\mathcal{D}$, score function $h$, number of retrieved models $M$,
+\State $\{\mathcal{T}_\mathtt{model}^i, \mathcal{T}_\mathtt{code}^i\}_{i=1}^M=\mathcal{A}_\mathtt{retriever}(\mathcal{T}_\mathtt{task})$
+\For{$i=1$ to $M$}
+\State $s_\mathtt{init}^i=\mathcal{A}_\mathtt{init}(\mathcal{T}_\mathtt{task}, \mathcal{T}_\mathtt{model}^i, \mathcal{T}_\mathtt{code}^i)$
+\State Evaluate $h(s_\mathtt{init}^i)$ using $\mathcal{D}$
+\EndFor
+\State $s_0\leftarrow s_\mathtt{init}^{\pi(1)}$
+\State $h_\mathtt{best}\leftarrow h(s_0)$
+\For{$i=2$ to $M$}
+\State $s_\mathtt{candidate}\leftarrow\mathcal{A}_\mathtt{merger}(s_0,s_\mathtt{init}^{\pi(i)})$
+\State Evaluate $h(s_\mathtt{candidate})$ using $\mathcal{D}$
+\If{$h(s_\mathtt{candidate})\geq h_\mathtt{best}$}
+\State $s_0\leftarrow s_\mathtt{candidate}$
+\State $h_\mathtt{best}\leftarrow h(s_0)$
+\Else
+\State \textbf{break}
+\EndIf
+\EndFor
+\State \textbf{Output}: initial solution $s_0$
+\end{algorithmic}
+\end{algorithm}\begin{algorithm}[h]
+\caption{Generating an initial solution}
+\label{alg:initialization}
+\begin{algorithmic}[1]
+\State \textbf{Input}: task description $\mathcal{T}_\mathtt{task}$, datasets $\mathcal{D}$, score function $h$, number of retrieved models $M$,
+\State $\{\mathcal{T}_\mathtt{model}^i, \mathcal{T}_\mathtt{code}^i\}_{i=1}^M=\mathcal{A}_\mathtt{retriever}(\mathcal{T}_\mathtt{task})$
+\For{$i=1$ to $M$}
+\State $s_\mathtt{init}^i=\mathcal{A}_\mathtt{init}(\mathcal{T}_\mathtt{task}, \mathcal{T}_\mathtt{model}^i, \mathcal{T}_\mathtt{code}^i)$
+\State Evaluate $h(s_\mathtt{init}^i)$ using $\mathcal{D}$
+\EndFor
+\State $s_0\leftarrow s_\mathtt{init}^{\pi(1)}$
+\State $h_\mathtt{best}\leftarrow h(s_0)$
+\For{$i=2$ to $M$}
+\State $s_\mathtt{candidate}\leftarrow\mathcal{A}_\mathtt{merger}(s_0,s_\mathtt{init}^{\pi(i)})$
+\State Evaluate $h(s_\mathtt{candidate})$ using $\mathcal{D}$
+\If{$h(s_\mathtt{candidate})\geq h_\mathtt{best}$}
+\State $s_0\leftarrow s_\mathtt{candidate}$
+\State $h_\mathtt{best}\leftarrow h(s_0)$
+\Else
+\State \textbf{break}
+\EndIf
+\EndFor
+\State \textbf{Output}: initial solution $s_0$
+\end{algorithmic}
+\end{algorithm}[h]
+\caption{Generating an initial solution}
+\label{alg:initialization}
+[1]
+\State \textbf{Input}: task description $\mathcal{T}_\mathtt{task}$\mathcal{T}_\mathtt{task}, datasets $\mathcal{D}$\mathcal{D}, score function $h$h, number of retrieved models $M$M,
+\State $\{\mathcal{T}_\mathtt{model}^i, \mathcal{T}_\mathtt{code}^i\}_{i=1}^M=\mathcal{A}_\mathtt{retriever}(\mathcal{T}_\mathtt{task})$\{\mathcal{T}_\mathtt{model}^i, \mathcal{T}_\mathtt{code}^i\}_{i=1}i=1^M=\mathcal{A}_\mathtt{retriever}(\mathcal{T}_\mathtt{task})
+\For{$i=1$ to $M$}$i=1$i=1 to $M$M
+\State $s_\mathtt{init}^i=\mathcal{A}_\mathtt{init}(\mathcal{T}_\mathtt{task}, \mathcal{T}_\mathtt{model}^i, \mathcal{T}_\mathtt{code}^i)$s_\mathtt{init}^i=\mathcal{A}_\mathtt{init}(\mathcal{T}_\mathtt{task}, \mathcal{T}_\mathtt{model}^i, \mathcal{T}_\mathtt{code}^i)
+\State Evaluate $h(s_\mathtt{init}^i)$h(s_\mathtt{init}^i) using $\mathcal{D}$\mathcal{D}
+\EndFor
+\State $s_0\leftarrow s_\mathtt{init}^{\pi(1)}$s_0\leftarrow s_\mathtt{init}^{\pi(1)}\pi(1)
+\State $h_\mathtt{best}\leftarrow h(s_0)$h_\mathtt{best}\leftarrow h(s_0)
+\For{$i=2$ to $M$}$i=2$i=2 to $M$M
+\State $s_\mathtt{candidate}\leftarrow\mathcal{A}_\mathtt{merger}(s_0,s_\mathtt{init}^{\pi(i)})$s_\mathtt{candidate}\leftarrow\mathcal{A}_\mathtt{merger}(s_0,s_\mathtt{init}^{\pi(i)}\pi(i))
+\State Evaluate $h(s_\mathtt{candidate})$h(s_\mathtt{candidate}) using $\mathcal{D}$\mathcal{D}
+\If{$h(s_\mathtt{candidate})\geq h_\mathtt{best}$}$h(s_\mathtt{candidate})\geq h_\mathtt{best}$h(s_\mathtt{candidate})\geq h_\mathtt{best}
+\State $s_0\leftarrow s_\mathtt{candidate}$s_0\leftarrow s_\mathtt{candidate}
+\State $h_\mathtt{best}\leftarrow h(s_0)$h_\mathtt{best}\leftarrow h(s_0)
+\Else
+\State \textbf{break}
+\EndIf
+\EndFor
+\State \textbf{Output}: initial solution $s_0$s_0
+
+
+
+\newpage
+\subsection{Algorithm for refining a code block for solution improvement}
+\begin{algorithm}[h]
+\caption{Refining solution}
+\label{alg:refinement}
+\begin{algorithmic}[1]
+\State \textbf{Input}: initial solution $s_0$, outer loop steps $T$, inner loop steps $K$
+\State $s_\mathtt{final}\leftarrow s_0$
+\State $h_\mathtt{best}\leftarrow h(s_0)$
+\State $\mathcal{T}_\mathtt{abl}, \mathcal{C}=\{\}, \{\}$
+\For{$t=0$ to $T-1$}
+\State $a_t=\mathcal{A}_\mathtt{abl}(s_t, \mathcal{T}_\mathtt{abl})$
+\State $r_t=\mathtt{exec}(a_t)$
+\State $\mathcal{T}_\mathtt{abl}^t=\mathcal{A}_\mathtt{summarize}(a_t, r_t)$
+\State $c_t, p_0=\mathcal{A}_\mathtt{extractor}(\mathcal{T}_\mathtt{abl}^t, s_t, \mathcal{C})$
+\State $c_t^0=\mathcal{A}_\mathtt{coder}(c_t,p_0)$
+\State $s_t^0=s_{t}\mathtt{.replace}(c_t,c_t^0)$
+\State Evaluate $h(s_t^0)$ using $\mathcal{D}$
+\If{$h(s_t^0)\geq h_\mathtt{best}$}
+\State $s_\mathtt{final}\leftarrow s_t^0$
+\State $h_\mathtt{best}\leftarrow h(s_t^0)$
+\EndIf
+\For{$k=1$ to $K-1$}
+\State $p_k=\mathcal{A}_\mathtt{planner}(c_t,\{p_j, h(s_t^j)\}_{j=0}^{k-1})$
+\State $c_t^k=\mathcal{A}_\mathtt{coder}(c_t,p_k)$
+\State $s_t^k=s_{t}\mathtt{.replace}(c_t,c_t^k)$
+\State Evaluate $h(s_t^k)$ using $\mathcal{D}$
+\If{$h(s_t^k)\geq h_\mathtt{best}$}
+\State $s_\mathtt{final}\leftarrow s_t^k$
+\State $h_\mathtt{best}\leftarrow h(s_t^k)$
+\EndIf
+\EndFor
+\State $\mathcal{T}_\mathtt{abl}\leftarrow\mathcal{T}_\mathtt{abl}+\mathcal{T}_\mathtt{abl}^t$
+\State $\mathcal{C}\leftarrow\mathcal{C}+c_t$
+\EndFor
+\State \textbf{Output}: final solution $s_\mathtt{final}$
+\end{algorithmic}
+\end{algorithm}\begin{algorithm}[h]
+\caption{Refining solution}
+\label{alg:refinement}
+\begin{algorithmic}[1]
+\State \textbf{Input}: initial solution $s_0$, outer loop steps $T$, inner loop steps $K$
+\State $s_\mathtt{final}\leftarrow s_0$
+\State $h_\mathtt{best}\leftarrow h(s_0)$
+\State $\mathcal{T}_\mathtt{abl}, \mathcal{C}=\{\}, \{\}$
+\For{$t=0$ to $T-1$}
+\State $a_t=\mathcal{A}_\mathtt{abl}(s_t, \mathcal{T}_\mathtt{abl})$
+\State $r_t=\mathtt{exec}(a_t)$
+\State $\mathcal{T}_\mathtt{abl}^t=\mathcal{A}_\mathtt{summarize}(a_t, r_t)$
+\State $c_t, p_0=\mathcal{A}_\mathtt{extractor}(\mathcal{T}_\mathtt{abl}^t, s_t, \mathcal{C})$
+\State $c_t^0=\mathcal{A}_\mathtt{coder}(c_t,p_0)$
+\State $s_t^0=s_{t}\mathtt{.replace}(c_t,c_t^0)$
+\State Evaluate $h(s_t^0)$ using $\mathcal{D}$
+\If{$h(s_t^0)\geq h_\mathtt{best}$}
+\State $s_\mathtt{final}\leftarrow s_t^0$
+\State $h_\mathtt{best}\leftarrow h(s_t^0)$
+\EndIf
+\For{$k=1$ to $K-1$}
+\State $p_k=\mathcal{A}_\mathtt{planner}(c_t,\{p_j, h(s_t^j)\}_{j=0}^{k-1})$
+\State $c_t^k=\mathcal{A}_\mathtt{coder}(c_t,p_k)$
+\State $s_t^k=s_{t}\mathtt{.replace}(c_t,c_t^k)$
+\State Evaluate $h(s_t^k)$ using $\mathcal{D}$
+\If{$h(s_t^k)\geq h_\mathtt{best}$}
+\State $s_\mathtt{final}\leftarrow s_t^k$
+\State $h_\mathtt{best}\leftarrow h(s_t^k)$
+\EndIf
+\EndFor
+\State $\mathcal{T}_\mathtt{abl}\leftarrow\mathcal{T}_\mathtt{abl}+\mathcal{T}_\mathtt{abl}^t$
+\State $\mathcal{C}\leftarrow\mathcal{C}+c_t$
+\EndFor
+\State \textbf{Output}: final solution $s_\mathtt{final}$
+\end{algorithmic}
+\end{algorithm}[h]
+\caption{Refining solution}
+\label{alg:refinement}
+[1]
+\State \textbf{Input}: initial solution $s_0$s_0, outer loop steps $T$T, inner loop steps $K$K
+\State $s_\mathtt{final}\leftarrow s_0$s_\mathtt{final}\leftarrow s_0
+\State $h_\mathtt{best}\leftarrow h(s_0)$h_\mathtt{best}\leftarrow h(s_0)
+\State $\mathcal{T}_\mathtt{abl}, \mathcal{C}=\{\}, \{\}$\mathcal{T}_\mathtt{abl}, \mathcal{C}=\{\}, \{\}
+\For{$t=0$ to $T-1$}$t=0$t=0 to $T-1$T-1
+\State $a_t=\mathcal{A}_\mathtt{abl}(s_t, \mathcal{T}_\mathtt{abl})$a_t=\mathcal{A}_\mathtt{abl}(s_t, \mathcal{T}_\mathtt{abl})
+\State $r_t=\mathtt{exec}(a_t)$r_t=\mathtt{exec}(a_t)
+\State $\mathcal{T}_\mathtt{abl}^t=\mathcal{A}_\mathtt{summarize}(a_t, r_t)$\mathcal{T}_\mathtt{abl}^t=\mathcal{A}_\mathtt{summarize}(a_t, r_t)
+\State $c_t, p_0=\mathcal{A}_\mathtt{extractor}(\mathcal{T}_\mathtt{abl}^t, s_t, \mathcal{C})$c_t, p_0=\mathcal{A}_\mathtt{extractor}(\mathcal{T}_\mathtt{abl}^t, s_t, \mathcal{C})
+\State $c_t^0=\mathcal{A}_\mathtt{coder}(c_t,p_0)$c_t^0=\mathcal{A}_\mathtt{coder}(c_t,p_0)
+\State $s_t^0=s_{t}\mathtt{.replace}(c_t,c_t^0)$s_t^0=s_{t}t\mathtt{.replace}(c_t,c_t^0)
+\State Evaluate $h(s_t^0)$h(s_t^0) using $\mathcal{D}$\mathcal{D}
+\If{$h(s_t^0)\geq h_\mathtt{best}$}$h(s_t^0)\geq h_\mathtt{best}$h(s_t^0)\geq h_\mathtt{best}
+\State $s_\mathtt{final}\leftarrow s_t^0$s_\mathtt{final}\leftarrow s_t^0
+\State $h_\mathtt{best}\leftarrow h(s_t^0)$h_\mathtt{best}\leftarrow h(s_t^0)
+\EndIf
+\For{$k=1$ to $K-1$}$k=1$k=1 to $K-1$K-1
+\State $p_k=\mathcal{A}_\mathtt{planner}(c_t,\{p_j, h(s_t^j)\}_{j=0}^{k-1})$p_k=\mathcal{A}_\mathtt{planner}(c_t,\{p_j, h(s_t^j)\}_{j=0}j=0^{k-1}k-1)
+\State $c_t^k=\mathcal{A}_\mathtt{coder}(c_t,p_k)$c_t^k=\mathcal{A}_\mathtt{coder}(c_t,p_k)
+\State $s_t^k=s_{t}\mathtt{.replace}(c_t,c_t^k)$s_t^k=s_{t}t\mathtt{.replace}(c_t,c_t^k)
+\State Evaluate $h(s_t^k)$h(s_t^k) using $\mathcal{D}$\mathcal{D}
+\If{$h(s_t^k)\geq h_\mathtt{best}$}$h(s_t^k)\geq h_\mathtt{best}$h(s_t^k)\geq h_\mathtt{best}
+\State $s_\mathtt{final}\leftarrow s_t^k$s_\mathtt{final}\leftarrow s_t^k
+\State $h_\mathtt{best}\leftarrow h(s_t^k)$h_\mathtt{best}\leftarrow h(s_t^k)
+\EndIf
+\EndFor
+\State $\mathcal{T}_\mathtt{abl}\leftarrow\mathcal{T}_\mathtt{abl}+\mathcal{T}_\mathtt{abl}^t$\mathcal{T}_\mathtt{abl}\leftarrow\mathcal{T}_\mathtt{abl}+\mathcal{T}_\mathtt{abl}^t
+\State $\mathcal{C}\leftarrow\mathcal{C}+c_t$\mathcal{C}\leftarrow\mathcal{C}+c_t
+\EndFor
+\State \textbf{Output}: final solution $s_\mathtt{final}$s_\mathtt{final}
+
+
+
+\newpage
+\subsection{Algorithm for further improvement by exploring ensemble strategies}
+\begin{algorithm}
+\caption{Ensembling final solutions}
+\label{alg:ensemble}
+\begin{algorithmic}[1]
+\State \textbf{Input}: candidate final solutions $s_\mathtt{final}^1, \cdots, s_\mathtt{final}^L$, ensemble loop steps $R$
+\State $e_0=\mathcal{A}_\mathtt{ens\_planner}(\{s_\mathtt{final}^l\}_{l=1}^L)$
+\State $s_\mathtt{ens}^0=\mathcal{A}_\mathtt{ensembler}(e_0, \{s_\mathtt{final}^l\}_{l=1}^L)$
+\State Evaluate $h(s_\mathtt{ens}^0)$ using $\mathcal{D}$
+\For{$r=1$ to $R-1$}
+\State $e_r=\mathcal{A}_\mathtt{ens\_planner}(\{s_\mathtt{final}^l\}_{l=1}^L, \{(e_j, h(s_\mathtt{ens}^j)\}_{j=0}^{r-1})$
+\State $s_\mathtt{ens}^r=\mathcal{A}_\mathtt{ensembler}(e_r, \{s_\mathtt{final}^l\}_{l=1}^L)$
+\State Evaluate $h(s_\mathtt{ens}^r)$ using $\mathcal{D}$
+\EndFor
+\State $s_\mathtt{ens}^*=s_\mathtt{ens}^{r^*}$ where $r^* = \arg\max_{r \in \{0, \dots, R-1\}} h(s_\mathtt{ens}^r)$
+\State \textbf{Output}: $s_\mathtt{ens}^*$
+\end{algorithmic}
+\end{algorithm}\begin{algorithm}
+\caption{Ensembling final solutions}
+\label{alg:ensemble}
+\begin{algorithmic}[1]
+\State \textbf{Input}: candidate final solutions $s_\mathtt{final}^1, \cdots, s_\mathtt{final}^L$, ensemble loop steps $R$
+\State $e_0=\mathcal{A}_\mathtt{ens\_planner}(\{s_\mathtt{final}^l\}_{l=1}^L)$
+\State $s_\mathtt{ens}^0=\mathcal{A}_\mathtt{ensembler}(e_0, \{s_\mathtt{final}^l\}_{l=1}^L)$
+\State Evaluate $h(s_\mathtt{ens}^0)$ using $\mathcal{D}$
+\For{$r=1$ to $R-1$}
+\State $e_r=\mathcal{A}_\mathtt{ens\_planner}(\{s_\mathtt{final}^l\}_{l=1}^L, \{(e_j, h(s_\mathtt{ens}^j)\}_{j=0}^{r-1})$
+\State $s_\mathtt{ens}^r=\mathcal{A}_\mathtt{ensembler}(e_r, \{s_\mathtt{final}^l\}_{l=1}^L)$
+\State Evaluate $h(s_\mathtt{ens}^r)$ using $\mathcal{D}$
+\EndFor
+\State $s_\mathtt{ens}^*=s_\mathtt{ens}^{r^*}$ where $r^* = \arg\max_{r \in \{0, \dots, R-1\}} h(s_\mathtt{ens}^r)$
+\State \textbf{Output}: $s_\mathtt{ens}^*$
+\end{algorithmic}
+\end{algorithm}
+\caption{Ensembling final solutions}
+\label{alg:ensemble}
+[1]
+\State \textbf{Input}: candidate final solutions $s_\mathtt{final}^1, \cdots, s_\mathtt{final}^L$s_\mathtt{final}^1, \cdots, s_\mathtt{final}^L, ensemble loop steps $R$R
+\State $e_0=\mathcal{A}_\mathtt{ens\_planner}(\{s_\mathtt{final}^l\}_{l=1}^L)$e_0=\mathcal{A}_\mathtt{ens\_planner}(\{s_\mathtt{final}^l\}_{l=1}l=1^L)
+\State $s_\mathtt{ens}^0=\mathcal{A}_\mathtt{ensembler}(e_0, \{s_\mathtt{final}^l\}_{l=1}^L)$s_\mathtt{ens}^0=\mathcal{A}_\mathtt{ensembler}(e_0, \{s_\mathtt{final}^l\}_{l=1}l=1^L)
+\State Evaluate $h(s_\mathtt{ens}^0)$h(s_\mathtt{ens}^0) using $\mathcal{D}$\mathcal{D}
+\For{$r=1$ to $R-1$}$r=1$r=1 to $R-1$R-1
+\State $e_r=\mathcal{A}_\mathtt{ens\_planner}(\{s_\mathtt{final}^l\}_{l=1}^L, \{(e_j, h(s_\mathtt{ens}^j)\}_{j=0}^{r-1})$e_r=\mathcal{A}_\mathtt{ens\_planner}(\{s_\mathtt{final}^l\}_{l=1}l=1^L, \{(e_j, h(s_\mathtt{ens}^j)\}_{j=0}j=0^{r-1}r-1)
+\State $s_\mathtt{ens}^r=\mathcal{A}_\mathtt{ensembler}(e_r, \{s_\mathtt{final}^l\}_{l=1}^L)$s_\mathtt{ens}^r=\mathcal{A}_\mathtt{ensembler}(e_r, \{s_\mathtt{final}^l\}_{l=1}l=1^L)
+\State Evaluate $h(s_\mathtt{ens}^r)$h(s_\mathtt{ens}^r) using $\mathcal{D}$\mathcal{D}
+\EndFor
+\State $s_\mathtt{ens}^*=s_\mathtt{ens}^{r^*}$s_\mathtt{ens}^*=s_\mathtt{ens}^{r^*}r^* where $r^* = \arg\max_{r \in \{0, \dots, R-1\}} h(s_\mathtt{ens}^r)$r^* = \arg\max_{r \in \{0, \dots, R-1\}}r \in \{0, \dots, R-1\} h(s_\mathtt{ens}^r)
+\State \textbf{Output}: $s_\mathtt{ens}^*$s_\mathtt{ens}^*
+
+
+
+
+
+\newpage
+",Algorithms,False,2506.15692,7.0
+110833,"
+
+\subsection{Topic Retrieval}
+We benchmark our proposed topic retriever method against a well-established unsupervised baseline: Latent Dirichlet Allocation (LDA). In the absence of ground-truth topic labels, this method serves as a suitable baseline for qualitative evaluation. We adapt the open-source workflow from \cite{jansen2020machine} which trains a LDA model on earnings calls transcripts and use the same preprocessing and vectorizing methods mentioned in that work on our entire dataset. We train to identify 15 topics represented by 10 coherent keywords with 25 passes over the corpus.
+
+The results from the model were observed to be uneven and sometimes not directly related financial topics. The heat map in Figure \ref{fig:lda_heatmap} (Appendix A.1) shows that topics T4 (keywords: \textit{cloud, service, platform, technology, solution}) and T11 (keywords: \textit{loan, capital, bank, credit, asset, fee}) contain semantically consistent, finance-relevant terms, whereas the remainder mix generic fillers such as \textit{thing, maybe, chief, officer} with domain words, making the topic boundaries hard to interpret. This observation is corroborated by the \textit{u\_mass} coherence scores: most topics fall between -0.4 and -2.5, with only three exceeding -0.8. 
+
+We also conducted a supplementary study to compare the number of topics identified over time to contrast with Figure \ref{fig:new_topics} but we did not obtain any further meaningful results on stratifying the dataset further by time-period. The quantitative and qualitative signals suggest that standard LDA model struggles to produce well-formed “financial” topics on this corpus, reinforcing our preference for the proposed LLM-agentic retriever, which consistently yields coherent, hierarchically grounded topics in downstream analyses.
+
+\subsection{Topic Ontology} Topic Ontology is constructed by iterating over the entire dataset. On each iteration of the paragraph data sample, the topic ontology is updated either with a new topic or a topic alias to an existing topic. To establish initial standardization of the topics at the top-level, we construct the ontology with a fixed set of seed topics at the root level (32) and the level below it (361). There are no constraints on where the new topics can be added in the ontology. Table \ref{tab:ontology-stats} shows the statistics of the final ontology after iterating over the entire dataset.
+
+\subsubsection{Ontology Coherence Evaluation}
+To evaluate the semantic coherence of our topic ontology in the absence of gold-standard labels, we conducted an embedding-based experiment using the \texttt{all-MiniLM-L6-v2} model from Sentence-Transformers \cite{reimers2019sentence}. We sampled a set of parent topics from the ontology and, for each, selected at most five associated child topics (ensuring each parent had at least two children). We computed the cosine similarity between the parent topic and each of its children, then averaged these scores to obtain a coherence score per parent node. As a baseline, we randomly sampled an unrelated parent topic and measured its similarity to the original set of child topics. Our results in Table \ref{tab:ontology-coherence} show that the true parent-child pairs exhibit substantially higher semantic similarity (average cosine similarity: 0.383) compared to random parent-child pairings (0.153), validating the structural integrity and conceptual closeness of our automatically generated topic hierarchy. This indicates that the GenAI-driven ontology construction process effectively groups semantically related financial topics under appropriate conceptual categories.
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{lr}
+\toprule
+\textbf{Metric} & \textbf{Value} \\
+\midrule
+Total nodes &  \texttt{3200} \\
+Number of levels &  \texttt{4} \\
+Number of leaf nodes &  \texttt{2986} \\
+Average children per node &  \texttt{1 ± 9.62} \\
+Average aliases per node &  \texttt{2.5 ± 5.56} \\
+\midrule
+\multicolumn{2}{c}{\textbf{Nodes per level}} \\
+\midrule
+Level 0 (Root) & \texttt{42} \\
+Level 1 & \texttt{1249} \\
+Level 2 & \texttt{1896} \\
+Level 3 & \texttt{13} \\
+\bottomrule
+\end{tabular}
+\caption{Structural statistics of the topic ontology tree.}
+\label{tab:ontology-stats}
+\end{table}
+\centering
+
+\toprule
+\textbf{Metric} & \textbf{Value} \\
+\midrule
+Total nodes &  \texttt{3200} \\
+Number of levels &  \texttt{4} \\
+Number of leaf nodes &  \texttt{2986} \\
+Average children per node &  \texttt{1 ± 9.62} \\
+Average aliases per node &  \texttt{2.5 ± 5.56} \\
+\midrule
+\multicolumn{2}2{c}c{\textbf{Nodes per level}}\textbf{Nodes per level} \\
+\midrule
+Level 0 (Root) & \texttt{42} \\
+Level 1 & \texttt{1249} \\
+Level 2 & \texttt{1896} \\
+Level 3 & \texttt{13} \\
+\bottomrule
+
+\caption{Structural statistics of the topic ontology tree.}
+\label{tab:ontology-stats}
+
+
+
+",Experiments,False,2507.07906,4.0
+277123,"\label{ap:t-reasonvos-desc}
+ReasonVOS contains 91 videos (18 from MeViS~\cite{MeViS}, 26 from MOSE~\cite{MOSE}, 37 from BURST~~\cite{athar2023burst}, and 10 from VIPSeg~\cite{miao2022large}) and 458 queries, which was proposed to effectively evaluate the performance of reasoning segmentation in videos~\cite{videolisa}. While being widely used, this benchmark falls short in giving a fair evaluation on temporal reasoning ability. In particular, some considerable number of queries are temporally insensitive and thus less challenging, where the context only refers to the appearance or function of the relevant video objects unrelated to the actions or object movements. Thus, we believe a new dataset is both timely and essential in clearly demonstrating the efficacy of ThinkVideo on temporal reasoning. Specifically, we sampled 180 video-query pairs that correspond to 45 videos (8 from MeViS, 18 from MOSE, 16 from BURST, and 3 from VIPSeg) from ReasonVOS to produce a new benchmark called T-ReasonVOS. We remove time-insensitive queries with target objects visible from the beginning to the end of the video, such as \textit{``The mode of transportation capable of transporting the largest group of people''}, where users can make decisions based on independent frames with image segmentation models. Surviving data in T-ReasonVOS after removing time-insensitive counterparts  focus on videos where the target objects are visible only in a short interval, or queries specifying actions and object movements, \textit{e.g., ``The thing that has made a 180-degree turn.''} This requires models to ``think'' in the temporal dimension to find the correct objects of interest. The T-ReasonVOS dataset and the selection code will be released.
+
+",T-ReasonVOS Dataset,False,2505.18561,9.0
+198695,"\label{numexp}
+We now demonstrate our theoretical findings on the strong convergence of the discretised scheme \eqref{EM} in time and the pathwise propagation of chaos through numerical experiments. The main goal of these experiments is to evaluate the strong convergence of the time-discretisation scheme (as presented in Theorem \ref{hlsvEM}) in cases where the condition on the Feller ratio, $\nu > \nu^{*}$\nu > \nu^{*}*, is not satisfied, which is observed in practical applications.\bigbreak
+
+\noindent Instead of using real market data, we simulate a \enquote{market}market implied volatility surface using pre--calibrated Heston parameters, $V_0 = 0.0094$V_0 = 0.0094, $\theta = 0.0137$\theta = 0.0137, $\kappa = 1.4124$\kappa = 1.4124, $\rho = -0.1194$\rho = -0.1194, and $\xi = 0.2988$\xi = 0.2988, sourced from \cite{CozMarRei2}. These parameters were calibrated to an FX market.
+\bigbreak
+
+\noindent Recall that we model the spot price process \( S \) S  using the risk--neutral dynamics \eqref{HestonLVM}. To calibrate this model to market prices, we begin by setting the leverage function to \( 1 \) 1 , effectively reducing the model to a pure Heston process. Since real market data is not used in our analysis, we adjust the parameters from our \enquote{market}market volatility surface to \( V_0 = 0.0094 \) V_0 = 0.0094 , \( \theta = 0.01 \) \theta = 0.01 , \( \kappa = 1.5 \) \kappa = 1.5 , \( \rho = - 0.1 \) \rho = - 0.1 , and \( \xi = 0.3 \) \xi = 0.3 , treating these as the \enquote{calibrated}calibrated Heston parameters. Subsequently, we calibrate the leverage function \( \sigma(t, S_t) \) \sigma(t, S_t) . Using condition \eqref{Dupireiff} for exact calibration, we obtain the calibrated system \eqref{sde}, which we then approximate using the particle system \eqref{particlessystem} as described in Section \ref{particlemethod}.\bigbreak
+
+\noindent Important for the simulation of the particle system \eqref{particlessystem} is the choice of regularisation parameters $\epsilon$\epsilon and $\delta$\delta. The authors in \cite{GuyHen} suggest using a time-dependent bandwidth $\epsilon_{t,N} = k_t N^{-1/5}$\epsilon_{t,N}t,N = k_t N^{-1/5}-1/5, where $N^{-1/5}$N^{-1/5}-1/5 comes from the minimisation of the asymptotic mean-integrated squared error (AMISE) of the Nadaraya--Watson estimator, and $k_t$k_t follows Silverman's rule of thumb (see \cite{Silv}). In our experiments, we fix $\epsilon = S_0N^{-\frac{1}{5}}$\epsilon = S_0N^{-\frac{1}{5}}-\frac{1}{5}, where $S_0$S_0 is the initial value of the stock price, and $\delta = 0.01$\delta = 0.01. We refer the reader to \cite{ReiTsi} for tests on the accuracy of the particle method applied to the calibrated Heston-type LSV model for different values of the regularisation parameters $\epsilon$\epsilon and $\delta$\delta.\bigbreak 
+
+\noindent We first test the strong convergence in time of the Euler--Maruyama scheme defined in \eqref{EM}. We set $T=1$T=1, $S_0 = 100$S_0 = 100, $V_0 = 0.0094$V_0 = 0.0094, and only use $N=10^3$N=10^3 particles to save computational time. In Theorem \ref{hlsvEM}, we proved the strong convergence of the EM scheme provided that $\nu >\nu^* = 2+\sqrt{3}$\nu >\nu^* = 2+\sqrt{3}. Here, we consider different values of $\kappa$\kappa and $\xi$\xi so that we test both cases when the condition on the Feller ratio is satisfied and violated, and check the rate of convergence. Specifically, we run tests for $\kappa_1 = 1.5$\kappa_1 = 1.5, $\kappa_2 = 6$\kappa_2 = 6, $\kappa_3 = 18$\kappa_3 = 18, while we keep the rest of the parameters fixed as mentioned above, giving $\nu_1 = 0.33$\nu_1 = 0.33, $\nu_2 = 1.33$\nu_2 = 1.33, and $\nu_3 = 4.00$\nu_3 = 4.00 respectively. We observe strong convergence with rates $0.43$0.43, $0.51$0.51, and $0.51$0.51, as shown in Figures \ref{fig:EM1}, \ref{fig:EM2}, and \ref{fig:EM3}, respectively. In the plots below, we show the true data points and fit a regression line to estimate the rate of convergence for each case. We also provide a $95$95\% confidence interval for each estimated gradient. Noticeably, for $\nu_2 = 1.33 < \nu^*$\nu_2 = 1.33 < \nu^*, the rate of convergence agrees with our theoretical findings, even if the condition on the Feller ratio is violated. For $\nu_1 = 0.33 <  \nu^*$\nu_1 = 0.33 <  \nu^* the rate is slower, as expected, while for $\nu_3 = 4.00 > \nu^*$\nu_3 = 4.00 > \nu^* we observe half-order convergence as suggested by the theory.\bigbreak
+\begin{figure}[H]
+  \centering
+  \begin{minipage}[b]{0.45\textwidth} 
+    \centering
+    \includegraphics[width=\textwidth]{EMconv1.png}
+    \caption{$\kappa_1 =1.5$}
+    \label{fig:EM1}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.45\textwidth} 
+    \centering
+    \includegraphics[width=\textwidth]{EM2.png}
+    \caption{$\kappa_2 =6$}
+    \label{fig:EM2}
+  \end{minipage}
+\end{figure}
+  \centering
+  [b]{0.45\textwidth}0.45\textwidth 
+    \centering
+    \includegraphics[width=\textwidth]{EMconv1.png}
+    \caption{$\kappa_1 =1.5$}
+    \label{fig:EM1}
+  
+  \hfill
+  [b]{0.45\textwidth}0.45\textwidth 
+    \centering
+    \includegraphics[width=\textwidth]{EM2.png}
+    \caption{$\kappa_2 =6$}
+    \label{fig:EM2}
+  
+
+
+\begin{figure}[H]
+  \centering
+  \begin{minipage}[b]{0.45\textwidth} 
+    \centering
+    \includegraphics[width=\textwidth]{EM3.png}
+    \caption{$\kappa_3 = 18$}
+    \label{fig:EM3}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.45\textwidth} 
+    \centering
+    \includegraphics[width=\textwidth]{EM4.png}
+    \caption{$\xi_4 = 0.1$}
+    \label{fig:EM4}
+  \end{minipage}
+\end{figure}
+  \centering
+  [b]{0.45\textwidth}0.45\textwidth 
+    \centering
+    \includegraphics[width=\textwidth]{EM3.png}
+    \caption{$\kappa_3 = 18$}
+    \label{fig:EM3}
+  
+  \hfill
+  [b]{0.45\textwidth}0.45\textwidth 
+    \centering
+    \includegraphics[width=\textwidth]{EM4.png}
+    \caption{$\xi_4 = 0.1$}
+    \label{fig:EM4}
+  
+
+
+ \noindent We also run further tests in which we keep $\theta = 0.01$\theta = 0.01, $\kappa = 1.5$\kappa = 1.5, and $\rho = -0.1$\rho = -0.1, and let $\xi$\xi vary. Specifically, we consider $\xi_4 = 0.1$\xi_4 = 0.1, $\xi_5 = 0.5$\xi_5 = 0.5, $\xi_6 = 0.8$\xi_6 = 0.8 giving $\nu_4 = 3.00$\nu_4 = 3.00, $\nu_5 = 0.12$\nu_5 = 0.12, and $\nu_6 = 0.05$\nu_6 = 0.05, respectively. In Figure \ref{fig:EM4}, we observe a rate of $0.51$0.51 for $\nu_4 = 3.00$\nu_4 = 3.00, which is consistent with the one proved in theory even if $\nu_4 < \nu^*$\nu_4 < \nu^*. For the smaller Feller ratios $\nu_5$\nu_5 and $\nu_6$\nu_6 in Figures \ref{fig:StrongConvEM3} and \ref{fig:StrongConvEM4}, the data become noisier. This could occur because in these cases, the value of $\xi$\xi is larger and therefore the diffusion term in the dynamics of $V$V is larger, adding noise in the process. These instabilities also affect our state process through the leverage function, causing noise in our data.\bigbreak
+ 
+
+\begin{figure}[H]
+  \centering
+  \begin{minipage}[b]{0.45\textwidth} 
+    \centering
+    \includegraphics[width=\textwidth]{EM5.png}
+    \caption{$\xi_5 = 0.5$}
+    \label{fig:StrongConvEM3}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.45\textwidth} 
+    \centering
+    \includegraphics[width=\textwidth]{EM6.png}
+    \caption{$\xi_6 = 0.8$}
+    \label{fig:StrongConvEM4}
+  \end{minipage}
+\end{figure}
+  \centering
+  [b]{0.45\textwidth}0.45\textwidth 
+    \centering
+    \includegraphics[width=\textwidth]{EM5.png}
+    \caption{$\xi_5 = 0.5$}
+    \label{fig:StrongConvEM3}
+  
+  \hfill
+  [b]{0.45\textwidth}0.45\textwidth 
+    \centering
+    \includegraphics[width=\textwidth]{EM6.png}
+    \caption{$\xi_6 = 0.8$}
+    \label{fig:StrongConvEM4}
+  
+
+
+\begin{figure}[H]
+  \centering
+  \begin{minipage}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{PCconv1.png}
+    \caption{$\kappa_1 = 1.5$}
+    \label{fig:prop_chaos_1}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.45\textwidth} 
+    \centering
+    \includegraphics[width=\textwidth]{PC2.png}
+    \caption{$\kappa_2 = 6$}
+    \label{fig:prop_chaos_2}
+  \end{minipage}
+\end{figure}
+  \centering
+  [b]{0.45\textwidth}0.45\textwidth
+    \centering
+    \includegraphics[width=\textwidth]{PCconv1.png}
+    \caption{$\kappa_1 = 1.5$}
+    \label{fig:prop_chaos_1}
+  
+  \hfill
+  [b]{0.45\textwidth}0.45\textwidth 
+    \centering
+    \includegraphics[width=\textwidth]{PC2.png}
+    \caption{$\kappa_2 = 6$}
+    \label{fig:prop_chaos_2}
+  
+
+
+
+\noindent Furthermore, for these different parameters and corresponding Feller ratios, we illustrate the strong propagation of chaos obtained in Theorem \ref{PropChaos}, in which the condition on the Feller ratio is $\nu \ge 1$\nu \ge 1. Specifically, we plot in log-log scale the root-mean-square error (RMSE) for increasing values of the number of particles $N$N. We measure
+\begin{equation}
+\label{eq:rmse}
+\text{error} \;:=\; \sqrt{\frac{1}{2N}\sum_{i=1}^{2N} \bigl(S_{T}^{i,2N} \;-\; \widetilde{S}_{T}^{i,2N}\bigr)^{2}} \,,
+\end{equation}\begin{equation}
+\label{eq:rmse}
+\text{error} \;:=\; \sqrt{\frac{1}{2N}\sum_{i=1}^{2N} \bigl(S_{T}^{i,2N} \;-\; \widetilde{S}_{T}^{i,2N}\bigr)^{2}} \,,
+\end{equation}
+\label{eq:rmse}
+\text{error} \;:=\; \sqrt{\frac{1}{2N}\sum_{i=1}^{2N} \bigl(S_{T}^{i,2N} \;-\; \widetilde{S}_{T}^{i,2N}\bigr)^{2}} \,,
+
+where both systems $\{ S_{T}^{i,2N} \}_{i=1,\ldots,2N}
+\quad \text{and} \quad
+\{\widetilde{S}_{T}^{i,2N}\}_{i=1,\ldots,2N}$\{ S_{T}T^{i,2N}i,2N \}_{i=1,\ldots,2N}i=1,\ldots,2N
+\quad \text{and} \quad
+\{\widetilde{S}_{T}T^{i,2N}i,2N\}_{i=1,\ldots,2N}i=1,\ldots,2N are driven by the same Brownian motion. However, for the particles denoted by $\widetilde{S}_{T}^{i,2N}$\widetilde{S}_{T}T^{i,2N}i,2N, the leverage function is determined only using the first $N$N particles. In Figures \ref{fig:prop_chaos_1} -- \ref{fig:prop_chaos_6}, we observe a convergence rate of approximately $0.40$0.40, which we compare to the established rate of $0.50$0.50 in the literature in simpler settings (see, e.g., \cite{ReiEngSmi} for the case of super-linear growth in the drift coefficient). We observe that Feller ratios less than $1$1 do not significantly impact convergence.
+\begin{figure}[H]
+  \centering
+  \begin{minipage}[b]{0.45\textwidth}
+    \centering
+\includegraphics[width=\textwidth]{PC3.png}
+    \caption{$\kappa_3 = 18$}
+    \label{fig:prop_chaos_3}
+  \end{minipage}\hfill
+  \begin{minipage}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{PC4.png}
+    \caption{$\xi_4 = 0.1$}
+    \label{fig:prop_chaos_4}
+  \end{minipage}
+
+  \vspace{1em} 
+  \begin{minipage}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{PC5.png}
+    \caption{$\xi_5 = 0.5$}
+    \label{fig:prop_chaos_5} 
+  \end{minipage}\hfill
+  \begin{minipage}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{PC6.png}
+    \caption{$\xi_6 = 0.8$}
+    \label{fig:prop_chaos_6}
+  \end{minipage}
+\end{figure}
+  \centering
+  [b]{0.45\textwidth}0.45\textwidth
+    \centering
+\includegraphics[width=\textwidth]{PC3.png}
+    \caption{$\kappa_3 = 18$}
+    \label{fig:prop_chaos_3}
+  \hfill
+  [b]{0.45\textwidth}0.45\textwidth
+    \centering
+    \includegraphics[width=\textwidth]{PC4.png}
+    \caption{$\xi_4 = 0.1$}
+    \label{fig:prop_chaos_4}
+  
+
+  \vspace{1em} 
+  [b]{0.45\textwidth}0.45\textwidth
+    \centering
+    \includegraphics[width=\textwidth]{PC5.png}
+    \caption{$\xi_5 = 0.5$}
+    \label{fig:prop_chaos_5} 
+  \hfill
+  [b]{0.45\textwidth}0.45\textwidth
+    \centering
+    \includegraphics[width=\textwidth]{PC6.png}
+    \caption{$\xi_6 = 0.8$}
+    \label{fig:prop_chaos_6}
+  
+
+",Numerical experiments,False,2504.14343,6.0
+544408,"
+
+This review explores the optical-filtering behavior of molecular polaritons within the collective regime, focusing on the implications of the large-$N$N limit. In this limit, the molecular absorption inside a cavity depends on the cavity quality factor and spectral overlap between the polariton linear transmission and the bare molecular absorption. We re-evaluate several predicted polaritonic phenomena in this context and suggest that as $N\to \infty$N\to \infty, polaritons function in large part as optical filters, selectively allowing certain frequencies to enter the cavity that are then absorbed by the molecules. Through the theoretical and experimental examples presented, we demonstrate how this perspective can straightforwardly account for various polaritonic phenomena proposed in the literature and that similar outcomes should be replicable outside the cavity using appropriately tailored light sources. With these findings in mind, we urge caution in attributing phenomena solely to ``polaritonic'' or to quantum effects without first thoroughly accounting for classical optical filtering effects.
+
+The linear optical treatment of polaritons is \textit{exact} in the asymptotic $N\to\infty$N\to\infty limit. However, this picture breaks down as $\mathcal{O}(g)$\mathcal{O}(g) quantum processes, or ``$1/N$1/N effects'', become significant. Examples of these $1/N$1/N effects are dark-state-to-polariton relaxation, fluorescence, and spontaneous Raman scattering. Similarly, in systems under strong coupling with a small number of molecules or with many quanta of excitation, quantum optics effects cannot be ignored, further limiting the scope of the linear optical perspective. Although quantum mechanical in nature, some $1/N$1/N effects like fluorescence can be described using classical linear optics. However, in the strong coupling regime, they can only partially be described as solely optical filtering due to phenomena like polariton-assisted photon recycling. Finally, there is experimental evidence for ultrafast behavior of polaritonic systems in the collective regime that theory cannot yet reconcile without invoking single-molecule processes that are artificially large. Thus, for both theorists and experimentalists aiming to uncover quantum or classical polaritonic phenomena that transcend the realm of optical filtering, the focus should shift towards these regions of interest. This approach will not only expand our understanding of polaritonic effects beyond the linear regime but also pave the way for novel applications and insights into the complex interplay between light and matter under strong coupling.
+
+",Conclusion and outlook,False,2408.05036,
+245917,"
+As shown in \Cref{fig:rev_pot_10demo}, we plot the evaluation curves of time reversal symmetry guided reward shaping in 6 environments of robosuite, from which we can see clear performance gap between the baseline and using time reversal symmetry guided reward shaping.
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\linewidth]{figures/rev_potential.pdf}
+    \caption{Evaluation curves of time reversal symmetry guided reward shaping in 6 environments of robosuite.
+    ""Single-Task SAC"" serves as the baseline. 
+    ""+reversal reward shaping"" introduces time reversal symmetry guided reward shaping.}
+    \label{fig:rev_pot_10demo}
+\end{figure}
+    \centering
+    \includegraphics[width=0.8\linewidth]{figures/rev_potential.pdf}
+    \caption{Evaluation curves of time reversal symmetry guided reward shaping in 6 environments of robosuite.
+    ""Single-Task SAC"" serves as the baseline. 
+    ""+reversal reward shaping"" introduces time reversal symmetry guided reward shaping.}
+    \label{fig:rev_pot_10demo}
+
+
+",Results of Time Reversal Symmetry Guided Reward Shaping in Robosuite,False,2505.13925,15.0
+259720,"
+From here, first, as researchers, we need to agree on accurate and sensible terms to describe the different types of data privacy from a control perspective. To this end, we first need to identify what terms are already there in the literature -- we listed some of the terms we are aware of earlier in this article, but there might be more. We do not only need a list of existing terms, but an understanding of the reasoning behind them and their definitions, if any. We then need to provide definitions for each type of privacy controls in a more systematic way, including the actors and data flows that each type involve. Before we move to suggest rigorous studies to evaluate existing terms, we may need to crowdsource more terms that can capture the definitions more precisely, both from privacy experts and non-experts. From there, we can move forward to evaluate users’ comprehension and sentiments towards the terms. Eventually, we should be able to shortlist, then identify, the most sensible terms that accurately define the two types of privacy controls. To realize this, we will likely need a combination of both qualitative and quantitative approaches. There have been studies in the literature that examined terminology issues, for example, the terms used in cookie consent interfaces~\cite{jiwani24} and privacy policies~\cite{tang21}, which we can learn from. 
+
+After identifying the most sensible terms to describe both types of privacy controls, researchers and the industry need to adopt them, and raise awareness about the different types of privacy controls. We should adopt sensible and common terms in our product designs, research studies, and in our privacy discussions in general. Users eventually should adopt these terms too and be more precise in communicating their privacy perceptions, behaviors, and concerns.
+
+Reaching a consensus on terms is not going to be free from limitations. For example, from my own perspective as a bilingual, I wonder if I conducted the study for choosing the most accurate and sensible terms in English as a representative language for service providers, would the results still hold if the terms were translated to another language? This may require follow-up studies.
+
+Finally, with precise, sensible, easy to comprehend and use terms to differentiate the two intrinsic types of privacy controls, I believe this will positively impact the accuracy of privacy research and discussions, and this is a worthwhile endeavor. 
+
+
+
+",What Do We Need to Do Next?,False,2503.18729,2.0
+424255," \label{sec:neurons}
+While the previous results are suggestive, none of our evidence directly shows that the model \textit{uses} the features learned by the probe. To address this, we search for individual neurons with input or output weights that have high cosine similarity with the learned probe direction. That is, we search for neurons which read from or write to a direction similar to the one learned by the probe.
+
+We find that when we project the activation datasets on to the weights of the most similar neurons, these neurons are indeed highly sensitive to the true location of entities in space or time (see Figure~\ref{fig:neurons}). In other words, there exist individual neurons within the model that are themselves fairly predictive feature probes. Moreover, these neurons are sensitive to all of the entity types within our datasets, providing stronger evidence for the claim these representations are unified.
+
+If probes trained with explicit supervision are an approximate upper bound on the extent to which a model represents these spatial and temporal features, then the performance of individual neurons is a lower bound. In particular, we generally expect features to be distributed in superposition \citep{elhage2022toy}, making individual neurons the wrong level of analysis. Nevertheless, the existence of these individual neurons, which received no supervision other than from next-token prediction, is very strong evidence that the model has learned and makes use of spatial and temporal features.
+
+
+\rev{We also perform a series of neuron ablation and intervention experiments in Appendix~\ref{sec:ablations} to verify the importance of these neurons in spatial and temporal modeling.}We also perform a series of neuron ablation and intervention experiments in Appendix~\ref{sec:ablations} to verify the importance of these neurons in spatial and temporal modeling.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{figures/neuron_composition_2rows.png}
+    \caption{Space and time neurons in Llama-2 models. Depicts the result of projecting activation datasets onto neuron weights compared to true space or time coordinates with Spearman correlation by entity type.}
+    \label{fig:neurons}
+\end{figure}
+    \centering
+    \includegraphics[width=\linewidth]{figures/neuron_composition_2rows.png}
+    \caption{Space and time neurons in Llama-2 models. Depicts the result of projecting activation datasets onto neuron weights compared to true space or time coordinates with Spearman correlation by entity type.}
+    \label{fig:neurons}
+
+\vspace{-0.5em}
+",Space and Time Neurons,False,2310.02207,
+194400,"
+\label{sec:Estimation Error Bounds}
+
+To investigate the model-based networks' EE, we use the LRC framework \citep{Bartlett2005LRC}.
+Instead of considering the entire class of functions $\HV$\HV, the LRC considers only estimators which are close to the optimal estimator
+$
+    \HV_r = \left\{ \boldsymbol h \in \HV: \E_{\D} \norm{ \boldsymbol h(\boldsymbol y) - \boldsymbol h^*(\boldsymbol y) }^2_2 \leq r \right\}
+    \label{def:Ar}
+$
+    \HV_r = \left\{ \boldsymbol h \in \HV: \E_{\D}\D \norm{ \boldsymbol h(\boldsymbol y) - \boldsymbol h^*(\boldsymbol y) } \boldsymbol h(\boldsymbol y) - \boldsymbol h^*(\boldsymbol y) ^2_2 \leq r \right\}
+    \label{def:Ar}
+,
+where $\boldsymbol h^*$\boldsymbol h^* is such that $L_D ( \boldsymbol h^* ) = \inf_{\boldsymbol h \in \HV} L_{\D}(\boldsymbol h)$L_D ( \boldsymbol h^* ) = \inf_{\boldsymbol h \in \HV}\boldsymbol h \in \HV L_{\D}\D(\boldsymbol h).
+It is interesting to note that the class of estimators $\HV_r$\HV_r only restricts the distance between the estimators themselves, and not between their corresponding losses.
+Following the LRC framework, we consider target vectors ranging in $[-1, 1]^{n_x}$[-1, 1]^{n_x}n_x.
+Therefore, we adapt the networks' estimations by clipping them to lie in the interval $[-1, 1]^{n_x}$[-1, 1]^{n_x}n_x.
+In our case we consider the restricted classes of functions representing the output of a neuron at depth $L$L in ISTA, ADMM, and ReLU networks.
+Moreover, we denote by $\boldsymbol W^l$\boldsymbol W^l and $\boldsymbol W^{l,*}, \ l \in [1, L]$\boldsymbol W^{l,*}l,*, \ l \in [1, L] the weight matrices corresponding to $\boldsymbol h \in \HV_r$\boldsymbol h \in \HV_r and $\boldsymbol h^*$\boldsymbol h^*, respectively. 
+Based on these restricted class of functions, we present the following assumption and theorem (the proof is provided in the supplementary material).
+
+\begin{assumption}
+    \label{assumption: loss}
+    % The loss function $\L$ satisfies the following requirement:
+    % \begin{itemize}
+    %     % \item The loss is averaged over per-coordinate losses $
+    %     %     \L\left( \boldsymbol h(\boldsymbol y), \boldsymbol x\right) = \frac{1}{n_x} \sum_{j = 1}^{n_x} \ell \left( \boldsymbol h_j(\boldsymbol y), \boldsymbol x_j \right)
+    %     % $,
+    %     % where $\ell: \mathbb{R} \times \mathbb{R} \xrightarrow[]{} \mathbb{R_+}$ is $1$-Lipschitz in its first argument.
+        
+    %     \item 
+    %     There exists a constant $C \geq 1$ such that for every probability distribution $\D$, and estimator $\boldsymbol h \in \HV$,  $
+    %         \E_{\D} \sum_{j = 1}^{n_x} (\boldsymbol h_j - \boldsymbol h^*_j )^2 \leq C \E_{\D} \sum_{j = 1}^{n_x} \left( \ell(\boldsymbol h_j) - \ell (\boldsymbol h^*_j ) \right)$.
+    % \end{itemize}
+    There exists a constant $C \geq 1$ such that for every probability distribution $\D$, and estimator $\boldsymbol h \in \HV$,  $
+            \E_{\D} \sum_{j = 1}^{n_x} (\boldsymbol h_j - \boldsymbol h^*_j )^2 \leq C \E_{\D} \sum_{j = 1}^{n_x} \left( \ell(\boldsymbol h_j) - \ell (\boldsymbol h^*_j ) \right)$,
+    where $\boldsymbol h_j$ and $\boldsymbol h^*_j$ denote the $j$th coordinate of the estimators.
+\end{assumption}\begin{assumption}
+    \label{assumption: loss}
+    % The loss function $\L$ satisfies the following requirement:
+    % \begin{itemize}
+    %     % \item The loss is averaged over per-coordinate losses $
+    %     %     \L\left( \boldsymbol h(\boldsymbol y), \boldsymbol x\right) = \frac{1}{n_x} \sum_{j = 1}^{n_x} \ell \left( \boldsymbol h_j(\boldsymbol y), \boldsymbol x_j \right)
+    %     % $,
+    %     % where $\ell: \mathbb{R} \times \mathbb{R} \xrightarrow[]{} \mathbb{R_+}$ is $1$-Lipschitz in its first argument.
+        
+    %     \item 
+    %     There exists a constant $C \geq 1$ such that for every probability distribution $\D$, and estimator $\boldsymbol h \in \HV$,  $
+    %         \E_{\D} \sum_{j = 1}^{n_x} (\boldsymbol h_j - \boldsymbol h^*_j )^2 \leq C \E_{\D} \sum_{j = 1}^{n_x} \left( \ell(\boldsymbol h_j) - \ell (\boldsymbol h^*_j ) \right)$.
+    % \end{itemize}
+    There exists a constant $C \geq 1$ such that for every probability distribution $\D$, and estimator $\boldsymbol h \in \HV$,  $
+            \E_{\D} \sum_{j = 1}^{n_x} (\boldsymbol h_j - \boldsymbol h^*_j )^2 \leq C \E_{\D} \sum_{j = 1}^{n_x} \left( \ell(\boldsymbol h_j) - \ell (\boldsymbol h^*_j ) \right)$,
+    where $\boldsymbol h_j$ and $\boldsymbol h^*_j$ denote the $j$th coordinate of the estimators.
+\end{assumption}
+    \label{assumption: loss}
+    There exists a constant $C \geq 1$C \geq 1 such that for every probability distribution $\D$\D, and estimator $\boldsymbol h \in \HV$\boldsymbol h \in \HV,  $
+            \E_{\D} \sum_{j = 1}^{n_x} (\boldsymbol h_j - \boldsymbol h^*_j )^2 \leq C \E_{\D} \sum_{j = 1}^{n_x} \left( \ell(\boldsymbol h_j) - \ell (\boldsymbol h^*_j ) \right)$
+            \E_{\D}\D \sum_{j = 1}j = 1^{n_x}n_x (\boldsymbol h_j - \boldsymbol h^*_j )^2 \leq C \E_{\D}\D \sum_{j = 1}j = 1^{n_x}n_x \left( \ell(\boldsymbol h_j) - \ell (\boldsymbol h^*_j ) \right),
+    where $\boldsymbol h_j$\boldsymbol h_j and $\boldsymbol h^*_j$\boldsymbol h^*_j denote the $j$jth coordinate of the estimators.
+
+As pointed out in \citep{Bartlett2002Rademacher}, this condition usually follows from a uniform convexity condition on the loss function $\ell$\ell.  For instance, if $\left|h(\boldsymbol y) - \boldsymbol x \right| \leq 1$\left|h(\boldsymbol y) - \boldsymbol x \right| \leq 1 for any $h \in \H, \boldsymbol y \in \R^{n_y}$h \in \H, \boldsymbol y \in \R^{n_y}n_y and $\boldsymbol x \in \R^{n_x}$\boldsymbol x \in \R^{n_x}n_x,  then the condition is satisfied with $C=1$C=1 \citep{Yousefi2018LRCMTL}.
+\begin{theorem} [Estimation error bound of ISTA, ADMM, and ReLU  networks]
+\label{theorem: EE of ISTA network}
+Consider the class of functions represented by depth-$L$ ISTA networks $\HV_I^L$ as detailed in Section \ref{sec:Network_Architecture}, $m$ i.i.d training samples, and a per-coordinate loss satisfying Assumption \ref{assumption: loss} with a constant $C$.
+    Let $|| \boldsymbol W^{l} -\boldsymbol W^{l,*} ||_{\infty} \leq \alpha \sqrt{r}$ for some $\alpha > 0$.
+    Moreover, $B \geq \max\{\alpha \sqrt{r}, 1\}$.
+    Then there exists $T$ in the interval
+    $
+        T \in \left[ 0, \min \left\{ \frac{\sqrt{m} B_0 B^{L - 1} 2^L }{\lambda \eta}, m\right\} \right]
+    $,
+    where $\eta = \frac{L B^{L-1} (B-1) - B^L + 1}{(B-1)^2}$, such that for any $s > 0$ with probability at least $1 - e^{-s}$,
+    \begin{equation}
+    \begin{aligned}
+        \label{eq:EE bound ISTA network}
+        \EE{\left( \HV_I^L \right)} \leq 41 r^* + \frac{17 C^2 + 48 C}{m n_x} s
+    \end{aligned}
+    \end{equation}
+    where $
+        r^* = C^2 \alpha^2 \left(\frac{B_0 B^{L-1}2^L}{\sqrt{m}} - \frac{\lambda T}{m} \eta \right)^2$.
+    The bound is also satisfied for the class of functions represented by depth-$L$ ADMM networks $\HV_A^L$, with $
+        r^* = C^2 \alpha^2 \left(\frac{B_0  \tilde{B}^{L-2}2^{L-1}}{\sqrt{m}} - \frac{\tilde{\lambda} T}{m} \tilde{\eta} \right)^2
+    $,
+    where $\tilde{\lambda} = (1 + \gamma) \lambda$, $\tilde{B} = (1 + 2 \gamma) (B + 2)$, and $\tilde{\eta} = \frac{(L-1) \tilde{B}^{L-2} (\tilde{B}-1) - \tilde{B}^{L-1} + 1}{(\tilde{B}-1)^2}$,
+    and for the class of functions represented by depth-$L$ ReLU networks $\HV_R^L$, with $
+        r^* =  C^2 \alpha^2 \, \left(\frac{B_0 B^{L-1}2^L}{\sqrt{m}}\right)^2$.
+
+    
+\end{theorem}\begin{theorem} [Estimation error bound of ISTA, ADMM, and ReLU  networks]
+\label{theorem: EE of ISTA network}
+Consider the class of functions represented by depth-$L$ ISTA networks $\HV_I^L$ as detailed in Section \ref{sec:Network_Architecture}, $m$ i.i.d training samples, and a per-coordinate loss satisfying Assumption \ref{assumption: loss} with a constant $C$.
+    Let $|| \boldsymbol W^{l} -\boldsymbol W^{l,*} ||_{\infty} \leq \alpha \sqrt{r}$ for some $\alpha > 0$.
+    Moreover, $B \geq \max\{\alpha \sqrt{r}, 1\}$.
+    Then there exists $T$ in the interval
+    $
+        T \in \left[ 0, \min \left\{ \frac{\sqrt{m} B_0 B^{L - 1} 2^L }{\lambda \eta}, m\right\} \right]
+    $,
+    where $\eta = \frac{L B^{L-1} (B-1) - B^L + 1}{(B-1)^2}$, such that for any $s > 0$ with probability at least $1 - e^{-s}$,
+    \begin{equation}
+    \begin{aligned}
+        \label{eq:EE bound ISTA network}
+        \EE{\left( \HV_I^L \right)} \leq 41 r^* + \frac{17 C^2 + 48 C}{m n_x} s
+    \end{aligned}
+    \end{equation}
+    where $
+        r^* = C^2 \alpha^2 \left(\frac{B_0 B^{L-1}2^L}{\sqrt{m}} - \frac{\lambda T}{m} \eta \right)^2$.
+    The bound is also satisfied for the class of functions represented by depth-$L$ ADMM networks $\HV_A^L$, with $
+        r^* = C^2 \alpha^2 \left(\frac{B_0  \tilde{B}^{L-2}2^{L-1}}{\sqrt{m}} - \frac{\tilde{\lambda} T}{m} \tilde{\eta} \right)^2
+    $,
+    where $\tilde{\lambda} = (1 + \gamma) \lambda$, $\tilde{B} = (1 + 2 \gamma) (B + 2)$, and $\tilde{\eta} = \frac{(L-1) \tilde{B}^{L-2} (\tilde{B}-1) - \tilde{B}^{L-1} + 1}{(\tilde{B}-1)^2}$,
+    and for the class of functions represented by depth-$L$ ReLU networks $\HV_R^L$, with $
+        r^* =  C^2 \alpha^2 \, \left(\frac{B_0 B^{L-1}2^L}{\sqrt{m}}\right)^2$.
+
+    
+\end{theorem}
+\label{theorem: EE of ISTA network}
+Consider the class of functions represented by depth-$L$L ISTA networks $\HV_I^L$\HV_I^L as detailed in Section \ref{sec:Network_Architecture}, $m$m i.i.d training samples, and a per-coordinate loss satisfying Assumption \ref{assumption: loss} with a constant $C$C.
+    Let $|| \boldsymbol W^{l} -\boldsymbol W^{l,*} ||_{\infty} \leq \alpha \sqrt{r}$|| \boldsymbol W^{l}l -\boldsymbol W^{l,*}l,* ||_{\infty}\infty \leq \alpha \sqrt{r} for some $\alpha > 0$\alpha > 0.
+    Moreover, $B \geq \max\{\alpha \sqrt{r}, 1\}$B \geq \max\{\alpha \sqrt{r}, 1\}.
+    Then there exists $T$T in the interval
+    $
+        T \in \left[ 0, \min \left\{ \frac{\sqrt{m} B_0 B^{L - 1} 2^L }{\lambda \eta}, m\right\} \right]
+    $
+        T \in \left[ 0, \min \left\{ \frac{\sqrt{m} B_0 B^{L - 1} 2^L }{\lambda \eta}, m\right\} \right]
+    ,
+    where $\eta = \frac{L B^{L-1} (B-1) - B^L + 1}{(B-1)^2}$\eta = \frac{L B^{L-1} (B-1) - B^L + 1}{(B-1)^2}, such that for any $s > 0$s > 0 with probability at least $1 - e^{-s}$1 - e^{-s}-s,
+    
+    
+        \label{eq:EE bound ISTA network}
+        \EE{\left( \HV_I^L \right)}\left( \HV_I^L \right) \leq 41 r^* + \frac{17 C^2 + 48 C}{m n_x} s
+    
+    
+    where $
+        r^* = C^2 \alpha^2 \left(\frac{B_0 B^{L-1}2^L}{\sqrt{m}} - \frac{\lambda T}{m} \eta \right)^2$
+        r^* = C^2 \alpha^2 \left(\frac{B_0 B^{L-1}2^L}{\sqrt{m}} - \frac{\lambda T}{m} \eta \right)^2.
+    The bound is also satisfied for the class of functions represented by depth-$L$L ADMM networks $\HV_A^L$\HV_A^L, with $
+        r^* = C^2 \alpha^2 \left(\frac{B_0  \tilde{B}^{L-2}2^{L-1}}{\sqrt{m}} - \frac{\tilde{\lambda} T}{m} \tilde{\eta} \right)^2
+    $
+        r^* = C^2 \alpha^2 \left(\frac{B_0  \tilde{B}^{L-2}2^{L-1}}{\sqrt{m}} - \frac{\tilde{\lambda} T}{m} \tilde{\eta} \right)^2
+    ,
+    where $\tilde{\lambda} = (1 + \gamma) \lambda$\tilde{\lambda} = (1 + \gamma) \lambda, $\tilde{B} = (1 + 2 \gamma) (B + 2)$\tilde{B} = (1 + 2 \gamma) (B + 2), and $\tilde{\eta} = \frac{(L-1) \tilde{B}^{L-2} (\tilde{B}-1) - \tilde{B}^{L-1} + 1}{(\tilde{B}-1)^2}$\tilde{\eta} = \frac{(L-1) \tilde{B}^{L-2} (\tilde{B}-1) - \tilde{B}^{L-1} + 1}{(\tilde{B}-1)^2},
+    and for the class of functions represented by depth-$L$L ReLU networks $\HV_R^L$\HV_R^L, with $
+        r^* =  C^2 \alpha^2 \, \left(\frac{B_0 B^{L-1}2^L}{\sqrt{m}}\right)^2$
+        r^* =  C^2 \alpha^2 \, \left(\frac{B_0 B^{L-1}2^L}{\sqrt{m}}\right)^2.
+
+    
+
+
+
+
+
+
+
+
+
+
+From Theorem \ref{theorem: EE of ISTA network}, we observe that the EE decreases by a factor of $\O \left(1 / m \right)$\O \left(1 / m \right), instead of a factor of $\O \left(1 / \sqrt{m}\right)$\O \left(1 / \sqrt{m}\right) obtained for the GE.
+This result complies with previous local bounds which yield faster convergence rates compared to global bounds \citep{Blanchard2007localVSglobal,Bartlett2005LRC}. 
+Also, the value of $\alpha$\alpha relates the maximal distance between estimators in $\H_r$\H_r denoted by $r$r, to the distance between their corresponding weight matrices $|| \boldsymbol W^{l} -\boldsymbol W^{l,*} ||_{\infty} \leq \alpha \sqrt{r},\ l \in [1, L]$|| \boldsymbol W^{l}l -\boldsymbol W^{l,*}l,* ||_{\infty}\infty \leq \alpha \sqrt{r},\ l \in [1, L].
+Tighter bounds on the distance between the weight matrices allow us to choose a smaller value for $\alpha$\alpha, resulting in smaller values $r^*$r^* which improve the EE bounds.
+The value of $\alpha$\alpha could depend on the network's nonlinearity, underlying data distribution $\D$\D, and number of layers.
+
+Note that the bounds of the model-based architectures depend on the soft-thresholding through the value of $\lambda \E_S(T)$\lambda \E_S(T).
+As $\lambda \E_S(T)$\lambda \E_S(T) increases, the bound on the EE decreases, which emphasizes the nonlinearity's role in the network's generalization abilities.
+Due to the soft-thresholding, ISTA and ADMM networks result in lower EE bounds compared to the bound for ReLU networks.
+It is interesting to note, that as the number of training samples $m$m increases, the difference between the bounds on the model-based and ReLU networks is less significant.
+In the EE bounds of model-based networks, the parameter $B_0$B_0 relates the bound to the sparsity level $\rho$\rho, of the target vectors.
+Lower values of $\rho$\rho result in lower EE bounds, as demonstrated in the supplementary.
+
+
+
+
+
+
+
+
+
+",Estimation Error Bounds: Local Properties,False,2304.09802v1,4.0
+352950,"
+\label{sec:prelims}
+In this section, we provide the necessary background on DNN verification and existing works on traditional DNN interpretability with sparse decision layers.
+While our method is applicable to general architectures, for simplicity, we focus on a $l$l-layer feedforward DNN $N : \mathbb{R}^{d_{0}} \rightarrow \mathbb{R}^{d_{l}}$N : \mathbb{R}^{d_{0}}d_{0}0 \rightarrow \mathbb{R}^{d_{l}}d_{l}l for the rest of this paper. Each layer $i$i except the final one applies the transformation $X_i=\sigma_i(W_i\cdot X_{i-1}+B_i)$X_i=\sigma_i(W_i\cdot X_{i-1}i-1+B_i) where $W_i \in \mathbb{R}^{d_{i} \times d_{i-1}}$W_i \in \mathbb{R}^{d_{i} \times d_{i-1}}d_{i}i \times d_{i-1}i-1 and $B_i\in \mathbb{R}^{d_{i}}$B_i\in \mathbb{R}^{d_{i}}d_{i}i are respectively the weights and biases of the affine transformation and $\sigma_i$\sigma_iis a non-linear activation like ReLU, Sigmoid, etc. corresponding to layer $i$i.   
+The final layer only applies the affine transformation and the network output is a vector $Y=W_l \cdot X_{l-1} + B_l$Y=W_l \cdot X_{l-1}l-1 + B_l. 
+\\
+\noindent \textbf{DNN verification.}
+At a high level, DNN verification involves proving that the network outputs $Y=N(X)$Y=N(X) corresponding to all inputs $X$X from an input region specified by $\inreg$\inreg, satisfy a logical specification $\outprop$\outprop.
+A common property is - the local robustness where the output specification $\outprop$\outprop is defined as 
+linear inequality over the elements of the output vector of the neural network.   
+The output specification, in this case, is written as $\outprop(Y) = (C^{T} Y \geq 0)$\outprop(Y) = (C^{T}T Y \geq 0) where $C \in \mathbb{R}^{d_{l}}$C \in \mathbb{R}^{d_{l}}d_{l}l defines the linear inequality for encoding the robustness property.
+For the rest of the paper, we refer to the input region $\inreg$\inreg and output specification $\outprop$\outprop together as \textit{property}  $(\inreg, \outprop)$(\inreg, \outprop). 
+\\
+Next, we briefly discuss how DNN robustness verifiers work. A DNN verifier $\ver$\ver symbolically computes a possibly over-approximated output region $\abstraction \subseteq \mathbb{R}^{d_{l}}$\abstraction \subseteq \mathbb{R}^{d_{l}}d_{l}l containing all possible outputs of $N$N corresponding to $\inreg$\inreg.
+Let, $\lb(\abstraction) = \min_{Y \in \abstraction} C^TY$\lb(\abstraction) = \min_{Y \in \abstraction}Y \in \abstraction C^TY denote the minimum value of $C^TY$C^TY where $Y \in \abstraction$Y \in \abstraction. Then $N$N satisfies property $(\inreg, \outprop)$(\inreg, \outprop) if $\lb(\abstraction) \geq 0$\lb(\abstraction) \geq 0.
+Most existing DNN verifiers~\cite{singh2018fast,singh2019abstract,zhang2018crown} are exact for affine transformations. 
+However, for non-linear activation functions, these verifiers compute convex regions that over-approximate the output of the activation function.
+Note that, due to the over-approximations, DNN verifiers are sound but not complete - the verifier may not always prove property even if it holds.
+For piecewise linear activation functions like ReLU, complete verifiers exist handling the activation exactly, which in theory always prove a property if it holds.
+Nevertheless, complete verification in the worst case takes exponential time, making them practically infeasible.
+In the rest of the paper, we focus on deterministic, sound, and incomplete verifiers which are more scalable than complete verifiers. \\
+\noindent \textbf{DNN interpretation with sparse decision layer.} 
+DNNs considered in this paper, have complex multi-layer structures, making them harder to interpret. 
+Instead of interpreting what each layer of the network is doing, recent works \cite{wong2021leveraging, liao2022automated} treat DNNs as the composition of a \textit{deep feature extractor} and an affine \textit{decision layer}.
+The output of each neuron of the penultimate layer represents a single deep feature and the final affine layer linearly combines these deep features to compute the network output.
+This perspective enables us to identify the set of features used by the network to compute its output and to investigate their semantic meaning using the existing feature visualization techniques \cite{ribeiro2016should, DBLP:journals/corr/SimonyanVZ13}.
+However, visualizing each feature is practically infeasible for large DNNs where the penultimate layer can contain hundreds of neurons.
+To address this, the work of \cite{wong2021leveraging} tries to identify a smaller set of features that are sufficient to maintain the perfomance of the network. 
+This smaller but sufficient feature set retains only the most important features corresponding to a given input. 
+It is shown empirically \cite{wong2021leveraging} 
+that a subset of these features of size less than 10 is sufficient to maintain the accuracy of state-of-the-art models.
+
+
+",Preliminaries,False,2301.13845v1,3.0

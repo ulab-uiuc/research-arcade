@@ -1,0 +1,11 @@
+id,citing_arxiv_id,cited_arxiv_id,bib_title,bib_key,author_cited_paper,citing_sections,citing_paragraphs
+90448,2501.14886,,An archive of their own: A case study of feminist HCI and values in design,fiesler2016archive,"Fiesler, Casey",['Related Work'],[]
+949579,2010.06313v2,,Multitask learning,caruana1997multitask,"Caruana, Rich",['Related Work'],[]
+971731,1811.01848v3,,Differential Dynamic Programming.,Jacobson1970,David Jacobson and David Mayne.,"['Lemma 2', 'The POLO framework']",[]
+1393298,2505.21793,,Dictionary.com | Meanings and Definitions of Words,dictionary,{Dictionary.com},['Systems Thinking Assessment of System Dynamics'],[]
+1825343,2503.19965,,Eker,Eker2024,,['Establishment of the Concept of Bolometric Correction'],[]
+1597787,2312.01127v2,,Mean-field Langevin dynamics and energy landscape of neural networks,Hu21,Kaitong Hu,['Introduction'],[]
+1843697,2503.22055,,Laboratory study on the effects of hydro kinetic turbines on hydrodynamics and sediment dynamics,[75],R. Ramírez-Mendoza,['Introduction'],[]
+65864,2501.01631,,Deep learning for practical image recognition: Case study on kaggle competitions,102yang2018deep,"Yang, Xulei",['PFMs Enhanced Systematic Optimization Methodologies'],[]
+259551,2502.04376,,Better Zero-Shot Reasoning with Role-Play Prompting,kong2024roleplay,"Kong, Aobo",['Related Work'],[]
+2169749,2402.19267,,Few-{NERD}: A Few-shot Named Entity Recognition Dataset,ding-etal-2021-nerd,"Ding, Ning",['Experiments'],[]
