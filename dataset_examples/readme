@@ -1,0 +1,61 @@
+# Supplementary Materials: OpenReview Dataset
+
+## Overview
+
+This supplementary material contains a dataset of OpenReview papers and reviews from ICLR 2025 Conference, along with the code infrastructure used to construct and process this dataset. The dataset serves as the foundation for our research on [your research topic - e.g., academic paper analysis, review prediction, etc.].
+
+## Dataset Description
+
+The dataset includes the following components:
+
+### Data Files (CSV Format)
+
+1. **openreview_papers.csv** - Paper metadata including titles, abstracts, decisions, and PDF links
+2. **openreview_authors.csv** - Author profiles from the venue
+3. **openreview_papers_authors.csv** - Mapping between papers and their authors
+4. **openreview_reviews.csv** - Review content with ratings and feedback
+5. **openreview_revisions.csv** - Paper revision history
+6. **openreview_paragraphs.csv** - Paragraph-level content from papers
+7. **openreview_arxiv.csv** - Mapping between OpenReview papers and arXiv preprints
+8. **openreview_papers_reviews.csv** - Mapping between papers and reviews
+9. **openreview_papers_revisions.csv** - Mapping between papers and revisions
+10. **openreview_revisions_reviews.csv** - Mapping between revisions and reviews
+
+### Code Files
+
+The repository includes two implementations for data processing:
+
+- **CSV Implementation** (`csv_openreview_*.py`) - Pandas-based data processing
+- **SQL Implementation** (`sql_openreview_*.py`) - PostgreSQL database backend
+- **Utility Modules** - OpenReview API crawler and PDF processing utilities
+
+## Double-Blind Compliance Statement
+
+**IMPORTANT: This dataset contains publicly available data from the ICLR 2025 Conference on OpenReview and does NOT include any papers authored by the submission authors.**
+
+The author information present in this dataset (names, affiliations, emails, etc.) represents the broader ICLR 2025 community and is included solely as part of the cited dataset for research purposes. This supplementary material complies with double-blind review policies as:
+
+1. **No submission author papers are included** - None of the papers in this dataset are authored by the submission authors or their close collaborators
+2. **Publicly available data** - All data is sourced from OpenReview.net, a public platform
+3. **Dataset as citation** - The author information is part of the research dataset being studied, similar to citing papers in a bibliography
+4. **No identifying selection bias** - The dataset selection does not reveal the submission authors' identity through paper choices or topical focus
+
+## Ethical Considerations
+
+- All data is publicly available on OpenReview
+- Author information is included as part of the research dataset
+- No private or confidential information is included
+- Reviewer anonymity is preserved through pseudonyms
+- Dataset complies with OpenReview's terms of service
+
+## Data Availability
+
+The complete dataset and code will be made publicly available upon paper acceptance to facilitate reproducibility and future research.
+
+## Contact
+
+For questions about this dataset or supplementary materials, please refer to the main paper submission or contact the conference organizers through the official review system.
+
+---
+
+**Note to Reviewers**: This supplementary material is provided to demonstrate our data collection and processing methodology. The presence of author names in the dataset does not violate double-blind review as none of these papers are authored by the submission authors.
