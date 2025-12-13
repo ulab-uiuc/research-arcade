@@ -607,7 +607,6 @@ class ResearchArcade:
             print(f"Table {table} does not support construction from API")
 
 
-
     def construct_table_from_csv(self, table: str, config: dict) -> Optional[pd.DataFrame]:
         # OpenReview tables
         if table == "openreview_papers":
