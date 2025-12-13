@@ -1,0 +1,96 @@
+version: '3.8'
+
+services:
+  arxiv-crawler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: arxiv-crawler
+    restart: unless-stopped
+    
+    environment:
+      # Crawl scheduling
+      - CRAWL_INTERVAL=daily          # hourly, daily, weekly, or seconds
+      - CRAWL_HOUR=6                  # Hour to run (UTC)
+      - CRAWL_MINUTE=0                # Minute to run
+      
+      # Crawl configuration
+      - ARXIV_FIELD=cs.AI             # arXiv category (leave empty for all)
+      - LOOKBACK_DAYS=1               # How many days back to crawl
+      
+      # Output directories (inside container)
+      - DEST_DIR=/app/download
+      - ARXIV_ID_DEST=/app/arxiv_ids
+      
+      # Timezone
+      - TZ=UTC
+    
+    volumes:
+      # Persist downloaded papers
+      - ./data/download:/app/download
+      # Persist arXiv ID lists
+      - ./data/arxiv_ids:/app/arxiv_ids
+      # Persist logs
+      - ./data/logs:/app/logs
+    
+    # Use 'continuous' for loop-based or 'cron' for cron-based scheduling
+    command: ["continuous"]
+    
+    # Resource limits (optional)
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 512M
+
+  # Optional: Multiple crawlers for different fields
+  arxiv-crawler-ml:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: arxiv-crawler-ml
+    restart: unless-stopped
+    profiles:
+      - multi-field
+    
+    environment:
+      - CRAWL_INTERVAL=daily
+      - CRAWL_HOUR=7
+      - ARXIV_FIELD=stat.ML
+      - LOOKBACK_DAYS=1
+      - DEST_DIR=/app/download
+      - ARXIV_ID_DEST=/app/arxiv_ids
+      - TZ=UTC
+    
+    volumes:
+      - ./data/ml/download:/app/download
+      - ./data/ml/arxiv_ids:/app/arxiv_ids
+      - ./data/ml/logs:/app/logs
+    
+    command: ["continuous"]
+
+  arxiv-crawler-cv:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: arxiv-crawler-cv
+    restart: unless-stopped
+    profiles:
+      - multi-field
+    
+    environment:
+      - CRAWL_INTERVAL=daily
+      - CRAWL_HOUR=8
+      - ARXIV_FIELD=cs.CV
+      - LOOKBACK_DAYS=1
+      - DEST_DIR=/app/download
+      - ARXIV_ID_DEST=/app/arxiv_ids
+      - TZ=UTC
+    
+    volumes:
+      - ./data/cv/download:/app/download
+      - ./data/cv/arxiv_ids:/app/arxiv_ids
+      - ./data/cv/logs:/app/logs
+    
+    command: ["continuous"]
