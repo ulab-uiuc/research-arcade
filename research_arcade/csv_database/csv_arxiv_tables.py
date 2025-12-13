@@ -134,7 +134,7 @@ class CSVArxivTable:
         
         return df.copy()
 
-    def construct_tables_table_from_api(self, arxiv_ids, dest_dir):
+    def construct_table_from_api(self, arxiv_ids, dest_dir):
         # Check if papers already exists in the directory
         md = MultiDownload()
         downloaded_paper_ids = []

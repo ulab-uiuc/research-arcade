@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile
     container_name: arxiv-crawler
     restart: unless-stopped
-    
+
     environment:
       # Crawl scheduling
       - CRAWL_INTERVAL=daily          # hourly, daily, weekly, or seconds
@@ -67,7 +67,7 @@ services:
       - ./data/ml/download:/app/download
       - ./data/ml/arxiv_ids:/app/arxiv_ids
       - ./data/ml/logs:/app/logs
-    
+
     command: ["continuous"]
 
   arxiv-crawler-cv:

@@ -40,7 +40,7 @@ class CSVArxivAuthors:
     def insert_author(self, semantic_scholar_id, name, homepage=None):
         """Insert an author. Returns the generated author id."""
         df = self._load_data()
-        
+
         if semantic_scholar_id in df['semantic_scholar_id'].values:
             return None
         

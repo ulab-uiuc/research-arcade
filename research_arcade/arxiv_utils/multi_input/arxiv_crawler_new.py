@@ -2,20 +2,22 @@ from paperscraper.get_dumps import arxiv
 from .multi_input import MultiInput
 import json
 from typing import List
+import os
 
 
 def download_with_time(start_date, end_date=None, save_path="./download"):
 
-    save_path = f"{save_path}/arxiv_metadata_{start_date}_{end_date}.jsonl"
-    
-    # Create an empty file of the same path
+    # os.mkdir(save_path)
+    os.makedirs(save_path, exist_ok=True)
 
-    
+    save_path = f"{save_path}/arxiv_metadata_{start_date}_{end_date}.jsonl"
+    print(save_path)
+    with open(save_path, 'w') as f:
+        f.write("")
 
     arxiv(start_date=start_date, end_date=end_date, save_path=save_path) # scrapes all metadata from 2024 until today.
     return save_path
 
-    
 
 def extract_arxiv_ids(file_path: str) -> List[str]:
     """

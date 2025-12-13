@@ -17,10 +17,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # Set working directory
 WORKDIR /app
+COPY app/ /app/
+COPY research_arcade/ /app/research_arcade/
 
 # Copy requirements first for better caching
-COPY requirements.txt .
+COPY docker/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
+
+COPY app/ /app/
 
 # Copy application code
 COPY . .
@@ -29,7 +33,7 @@ COPY . .
 RUN mkdir -p /app/download /app/arxiv_ids /app/logs
 
 # Copy and set up entrypoint
-COPY docker-entrypoint.sh /docker-entrypoint.sh
+COPY docker/docker-entrypoint.sh /docker-entrypoint.sh
 RUN chmod +x /docker-entrypoint.sh
 
 # Default environment variables for crawling

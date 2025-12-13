@@ -371,3 +371,37 @@ class CSVArxivCitation:
             return False
 
 
+
+    def construct_citations_table_from_api(self, arxiv_ids, dest):
+
+        for arxiv_id in arxiv_ids:
+            json_path = f"{dest}/output/{arxiv_id}.json"
+
+            try:
+                with open(json_path, 'r') as file:
+                    file_json = json.load(file)
+            except FileNotFoundError:
+                print(f"Error: The file '{file_json}' was not found.")
+                continue
+            except json.JSONDecodeError:
+                print(f"Error: Could not decode JSON from '{file_json}'. Check if the file contains valid JSON.")
+                continue
+            except Exception as e:
+                print(f"An unexpected error occurred: {e}")
+                continue
+
+
+            for citation in file_json['citations'].values():
+                    # print(f"Citation: {citation}")
+                    cited_arxiv_id = citation.get('arxiv_id')
+                    bib_key = citation.get('bib_key')
+                    bib_title = citation.get('bib_title')
+                    bib_author = citation.get('bib_author ')
+                    contexts = citation.get('context')
+                    citing_sections = set()
+                    for context in contexts:
+                        citing_section = context['section']
+                        citing_sections.add(citing_section)
+
+                    #大切なこと
+                    self.insert_citation(citing_arxiv_id=arxiv_id, cited_arxiv_id=cited_arxiv_id, citing_sections=list(citing_sections), bib_title=bib_title, bib_key=bib_key)

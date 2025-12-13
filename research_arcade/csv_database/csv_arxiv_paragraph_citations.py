@@ -99,7 +99,7 @@ class CSVArxivParagraphCitation:
         self._save_data(df)
         return count
 
-    def construct_table_from_api(self, arxiv_ids, dest_dir):
+    def construct_citations_table_from_api(self, arxiv_ids, dest_dir):
         paragraph_path = f"{dest_dir}/output/paragraphs/text_nodes.jsonl"
 
         with open(paragraph_path) as f:

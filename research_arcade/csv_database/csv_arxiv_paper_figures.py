@@ -271,3 +271,62 @@ class CSVArxivPaperFigure:
             return False
 
 
+    def construct_paper_figures_table_from_api(self, arxiv_ids, dest):
+
+        for arxiv_id in arxiv_ids:
+            json_path = f"{dest}/output/{arxiv_id}.json"
+
+            try:
+                with open(json_path, 'r') as file:
+                    file_json = json.load(file)
+            except FileNotFoundError:
+                print(f"Error: The file '{file_json}' was not found.")
+                continue
+            except json.JSONDecodeError:
+                print(f"Error: Could not decode JSON from '{file_json}'. Check if the file contains valid JSON.")
+                continue
+            except Exception as e:
+                print(f"An unexpected error occurred: {e}")
+                continue
+
+
+            figure_jsons = file_json['figure']
+
+            for figure_json in figure_jsons:
+                
+                figures = self.figure_iteration_recursive(figure_json=figure_json)
+
+                for figure in figures:
+                    path, caption, label = figure
+                    figure_id = self.db.insert_figure(paper_arxiv_id=arxiv_id, path=path, caption=caption, label=label, name=None)
+
+                    self.insert_paper_figure(paper_arxiv_id=arxiv_id, figure_id=figure_id)
+
+
+            table_jsons = file_json['table']
+            for table_json in table_jsons:
+                
+                caption = table_json['caption']
+                label = table_json['label']
+                table = table_json['tabular']
+                # We don't currently store the table anywhere as a file so the table path is empty
+                path = None
+                
+                table_id = self.db.insert_table(paper_arxiv_id=arxiv_id, path=path, caption=caption, label=label, table_text=table)
+                
+                self.insert_paper_table(paper_arxiv_id = arxiv_id, table_id=table_id)
+
+
+                for citation in file_json['citations'].values():
+                    # print(f"Citation: {citation}")
+                    cited_arxiv_id = citation.get('arxiv_id')
+                    bib_key = citation.get('bib_key')
+                    bib_title = citation.get('bib_title')
+                    bib_author = citation.get('bib_author ')
+                    contexts = citation.get('context')
+                    citing_sections = set()
+                    for context in contexts:
+                        citing_section = context['section']
+                        citing_sections.add(citing_section)
+
+                    self.insert_citation(citing_arxiv_id=arxiv_id, cited_arxiv_id=cited_arxiv_id, citing_sections=list(citing_sections),bib_title=bib_title, bib_key=bib_key, author_cited_paper=bib_author)

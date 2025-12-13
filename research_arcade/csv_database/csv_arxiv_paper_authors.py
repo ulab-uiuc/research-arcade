@@ -14,7 +14,7 @@ class CSVArxivPaperAuthor:
             self.create_paper_authors_table()
 
     def create_paper_authors_table(self):
-        df = pd.DataFrame(columns=['paper_arxiv_id', 'author_id', 'author_sequence'])
+        df = pd.DataFrame(columns=['paper_arxiv_id', 'author_id', 'author_sequence', 'author_name'])
         df.to_csv(self.csv_path, index=False)
         print(f"Created paper_authors CSV at {self.csv_path}")
 
@@ -24,7 +24,7 @@ class CSVArxivPaperAuthor:
     def _save_data(self, df):
         df.to_csv(self.csv_path, index=False)
 
-    def insert_paper_author(self, paper_arxiv_id, author_id, author_sequence):
+    def insert_paper_author(self, paper_arxiv_id, author_name, author_id=None, author_sequence=None):
         df = self._load_data()
         conflict = df[
             (df['paper_arxiv_id'] == paper_arxiv_id) &
@@ -35,7 +35,8 @@ class CSVArxivPaperAuthor:
         new_row = pd.DataFrame([{
             'paper_arxiv_id': paper_arxiv_id,
             'author_id': author_id,
-            'author_sequence': author_sequence
+            'author_sequence': author_sequence,
+            'author_name': author_name
         }])
         df = pd.concat([df, new_row], ignore_index=True)
         self._save_data(df)
@@ -252,4 +253,16 @@ class CSVArxivPaperAuthor:
             print(f"Error importing paper-author relationships from JSON: {e}")
             return False
 
+    def construct_paper_authors_table_from_api(self, arxiv_ids, dest):
 
+        # search for authors in the page.
+        for arxiv_id in arxiv_ids:
+            metadata_path = f"{dest}/{arxiv_id}/{arxiv_id}_metadata.json"
+
+            with open(metadata_path, 'r') as file:
+                metadata_json = json.load(file)
+                authors = metadata_json['authors']
+                i = 0
+                for author in authors:
+                    i += 1
+                    self.insert_paper_author(paper_arxiv_id=arxiv_id, author_name=author, author_sequence=i)
