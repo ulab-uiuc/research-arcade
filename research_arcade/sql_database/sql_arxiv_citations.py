@@ -22,6 +22,7 @@ class SQLArxivCitation:
         self.password = password
         self.port = port
         self.autocommit = True
+        self.create_citations_table()
 
     def _get_connection(self):
         conn = psycopg2.connect(
@@ -40,7 +41,8 @@ class SQLArxivCitation:
     def create_citations_table(self):
         """
         Creates the arxiv_citations table.
-        Enforces no self-citations and unique (citing_arxiv_id, cited_arxiv_id) pairs.
+        Enforces no self-citations (when both IDs are present) and unique (citing_arxiv_id, cited_arxiv_id) pairs.
+        cited_arxiv_id can be NULL for citations to non-arXiv papers.
         """
         conn = self._get_connection()
         try:
@@ -48,21 +50,18 @@ class SQLArxivCitation:
             cur.execute("""
                 CREATE TABLE IF NOT EXISTS arxiv_citations (
                     id SERIAL PRIMARY KEY,
-                    citing_arxiv_id VARCHAR(100) NOT NULL,
-                    cited_arxiv_id VARCHAR(100) NOT NULL,
+                    citing_arxiv_id VARCHAR(100),
+                    cited_arxiv_id VARCHAR(100),
                     bib_title TEXT,
                     bib_key VARCHAR(255),
                     author_cited_paper TEXT,
                     citing_sections TEXT[],
-                    citing_paragraphs TEXT[],
-                    CONSTRAINT no_self_citation CHECK (citing_arxiv_id != cited_arxiv_id),
-                    CONSTRAINT unique_citation UNIQUE (citing_arxiv_id, cited_arxiv_id)
+                    citing_paragraphs TEXT[]
                 )
             """)
             cur.close()
         finally:
             conn.close()
-
     # -------------------------
     # CRUD
     # -------------------------
@@ -92,7 +91,6 @@ class SQLArxivCitation:
                 (citing_arxiv_id, cited_arxiv_id, bib_title, bib_key, 
                  author_cited_paper, citing_sections, citing_paragraphs)
                 VALUES (%s, %s, %s, %s, %s, %s, %s)
-                ON CONFLICT ON CONSTRAINT unique_citation DO NOTHING
                 RETURNING id
                 """,
                 (
@@ -218,65 +216,61 @@ class SQLArxivCitation:
         finally:
             conn.close()
 
-    def get_all_citations(self, is_all_features=True):
-        """Get all citations from the database."""
+    def get_all_citations(self, is_all_features=True) -> Optional[pd.DataFrame]:
+        """
+        Get all citations from the database.
+        Returns DataFrame or None if empty.
+        """
         conn = self._get_connection()
         try:
-            cur = conn.cursor()
-            cur.execute(
-                """
+            query = """
                 SELECT id, citing_arxiv_id, cited_arxiv_id, bib_title, bib_key,
                        author_cited_paper, citing_sections, citing_paragraphs
                 FROM arxiv_citations
-                """
-            )
-            rows = cur.fetchall()
-            cur.close()
-            return rows if rows else None
+            """
+            df = pd.read_sql(query, conn)
+            
+            return None if df.empty else df
         finally:
             conn.close()
 
-    def get_citing_neighboring_cited(self, citing_paper_id: str):
+    def get_citing_neighboring_cited(self, citing_paper_id: str) -> Optional[pd.DataFrame]:
         """
         Get all papers cited by the given paper.
         Returns citations where this paper is the citing paper.
+        Returns DataFrame or None.
         """
         conn = self._get_connection()
         try:
-            cur = conn.cursor()
-            cur.execute(
-                """
+            query = """
                 SELECT id, citing_arxiv_id, cited_arxiv_id, bib_title, bib_key,
                        author_cited_paper, citing_sections, citing_paragraphs
-                FROM arxiv_citations WHERE citing_arxiv_id = %s
-                """,
-                (citing_paper_id,)
-            )
-            rows = cur.fetchall()
-            cur.close()
-            return rows if rows else None
+                FROM arxiv_citations 
+                WHERE citing_arxiv_id = %s
+            """
+            df = pd.read_sql(query, conn, params=(citing_paper_id,))
+            
+            return None if df.empty else df
         finally:
             conn.close()
 
-    def get_cited_neighboring_citing(self, cited_paper_id: str):
+    def get_cited_neighboring_citing(self, cited_paper_id: str) -> Optional[pd.DataFrame]:
         """
         Get all papers that cite the given paper.
         Returns citations where this paper is the cited paper.
+        Returns DataFrame or None.
         """
         conn = self._get_connection()
         try:
-            cur = conn.cursor()
-            cur.execute(
-                """
+            query = """
                 SELECT id, citing_arxiv_id, cited_arxiv_id, bib_title, bib_key,
                        author_cited_paper, citing_sections, citing_paragraphs
-                FROM arxiv_citations WHERE cited_arxiv_id = %s
-                """,
-                (cited_paper_id,)
-            )
-            rows = cur.fetchall()
-            cur.close()
-            return rows if rows else None
+                FROM arxiv_citations 
+                WHERE cited_arxiv_id = %s
+            """
+            df = pd.read_sql(query, conn, params=(cited_paper_id,))
+            
+            return None if df.empty else df
         finally:
             conn.close()
 
@@ -331,6 +325,29 @@ class SQLArxivCitation:
             ok = cur.fetchone() is not None
             cur.close()
             return ok
+        finally:
+            conn.close()
+
+    def get_bib_title_by_citing_arxiv_id_bib_key(self, citing_arxiv_id: str, bib_key: str) -> Optional[str]:
+        """
+        Get the bib_title for a citation given the citing_arxiv_id and bib_key.
+        Returns the bib_title string or None if not found.
+        """
+        conn = self._get_connection()
+        try:
+            cur = conn.cursor()
+            cur.execute(
+                """
+                SELECT bib_title 
+                FROM arxiv_citations 
+                WHERE citing_arxiv_id = %s AND bib_key = %s
+                LIMIT 1
+                """,
+                (citing_arxiv_id, bib_key)
+            )
+            res = cur.fetchone()
+            cur.close()
+            return res[0] if res else None
         finally:
             conn.close()
 
@@ -391,7 +408,7 @@ class SQLArxivCitation:
         if not rows:
             print("No valid rows to import.")
             return True
-
+        
         conn = self._get_connection()
         try:
             cur = conn.cursor()
@@ -528,8 +545,19 @@ class SQLArxivCitation:
             print(f"Error importing citations from JSON: {e}")
             return False
 
-    def construct_tables_table_from_api(self, arxiv_ids, dest_dir):
-        # Check if papers already exists in the directory
+    def construct_citations_table_from_api(self, arxiv_ids, dest_dir):
+        """
+        Construct citations table by downloading and processing arXiv papers.
+        Downloads papers if not present, builds paper graphs, and extracts citations.
+        
+        Args:
+            arxiv_ids: List of arXiv IDs to process
+            dest_dir: Directory to store downloaded papers and graphs
+            
+        Returns:
+            None
+        """
+        # Check if papers already exist in the directory
         downloaded_paper_ids = []
         for arxiv_id in arxiv_ids:
             paper_dir = f"{dest_dir}/{arxiv_id}/{arxiv_id}_metadata.json"
@@ -537,24 +565,28 @@ class SQLArxivCitation:
             if not os.path.exists(paper_dir):
                 downloaded_paper_ids.append(arxiv_id)
 
+        # Download papers that don't exist
         for arxiv_id in downloaded_paper_ids:
             md = MultiDownload()
             try:
-                md.download_arxiv(input=arxiv_id, input_type = "id", output_type="latex", dest_dir=dest_dir)
-                print(f"paper with id {arxiv_id} downloaded")
-                downloaded_paper_ids.append(arxiv_id)
+                md.download_arxiv(
+                    input=arxiv_id, 
+                    input_type="id", 
+                    output_type="latex", 
+                    dest_dir=dest_dir
+                )
+                print(f"Paper with id {arxiv_id} downloaded")
             except RuntimeError as e:
                 print(f"[ERROR] Failed to download {arxiv_id}: {e}")
                 continue
 
+        # Process each arXiv ID to extract citations
         for arxiv_id in arxiv_ids:
-            # Search if the corresponding paper graph exists
-
             json_path = f"{dest_dir}/output/{arxiv_id}.json"
+            
+            # Build paper graph if it doesn't exist
             if not os.path.exists(json_path):
-                # arxiv_id_graph.append(arxiv_id)
                 try:
-                    # Build corresponding graph
                     md = MultiDownload()
                     md.build_paper_graph(
                         input=arxiv_id,
@@ -562,25 +594,46 @@ class SQLArxivCitation:
                         dest_dir=dest_dir
                     )
                 except Exception as e:
-                    print(f"[Warning] Failed to process papers: {e}")
+                    print(f"[Warning] Failed to process paper {arxiv_id}: {e}")
                     continue
 
+            # Extract and insert citations from the paper graph
             try:
                 with open(json_path, 'r') as file:
                     file_json = json.load(file)
+                    print("len(file_json['citations'].values())")
+                    print(len(file_json['citations'].values()))
                     for citation in file_json['citations'].values():
-                        # print(f"Citation: {citation}")
                         cited_arxiv_id = citation.get('arxiv_id')
+                        
+                        # Skip citations without arXiv IDs (non-arXiv papers)
+                        # print("Cited arxiv id")
+                        # print(cited_arxiv_id)
+                        # if not cited_arxiv_id:
+                        #     continue
+                        
                         bib_key = citation.get('bib_key')
                         bib_title = citation.get('bib_title')
-                        bib_author = citation.get('bib_author ')
-                        contexts = citation.get('context')
+                        bib_author = citation.get('bib_author')
+                        contexts = citation.get('context', [])
+                        
+                        # Extract unique citing sections
                         citing_sections = set()
                         for context in contexts:
-                            citing_section = context['section']
-                            citing_sections.add(citing_section)
-                        
-                        self.insert_citation(citing_arxiv_id=arxiv_id, cited_arxiv_id=cited_arxiv_id, citing_sections=list(citing_sections), bib_title=bib_title, bib_key=bib_key, author_cited_paper=bib_author)
+                            citing_section = context.get('section')
+                            if citing_section:
+                                citing_sections.add(citing_section)
+                        # print("Inserting citation")
+                        # Insert citation into database
+                        self.insert_citation(
+                            citing_arxiv_id=arxiv_id,
+                            cited_arxiv_id=cited_arxiv_id,
+                            citing_sections=list(citing_sections),
+                            bib_title=bib_title,
+                            bib_key=bib_key,
+                            author_cited_paper=bib_author
+                        )
+
 
             except FileNotFoundError:
                 print(f"Error: The file '{json_path}' was not found.")
@@ -589,5 +642,5 @@ class SQLArxivCitation:
                 print(f"Error: Could not decode JSON from '{json_path}'. Check if the file contains valid JSON.")
                 continue
             except Exception as e:
-                print(f"An unexpected error occurred: {e}")
+                print(f"An unexpected error occurred while processing {arxiv_id}: {e}")
                 continue

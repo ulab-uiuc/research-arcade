@@ -18,7 +18,7 @@ from .csv_database import (
     CSVArxivAuthors, CSVArxivCategory, CSVArxivCitation, CSVArxivFigure,
     CSVArxivPaperAuthor, CSVArxivPaperCategory, CSVArxivPaperFigure,
     CSVArxivPaperTable, CSVArxivPapers, CSVArxivParagraphReference,
-    CSVArxivParagraphs, CSVArxivSections, CSVArxivTable
+    CSVArxivParagraphs, CSVArxivSections, CSVArxivTable, CSVArxivParagraphCitation
 )
 
 # Arxiv SQL
@@ -26,9 +26,11 @@ from .sql_database import (
     SQLArxivAuthors, SQLArxivCategory, SQLArxivCitation, SQLArxivFigure,
     SQLArxivPaperAuthor, SQLArxivPaperCategory, SQLArxivPaperFigure,
     SQLArxivPaperTable, SQLArxivPapers, SQLArxivParagraphReference,
-    SQLArxivParagraphs, SQLArxivSections, SQLArxivTable
+    SQLArxivParagraphs, SQLArxivSections, SQLArxivTable, SQLArxivParagraphCitation
 )
 import os
+# from paper_crawler.crawler_job import CrawlerJob
+
 from dotenv import load_dotenv
 from typing import Optional
 import pandas as pd
@@ -39,7 +41,7 @@ class ResearchArcade:
         if db_type == 'csv':
             if config["csv_dir"] is None:
                 config["csv_dir"] = os.getenv('CSV_DATASET_FOLDER_PATH')
-                
+            
             """
             Below is the arxiv dataset
             """
@@ -56,6 +58,7 @@ class ResearchArcade:
             self.arxiv_paper_figure = CSVArxivPaperFigure(**config)
             self.arxiv_paper_table = CSVArxivPaperTable(**config)
             self.arxiv_paragraph_reference = CSVArxivParagraphReference(**config)
+            self.arxiv_paragraph_citation = CSVArxivParagraphCitation(**config)
             
             """
             Below is the openreview dataset
@@ -90,6 +93,7 @@ class ResearchArcade:
             self.arxiv_paper_figure = SQLArxivPaperFigure(**config)
             self.arxiv_paper_table = SQLArxivPaperTable(**config)
             self.arxiv_paragraph_reference = SQLArxivParagraphReference(**config)
+            self.arxiv_paragraph_citation = SQLArxivParagraphCitation(**config)
 
             
             """
@@ -594,12 +598,13 @@ class ResearchArcade:
         elif table == "arxiv_paper_categories":
             self.arxiv_paper_tables.construct_papers_table_from_api(**config)
         elif table == "arxiv_citations":
-            self.arxiv_citations.construct_papers_table_from_api(**config)
+            self.arxiv_citation.construct_citations_table_from_api(**config)
         elif table == "arxiv_paragraph_references":
             self.arxiv_paragraph_references.construct_papers_table_from_api(**config)
+        elif table == "arxiv_paragraph_citations":
+            self.arxiv_paragraph_citation.construct_table_from_api(**config)
         else:
             print(f"Table {table} does not support construction from API")
-            
 
 
 

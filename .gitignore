@@ -1,12 +1,15 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
 data/
+paragraph_generation_output/
 # Django stuff:
 *.log
 *.py[cod]
 *$py.class
 .vscode
 json/
+experiments/
+arxiv_ids/
 # C extensions
 *.so
 !./data/openreview/figures.csv

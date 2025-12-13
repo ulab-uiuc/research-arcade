@@ -22,6 +22,7 @@ class SQLArxivParagraphs:
         self.password = password
         self.port = port
         self.autocommit = True
+        self.create_paragraphs_table()
 
     def _get_connection(self):
         conn = psycopg2.connect(
@@ -178,65 +179,90 @@ class SQLArxivParagraphs:
         finally:
             conn.close()
 
-    def get_paragraph_by_id(self, id: int, return_all: bool = False):
+    def get_paragraph_by_id(self, id: int, return_all: bool = False) -> Optional[pd.DataFrame]:
         """
-        If return_all=False: returns a single tuple
-           (id, paragraph_id, content, paper_arxiv_id, paper_section)
-        If return_all=True: returns a list of such tuples.
+        Returns a DataFrame with the paragraph(s) matching the given id.
+        If return_all=False (default): returns DataFrame with single row or None
+        If return_all=True: returns DataFrame with all matching rows or None
+        
         Returns None if no row found.
         """
         conn = self._get_connection()
         try:
-            cur = conn.cursor()
-            cur.execute(
-                "SELECT id, paragraph_id, content, paper_arxiv_id, paper_section "
-                "FROM arxiv_paragraphs WHERE id = %s",
-                (id,)
-            )
-            rows = cur.fetchall() if return_all else cur.fetchone()
-            cur.close()
-            return rows if rows else None
+            query = """
+                SELECT id, paragraph_id, content, paper_arxiv_id, paper_section
+                FROM arxiv_paragraphs 
+                WHERE id = %s
+            """
+            df = pd.read_sql(query, conn, params=(id,))
+            
+            if df.empty:
+                return None
+            
+            return df
         finally:
             conn.close()
 
-    def get_paragraphs_by_arxiv_id(self, arxiv_id: str):
+    def get_paragraphs_by_arxiv_id(self, arxiv_id: str) -> Optional[pd.DataFrame]:
         """
-        Returns a list of tuples
-          (id, paragraph_id, content, paper_arxiv_id, paper_section)
-        or None if no rows exist.
+        Returns a DataFrame with all paragraphs for a given arxiv_id.
+        Returns None if no rows exist.
+        """
+        conn = self._get_connection()
+        try:
+            query = """
+                SELECT id, paragraph_id, content, paper_arxiv_id, paper_section
+                FROM arxiv_paragraphs 
+                WHERE paper_arxiv_id = %s 
+                ORDER BY id
+            """
+            df = pd.read_sql(query, conn, params=(arxiv_id,))
+            
+            return None if df.empty else df
+        finally:
+            conn.close()
+
+    def get_paragraphs_by_paper_section(self, paper_arxiv_id: str, paper_section: str) -> Optional[pd.DataFrame]:
+        """
+        Returns a DataFrame with all paragraphs for a given (paper_arxiv_id, paper_section).
+        Returns None if no rows exist.
+        """
+        conn = self._get_connection()
+        try:
+            query = """
+                SELECT id, paragraph_id, content, paper_arxiv_id, paper_section
+                FROM arxiv_paragraphs 
+                WHERE paper_arxiv_id = %s AND paper_section = %s
+                ORDER BY id
+            """
+            df = pd.read_sql(query, conn, params=(paper_arxiv_id, paper_section))
+            
+            return None if df.empty else df
+        finally:
+            conn.close()
+
+    def get_id_by_arxiv_id_section_paragraph_id(self, paper_arxiv_id: str, paper_section: str, paragraph_id) -> Optional[int]:
+        """
+        Get the database id for a paragraph given its paper_arxiv_id, paper_section, and paragraph_id.
+        Returns the id or None if not found.
         """
         conn = self._get_connection()
         try:
             cur = conn.cursor()
             cur.execute(
-                "SELECT id, paragraph_id, content, paper_arxiv_id, paper_section "
-                "FROM arxiv_paragraphs WHERE paper_arxiv_id = %s ORDER BY id",
-                (arxiv_id,)
+                """
+                SELECT id 
+                FROM arxiv_paragraphs 
+                WHERE paper_arxiv_id = %s 
+                  AND paper_section = %s 
+                  AND paragraph_id = %s
+                LIMIT 1
+                """,
+                (paper_arxiv_id, paper_section, str(paragraph_id))
             )
-            rows = cur.fetchall()
+            res = cur.fetchone()
             cur.close()
-            return rows if rows else None
-        finally:
-            conn.close()
-
-    def get_paragraphs_by_paper_section(self, paper_arxiv_id: str, paper_section: str):
-        """
-        Returns a list of tuples
-          (id, paragraph_id, content, paper_arxiv_id, paper_section)
-        filtered by (paper_arxiv_id, paper_section), or None if no rows.
-        """
-        conn = self._get_connection()
-        try:
-            cur = conn.cursor()
-            cur.execute(
-                "SELECT id, paragraph_id, content, paper_arxiv_id, paper_section "
-                "FROM arxiv_paragraphs WHERE paper_arxiv_id = %s AND paper_section = %s "
-                "ORDER BY id",
-                (paper_arxiv_id, paper_section)
-            )
-            rows = cur.fetchall()
-            cur.close()
-            return rows if rows else None
+            return res[0] if res else None
         finally:
             conn.close()
 
@@ -254,17 +280,21 @@ class SQLArxivParagraphs:
         finally:
             conn.close()
 
-    def get_all_paragraphs(self, is_all_features=True):
-        """Get all paragraphs from the database."""
+    def get_all_paragraphs(self, is_all_features=True) -> Optional[pd.DataFrame]:
+        """
+        Get all paragraphs from the database.
+        Returns DataFrame or None if empty.
+        """
         conn = self._get_connection()
         try:
-            cur = conn.cursor()
-            cur.execute(
-                "SELECT id, paragraph_id, content, paper_arxiv_id, paper_section FROM arxiv_paragraphs"
-            )
-            rows = cur.fetchall()
-            cur.close()
-            return rows if rows else None
+            query = """
+                SELECT id, paragraph_id, content, paper_arxiv_id, paper_section
+                FROM arxiv_paragraphs
+                ORDER BY id
+            """
+            df = pd.read_sql(query, conn)
+            
+            return None if df.empty else df
         finally:
             conn.close()
 
@@ -411,11 +441,9 @@ class SQLArxivParagraphs:
             return False
 
     def construct_paragraphs_table_from_api(self, arxiv_ids, dest_dir):
-        # Check if papers already exists in the directory
         """
-        section id and paragraph order required further
-        Or maybe we can write a incremental method to process such information
-        TODO
+        Construct the paragraphs table from API-generated data.
+        Downloads papers, builds graphs, and extracts paragraphs.
         """
         downloaded_paper_ids = []
         md = MultiDownload()
@@ -434,7 +462,7 @@ class SQLArxivParagraphs:
 
         for arxiv_id in downloaded_paper_ids:
             try:
-                md.download_arxiv(input=arxiv_id, input_type = "id", output_type="latex", dest_dir=dest_dir)
+                md.download_arxiv(input=arxiv_id, input_type="id", output_type="latex", dest_dir=dest_dir)
                 print(f"paper with id {arxiv_id} downloaded")
                 downloaded_paper_ids.append(arxiv_id)
             except RuntimeError as e:
@@ -443,10 +471,8 @@ class SQLArxivParagraphs:
         
         for arxiv_id in arxiv_ids:
             # Search if the corresponding paper graph exists
-
             json_path = f"{dest_dir}/output/{arxiv_id}.json"
             if not os.path.exists(json_path):
-                # arxiv_id_graph.append(arxiv_id)
                 try:
                     # Build corresponding graph
                     md.build_paper_graph(
@@ -468,11 +494,9 @@ class SQLArxivParagraphs:
         pgp.process_papers(paper_paths)
 
         # Build the paragraphs
-        
         paragraph_path = f"{dest_dir}/output/paragraphs/text_nodes.jsonl"
         with open(paragraph_path) as f:
             data = [json.loads(line) for line in f]
-        
         
         # Use arxiv_id + section name as key
         # Find the smallest paragraph_id generated by knowledge debugger
@@ -499,29 +523,3 @@ class SQLArxivParagraphs:
             id_zero_based = id_number - section_min_paragraph[(paper_arxiv_id, paper_section)]
             self.insert_paragraph(paragraph_id=id_zero_based, content=content, paper_arxiv_id=paper_arxiv_id, paper_section=paper_section)
 
-            # paragraph_cite_bib_keys = paragraph.get('cites')
-            # for bib_key in paragraph_cite_bib_keys:
-            #     self.db.insert_paragraph_citations(paragraph_id=id_zero_based, paper_section=paper_section, citing_arxiv_id=paper_arxiv_id, bib_key=bib_key)
-
-
-            # paragraph_ref_labels = paragraph.get('ref_labels')
-
-
-            # # def insert_paragraph_reference(self, paragraph_id, paper_arxiv_id, reference_label, reference_type=None):
-
-            # for ref_label in paragraph_ref_labels:
-
-            #     ref_type = None
-            #     # First search bib_key in databases.
-            #     # If presented in one of them, we can determine the type of reference
-
-            #     is_figure = self.db.check_exist_figure(bib_key=ref_label)
-            #     is_table = self.db.check_exist_table(bib_key=ref_label)
-            #     if is_figure:
-            #         ref_type = 'figure'
-            #     elif is_table:
-            #         ref_type = 'table'
-                
-            #     self.insert_paragraph(paragraph_id=id_zero_based, paper_section=paper_section, paper_arxiv_id=paper_arxiv_id, paper_section=paper_section, refe)
-
-            #     self.db.insert_paragraph_reference(paragraph_id=id_zero_based, paper_section=paper_section, paper_arxiv_id=paper_arxiv_id, reference_label=ref_label, reference_type=ref_type)

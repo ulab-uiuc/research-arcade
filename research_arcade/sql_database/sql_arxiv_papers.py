@@ -20,6 +20,7 @@ class SQLArxivPapers:
         self.password = password
         self.port = port
         self.autocommit = True
+        self.create_papers_table()
 
     def _get_connection(self):
         conn = psycopg2.connect(
@@ -447,7 +448,7 @@ class SQLArxivPapers:
             try:
                 md.download_arxiv(input=arxiv_id, input_type = "id", output_type="latex", dest_dir=dest_dir)
                 print(f"paper with id {arxiv_id} downloaded")
-                downloaded_paper_ids.append(arxiv_id)
+                # downloaded_paper_ids.append(arxiv_id)
             except RuntimeError as e:
                 print(f"[ERROR] Failed to download {arxiv_id}: {e}")
                 continue
