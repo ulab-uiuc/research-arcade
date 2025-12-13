@@ -19,6 +19,8 @@ build/
 develop-eggs/
 dist/
 downloads/
+citation_sch/
+citation_log/
 eggs/
 .eggs/
 lib/
