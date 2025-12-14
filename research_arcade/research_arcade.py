@@ -592,20 +592,19 @@ class ResearchArcade:
         elif table == "arxiv_paper_authors":
             self.arxiv_paper_authors.construct_papers_table_from_api(**config)
         elif table == "arxiv_paper_figures":
-            self.arxiv_paper_figures.construct_papers_table_from_api(**config)
+            self.arxiv_paper_figure.construct_papers_table_from_api(**config)
         elif table == "arxiv_paper_tables":
             self.arxiv_paper_tables.construct_papers_table_from_api(**config)
         elif table == "arxiv_paper_categories":
-            self.arxiv_paper_tables.construct_papers_table_from_api(**config)
+            self.arxiv_paper_category.construct_papers_table_from_api(**config)
         elif table == "arxiv_citations":
             self.arxiv_citation.construct_citations_table_from_api(**config)
         elif table == "arxiv_paragraph_references":
-            self.arxiv_paragraph_references.construct_papers_table_from_api(**config)
+            self.arxiv_paragraph_reference.construct_papers_table_from_api(**config)
         elif table == "arxiv_paragraph_citations":
             self.arxiv_paragraph_citation.construct_table_from_api(**config)
         else:
             print(f"Table {table} does not support construction from API")
-
 
 
     def construct_table_from_csv(self, table: str, config: dict) -> Optional[pd.DataFrame]:
@@ -713,3 +712,22 @@ class ResearchArcade:
             self.arxiv_paragraph_reference.construct_table_from_json(**config)
         else:
             print(f"Table {table} does not support construction from JSON")
+
+    def construct_tables_from_arxiv_ids(self, config: dict) -> Optional[pd.DataFrame]:
+
+        # Use sequential construction
+        self.arxiv_papers.construct_papers_table_from_api(**config)
+        self.arxiv_sections.construct_sections_table_from_api(**config)
+        self.arxiv_authors.construct_authors_table_from_api(**config)
+        self.arxiv_categories.construct_category_table_from_api(**config)
+        self.arxiv_figures.construct_figures_table_from_api(**config)
+        self.arxiv_tables.construct_tables_table_from_api(**config)
+        self.arxiv_categories.construct_category_table_from_api(**config)
+        self.arxiv_paper_author.construct_paper_authors_table_from_api(**config)
+        self.arxiv_paper_figure.construct_paper_figures_table_from_api(**config)
+        self.arxiv_paper_table.construct_paper_tables_table_from_api(**config)
+        self.arxiv_paper_category.construct_paper_category_table_from_api(**config)
+        self.arxiv_citation.construct_citations_table_from_api(**config)
+        self.arxiv_paragraphs.construct_paragraphs_table_from_api(**config)
+        self.arxiv_paragraph_reference.construct_paragraph_references_table_from_api(**config)
+        self.arxiv_paragraph_citation.construct_citations_table_from_api(**config)

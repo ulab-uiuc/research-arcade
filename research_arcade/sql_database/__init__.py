@@ -26,6 +26,7 @@ from .sql_arxiv_paragraph_references import SQLArxivParagraphReference
 from .sql_arxiv_paragraphs import SQLArxivParagraphs
 from .sql_arxiv_sections import SQLArxivSections
 from .sql_arxiv_tables import SQLArxivTable
+from .sql_arxiv_paragraph_citations import SQLArxivParagraphCitation
 
 __all__ = [
     # --- OpenReview ---

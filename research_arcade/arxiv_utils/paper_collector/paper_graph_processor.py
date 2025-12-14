@@ -119,7 +119,7 @@ class PaperGraphProcessor:
         pattern = r"\\label\{([^}]+)\}"
         match = re.search(pattern, text)
         return match.group(1) if match else ""
-
+    
     def find_references(self, text: str) -> List[str]:
         """Find all figure references in text."""
         pattern = r"\\ref\{([^}]+)\}"
@@ -258,14 +258,14 @@ class PaperGraphProcessor:
 
         for key, citation in data["citations"].items():
             # TODO Not quite sure why we need the similarity score. We can drop it.
-            if citation["similar_score"] and (
-                citation["similar_score"] > self.threshold
-            ):
-                citations[key] = citation
-                neighbors.append(citation["short_id"])
-            elif not citation["similar_score"]:
-                citations[key] = citation
-                neighbors.append(citation["short_id"])
+            # if citation["similar_score"] and (
+            #     citation["similar_score"] > self.threshold
+            # ):
+            citations[key] = citation
+            neighbors.append(citation["short_id"])
+            # elif not citation["similar_score"]:
+            #     citations[key] = citation
+            #     neighbors.append(citation["short_id"])
         # print("key to citations:")
         # print(citations)
         print(f"Key to References: {label2id}")
@@ -474,10 +474,10 @@ class PaperGraphProcessor:
                 self.process_paper(paper_data, paper_id)
                 citations = {}
                 for key, cite in paper_data["citations"].items():
-                    if cite["similar_score"] and (
-                        cite["similar_score"] > self.threshold
-                    ):
-                        citations[key] = cite
+                    # if cite["similar_score"] and (
+                    #     cite["similar_score"] > self.threshold
+                    # ):
+                    citations[key] = cite
                 paper_data["citations"] = citations
                 os.makedirs(os.path.join(self.output_dir, "papers"), exist_ok=True)
                 # shutil.copy(paper_path, os.path.join(self.output_dir, 'papers', os.path.basename(paper_path)))
@@ -530,10 +530,10 @@ class PaperGraphProcessor:
                 self.process_paper(paper_data, paper_id)
                 citations = {}
                 for key, cite in paper_data["citations"].items():
-                    if cite["similar_score"] and (
-                        cite["similar_score"] > self.threshold
-                    ):
-                        citations[key] = cite
+                    # if cite["similar_score"] and (
+                    #     cite["similar_score"] > self.threshold
+                    # ):
+                    citations[key] = cite
                 paper_data["citations"] = citations
                 os.makedirs(os.path.join(self.output_dir, "papers"), exist_ok=True)
                 # shutil.copy(paper_path, os.path.join(self.output_dir, 'papers', os.path.basename(paper_path)))
