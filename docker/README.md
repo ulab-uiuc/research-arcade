@@ -28,7 +28,6 @@ docker-compose down
 ```bash
 # Continuous mode (default) - runs immediately then loops
 docker run -d \
-  -e ARXIV_FIELD=cs.AI \
   -e CRAWL_INTERVAL=daily \
   -e LOOKBACK_DAYS=1 \
   -v $(pwd)/data/download:/app/download \
@@ -39,7 +38,6 @@ docker run -d \
 
 # One-time run
 docker run --rm \
-  -e ARXIV_FIELD=cs.AI \
   -v $(pwd)/data:/app/download \
   arxiv-crawler once 2024-01-01 2024-01-31
 

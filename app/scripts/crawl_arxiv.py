@@ -19,6 +19,7 @@ def crawl_recent_arxiv_paper_new(start_date, end_date=None, path=None):
     # Create the save path target file if not exists
 
     save_path = download_with_time(start_date=start_date, end_date=end_date, save_path=path)
+    print(save_path)
     arxiv_ids = extract_arxiv_ids(file_path=save_path)
     return arxiv_ids
 
@@ -88,12 +89,16 @@ def main():
     parser.add_argument("--dest", default="download", help="Output directory")
     parser.add_argument("--arxiv_id_dest", default="arxiv_ids", help="Directory that stores downloaded arxiv ids")
     args = parser.parse_args()
-    
+
     start_date = args.start_date
     end_date = args.end_date or date.today().isoformat()
     field = args.field
     dest_dir = args.dest
     arxiv_id_dest = args.arxiv_id_dest
+
+    print(dest_dir)
+    print(field)
+    # sys.exit()
 
     # cj = CrawlerJob(dest_dir=str(dest_dir))
 
@@ -107,7 +112,10 @@ def main():
 
     print(f"Papers from {start_date} to {end_date}: {len(ids_raw)} found")
 
-    
+    # We should flter papers of specific fields/categories
+    # Otherwise, there will be repetition
+
+
     # Save arXiv IDs to file
     save_arxiv_ids(
         arxiv_ids=ids_raw,
@@ -116,7 +124,7 @@ def main():
         end_date=end_date,
         field=field
     )
-    
+
     # process the paper with ids
 
     process_papers(arxiv_ids=ids_raw, db_type='csv')

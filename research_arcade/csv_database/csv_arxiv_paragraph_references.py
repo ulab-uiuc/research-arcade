@@ -269,7 +269,7 @@ class CSVArxivParagraphReference:
 
         with open(paragraph_path) as f:
             data = [json.loads(line) for line in f]
-
+        
         section_min_paragraph = {}
 
         # First pass
