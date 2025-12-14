@@ -183,6 +183,9 @@ class CSVArxivSections:
                 downloaded_paper_ids.append(arxiv_id)
 
         for arxiv_id in downloaded_paper_ids:
+            # First see if we already provessed the paper
+            # If so, we can skip this process
+
             try:
                 md.download_arxiv(input=arxiv_id, input_type = "id", output_type="latex", dest_dir=self.dest_dir)
                 print(f"paper with id {arxiv_id} downloaded")
@@ -195,8 +198,9 @@ class CSVArxivSections:
             # Search if the corresponding paper graph exists
 
             json_path = f"{dest_dir}/output/{arxiv_id}.json"
-            if not os.path.exists(json_path):
+            if not os.path.exists(json_path) and not os.path.exists(f"./{dest_dir}/output/{arxiv_id}.json"):
                 # arxiv_id_graph.append(arxiv_id)
+
                 try:
                     # Build corresponding graph
                     md.build_paper_graph(

@@ -1,7 +1,7 @@
 import sys
 import os
 
-sys.path.insert(0, '/app')
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import argparse
 from datetime import date, datetime
@@ -9,7 +9,6 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 load_dotenv()
-
 
 # from research_arcade.arxiv_utils.paper_crawler.crawler_job import CrawlerJob
 from research_arcade.arxiv_utils.multi_input.arxiv_crawler_new import download_with_time, extract_arxiv_ids
@@ -81,43 +80,9 @@ def process_papers(arxiv_ids, db_type):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Crawl arXiv and run pipeline.")
-    parser.add_argument("--start-date", required=True, type=valid_date)
-    parser.add_argument("--end-date", type=valid_date, help="Defaults to today")
-    parser.add_argument("--field", default=None, help="e.g., cs.AI, cs.CV, stat.ML")
-    parser.add_argument("--dest", default="download", help="Output directory")
-    parser.add_argument("--arxiv_id_dest", default="arxiv_ids", help="Directory that stores downloaded arxiv ids")
-    args = parser.parse_args()
-    
-    start_date = args.start_date
-    end_date = args.end_date or date.today().isoformat()
-    field = args.field
-    dest_dir = args.dest
-    arxiv_id_dest = args.arxiv_id_dest
-
-    # cj = CrawlerJob(dest_dir=str(dest_dir))
-
-    # If your crawler supports field/category, pass it; otherwise remove 'field'
-    # ids_raw may be a list of IDs (e.g., ['2508.01234', ...])
-    ids_raw = crawl_recent_arxiv_paper_new(
-        start_date=start_date,
-        end_date=end_date,
-        path=str(dest_dir)
-    )
-
-    print(f"Papers from {start_date} to {end_date}: {len(ids_raw)} found")
-
-    
-    # Save arXiv IDs to file
-    save_arxiv_ids(
-        arxiv_ids=ids_raw,
-        dest_dir=arxiv_id_dest,
-        start_date=start_date,
-        end_date=end_date,
-        field=field
-    )
-    
     # process the paper with ids
+
+    ids_raw = ['1802.08773', '1806.02473']
 
     process_papers(arxiv_ids=ids_raw, db_type='csv')
     

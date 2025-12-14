@@ -364,4 +364,3 @@ class CSVArxivFigure:
             print(f"Error importing figures from JSON: {e}")
             return False
 
-    def construct_paper_figures_table_from_api(self, arxiv_ids, )

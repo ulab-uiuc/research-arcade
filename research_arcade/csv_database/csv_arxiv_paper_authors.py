@@ -253,11 +253,11 @@ class CSVArxivPaperAuthor:
             print(f"Error importing paper-author relationships from JSON: {e}")
             return False
 
-    def construct_paper_authors_table_from_api(self, arxiv_ids, dest):
+    def construct_paper_authors_table_from_api(self, arxiv_ids, dest_dir):
 
         # search for authors in the page.
         for arxiv_id in arxiv_ids:
-            metadata_path = f"{dest}/{arxiv_id}/{arxiv_id}_metadata.json"
+            metadata_path = f"{dest_dir}/{arxiv_id}/{arxiv_id}_metadata.json"
 
             with open(metadata_path, 'r') as file:
                 metadata_json = json.load(file)

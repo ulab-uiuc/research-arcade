@@ -6,6 +6,7 @@ import json
 
 class CSVArxivPaperTable:
     def __init__(self, csv_dir: str):
+        self.csv_dir = csv_dir
         csv_path = f"{csv_dir}/arxiv_paper_tables.csv"
         self.csv_path = csv_path
         Path(csv_path).parent.mkdir(parents=True, exist_ok=True)
@@ -132,6 +133,27 @@ class CSVArxivPaperTable:
         self._save_data(df)
         
         return count
+
+
+    def match_table_id(self, paper_arxiv_id, label):
+        csv_path2 = f"{self.csv_dir}/arxiv_tables.csv"
+        
+        if not os.path.exists(csv_path2):
+            return None
+        
+        df2 = pd.read_csv(csv_path2)
+        
+        mask = (
+            (df2['paper_arxiv_id'] == paper_arxiv_id) & 
+            (df2['label'] == label)
+        )
+
+        matched_rows = df2[mask]
+        
+        if len(matched_rows) > 0:
+            return matched_rows.iloc[0]['id']
+        else:
+            return None
 
 
 
@@ -272,10 +294,10 @@ class CSVArxivPaperTable:
             return False
 
 
-    def construct_paper_tables_table_from_api(self, arxiv_ids, dest):
+    def construct_paper_tables_table_from_api(self, arxiv_ids, dest_dir):
 
         for arxiv_id in arxiv_ids:
-            json_path = f"{dest}/output/{arxiv_id}.json"
+            json_path = f"{dest_dir}/output/{arxiv_id}.json"
 
             try:
                 with open(json_path, 'r') as file:
@@ -298,8 +320,9 @@ class CSVArxivPaperTable:
                 table = table_json['tabular']
                 # We don't currently store the table anywhere as a file so the table path is empty
                 path = None
+
+                table_id = self.match_table_id(paper_arxiv_id=arxiv_id, label=label)
                 
-                table_id = self.db.insert_table(paper_arxiv_id=arxiv_id, path=path, caption=caption, label=label, table_text=table)
                 
                 self.insert_paper_table(paper_arxiv_id = arxiv_id, table_id=table_id)
 

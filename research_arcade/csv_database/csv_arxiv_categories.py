@@ -145,7 +145,7 @@ class CSVArxivCategory:
         
         return df.copy()
 
-    def construct_table_from_api(self, arxiv_ids, dest_dir):
+    def construct_category_table_from_api(self, arxiv_ids, dest_dir):
         
         downloaded_paper_ids = []
         for arxiv_id in arxiv_ids:

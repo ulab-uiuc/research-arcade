@@ -106,7 +106,8 @@ class CSVArxivParagraphCitation:
             data = [json.loads(line) for line in f]
 
         section_min_paragraph = {}
-
+        # print("len(data)")
+        # print(len(data))
         # First pass
         for paragraph in data:
             paragraph_id = paragraph.get("id")
@@ -132,15 +133,17 @@ class CSVArxivParagraphCitation:
 
             if not paragraph_id or not paper_arxiv_id or not paper_section:
                 continue
-
+            
             key = (paper_arxiv_id, paper_section)
             if key not in section_min_paragraph:
                 continue
-
+            
             id_number = get_paragraph_num(paragraph_id)
             id_zero_based = id_number - section_min_paragraph[key]
 
             cite_keys = paragraph.get("cites") or []
+            print("len(cite_keys)")
+            print(len(cite_keys))
             for bib_key in cite_keys:
                 self.insert_paragraph_reference(
                     paragraph_id=id_zero_based,
@@ -308,9 +311,6 @@ class CSVArxivParagraphCitation:
         return matched
 
 
-
-
-
     def save_paragraph_with_reference(self, arxiv_paragraphs, output_csv_path: str):
         df = self._load_data2()
         
@@ -337,7 +337,7 @@ class CSVArxivParagraphCitation:
 
             if not paragraph_text or not isinstance(paragraph_text, str):
                 continue
-            
+
             output_rows.append({
                 "citing_arxiv_id": row['citing_arxiv_id'],
                 "paragraph_global_id": paragraph_global_id,

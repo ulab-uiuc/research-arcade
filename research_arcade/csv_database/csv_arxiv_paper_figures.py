@@ -1,11 +1,40 @@
 import pandas as pd
 import os
 from pathlib import Path
-from typing import Optional
+from typing import Optional, List, Tuple
 import json
+
+def figure_iteration_recursive(figure_json):
+
+        # Create a set of figures along with the
+        # list represents (path, caption, label)
+        path_to_info: List[Tuple[str, str, str]] = []
+
+        # First iterate through parent, then go into the children
+
+        def figure_iteration(figure_json):
+            nonlocal path_to_info
+
+            if not figure_json:
+                return
+            if figure_json['figure_paths']:
+                path = figure_json['figure_paths'][0]
+                caption = figure_json['caption']
+                label = figure_json['label']
+                path_to_info.append((path, caption, label))
+            subfigures = figure_json['subfigures']
+            
+            for subfigure in subfigures:
+                figure_iteration(subfigure)
+        
+        figure_iteration(figure_json=figure_json)
+        return path_to_info
+
+
 
 class CSVArxivPaperFigure:
     def __init__(self, csv_dir: str):
+        self.csv_dir = csv_dir
         csv_path = f"{csv_dir}/arxiv_paper_figures.csv"
         self.csv_path = csv_path
         Path(csv_path).parent.mkdir(parents=True, exist_ok=True)
@@ -270,11 +299,30 @@ class CSVArxivPaperFigure:
             print(f"Error importing paper-figure relationships from JSON: {e}")
             return False
 
+    def match_figure_id(self, paper_arxiv_id, label):
+        csv_path2 = f"{self.csv_dir}/arxiv_figures.csv"
+        
+        if not os.path.exists(csv_path2):
+            return None
+        
+        df2 = pd.read_csv(csv_path2)
+        
+        mask = (
+            (df2['paper_arxiv_id'] == paper_arxiv_id) & 
+            (df2['label'] == label)
+        )
+        
+        matched_rows = df2[mask]
+        
+        if len(matched_rows) > 0:
+            return matched_rows.iloc[0]['id']
+        else:
+            return None
 
-    def construct_paper_figures_table_from_api(self, arxiv_ids, dest):
+    def construct_paper_figures_table_from_api(self, arxiv_ids, dest_dir):
 
         for arxiv_id in arxiv_ids:
-            json_path = f"{dest}/output/{arxiv_id}.json"
+            json_path = f"{dest_dir}/output/{arxiv_id}.json"
 
             try:
                 with open(json_path, 'r') as file:
@@ -294,39 +342,11 @@ class CSVArxivPaperFigure:
 
             for figure_json in figure_jsons:
                 
-                figures = self.figure_iteration_recursive(figure_json=figure_json)
+                figures = figure_iteration_recursive(figure_json=figure_json)
 
                 for figure in figures:
                     path, caption, label = figure
-                    figure_id = self.db.insert_figure(paper_arxiv_id=arxiv_id, path=path, caption=caption, label=label, name=None)
+                    figure_id = self.match_figure_id(paper_arxiv_id=arxiv_id, label=label)
+
 
                     self.insert_paper_figure(paper_arxiv_id=arxiv_id, figure_id=figure_id)
-
-
-            table_jsons = file_json['table']
-            for table_json in table_jsons:
-                
-                caption = table_json['caption']
-                label = table_json['label']
-                table = table_json['tabular']
-                # We don't currently store the table anywhere as a file so the table path is empty
-                path = None
-                
-                table_id = self.db.insert_table(paper_arxiv_id=arxiv_id, path=path, caption=caption, label=label, table_text=table)
-                
-                self.insert_paper_table(paper_arxiv_id = arxiv_id, table_id=table_id)
-
-
-                for citation in file_json['citations'].values():
-                    # print(f"Citation: {citation}")
-                    cited_arxiv_id = citation.get('arxiv_id')
-                    bib_key = citation.get('bib_key')
-                    bib_title = citation.get('bib_title')
-                    bib_author = citation.get('bib_author ')
-                    contexts = citation.get('context')
-                    citing_sections = set()
-                    for context in contexts:
-                        citing_section = context['section']
-                        citing_sections.add(citing_section)
-
-                    self.insert_citation(citing_arxiv_id=arxiv_id, cited_arxiv_id=cited_arxiv_id, citing_sections=list(citing_sections),bib_title=bib_title, bib_key=bib_key, author_cited_paper=bib_author)

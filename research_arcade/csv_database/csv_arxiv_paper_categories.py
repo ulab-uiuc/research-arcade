@@ -41,22 +41,21 @@ class CSVArxivPaperCategory:
         self._save_data(df)
         return True
 
-    def insert_category_id_by_name(self, category_name):
+    def match_category_id_by_name(self, category_name):
         # load another dataframe?
 
-        csv_path2 = f"{self.csv_dir}/arxiv_category.csv"
+        csv_path2 = f"{self.csv_dir}/arxiv_categories.csv"
         df2 = pd.read_csv(csv_path2)
-
+        
         # Unique return
-        return [df2['name'] == category_name]['id'][0]
-
+        return df2[df2['name'] == category_name]['id'].iloc[0]
 
 
     def insert_paper_category_by_name(self, paper_arxiv_id, category_name):
         # search id by name
-        category_id = self.insert_category_id_by_name(category_name)
+        category_id = self.match_category_id_by_name(category_name)
         # insert by id
-        self.insert_category_id_by_name(paper_arxiv_id, category_id)
+        self.insert_paper_category(paper_arxiv_id=paper_arxiv_id, category_id=category_id)
 
 
 
@@ -294,17 +293,17 @@ class CSVArxivPaperCategory:
             return False
 
 
-    def construct_paper_category_table_from_api(self, arxiv_ids, dest):
+    def construct_paper_category_table_from_api(self, arxiv_ids, dest_dir):
         # The same logic, that we first open the file, then create the corresponding stuff.
 
         # In fact, we only need to add paper category
         # Open the metadata
 
         for arxiv_id in arxiv_ids:
-            metadata_path = f"{dest}/{arxiv_id}/{arxiv_id}_metadata.json"
+            metadata_path = f"{dest_dir}/{arxiv_id}/{arxiv_id}_metadata.json"
 
             with open(metadata_path, 'r') as file:
                 metadata_json = json.load(file)
                 categories = metadata_json['categories']
                 for category in categories:
-                    self.insert_paper_category_by_name(paper_arxiv_id=arxiv_id, category=category)
+                    self.insert_paper_category_by_name(paper_arxiv_id=arxiv_id, category_name=category)

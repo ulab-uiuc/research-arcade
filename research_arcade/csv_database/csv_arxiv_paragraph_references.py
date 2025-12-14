@@ -5,6 +5,8 @@ from typing import Optional
 import json
 from ..arxiv_utils.utils import get_paragraph_num
 
+
+
 class CSVArxivParagraphReference:
     def __init__(self, csv_dir: str):
         csv_path = f"{csv_dir}/arxiv_paragraph_references.csv"
@@ -303,12 +305,17 @@ class CSVArxivParagraphReference:
             id_number = get_paragraph_num(paragraph_id)
             id_zero_based = id_number - section_min_paragraph[key]
 
-            cite_keys = paragraph.get("cites") or []
-            for bib_key in cite_keys:
-                self.insert_paragraph_reference(
-                    paragraph_id=id_zero_based,
-                    paper_section=paper_section,
-                    citing_arxiv_id=paper_arxiv_id,
-                    bib_key=bib_key
-                )
+            paragraph_ref_labels = paragraph.get('ref_labels') or []
+            for ref_label in paragraph_ref_labels:
 
+                ref_type = None
+                # First search bib_key in databases.
+                # If presented in one of them, we can determine the type of reference
+
+                is_figure = ref_label.startswith("figure")
+                is_table = ref_label.startswith("table")
+                if is_figure:
+                    ref_type = 'figure'
+                elif is_table:
+                    ref_type = 'table'
+                self.insert_paragraph_reference(paragraph_id=id_zero_based, paper_section=paper_section, paper_arxiv_id=paper_arxiv_id,reference_label=ref_label,reference_type=ref_type)
