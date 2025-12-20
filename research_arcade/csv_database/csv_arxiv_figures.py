@@ -56,6 +56,7 @@ class CSVArxivFigure:
         self._save_data(df)
         return new_id
 
+
     def delete_figure_by_id(self, id):
         df = self._load_data()
         
@@ -65,8 +66,8 @@ class CSVArxivFigure:
         df = df[df['id'] != id]
         self._save_data(df)
         return True
-    
-    
+
+
     def update_figure(self, id, paper_arxiv_id, path, caption=None, label=None, name=None):
         df = self._load_data()
         
@@ -88,7 +89,8 @@ class CSVArxivFigure:
         
         self._save_data(df)
         return True
-    
+
+
     def get_figure_by_id(self, id: int) -> Optional[pd.DataFrame]:
         df = self._load_data()
         

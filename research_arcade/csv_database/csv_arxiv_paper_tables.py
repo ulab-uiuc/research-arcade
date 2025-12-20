@@ -6,6 +6,7 @@ import json
 
 class CSVArxivPaperTable:
     def __init__(self, csv_dir: str):
+        self.csv_dir = csv_dir
         csv_path = f"{csv_dir}/arxiv_paper_tables.csv"
         self.csv_path = csv_path
         Path(csv_path).parent.mkdir(parents=True, exist_ok=True)
@@ -132,6 +133,27 @@ class CSVArxivPaperTable:
         self._save_data(df)
         
         return count
+
+
+    def match_table_id(self, paper_arxiv_id, label):
+        csv_path2 = f"{self.csv_dir}/arxiv_tables.csv"
+        
+        if not os.path.exists(csv_path2):
+            return None
+        
+        df2 = pd.read_csv(csv_path2)
+        
+        mask = (
+            (df2['paper_arxiv_id'] == paper_arxiv_id) & 
+            (df2['label'] == label)
+        )
+
+        matched_rows = df2[mask]
+        
+        if len(matched_rows) > 0:
+            return matched_rows.iloc[0]['id']
+        else:
+            return None
 
 
 
@@ -271,4 +293,36 @@ class CSVArxivPaperTable:
             print(f"Error importing paper-table relationships from JSON: {e}")
             return False
 
+
+    def construct_paper_tables_table_from_api(self, arxiv_ids, dest_dir):
+
+        for arxiv_id in arxiv_ids:
+            json_path = f"{dest_dir}/output/{arxiv_id}.json"
+
+            try:
+                with open(json_path, 'r') as file:
+                    file_json = json.load(file)
+            except FileNotFoundError:
+                print(f"Error: The file '{file_json}' was not found.")
+                continue
+            except json.JSONDecodeError:
+                print(f"Error: Could not decode JSON from '{file_json}'. Check if the file contains valid JSON.")
+                continue
+            except Exception as e:
+                print(f"An unexpected error occurred: {e}")
+                continue
+
+            table_jsons = file_json['table']
+            for table_json in table_jsons:
+                
+                caption = table_json['caption']
+                label = table_json['label']
+                table = table_json['tabular']
+                # We don't currently store the table anywhere as a file so the table path is empty
+                path = None
+
+                table_id = self.match_table_id(paper_arxiv_id=arxiv_id, label=label)
+                
+                
+                self.insert_paper_table(paper_arxiv_id = arxiv_id, table_id=table_id)
 

@@ -2,6 +2,10 @@ import pandas as pd
 import os
 from pathlib import Path
 from typing import Optional
+import json
+from ..arxiv_utils.utils import get_paragraph_num
+
+
 
 class CSVArxivParagraphReference:
     def __init__(self, csv_dir: str):
@@ -127,7 +131,6 @@ class CSVArxivParagraphReference:
         self._save_data(df)
         
         return count
-
 
 
     def construct_table_from_csv(self, csv_file):
@@ -259,4 +262,60 @@ class CSVArxivParagraphReference:
             print(f"Error importing paragraph-reference relationships from JSON: {e}")
             return False
 
+    def construct_paragraph_references_table_from_api(self, arxiv_ids, dest_dir):
+        # Assume that the paragraph has already been processed
 
+        paragraph_path = f"{dest_dir}/output/paragraphs/text_nodes.jsonl"
+
+        with open(paragraph_path) as f:
+            data = [json.loads(line) for line in f]
+        
+        section_min_paragraph = {}
+
+        # First pass
+        for paragraph in data:
+            paragraph_id = paragraph.get("id")
+            paper_arxiv_id = paragraph.get("paper_id")
+            paper_section = paragraph.get("section")
+
+            if not paragraph_id or not paper_arxiv_id or not paper_section:
+                continue
+
+            id_number = get_paragraph_num(paragraph_id)
+            key = (paper_arxiv_id, paper_section)
+
+            if key not in section_min_paragraph:
+                section_min_paragraph[key] = int(id_number)
+            else:
+                section_min_paragraph[key] = min(section_min_paragraph[key], int(id_number))
+
+        # Second pass
+        for paragraph in data:
+            paragraph_id = paragraph.get("id")
+            paper_arxiv_id = paragraph.get("paper_id")
+            paper_section = paragraph.get("section")
+
+            if not paragraph_id or not paper_arxiv_id or not paper_section:
+                continue
+
+            key = (paper_arxiv_id, paper_section)
+            if key not in section_min_paragraph:
+                continue
+
+            id_number = get_paragraph_num(paragraph_id)
+            id_zero_based = id_number - section_min_paragraph[key]
+
+            paragraph_ref_labels = paragraph.get('ref_labels') or []
+            for ref_label in paragraph_ref_labels:
+
+                ref_type = None
+                # First search bib_key in databases.
+                # If presented in one of them, we can determine the type of reference
+
+                is_figure = ref_label.startswith("figure")
+                is_table = ref_label.startswith("table")
+                if is_figure:
+                    ref_type = 'figure'
+                elif is_table:
+                    ref_type = 'table'
+                self.insert_paragraph_reference(paragraph_id=id_zero_based, paper_section=paper_section, paper_arxiv_id=paper_arxiv_id,reference_label=ref_label,reference_type=ref_type)

@@ -54,67 +54,67 @@ class CSVArxivCitation:
         self._save_data(df)
         return True
 
-    def construct_citations_table_from_api(self, arxiv_ids, dest_dir):
-        # Check if papers already exists in the directory
-        downloaded_paper_ids = []
-        for arxiv_id in arxiv_ids:
-            paper_dir = f"{dest_dir}/{arxiv_id}/{arxiv_id}_metadata.json"
+    # def construct_citations_table_from_api(self, arxiv_ids, dest_dir):
+    #     # Check if papers already exists in the directory
+    #     downloaded_paper_ids = []
+    #     for arxiv_id in arxiv_ids:
+    #         paper_dir = f"{dest_dir}/{arxiv_id}/{arxiv_id}_metadata.json"
 
-            if not os.path.exists(paper_dir):
-                downloaded_paper_ids.append(arxiv_id)
+    #         if not os.path.exists(paper_dir):
+    #             downloaded_paper_ids.append(arxiv_id)
 
-        for arxiv_id in downloaded_paper_ids:
-            md = MultiDownload()
-            try:
-                md.download_arxiv(input=arxiv_id, input_type = "id", output_type="latex", dest_dir=self.dest_dir)
-                print(f"paper with id {arxiv_id} downloaded")
-                downloaded_paper_ids.append(arxiv_id)
-            except RuntimeError as e:
-                print(f"[ERROR] Failed to download {arxiv_id}: {e}")
-                continue
+    #     for arxiv_id in downloaded_paper_ids:
+    #         md = MultiDownload()
+    #         try:
+    #             md.download_arxiv(input=arxiv_id, input_type = "id", output_type="latex", dest_dir=self.dest_dir)
+    #             print(f"paper with id {arxiv_id} downloaded")
+    #             downloaded_paper_ids.append(arxiv_id)
+    #         except RuntimeError as e:
+    #             print(f"[ERROR] Failed to download {arxiv_id}: {e}")
+    #             continue
         
-        for arxiv_id in arxiv_ids:
+    #     for arxiv_id in arxiv_ids:
 
-            json_path = f"{dest_dir}/output/{arxiv_id}.json"
-            if not os.path.exists(json_path):
-                # arxiv_id_graph.append(arxiv_id)
-                try:
-                    # Build corresponding graph
-                    md.build_paper_graph(
-                        input=arxiv_id,
-                        input_type="id",
-                        dest_dir=dest_dir
-                    )
-                except Exception as e:
-                    print(f"[Warning] Failed to process papers: {e}")
-                    continue
+    #         json_path = f"{dest_dir}/output/{arxiv_id}.json"
+    #         if not os.path.exists(json_path):
+    #             # arxiv_id_graph.append(arxiv_id)
+    #             try:
+    #                 # Build corresponding graph
+    #                 md.build_paper_graph(
+    #                     input=arxiv_id,
+    #                     input_type="id",
+    #                     dest_dir=dest_dir
+    #                 )
+    #             except Exception as e:
+    #                 print(f"[Warning] Failed to process papers: {e}")
+    #                 continue
 
-            try:
-                with open(json_path, 'r') as file:
-                    file_json = json.load(file)
-                    for citation in file_json['citations'].values():
-                        # print(f"Citation: {citation}")
-                        cited_arxiv_id = citation.get('arxiv_id')
-                        bib_key = citation.get('bib_key')
-                        bib_title = citation.get('bib_title')
-                        bib_author = citation.get('bib_author ')
-                        contexts = citation.get('context')
-                        citing_sections = set()
-                        for context in contexts:
-                            citing_section = context['section']
-                            citing_sections.add(citing_section)
+    #         try:
+    #             with open(json_path, 'r') as file:
+    #                 file_json = json.load(file)
+    #                 for citation in file_json['citations'].values():
+    #                     # print(f"Citation: {citation}")
+    #                     cited_arxiv_id = citation.get('arxiv_id')
+    #                     bib_key = citation.get('bib_key')
+    #                     bib_title = citation.get('bib_title')
+    #                     bib_author = citation.get('bib_author ')
+    #                     contexts = citation.get('context')
+    #                     citing_sections = set()
+    #                     for context in contexts:
+    #                         citing_section = context['section']
+    #                         citing_sections.add(citing_section)
 
-                        self.insert_citation(citing_arxiv_id=arxiv_id, cited_arxiv_id=cited_arxiv_id, citing_sections=list(citing_sections), bib_title=bib_title, bib_key=bib_key)
+    #                     self.insert_citation(citing_arxiv_id=arxiv_id, cited_arxiv_id=cited_arxiv_id, citing_sections=list(citing_sections), bib_title=bib_title, bib_key=bib_key)
 
-            except FileNotFoundError:
-                print(f"Error: The file '{file_json}' was not found.")
-                continue
-            except json.JSONDecodeError:
-                print(f"Error: Could not decode JSON from '{file_json}'. Check if the file contains valid JSON.")
-                continue
-            except Exception as e:
-                print(f"An unexpected error occurred: {e}")
-                continue
+    #         except FileNotFoundError:
+    #             print(f"Error: The file '{file_json}' was not found.")
+    #             continue
+    #         except json.JSONDecodeError:
+    #             print(f"Error: Could not decode JSON from '{file_json}'. Check if the file contains valid JSON.")
+    #             continue
+    #         except Exception as e:
+    #             print(f"An unexpected error occurred: {e}")
+    #             continue
 
 
     def delete_citation_by_id(self, citing_paper_id, cited_paper_id):
@@ -371,3 +371,37 @@ class CSVArxivCitation:
             return False
 
 
+
+    def construct_citations_table_from_api(self, arxiv_ids, dest_dir):
+
+        for arxiv_id in arxiv_ids:
+            json_path = f"{dest_dir}/output/{arxiv_id}.json"
+
+            try:
+                with open(json_path, 'r') as file:
+                    file_json = json.load(file)
+            except FileNotFoundError:
+                print(f"Error: The file '{file_json}' was not found.")
+                continue
+            except json.JSONDecodeError:
+                print(f"Error: Could not decode JSON from '{file_json}'. Check if the file contains valid JSON.")
+                continue
+            except Exception as e:
+                print(f"An unexpected error occurred: {e}")
+                continue
+
+
+            for citation in file_json['citations'].values():
+                    # print(f"Citation: {citation}")
+                    cited_arxiv_id = citation.get('arxiv_id')
+                    bib_key = citation.get('bib_key')
+                    bib_title = citation.get('bib_title')
+                    bib_author = citation.get('bib_author ')
+                    contexts = citation.get('context')
+                    citing_sections = set()
+                    for context in contexts:
+                        citing_section = context['section']
+                        citing_sections.add(citing_section)
+                
+                    #大切なこと
+                    self.insert_citation(citing_arxiv_id=arxiv_id, cited_arxiv_id=cited_arxiv_id, citing_sections=list(citing_sections), bib_title=bib_title, bib_key=bib_key)
