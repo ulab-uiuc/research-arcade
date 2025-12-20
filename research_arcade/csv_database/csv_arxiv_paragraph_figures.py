@@ -9,10 +9,9 @@ from typing import Optional
 import json
 from ..arxiv_utils.utils import get_paragraph_num
 
-
-
 class CSVArxivParagraphFigure:
     def __init__(self, csv_dir: str):
+        self.csv_dir = csv_dir
         csv_path = f"{csv_dir}/arxiv_paragraph_figures.csv"
         self.csv_path = csv_path
         Path(csv_path).parent.mkdir(parents=True, exist_ok=True)
@@ -32,7 +31,7 @@ class CSVArxivParagraphFigure:
     def _save_data(self, df): 
         df.to_csv(self.csv_path, index=False)
 
-    def insert_paragraph_table(self, paragraph_id, figure_id, paper_arxiv_id, paper_section_id):
+    def insert_paragraph_figure_table(self, paragraph_id, figure_id, paper_arxiv_id, paper_section_id):
         df = self._load_data()
         new_id = df['id'].max() + 1 if not df.empty else 1
         new_row = pd.DataFrame([{
@@ -271,5 +270,74 @@ class CSVArxivParagraphFigure:
             print(f"Error importing paragraph-figure relationships from JSON: {e}")
             return False
 
-    def construct_paragraph_figures_table_from_api(self, arxiv_ids, dest_dir):
-        pass
+
+
+    def construct_paragraph_figures_table_from_api(self, arxiv_ids, dest_dir=None):
+        """
+        Assume that we already have preprocessed paragraph-reference edges and figure nodes in the dataset.
+
+        First select all refs in the paragraph-reference that are figures
+        Then for these refs, we match them with their corresponding paragraphs and figures.
+
+        Finally we can save the edges.
+        """
+
+        # First open the reference table
+        para_ref_path = f"{self.csv_dir}/arxiv_paragraph_references.csv"
+        paragraph_path = f"{self.csv_dir}/arxiv_paragraphs.csv"
+        figure_path = f"{self.csv_dir}/arxiv_figures.csv"
+        section_path = f"{self.csv_dir}/arxiv_sections.csv"
+
+        df2 = pd.read_csv(para_ref_path)
+        df3 = pd.read_csv(paragraph_path)
+        df4 = pd.read_csv(figure_path)
+        df5 = pd.read_csv(section_path)
+        
+        for arxiv_id in arxiv_ids:
+            result = df2[(df2['paper_arxiv_id'] == arxiv_id) & (df2['reference_type'] == 'figure')].copy()
+
+            # Find two things: One is the exact paragraph, the other is the exact figure
+            for idx, para_figure in result.iterrows():
+                paragraph_id = para_figure['paragraph_id']
+                paper_section = para_figure['paper_section']
+                reference_label = para_figure['reference_label']
+                
+                # Construct label - adjust format based on your actual data
+                label = f"\\label{{{reference_label}}}"
+                
+                # First search for the global paragraph id
+                paragraph_result = df3[(df3['paper_arxiv_id'] == arxiv_id) & 
+                                    (df3['paper_section'] == paper_section) & 
+                                    (df3['paragraph_id'] == paragraph_id)]
+                
+                if paragraph_result.empty:
+                    print(f"Warning: Paragraph not found for arxiv_id={arxiv_id}, section={paper_section}, para_id={paragraph_id}")
+                    continue
+                
+                global_paragraph_id = paragraph_result.iloc[0]['id']
+                
+                # Then we fetch figure id
+                figure_result = df4[(df4['label'] == label) & (df4['paper_arxiv_id'] == arxiv_id)]
+                
+                if figure_result.empty:
+                    print(f"Warning: Figure not found for label={label}, arxiv_id={arxiv_id}")
+                    continue
+                
+                figure_id = figure_result.iloc[0]['id']
+                
+                # We also need to search for the paper_section id
+                section_result = df5[(df5['paper_arxiv_id'] == arxiv_id) & 
+                                    (df5['section_in_paper_id'] == paper_section)]
+                
+                if section_result.empty:
+                    print(f"Warning: Section not found for arxiv_id={arxiv_id}, section={paper_section}")
+                    continue
+                
+                section_id = section_result.iloc[0]['id']
+                
+                self.insert_paragraph_figure_table(
+                    paragraph_id=global_paragraph_id, 
+                    figure_id=figure_id, 
+                    paper_arxiv_id=arxiv_id, 
+                    paper_section_id=section_id
+                )
