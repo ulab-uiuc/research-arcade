@@ -4,6 +4,7 @@ import psycopg2
 import psycopg2.extras
 import pandas as pd
 import json
+from ..arxiv_utils.utils import get_paragraph_num
 
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -407,3 +408,96 @@ class SQLArxivParagraphReference:
         except Exception as e:
             print(f"Error importing paragraph-reference relationships from JSON: {e}")
             return False
+        
+    def construct_paragraph_references_table_from_api_sql(self, arxiv_ids, dest_dir):
+        """
+        SQL version using bulk operations instead of individual inserts.
+        """
+        # Assume that the paragraph has already been processed
+        paragraph_path = f"{dest_dir}/output/paragraphs/text_nodes.jsonl"
+        
+        with open(paragraph_path) as f:
+            data = [json.loads(line) for line in f]
+        
+        section_min_paragraph = {}
+        
+        # First pass - find minimum paragraph ID for each section
+        for paragraph in data:
+            paragraph_id = paragraph.get("id")
+            paper_arxiv_id = paragraph.get("paper_id")
+            paper_section = paragraph.get("section")
+            
+            if not paragraph_id or not paper_arxiv_id or not paper_section:
+                continue
+            
+            id_number = get_paragraph_num(paragraph_id)
+            key = (paper_arxiv_id, paper_section)
+            
+            if key not in section_min_paragraph:
+                section_min_paragraph[key] = int(id_number)
+            else:
+                section_min_paragraph[key] = min(section_min_paragraph[key], int(id_number))
+        
+        # Second pass - collect all rows for bulk insert
+        rows = []
+        for paragraph in data:
+            paragraph_id = paragraph.get("id")
+            paper_arxiv_id = paragraph.get("paper_id")
+            paper_section = paragraph.get("section")
+            
+            if not paragraph_id or not paper_arxiv_id or not paper_section:
+                continue
+                
+            key = (paper_arxiv_id, paper_section)
+            if key not in section_min_paragraph:
+                continue
+                
+            id_number = get_paragraph_num(paragraph_id)
+            id_zero_based = id_number - section_min_paragraph[key]
+            
+            paragraph_ref_labels = paragraph.get('ref_labels') or []
+            
+            for ref_label in paragraph_ref_labels:
+                ref_type = None
+                
+                # Determine reference type
+                is_figure = ref_label.startswith("figure")
+                is_table = ref_label.startswith("table")
+                
+                if is_figure:
+                    ref_type = 'figure'
+                elif is_table:
+                    ref_type = 'table'
+                
+                # Add to bulk insert list
+                rows.append((
+                    id_zero_based,
+                    paper_section,
+                    paper_arxiv_id,
+                    ref_label,
+                    ref_type
+                ))
+        
+        # Bulk insert all rows at once
+        if not rows:
+            print("No paragraph references to import")
+            return True
+        
+        conn = self._get_connection()
+        try:
+            cur = conn.cursor()
+            psycopg2.extras.execute_values(
+                cur,
+                """
+                INSERT INTO arxiv_paragraph_references 
+                    (paragraph_id, paper_section, paper_arxiv_id, reference_label, reference_type)
+                VALUES %s
+                """,
+                rows,
+                page_size=1000
+            )
+            cur.close()
+            print(f"Successfully imported {len(rows)} paragraph references from API")
+            return True
+        finally:
+            conn.close()
