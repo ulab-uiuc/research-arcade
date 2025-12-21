@@ -5,7 +5,7 @@ from typing import Optional
 import json
 from rapidfuzz import fuzz, process
 from collections import defaultdict
-from ..arxiv_utils.utils import get_paragraph_num
+from ..arxiv_utils.utils import get_paragraph_num, arxiv_ids_hashing
 from semanticscholar import SemanticScholar
 from dotenv import load_dotenv
 load_dotenv()
@@ -100,7 +100,9 @@ class CSVArxivParagraphCitation:
         return count
 
     def construct_citations_table_from_api(self, arxiv_ids, dest_dir):
-        paragraph_path = f"{dest_dir}/output/paragraphs/text_nodes.jsonl"
+        prefix = arxiv_ids_hashing()
+        # Build the paragraphs
+        paragraph_path = f"{dest_dir}/{prefix}/output/paragraphs/text_nodes.jsonl"
 
         with open(paragraph_path) as f:
             data = [json.loads(line) for line in f]

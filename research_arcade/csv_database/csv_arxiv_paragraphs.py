@@ -7,7 +7,8 @@ import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from ..arxiv_utils.multi_input.multi_download import MultiDownload
 from ..arxiv_utils.paper_collector.paper_graph_processor import PaperGraphProcessor
-from ..arxiv_utils.utils import get_paragraph_num
+from ..arxiv_utils.utils import get_paragraph_num, arxiv_ids_hashing
+
 
 class CSVArxivParagraphs:
     def __init__(self, csv_dir: str):
@@ -16,8 +17,6 @@ class CSVArxivParagraphs:
         Path(csv_path).parent.mkdir(parents=True, exist_ok=True)
         if not os.path.exists(csv_path):
             self.create_paragraphs_table()
-        # self.arxiv_crawler = ArxivCrawler()
-    
 
     def create_paragraphs_table(self):
         if not os.path.exists(self.csv_path):
@@ -36,7 +35,6 @@ class CSVArxivParagraphs:
     def _save_data(self, df: pd.DataFrame):
         df.to_csv(self.csv_path, index=False)
 
-
     def insert_paragraph(self, paragraph_id, content, paper_arxiv_id, paper_section, section_id=None, paragraph_in_paper_id=None):
         df = self._load_data()
         
@@ -47,9 +45,9 @@ class CSVArxivParagraphs:
         ]
         if not conflict.empty:
             return None
-        
+
         new_id = df['id'].max() + 1 if not df.empty else 1
-        
+
         new_row = pd.DataFrame([{
             'id': new_id,
             'paragraph_id': paragraph_id,
@@ -101,7 +99,6 @@ class CSVArxivParagraphs:
         
         self._save_data(df)
         return deleted_count
-
     
     def update_paragraph(self, id, paragraph_id=None, content=None, paper_arxiv_id=None, paper_section=None):
         df = self._load_data()
@@ -131,7 +128,6 @@ class CSVArxivParagraphs:
         
         paragraph = df[df['id'] == id]
         return paragraph
-
 
     def get_paragraphs_by_arxiv_id(self, arxiv_id: str) -> Optional[pd.DataFrame]:
         df = self._load_data()
@@ -228,7 +224,7 @@ class CSVArxivParagraphs:
         data_dir_path = f"{dest_dir}/output"
         figures_dir_path = f"{dest_dir}/output/images"
         output_dir_path = f"{dest_dir}/output/paragraphs"
-        pgp = PaperGraphProcessor(data_dir=data_dir_path, figures_dir=figures_dir_path, output_dir=output_dir_path)
+        pgp = PaperGraphProcessor(data_dir=data_dir_path, figures_dir=figures_dir_path, output_dir=output_dir_path, arxiv_ids=arxiv_ids)
 
         papers = []
         for arxiv_id in arxiv_ids:
@@ -245,7 +241,7 @@ class CSVArxivParagraphs:
             except RuntimeError as e:
                 print(f"[ERROR] Failed to download {arxiv_id}: {e}")
                 continue
-
+        
         for arxiv_id in arxiv_ids:
             # Search if the corresponding paper graph exists
 
@@ -271,9 +267,11 @@ class CSVArxivParagraphs:
         for arxiv_id in papers:
             paper_paths.append(f"{dest_dir}/output/{arxiv_id}.json")
         pgp.process_papers(paper_paths)
-        
+
+        # We apply the hashing
+        prefix = arxiv_ids_hashing()
         # Build the paragraphs
-        paragraph_path = f"{dest_dir}/output/paragraphs/text_nodes.jsonl"
+        paragraph_path = f"{dest_dir}/{prefix}/output/paragraphs/text_nodes.jsonl"
         with open(paragraph_path) as f:
             data = [json.loads(line) for line in f]
 

@@ -6,6 +6,7 @@ import shutil
 from typing import Any, Dict, List, Optional, Tuple
 
 from tqdm import tqdm
+from ..utils import arxiv_ids_hashing
 
 global discarded
 discarded = 0
@@ -46,7 +47,7 @@ class PaperGraphProcessor:
         return plain_text
 
     def __init__(
-        self, data_dir: str, figures_dir: str, output_dir: str, threshold: float = 0.8
+        self, data_dir: str, figures_dir: str, output_dir: str, threshold: float = 0.8, arxiv_ids = None
     ):
         """Initialize with directory paths for data processing.
 
@@ -54,7 +55,11 @@ class PaperGraphProcessor:
             data_dir: Directory containing paper JSON files
             figures_dir: Directory containing figure files
             output_dir: Directory for processed output
+            arxiv_ids: Arxiv ids of the paragraphs for parallel processing
         """
+        if arxiv_ids:
+            prefix = arxiv_ids_hashing(arxiv_ids=arxiv_ids)
+            output_dir = os.path.join(output_dir, prefix)
         self.data_dir = data_dir
         self.figures_dir = figures_dir
         self.output_dir = output_dir
@@ -119,7 +124,7 @@ class PaperGraphProcessor:
         pattern = r"\\label\{([^}]+)\}"
         match = re.search(pattern, text)
         return match.group(1) if match else ""
-    
+
     def find_references(self, text: str) -> List[str]:
         """Find all figure references in text."""
         pattern = r"\\ref\{([^}]+)\}"
@@ -164,7 +169,7 @@ class PaperGraphProcessor:
             "parent_paper_id": paper_id,
             "type": "tableNode",
         }
-
+    
     def create_section_node(self, section: str) -> Dict:
         """Create a section node for the graph."""
         return {
