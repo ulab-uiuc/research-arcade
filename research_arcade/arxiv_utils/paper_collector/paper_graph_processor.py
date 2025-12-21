@@ -6,6 +6,7 @@ import shutil
 from typing import Any, Dict, List, Optional, Tuple
 
 from tqdm import tqdm
+from ..utils import arxiv_ids_hashing
 
 global discarded
 discarded = 0
@@ -46,7 +47,7 @@ class PaperGraphProcessor:
         return plain_text
 
     def __init__(
-        self, data_dir: str, figures_dir: str, output_dir: str, threshold: float = 0.8
+        self, data_dir: str, figures_dir: str, output_dir: str, threshold: float = 0.8, arxiv_ids = None
     ):
         """Initialize with directory paths for data processing.
 
@@ -54,7 +55,11 @@ class PaperGraphProcessor:
             data_dir: Directory containing paper JSON files
             figures_dir: Directory containing figure files
             output_dir: Directory for processed output
+            arxiv_ids: Arxiv ids of the paragraphs for parallel processing
         """
+        if arxiv_ids:
+            prefix = arxiv_ids_hashing(arxiv_ids=arxiv_ids)
+            output_dir = os.path.join(output_dir, prefix)
         self.data_dir = data_dir
         self.figures_dir = figures_dir
         self.output_dir = output_dir
@@ -119,21 +124,17 @@ class PaperGraphProcessor:
         pattern = r"\\label\{([^}]+)\}"
         match = re.search(pattern, text)
         return match.group(1) if match else ""
-    
+
     def find_references(self, text: str) -> List[str]:
         """Find all figure references in text."""
         pattern = r"\\ref\{([^}]+)\}"
         return re.findall(pattern, text)
 
     def find_cites(self, text: str) -> List[str]:
-        """
-        Find all citation keys in text, for commands like
-        \citet{}, \citet*{}, \citep{}, \citep*{},
-        \citeauthor{}, \citeyear{}
-        """
-        pattern = r"\\cite(?:t|p|author|year)\*?\{([^}]+)\}"
+        # Match \cite, \citet, \citep, \citeauthor, \citeyear (with optional *)
+        pattern = r"\\(?:cite|citet|citep|citealt|citealp|citeauthor|citeyear|citeyearpar|citenum|parencite|textcite|autocite|fullcite|footcite|supercite)\*?\{([^}]+)\}"
         return re.findall(pattern, text)
-        
+    
     def create_figure_node(self, figure: dict, paper_id: str) -> Dict:
         """Create a figure node for the graph."""
         have_paths = False
@@ -164,7 +165,7 @@ class PaperGraphProcessor:
             "parent_paper_id": paper_id,
             "type": "tableNode",
         }
-
+    
     def create_section_node(self, section: str) -> Dict:
         """Create a section node for the graph."""
         return {
@@ -190,6 +191,8 @@ class PaperGraphProcessor:
         """
         # print("Here!")
         cites_ = self.find_cites(text)
+        print("cites_:")
+        print(cites_)
         cites = []
         for cite in cites_:
             cites.extend(cite.split(","))

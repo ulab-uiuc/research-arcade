@@ -1,5 +1,6 @@
 import re
 from typing import List, Tuple
+import hashlib
 
 def arxiv_id_processor(arxiv_id):
     """
@@ -46,3 +47,12 @@ def get_paragraph_num(pid):
     if not m:
         raise ValueError(f"Bad paragraph id format: {pid!r}")
     return int(m.group(1))
+
+def arxiv_ids_hashing(arxiv_ids):
+    # convert a list of arxiv ids into a unique hashing
+    # arxiv ids up to permutation: for the same set of arxiv ids, we produce the same result after hashing, regardless how we order them in the list
+
+    arxiv_ids_set = set(arxiv_ids)
+    sorted_ids = sorted(arxiv_ids_set)
+    combined = "|".join(sorted_ids)
+    return hashlib.sha256(combined.encode()).hexdigest()
