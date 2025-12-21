@@ -263,9 +263,9 @@ class CSVArxivParagraphReference:
 
     def construct_paragraph_references_table_from_api(self, arxiv_ids, dest_dir):
         # Assume that the paragraph has already been processed
-        prefix = arxiv_ids_hashing()
+        prefix = arxiv_ids_hashing(arxiv_ids=arxiv_ids)
         # Build the paragraphs
-        paragraph_path = f"{dest_dir}/{prefix}/output/paragraphs/text_nodes.jsonl"
+        paragraph_path = f"{dest_dir}/output/paragraphs/{prefix}/text_nodes.jsonl"
 
 
         with open(paragraph_path) as f:

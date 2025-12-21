@@ -37,7 +37,7 @@ class CSVArxivParagraphs:
 
     def insert_paragraph(self, paragraph_id, content, paper_arxiv_id, paper_section, section_id=None, paragraph_in_paper_id=None):
         df = self._load_data()
-        
+
         conflict = df[
             (df['paragraph_id'] == paragraph_id) & 
             (df['paper_arxiv_id'] == paper_arxiv_id) & 
@@ -269,9 +269,9 @@ class CSVArxivParagraphs:
         pgp.process_papers(paper_paths)
 
         # We apply the hashing
-        prefix = arxiv_ids_hashing()
+        prefix = arxiv_ids_hashing(arxiv_ids=arxiv_ids)
         # Build the paragraphs
-        paragraph_path = f"{dest_dir}/{prefix}/output/paragraphs/text_nodes.jsonl"
+        paragraph_path = f"{dest_dir}/output/paragraphs/{prefix}/text_nodes.jsonl"
         with open(paragraph_path) as f:
             data = [json.loads(line) for line in f]
 

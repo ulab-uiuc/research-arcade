@@ -4,7 +4,7 @@ import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import argparse
-from datetime import date, datetime
+from datetime import datetime
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -76,9 +76,7 @@ def process_papers(arxiv_ids, db_type):
         'dest_dir': os.getenv('PAPER_FOLDER_PATH')
     }
 
-    ra.arxiv_paragraphs.construct_paragraphs_table_from_api(**config)
-    ra.arxiv_paragraph_reference.construct_paragraph_references_table_from_api(**config)
-    ra.arxiv_paragraph_citation.construct_citations_table_from_api(**config)
+    ra.construct_tables_from_arxiv_ids(config=config)
 
 
 def main():
@@ -92,3 +90,9 @@ def main():
     
 if __name__ == "__main__":
     main()
+
+
+self.arxiv_citation.construct_citations_table_from_api(**config)
+self.arxiv_paragraphs.construct_paragraphs_table_from_api(**config)
+self.arxiv_paragraph_reference.construct_paragraph_references_table_from_api(**config)
+self.arxiv_paragraph_citation.construct_citations_table_from_api(**config)

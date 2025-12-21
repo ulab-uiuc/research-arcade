@@ -131,14 +131,10 @@ class PaperGraphProcessor:
         return re.findall(pattern, text)
 
     def find_cites(self, text: str) -> List[str]:
-        """
-        Find all citation keys in text, for commands like
-        \citet{}, \citet*{}, \citep{}, \citep*{},
-        \citeauthor{}, \citeyear{}
-        """
-        pattern = r"\\cite(?:t|p|author|year)\*?\{([^}]+)\}"
+        # Match \cite, \citet, \citep, \citeauthor, \citeyear (with optional *)
+        pattern = r"\\(?:cite|citet|citep|citealt|citealp|citeauthor|citeyear|citeyearpar|citenum|parencite|textcite|autocite|fullcite|footcite|supercite)\*?\{([^}]+)\}"
         return re.findall(pattern, text)
-        
+    
     def create_figure_node(self, figure: dict, paper_id: str) -> Dict:
         """Create a figure node for the graph."""
         have_paths = False
@@ -195,6 +191,8 @@ class PaperGraphProcessor:
         """
         # print("Here!")
         cites_ = self.find_cites(text)
+        print("cites_:")
+        print(cites_)
         cites = []
         for cite in cites_:
             cites.extend(cite.split(","))

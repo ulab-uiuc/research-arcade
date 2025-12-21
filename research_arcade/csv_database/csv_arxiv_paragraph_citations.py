@@ -101,9 +101,9 @@ class CSVArxivParagraphCitation:
         return count
 
     def construct_citations_table_from_api(self, arxiv_ids, dest_dir):
-        prefix = arxiv_ids_hashing()
+        prefix = arxiv_ids_hashing(arxiv_ids=arxiv_ids)
         # Build the paragraphs
-        paragraph_path = f"{dest_dir}/{prefix}/output/paragraphs/text_nodes.jsonl"
+        paragraph_path = f"{dest_dir}/output/paragraphs/{prefix}/text_nodes.jsonl"
 
         with open(paragraph_path) as f:
             data = [json.loads(line) for line in f]
