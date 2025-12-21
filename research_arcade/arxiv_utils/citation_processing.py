@@ -9,14 +9,14 @@ from semanticscholar import SemanticScholar
 import os
 from dotenv import load_dotenv
 import pandas as pd
-import pandas as pd
 from rapidfuzz import fuzz, process
 from collections import defaultdict
 
 import psycopg2
-from psycopg2.extras import execute_values
+from psycopg2.extras import execute_batch
 
 load_dotenv()
+
 
 def paper_citation_crawling(arxiv_ids):
     # Initialize the Semantic Scholar API client
@@ -76,17 +76,16 @@ def citation_matching_csv(
     df_cit,
     arxiv_ids, 
     csv_path,
-    output_path=None,
     similarity_threshold=95
 ):
     """
     Match citations from Semantic Scholar with bibliography entries from CSV.
+    Updates the original CSV file with matched arxiv IDs.
     
     Args:
         df_cit: DataFrame with citations from paper_citation_crawling()
         arxiv_ids: List of arxiv IDs to filter on
         csv_path: Path to the CSV file containing bibliography data
-        output_path: Optional path to save results
         similarity_threshold: Minimum fuzzy match score (0-100)
     
     Returns:
@@ -95,25 +94,29 @@ def citation_matching_csv(
     # Load bibkey from the CSV
     df_bib = pd.read_csv(csv_path)
     
-    # Filter to only the arxiv_ids we care about
-    df_bib = df_bib[df_bib['citing_arxiv_id'].isin(arxiv_ids)]
+    # Filter to only the arxiv_ids we care about AND where cited_arxiv_id is null
+    mask = df_bib['citing_arxiv_id'].isin(arxiv_ids) & df_bib['cited_arxiv_id'].isna()
+    df_bib_filtered = df_bib[mask].copy()
     
-    df_bib["norm_bib_title"] = df_bib["bib_title"].apply(normalize_title)
+    df_bib_filtered["norm_bib_title"] = df_bib_filtered["bib_title"].apply(normalize_title)
 
-    # Group bib titles by citing_arxiv_id
+    # Group bib titles by citing_arxiv_id, also track original index for updating
     bib_groups = defaultdict(list)
-    for _, row in df_bib.iterrows():
-        bib_groups[str(row["citing_arxiv_id"])].append(
-            (row["bib_title"], row["norm_bib_title"])
-        )
-
-    # Ensure required columns exist
+    for idx, row in df_bib_filtered.iterrows():
+        bib_groups[str(row["citing_arxiv_id"])].append({
+            'original_idx': idx,
+            'bib_title': row["bib_title"],
+            'norm_bib_title': row["norm_bib_title"]
+        })
+    
+    # Ensure required columns exist in citation df
     required_cols = ["citing_arxiv_id", "cited_arxiv_id", "cited_paper_name"]
     for col in required_cols:
         if col not in df_cit.columns:
             raise ValueError(f"Missing required column: {col}")
 
     results = []
+    updates = []  # Track updates to make to original CSV
     total = 0
     matched = 0
     no_match = 0
@@ -125,8 +128,12 @@ def citation_matching_csv(
         if citing_id not in bib_groups:
             continue
 
-        bib_titles = bib_groups[citing_id]
-        norm_title_map = {norm: orig for (orig, norm) in bib_titles}
+        bib_entries = bib_groups[citing_id]
+        # Map normalized title -> (original_idx, original_title)
+        norm_title_map = {
+            entry['norm_bib_title']: (entry['original_idx'], entry['bib_title']) 
+            for entry in bib_entries
+        }
         norm_title_list = list(norm_title_map.keys())
 
         for _, row in group.iterrows():
@@ -143,7 +150,7 @@ def citation_matching_csv(
 
             if best:
                 norm_match, score, _ = best
-                matched_title = norm_title_map[norm_match]
+                original_idx, matched_title = norm_title_map[norm_match]
                 matched += 1
                 
                 results.append({
@@ -153,41 +160,47 @@ def citation_matching_csv(
                     "matched_bib_title": matched_title,
                     "match_score": score
                 })
+                
+                # Track update for original CSV
+                updates.append({
+                    'original_idx': original_idx,
+                    'cited_arxiv_id': row["cited_arxiv_id"]
+                })
             else:
                 no_match += 1
 
-    df_out = pd.DataFrame(results)
+    # Apply updates to original DataFrame and save back to CSV
+    for update in updates:
+        df_bib.at[update['original_idx'], 'cited_arxiv_id'] = update['cited_arxiv_id']
     
-    # Save if output path provided
-    if output_path:
-        df_out.to_csv(output_path, index=False)
-        print(f"\nSaved result CSV to: {output_path}")
+    df_bib.to_csv(csv_path, index=False)
+    print(f"\nUpdated original CSV: {csv_path}")
 
     print("\n" + "=" * 50)
     print("Citation Matching Statistics")
     print(f"Total citations processed: {total}")
     print(f"Matched: {matched}")
     print(f"No match: {no_match}")
+    print(f"Updates applied to database: {len(updates)}")
     print("=" * 50)
 
-    return df_out
+
 
 
 def citation_matching_sql(
     df_cit,
     arxiv_ids,
     db_config,
-    output_path=None,
     similarity_threshold=95
 ):
     """
     Match citations from Semantic Scholar with bibliography entries from PostgreSQL.
+    Updates the original database with matched arxiv IDs.
     
     Args:
         df_cit: DataFrame with citations from paper_citation_crawling()
         arxiv_ids: List of arxiv IDs to filter on
         db_config: Dict with keys: host, port, dbname, user, password
-        output_path: Optional path to save results
         similarity_threshold: Minimum fuzzy match score (0-100)
     
     Returns:
@@ -196,24 +209,28 @@ def citation_matching_sql(
     conn = psycopg2.connect(**db_config)
     
     try:
-        # Query bibliography data from database
+        # Query bibliography data from database (include primary key for updates)
         query = """
-            SELECT citing_arxiv_id, bib_title
+            SELECT id, citing_arxiv_id, bib_title
             FROM arxiv_citations
             WHERE citing_arxiv_id = ANY(%s)
+            AND cited_arxiv_id IS NULL
         """
-        df_bib = pd.read_sql(query, conn, params=(arxiv_ids,))
-    finally:
+        df_bib = pd.read_sql(query, conn, params=(list(arxiv_ids),))
+    except Exception as e:
         conn.close()
+        raise e
     
     df_bib["norm_bib_title"] = df_bib["bib_title"].apply(normalize_title)
 
-    # Group bib titles by citing_arxiv_id
+    # Group bib titles by citing_arxiv_id, also track row id for updating
     bib_groups = defaultdict(list)
     for _, row in df_bib.iterrows():
-        bib_groups[str(row["citing_arxiv_id"])].append(
-            (row["bib_title"], row["norm_bib_title"])
-        )
+        bib_groups[str(row["citing_arxiv_id"])].append({
+            'id': row["id"],
+            'bib_title': row["bib_title"],
+            'norm_bib_title': row["norm_bib_title"]
+        })
 
     # Ensure required columns exist
     required_cols = ["citing_arxiv_id", "cited_arxiv_id", "cited_paper_name"]
@@ -222,6 +239,7 @@ def citation_matching_sql(
             raise ValueError(f"Missing required column: {col}")
 
     results = []
+    updates = []  # Track updates to make to database
     total = 0
     matched = 0
     no_match = 0
@@ -233,8 +251,12 @@ def citation_matching_sql(
         if citing_id not in bib_groups:
             continue
 
-        bib_titles = bib_groups[citing_id]
-        norm_title_map = {norm: orig for (orig, norm) in bib_titles}
+        bib_entries = bib_groups[citing_id]
+        # Map normalized title -> (row_id, original_title)
+        norm_title_map = {
+            entry['norm_bib_title']: (entry['id'], entry['bib_title']) 
+            for entry in bib_entries
+        }
         norm_title_list = list(norm_title_map.keys())
 
         for _, row in group.iterrows():
@@ -251,7 +273,7 @@ def citation_matching_sql(
 
             if best:
                 norm_match, score, _ = best
-                matched_title = norm_title_map[norm_match]
+                row_id, matched_title = norm_title_map[norm_match]
                 matched += 1
                 
                 results.append({
@@ -261,20 +283,37 @@ def citation_matching_sql(
                     "matched_bib_title": matched_title,
                     "match_score": score
                 })
+                
+                # Track update for database
+                updates.append((row["cited_arxiv_id"], row_id))
             else:
                 no_match += 1
 
-    df_out = pd.DataFrame(results)
+    # Apply updates to database
+    if updates:
+        try:
+            cursor = conn.cursor()
+            update_query = """
+                UPDATE arxiv_citations 
+                SET cited_arxiv_id = %s 
+                WHERE id = %s
+            """
+            execute_batch(cursor, update_query, updates)
+            conn.commit()
+            print(f"\nUpdated {len(updates)} rows in database")
+        except Exception as e:
+            conn.rollback()
+            raise e
+        finally:
+            cursor.close()
     
-    if output_path:
-        df_out.to_csv(output_path, index=False)
-        print(f"\nSaved result CSV to: {output_path}")
+    conn.close()
+
 
     print("\n" + "=" * 50)
     print("Citation Matching Statistics")
     print(f"Total citations processed: {total}")
     print(f"Matched: {matched}")
     print(f"No match: {no_match}")
+    print(f"Updates applied to database: {len(updates)}")
     print("=" * 50)
-
-    return df_out
