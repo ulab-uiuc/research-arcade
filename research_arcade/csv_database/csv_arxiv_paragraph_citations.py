@@ -10,6 +10,7 @@ from semanticscholar import SemanticScholar
 from dotenv import load_dotenv
 load_dotenv()
 
+
 class CSVArxivParagraphCitation:
     def __init__(self, csv_dir: str):
         csv_path = f"{csv_dir}/arxiv_paragraph_citations.csv"
