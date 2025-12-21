@@ -6,9 +6,6 @@ import json
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from ..arxiv_utils.multi_input.multi_download import MultiDownload
-from ..arxiv_utils.graph_constructor.node_processor import NodeConstructor
-from ..arxiv_utils.utils import arxiv_id_processor
 
 
 class SQLArxivPaperCategory:
@@ -342,3 +339,20 @@ class SQLArxivPaperCategory:
         except Exception as e:
             print(f"Error importing paper-category relationships from JSON: {e}")
             return False
+
+
+
+    def construct_paper_category_table_from_api(self, arxiv_ids, dest_dir):
+        # The same logic, that we first open the file, then create the corresponding stuff.
+
+        # In fact, we only need to add paper category
+        # Open the metadata
+
+        for arxiv_id in arxiv_ids:
+            metadata_path = f"{dest_dir}/{arxiv_id}/{arxiv_id}_metadata.json"
+
+            with open(metadata_path, 'r') as file:
+                metadata_json = json.load(file)
+                categories = metadata_json['categories']
+                for category in categories:
+                    self.insert_paper_category_by_name(paper_arxiv_id=arxiv_id, category_name=category)

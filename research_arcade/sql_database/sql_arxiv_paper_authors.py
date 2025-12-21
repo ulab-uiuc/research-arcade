@@ -6,9 +6,6 @@ import json
 import os
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from ..arxiv_utils.multi_input.multi_download import MultiDownload
-from ..arxiv_utils.graph_constructor.node_processor import NodeConstructor
-from ..arxiv_utils.utils import arxiv_id_processor
 
 
 class SQLArxivPaperAuthor:
@@ -352,3 +349,17 @@ class SQLArxivPaperAuthor:
         except Exception as e:
             print(f"Error importing paper-author relationships from JSON: {e}")
             return False
+
+    def construct_paper_authors_table_from_api(self, arxiv_ids, dest_dir):
+
+        # search for authors in the page.
+        for arxiv_id in arxiv_ids:
+            metadata_path = f"{dest_dir}/{arxiv_id}/{arxiv_id}_metadata.json"
+
+            with open(metadata_path, 'r') as file:
+                metadata_json = json.load(file)
+                authors = metadata_json['authors']
+                i = 0
+                for author in authors:
+                    i += 1
+                    self.insert_paper_author(paper_arxiv_id=arxiv_id, author_name=author, author_sequence=i)

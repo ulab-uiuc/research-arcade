@@ -6,9 +6,33 @@ import json
 import os
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from ..arxiv_utils.multi_input.multi_download import MultiDownload
-from ..arxiv_utils.graph_constructor.node_processor import NodeConstructor
-from ..arxiv_utils.utils import arxiv_id_processor
+from typing import List, Tuple
+
+def figure_iteration_recursive(figure_json):
+
+        # Create a set of figures along with the
+        # list represents (path, caption, label)
+        path_to_info: List[Tuple[str, str, str]] = []
+
+        # First iterate through parent, then go into the children
+
+        def figure_iteration(figure_json):
+            nonlocal path_to_info
+
+            if not figure_json:
+                return
+            if figure_json['figure_paths']:
+                path = figure_json['figure_paths'][0]
+                caption = figure_json['caption']
+                label = figure_json['label']
+                path_to_info.append((path, caption, label))
+            subfigures = figure_json['subfigures']
+            
+            for subfigure in subfigures:
+                figure_iteration(subfigure)
+        
+        figure_iteration(figure_json=figure_json)
+        return path_to_info
 
 
 class SQLArxivPaperFigure:
@@ -342,3 +366,37 @@ class SQLArxivPaperFigure:
         except Exception as e:
             print(f"Error importing paper-figure relationships from JSON: {e}")
             return False
+
+
+
+    def construct_paper_figures_table_from_api(self, arxiv_ids, dest_dir):
+
+        for arxiv_id in arxiv_ids:
+            json_path = f"{dest_dir}/output/{arxiv_id}.json"
+
+            try:
+                with open(json_path, 'r') as file:
+                    file_json = json.load(file)
+            except FileNotFoundError:
+                print(f"Error: The file '{file_json}' was not found.")
+                continue
+            except json.JSONDecodeError:
+                print(f"Error: Could not decode JSON from '{file_json}'. Check if the file contains valid JSON.")
+                continue
+            except Exception as e:
+                print(f"An unexpected error occurred: {e}")
+                continue
+
+
+            figure_jsons = file_json['figure']
+
+            for figure_json in figure_jsons:
+                
+                figures = figure_iteration_recursive(figure_json=figure_json)
+
+                for figure in figures:
+                    path, caption, label = figure
+                    figure_id = self.match_figure_id(paper_arxiv_id=arxiv_id, label=label)
+
+
+                    self.insert_paper_figure(paper_arxiv_id=arxiv_id, figure_id=figure_id)

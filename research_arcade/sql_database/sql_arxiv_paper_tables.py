@@ -1,11 +1,9 @@
 import psycopg2
-
+import json
 import os
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from ..arxiv_utils.multi_input.multi_download import MultiDownload
-from ..arxiv_utils.graph_constructor.node_processor import NodeConstructor
-from ..arxiv_utils.utils import arxiv_id_processor
+
 class SQLArxivPaperTable:
     def __init__(self, host: str, dbname: str, user: str, password: str, port: str):
         self.host = host
@@ -69,3 +67,38 @@ class SQLArxivPaperTable:
             return inserted
         finally:
             conn.close()
+
+
+
+    def construct_paper_tables_table_from_api(self, arxiv_ids, dest_dir):
+
+        for arxiv_id in arxiv_ids:
+            json_path = f"{dest_dir}/output/{arxiv_id}.json"
+
+            try:
+                with open(json_path, 'r') as file:
+                    file_json = json.load(file)
+            except FileNotFoundError:
+                print(f"Error: The file '{file_json}' was not found.")
+                continue
+            except json.JSONDecodeError:
+                print(f"Error: Could not decode JSON from '{file_json}'. Check if the file contains valid JSON.")
+                continue
+            except Exception as e:
+                print(f"An unexpected error occurred: {e}")
+                continue
+
+            table_jsons = file_json['table']
+            for table_json in table_jsons:
+                
+                caption = table_json['caption']
+                label = table_json['label']
+                table = table_json['tabular']
+                # We don't currently store the table anywhere as a file so the table path is empty
+                path = None
+
+                table_id = self.match_table_id(paper_arxiv_id=arxiv_id, label=label)
+                
+                
+                self.insert_paper_table(paper_arxiv_id = arxiv_id, table_id=table_id)
+
