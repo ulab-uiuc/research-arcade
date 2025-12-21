@@ -9,8 +9,10 @@ sys.path.insert(0, '/app')
 
 from dotenv import load_dotenv
 load_dotenv()
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from research_arcade.arxiv_utils.multi_input.arxiv_crawler_new import download_with_time, extract_arxiv_ids
+# from research_arcade.research_arcade import ResearchArcade
 from research_arcade.research_arcade import ResearchArcade
 
 
@@ -47,7 +49,7 @@ def save_arxiv_ids(arxiv_ids, dest_dir, start_date, end_date, field=None):
     with open(filepath, 'w') as f:
         for arxiv_id in arxiv_ids:
             f.write(f"{arxiv_id}\n")
-    
+
     print(f"Saved {len(arxiv_ids)} processed arXiv IDs to {filepath}")
     return filepath
 
@@ -70,21 +72,9 @@ def process_papers(arxiv_ids, db_type):
     ra.construct_tables_from_arxiv_ids(config=config)
 
 
-def get_interval_seconds(interval: str) -> int:
+def get_interval_seconds(interval: int) -> int:
     """Convert interval string to seconds."""
-    if interval == "hourly":
-        return 3600
-    elif interval == "daily":
-        return 86400
-    elif interval == "weekly":
-        return 604800
-    else:
-        # Assume it's a number (seconds)
-        try:
-            return int(interval)
-        except ValueError:
-            return 86400  # Default to daily
-
+    return int(interval) * 86400
 
 def run_single_crawl(start_date, end_date, field, dest_dir, arxiv_id_dest, db_type):
     """Run a single crawl iteration."""
@@ -127,12 +117,14 @@ def main():
     parser.add_argument("--dest", default="download", help="Output directory for downloads")
     parser.add_argument("--arxiv_id_dest", default="arxiv_ids", help="Directory for arXiv ID files")
     parser.add_argument("--db-type", default="csv", choices=["csv", "sql"], help="Database type")
-    
+
     # Continuous mode options
     parser.add_argument("--continuous", action="store_true", help="Run continuously in a loop")
-    parser.add_argument("--interval", default="daily", help="Crawl interval: hourly, daily, weekly, or seconds")
-    parser.add_argument("--lookback-days", type=int, default=1, help="Days to look back for each crawl")
-    
+    parser.add_argument("--interval", type=int, default=2, help="Crawl interval by days")
+
+    # Allow delay of crawl since papers go through review before being published on ArXiv
+    parser.add_argument("--delay", type=int, default=2, help="Crawl interval by days")
+
     args = parser.parse_args()
 
     # Single run mode
@@ -155,13 +147,12 @@ def main():
     interval_seconds = get_interval_seconds(args.interval)
     print(f"Starting continuous crawl mode")
     print(f"  Interval: {args.interval} ({interval_seconds} seconds)")
-    print(f"  Lookback: {args.lookback_days} days")
     print(f"  Field: {args.field or 'all'}")
     print(f"  Destination: {args.dest}")
 
     while True:
-        start_date = (date.today() - timedelta(days=args.lookback_days)).isoformat()
-        end_date = date.today().isoformat()
+        start_date = (date.today() - timedelta(days=args.interval) - timedelta(days=args.delay + 1)).isoformat()
+        end_date = (date.today() - timedelta(days=args.delay)).isoformat() 
         
         run_single_crawl(
             start_date=start_date,
