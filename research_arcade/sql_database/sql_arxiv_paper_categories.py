@@ -41,13 +41,9 @@ class SQLArxivPaperCategory:
             cur.execute("""
                 CREATE TABLE IF NOT EXISTS arxiv_paper_category (
                     paper_arxiv_id VARCHAR(100) NOT NULL,
-                    category_id VARCHAR(100) NOT NULL
+                    category_id INTEGER NOT NULL,
+                    CONSTRAINT ux_arxiv_paper_category_unique UNIQUE (paper_arxiv_id, category_id)
                 )
-            """)
-            # Composite unique index for preventing duplicates
-            cur.execute("""
-                CREATE UNIQUE INDEX IF NOT EXISTS ux_arxiv_paper_category_unique
-                ON arxiv_paper_category (paper_arxiv_id, category_id)
             """)
             cur.close()
         finally:
@@ -77,6 +73,37 @@ class SQLArxivPaperCategory:
             return inserted
         finally:
             conn.close()
+
+    def match_category_id_by_name(self, category_name: str):
+        """
+        Look up category ID by name from the arxiv_categories table.
+        Returns the category id if found, None otherwise.
+        """
+        conn = self._get_connection()
+        try:
+            cur = conn.cursor()
+            cur.execute(
+                """
+                SELECT id 
+                FROM arxiv_categories 
+                WHERE name = %s
+                LIMIT 1
+                """,
+                (category_name,)
+            )
+            result = cur.fetchone()
+            cur.close()
+            return result[0] if result else None
+        finally:
+            conn.close()
+
+    def insert_paper_category_by_name(self, paper_arxiv_id, category_name):
+        """
+        Insert a paper-category relationship by looking up the category ID by name.
+        """
+        category_id = self.match_category_id_by_name(category_name)
+        if category_id is not None:
+            self.insert_paper_category(paper_arxiv_id=paper_arxiv_id, category_id=category_id)
 
     def get_all_paper_categories(self):
         """Get all paper-category relationships from the database."""
@@ -256,15 +283,15 @@ class SQLArxivPaperCategory:
             
         Expected JSON format:
             [
-                {"paper_arxiv_id": "1706.03762v7", "category_id": "cs.AI"},
-                {"paper_arxiv_id": "1706.03762v7", "category_id": "cs.LG"},
+                {"paper_arxiv_id": "1706.03762v7", "category_id": 1},
+                {"paper_arxiv_id": "1706.03762v7", "category_id": 2},
                 ...
             ]
             
         Or:
             {
                 "paper_categories": [
-                    {"paper_arxiv_id": "1706.03762v7", "category_id": "cs.AI"},
+                    {"paper_arxiv_id": "1706.03762v7", "category_id": 1},
                     ...
                 ]
             }
@@ -340,19 +367,29 @@ class SQLArxivPaperCategory:
             print(f"Error importing paper-category relationships from JSON: {e}")
             return False
 
-
-
     def construct_paper_category_table_from_api(self, arxiv_ids, dest_dir):
-        # The same logic, that we first open the file, then create the corresponding stuff.
-
-        # In fact, we only need to add paper category
-        # Open the metadata
-
+        """
+        Construct paper-category relationships from paper metadata files.
+        
+        Args:
+            arxiv_ids: List of arxiv IDs to process
+            dest_dir: Directory containing paper metadata
+        """
         for arxiv_id in arxiv_ids:
             metadata_path = f"{dest_dir}/{arxiv_id}/{arxiv_id}_metadata.json"
 
-            with open(metadata_path, 'r') as file:
-                metadata_json = json.load(file)
-                categories = metadata_json['categories']
-                for category in categories:
-                    self.insert_paper_category_by_name(paper_arxiv_id=arxiv_id, category_name=category)
+            try:
+                with open(metadata_path, 'r') as file:
+                    metadata_json = json.load(file)
+                    categories = metadata_json['categories']
+                    for category in categories:
+                        self.insert_paper_category_by_name(paper_arxiv_id=arxiv_id, category_name=category)
+            except FileNotFoundError:
+                print(f"Error: Metadata file not found for {arxiv_id}")
+                continue
+            except json.JSONDecodeError:
+                print(f"Error: Could not decode JSON from metadata for {arxiv_id}")
+                continue
+            except Exception as e:
+                print(f"An unexpected error occurred for {arxiv_id}: {e}")
+                continue

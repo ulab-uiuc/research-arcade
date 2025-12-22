@@ -11,6 +11,11 @@ from semanticscholar import SemanticScholar
 from dotenv import load_dotenv
 from pathlib import Path
 
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from ..arxiv_utils.utils import get_paragraph_num, arxiv_ids_hashing
+from ..arxiv_utils.citation_processing import citation_matching_csv
+
 load_dotenv()
 
 
@@ -161,14 +166,14 @@ class SQLArxivParagraphCitation:
     # -------------------------
     # Bulk Operations
     # -------------------------
-    def construct_table_from_api(self, arxiv_ids: List[str], dest_dir: str):
+    def construct_citations_table_from_api(self, arxiv_ids: List[str], dest_dir: str):
         """
         Construct the paragraph citations table from API-generated paragraph data.
         Reads from JSONL file and populates the database.
         """
-        from ..arxiv_utils.utils import get_paragraph_num
-        
-        paragraph_path = f"{dest_dir}/output/paragraphs/text_nodes.jsonl"
+        # We apply the hashing
+        prefix = arxiv_ids_hashing(arxiv_ids=arxiv_ids)
+        paragraph_path = f"{dest_dir}/output/paragraphs/{prefix}/text_nodes.jsonl"
 
         if not os.path.exists(paragraph_path):
             print(f"Error: Paragraph file {paragraph_path} does not exist.")
@@ -368,6 +373,160 @@ class SQLArxivParagraphCitation:
             cur.close()
 
             print(f"Updated {len(updates)} paragraph_global_id entries")
+            return len(updates)
+        finally:
+            conn.close()
+
+    def update_paragraph_global_id(self, arxiv_ids: List[str], paragraph_table_name: str = "arxiv_paragraphs"):
+        """
+        Update paragraph_global_id by looking up from the paragraphs table.
+        
+        Args:
+            arxiv_ids: List of arxiv IDs to process
+            paragraph_table_name: Name of the paragraphs table to look up from
+        
+        Returns:
+            Number of rows updated
+        """
+        conn = self._get_connection()
+        try:
+            # Get rows needing paragraph_global_id for the specified arxiv_ids
+            placeholders = ','.join(['%s'] * len(arxiv_ids))
+            query = f"""
+                SELECT id, citing_arxiv_id, paper_section, paragraph_id
+                FROM arxiv_paragraph_citations
+                WHERE citing_arxiv_id IN ({placeholders})
+                  AND (paragraph_global_id IS NULL OR paragraph_global_id = 0)
+            """
+            df = pd.read_sql(query, conn, params=tuple(arxiv_ids))
+
+            if df.empty:
+                return 0
+
+            # Build lookup from paragraphs table
+            paragraph_query = f"""
+                SELECT id, paper_arxiv_id, paper_section, paragraph_id
+                FROM {paragraph_table_name}
+                WHERE paper_arxiv_id IN ({placeholders})
+            """
+            para_df = pd.read_sql(paragraph_query, conn, params=tuple(arxiv_ids))
+
+            if para_df.empty:
+                print(f"Paragraph table not found or empty: {paragraph_table_name}")
+                return 0
+
+            # Build lookup: (paper_arxiv_id, paper_section, paragraph_id) -> id
+            paragraph_lookup = {}
+            for _, row in para_df.iterrows():
+                key = (str(row['paper_arxiv_id']), str(row['paper_section']), str(row['paragraph_id']))
+                paragraph_id = row.get('id')
+                if pd.notna(paragraph_id):
+                    paragraph_lookup[key] = paragraph_id
+
+            updates = []
+            for _, row in df.iterrows():
+                lookup_key = (str(row['citing_arxiv_id']), str(row['paper_section']), str(row['paragraph_id']))
+                
+                if lookup_key in paragraph_lookup:
+                    updates.append((paragraph_lookup[lookup_key], row['id']))
+
+            if not updates:
+                return 0
+
+            # Batch update
+            cur = conn.cursor()
+            execute_values(
+                cur,
+                """
+                UPDATE arxiv_paragraph_citations
+                SET paragraph_global_id = data.paragraph_global_id
+                FROM (VALUES %s) AS data(paragraph_global_id, id)
+                WHERE arxiv_paragraph_citations.id = data.id
+                """,
+                updates,
+                template="(%s, %s)"
+            )
+            cur.close()
+
+            print(f"Updated {len(updates)} paragraph_global_id entries")
+            return len(updates)
+        finally:
+            conn.close()
+
+    def update_cited_paper_arxiv_ids(self, arxiv_ids: List[str], citations_table_name: str = "arxiv_citations"):
+        """
+        Update cited_arxiv_id by looking up from the citations table.
+        
+        Args:
+            arxiv_ids: List of arxiv IDs to process
+            citations_table_name: Name of the citations table to look up from
+        
+        Returns:
+            Number of rows updated
+        """
+        conn = self._get_connection()
+        try:
+            # Get rows needing cited_arxiv_id for the specified arxiv_ids
+            placeholders = ','.join(['%s'] * len(arxiv_ids))
+            query = f"""
+                SELECT id, citing_arxiv_id, bib_key
+                FROM arxiv_paragraph_citations
+                WHERE citing_arxiv_id IN ({placeholders})
+                  AND (cited_arxiv_id IS NULL OR cited_arxiv_id = '')
+            """
+            df = pd.read_sql(query, conn, params=tuple(arxiv_ids))
+
+            if df.empty:
+                return 0
+
+            # Build lookup from citations table
+            citation_query = f"""
+                SELECT citing_arxiv_id, bib_key, cited_arxiv_id
+                FROM {citations_table_name}
+                WHERE citing_arxiv_id IN ({placeholders})
+                  AND cited_arxiv_id IS NOT NULL
+                  AND cited_arxiv_id != ''
+            """
+            cit_df = pd.read_sql(citation_query, conn, params=tuple(arxiv_ids))
+
+            if cit_df.empty:
+                print(f"Citations table not found or empty: {citations_table_name}")
+                return 0
+
+            # Build lookup: (citing_arxiv_id, bib_key) -> cited_arxiv_id
+            citation_lookup = {}
+            for _, row in cit_df.iterrows():
+                key = (str(row['citing_arxiv_id']), str(row['bib_key']))
+                cited_id = row.get('cited_arxiv_id')
+                if cited_id and cited_id != '':
+                    citation_lookup[key] = cited_id
+
+            updates = []
+            for _, row in df.iterrows():
+                lookup_key = (str(row['citing_arxiv_id']), str(row['bib_key']))
+                
+                if lookup_key in citation_lookup:
+                    updates.append((citation_lookup[lookup_key], row['id']))
+
+            if not updates:
+                return 0
+
+            # Batch update
+            cur = conn.cursor()
+            execute_values(
+                cur,
+                """
+                UPDATE arxiv_paragraph_citations
+                SET cited_arxiv_id = data.cited_arxiv_id
+                FROM (VALUES %s) AS data(cited_arxiv_id, id)
+                WHERE arxiv_paragraph_citations.id = data.id
+                """,
+                updates,
+                template="(%s, %s)"
+            )
+            cur.close()
+
+            print(f"Updated {len(updates)} cited_arxiv_id entries")
             return len(updates)
         finally:
             conn.close()

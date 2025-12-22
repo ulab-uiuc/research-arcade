@@ -94,9 +94,10 @@ class SQLArxivPapers:
         finally:
             conn.close()
 
-    def delete_paper_by_arxiv_id(self, arxiv_id: str) -> bool:
+    def delete_paper_by_id(self, arxiv_id: str) -> bool:
         """
         Delete by arxiv_id; returns True if a row was deleted.
+        (Named to match CSV version's delete_paper_by_id)
         """
         conn = self._get_connection()
         try:
@@ -172,6 +173,25 @@ class SQLArxivPapers:
             ok = cur.fetchone() is not None
             cur.close()
             return ok
+        finally:
+            conn.close()
+
+    def get_paper_by_id(self, arxiv_id: str):
+        """
+        Get a paper by its arxiv_id. Returns a single tuple or None if not found.
+        (Named to match CSV version's get_paper_by_id)
+        """
+        conn = self._get_connection()
+        try:
+            cur = conn.cursor()
+            cur.execute(
+                "SELECT id, arxiv_id, base_arxiv_id, version, title, abstract, submit_date, metadata "
+                "FROM arxiv_papers WHERE arxiv_id = %s",
+                (arxiv_id,)
+            )
+            row = cur.fetchone()
+            cur.close()
+            return row if row else None
         finally:
             conn.close()
 
@@ -433,7 +453,13 @@ class SQLArxivPapers:
             return False
 
     def construct_papers_table_from_api(self, arxiv_ids, dest_dir):
-
+        """
+        Construct papers table by downloading and processing arXiv papers.
+        
+        Args:
+            arxiv_ids: List of arXiv IDs to process
+            dest_dir: Directory to store downloaded papers
+        """
         # Check if papers already exists in the directory
         downloaded_paper_ids = []
         for arxiv_id in arxiv_ids:
@@ -445,9 +471,8 @@ class SQLArxivPapers:
         for arxiv_id in downloaded_paper_ids:
             md = MultiDownload()
             try:
-                md.download_arxiv(input=arxiv_id, input_type = "id", output_type="latex", dest_dir=dest_dir)
+                md.download_arxiv(input=arxiv_id, input_type="id", output_type="latex", dest_dir=dest_dir)
                 print(f"paper with id {arxiv_id} downloaded")
-                # downloaded_paper_ids.append(arxiv_id)
             except RuntimeError as e:
                 print(f"[ERROR] Failed to download {arxiv_id}: {e}")
                 continue
@@ -479,5 +504,6 @@ class SQLArxivPapers:
                     submit_date=metadata['published'],
                     metadata=metadata
                 )
+                print("Downloaded")
             except Exception:
                 print(f"Paper {arxiv_id} does not have metadata downloaded")

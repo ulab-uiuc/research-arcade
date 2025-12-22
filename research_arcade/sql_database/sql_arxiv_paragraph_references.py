@@ -4,10 +4,10 @@ import psycopg2
 import psycopg2.extras
 import pandas as pd
 import json
-from ..arxiv_utils.utils import get_paragraph_num
 
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from ..arxiv_utils.utils import get_paragraph_num, arxiv_ids_hashing
 
 
 class SQLArxivParagraphReference:
@@ -79,17 +79,56 @@ class SQLArxivParagraphReference:
         finally:
             conn.close()
 
-    def delete_paragraph_reference_by_id(self, id: int) -> bool:
+    def delete_paragraph_reference_by_id(self, paragraph_id: int, reference_id: int) -> bool:
         """
-        Delete by id. Returns True if deleted.
+        Delete by paragraph_id and reference_id (id). Returns True if deleted.
         """
         conn = self._get_connection()
         try:
             cur = conn.cursor()
-            cur.execute("DELETE FROM arxiv_paragraph_references WHERE id = %s RETURNING id", (id,))
+            cur.execute(
+                "DELETE FROM arxiv_paragraph_references WHERE paragraph_id = %s AND id = %s RETURNING id",
+                (paragraph_id, reference_id)
+            )
             ok = cur.fetchone() is not None
             cur.close()
             return ok
+        finally:
+            conn.close()
+
+    def delete_paragraph_reference_by_paragraph_id(self, paragraph_id: int) -> int:
+        """
+        Delete all references for a given paragraph_id.
+        Returns count of deleted rows.
+        """
+        conn = self._get_connection()
+        try:
+            cur = conn.cursor()
+            cur.execute(
+                "DELETE FROM arxiv_paragraph_references WHERE paragraph_id = %s RETURNING id",
+                (str(paragraph_id),)
+            )
+            rows = cur.fetchall()
+            cur.close()
+            return len(rows) if rows else 0
+        finally:
+            conn.close()
+
+    def delete_paragraph_reference_by_reference_id(self, reference_id: int) -> int:
+        """
+        Delete a reference by its id.
+        Returns count of deleted rows (0 or 1).
+        """
+        conn = self._get_connection()
+        try:
+            cur = conn.cursor()
+            cur.execute(
+                "DELETE FROM arxiv_paragraph_references WHERE id = %s RETURNING id",
+                (reference_id,)
+            )
+            rows = cur.fetchall()
+            cur.close()
+            return len(rows) if rows else 0
         finally:
             conn.close()
 
@@ -187,72 +226,36 @@ class SQLArxivParagraphReference:
         finally:
             conn.close()
 
-    def get_paragraph_neighboring_references(self, paragraph_id: int):
+    def get_paragraph_neighboring_references(self, paragraph_id: int) -> Optional[pd.DataFrame]:
         """Get all references for a given paragraph."""
         conn = self._get_connection()
         try:
-            cur = conn.cursor()
-            cur.execute(
-                "SELECT id, paragraph_id, paper_section, paper_arxiv_id, reference_label, reference_type "
-                "FROM arxiv_paragraph_references WHERE paragraph_id = %s",
-                (paragraph_id,)
-            )
-            rows = cur.fetchall()
-            cur.close()
-            return rows if rows else None
+            query = """
+                SELECT id, paragraph_id, paper_section, paper_arxiv_id, reference_label, reference_type 
+                FROM arxiv_paragraph_references 
+                WHERE paragraph_id = %s
+            """
+            df = pd.read_sql(query, conn, params=(str(paragraph_id),))
+            return None if df.empty else df.reset_index(drop=True)
         finally:
             conn.close()
 
-    def get_reference_neighboring_paragraphs(self, reference_id: int):
+    def get_reference_neighboring_paragraphs(self, reference_id: int) -> Optional[pd.DataFrame]:
         """Get all paragraphs that reference a given reference_id."""
         conn = self._get_connection()
         try:
-            cur = conn.cursor()
-            cur.execute(
-                "SELECT id, paragraph_id, paper_section, paper_arxiv_id, reference_label, reference_type "
-                "FROM arxiv_paragraph_references WHERE id = %s",
-                (reference_id,)
-            )
-            rows = cur.fetchall()
-            cur.close()
-            return rows if rows else None
-        finally:
-            conn.close()
-
-    def delete_paragraph_reference_by_paragraph_id(self, paragraph_id: int) -> int:
-        """Delete all references for a given paragraph. Returns count of deleted rows."""
-        conn = self._get_connection()
-        try:
-            cur = conn.cursor()
-            cur.execute(
-                "DELETE FROM arxiv_paragraph_references WHERE paragraph_id = %s",
-                (paragraph_id,)
-            )
-            count = cur.rowcount
-            cur.close()
-            return count
-        finally:
-            conn.close()
-
-    def delete_paragraph_reference_by_reference_id(self, reference_id: int) -> int:
-        """Delete a reference by its id. Returns count of deleted rows."""
-        conn = self._get_connection()
-        try:
-            cur = conn.cursor()
-            cur.execute(
-                "DELETE FROM arxiv_paragraph_references WHERE id = %s",
-                (reference_id,)
-            )
-            count = cur.rowcount
-            cur.close()
-            return count
+            query = """
+                SELECT id, paragraph_id, paper_section, paper_arxiv_id, reference_label, reference_type 
+                FROM arxiv_paragraph_references 
+                WHERE id = %s
+            """
+            df = pd.read_sql(query, conn, params=(reference_id,))
+            return None if df.empty else df.reset_index(drop=True)
         finally:
             conn.close()
 
     def check_paragraph_reference_exists(self, id: int) -> bool:
-        """
-        Returns True if a paragraph reference with the given id exists.
-        """
+        """Check if a paragraph reference exists by id."""
         conn = self._get_connection()
         try:
             cur = conn.cursor()
@@ -269,7 +272,7 @@ class SQLArxivParagraphReference:
     def construct_paragraph_references_table_from_csv(self, csv_file: str) -> bool:
         """
         Imports rows from a CSV with columns:
-          ['paragraph_id', 'paper_section', 'paper_arxiv_id', 'reference_label', 'reference_type']
+            ['paragraph_id', 'paper_section', 'paper_arxiv_id', 'reference_label', 'reference_type']
         Ignores any 'id' column; DB assigns SERIAL ids.
         Returns True on success, False on validation error or missing file.
         """
@@ -406,12 +409,18 @@ class SQLArxivParagraphReference:
             print(f"Error importing paragraph-reference relationships from JSON: {e}")
             return False
         
-    def construct_paragraph_references_table_from_api_sql(self, arxiv_ids, dest_dir):
+    def construct_paragraph_references_table_from_api(self, arxiv_ids, dest_dir):
         """
-        SQL version using bulk operations instead of individual inserts.
+        Construct paragraph references from API-generated paragraph data.
+        Uses bulk operations for efficiency.
         """
-        # Assume that the paragraph has already been processed
-        paragraph_path = f"{dest_dir}/output/paragraphs/text_nodes.jsonl"
+        # Apply the hashing to get the correct path
+        prefix = arxiv_ids_hashing(arxiv_ids=arxiv_ids)
+        paragraph_path = f"{dest_dir}/output/paragraphs/{prefix}/text_nodes.jsonl"
+        
+        if not os.path.exists(paragraph_path):
+            print(f"Error: Paragraph file {paragraph_path} does not exist.")
+            return False
         
         with open(paragraph_path) as f:
             data = [json.loads(line) for line in f]
@@ -457,9 +466,9 @@ class SQLArxivParagraphReference:
             for ref_label in paragraph_ref_labels:
                 ref_type = None
                 
-                # Determine reference type
-                is_figure = ref_label.startswith("figure")
-                is_table = ref_label.startswith("table")
+                # Determine reference type - match CSV version prefixes
+                is_figure = ref_label.startswith("fig")
+                is_table = ref_label.startswith("tab")
                 
                 if is_figure:
                     ref_type = 'figure'

@@ -786,3 +786,4 @@ class ResearchArcade:
         self.arxiv_paragraph_citation.construct_citations_table_from_api(**config)
         self.arxiv_paragraph_figure.construct_paragraph_figures_table_from_api(**config)
         self.arxiv_paragraph_table.construct_paragraph_tables_table_from_api(**config)
+    

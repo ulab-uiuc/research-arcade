@@ -4,14 +4,15 @@ import psycopg2
 import psycopg2.extras
 import pandas as pd
 import json
-
-
+from rapidfuzz import fuzz, process
+from collections import defaultdict
 
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from ..arxiv_utils.multi_input.multi_download import MultiDownload
 from ..arxiv_utils.graph_constructor.node_processor import NodeConstructor
 from ..arxiv_utils.utils import arxiv_id_processor
+from ..arxiv_utils.citation_processing import paper_citation_crawling, normalize_title
 
 
 class SQLArxivCitation:
@@ -54,14 +55,15 @@ class SQLArxivCitation:
                     cited_arxiv_id VARCHAR(100),
                     bib_title TEXT,
                     bib_key VARCHAR(255),
-                    author_cited_paper TEXT,
                     citing_sections TEXT[],
-                    citing_paragraphs TEXT[]
+                    citing_paragraphs TEXT[],
+                    CONSTRAINT unique_citation UNIQUE (citing_arxiv_id, cited_arxiv_id)
                 )
             """)
             cur.close()
         finally:
             conn.close()
+
     # -------------------------
     # CRUD
     # -------------------------
@@ -71,7 +73,6 @@ class SQLArxivCitation:
         cited_arxiv_id: str, 
         bib_title: str = None,
         bib_key: str = None, 
-        author_cited_paper: str = None,
         citing_sections: List[str] = None,
         citing_paragraphs: List[str] = None
     ) -> Optional[int]:
@@ -89,8 +90,9 @@ class SQLArxivCitation:
                 """
                 INSERT INTO arxiv_citations 
                 (citing_arxiv_id, cited_arxiv_id, bib_title, bib_key, 
-                 author_cited_paper, citing_sections, citing_paragraphs)
-                VALUES (%s, %s, %s, %s, %s, %s, %s)
+                 citing_sections, citing_paragraphs)
+                VALUES (%s, %s, %s, %s, %s, %s)
+                ON CONFLICT ON CONSTRAINT unique_citation DO NOTHING
                 RETURNING id
                 """,
                 (
@@ -98,7 +100,6 @@ class SQLArxivCitation:
                     cited_arxiv_id, 
                     bib_title, 
                     bib_key, 
-                    author_cited_paper,
                     citing_sections or [],
                     citing_paragraphs or []
                 )
@@ -142,7 +143,6 @@ class SQLArxivCitation:
         cited_arxiv_id: str = None,
         bib_title: str = None,
         bib_key: str = None,
-        author_cited_paper: str = None,
         citing_sections: List[str] = None,
         citing_paragraphs: List[str] = None
     ) -> bool:
@@ -165,9 +165,6 @@ class SQLArxivCitation:
         if bib_key is not None:
             sets.append("bib_key = %s")
             vals.append(bib_key)
-        if author_cited_paper is not None:
-            sets.append("author_cited_paper = %s")
-            vals.append(author_cited_paper)
         if citing_sections is not None:
             sets.append("citing_sections = %s")
             vals.append(citing_sections)
@@ -195,7 +192,7 @@ class SQLArxivCitation:
         """
         If return_all=False: returns a single tuple
            (id, citing_arxiv_id, cited_arxiv_id, bib_title, bib_key, 
-            author_cited_paper, citing_sections, citing_paragraphs)
+            citing_sections, citing_paragraphs)
         If return_all=True: returns a list of such tuples.
         Returns None if not found.
         """
@@ -205,7 +202,7 @@ class SQLArxivCitation:
             cur.execute(
                 """
                 SELECT id, citing_arxiv_id, cited_arxiv_id, bib_title, bib_key,
-                       author_cited_paper, citing_sections, citing_paragraphs
+                       citing_sections, citing_paragraphs
                 FROM arxiv_citations WHERE id = %s
                 """,
                 (id,)
@@ -225,7 +222,7 @@ class SQLArxivCitation:
         try:
             query = """
                 SELECT id, citing_arxiv_id, cited_arxiv_id, bib_title, bib_key,
-                       author_cited_paper, citing_sections, citing_paragraphs
+                       citing_sections, citing_paragraphs
                 FROM arxiv_citations
             """
             df = pd.read_sql(query, conn)
@@ -244,7 +241,7 @@ class SQLArxivCitation:
         try:
             query = """
                 SELECT id, citing_arxiv_id, cited_arxiv_id, bib_title, bib_key,
-                       author_cited_paper, citing_sections, citing_paragraphs
+                       citing_sections, citing_paragraphs
                 FROM arxiv_citations 
                 WHERE citing_arxiv_id = %s
             """
@@ -264,7 +261,7 @@ class SQLArxivCitation:
         try:
             query = """
                 SELECT id, citing_arxiv_id, cited_arxiv_id, bib_title, bib_key,
-                       author_cited_paper, citing_sections, citing_paragraphs
+                       citing_sections, citing_paragraphs
                 FROM arxiv_citations 
                 WHERE cited_arxiv_id = %s
             """
@@ -287,7 +284,7 @@ class SQLArxivCitation:
                 cur.execute(
                     """
                     SELECT id, citing_arxiv_id, cited_arxiv_id, bib_title, bib_key,
-                           author_cited_paper, citing_sections, citing_paragraphs
+                           citing_sections, citing_paragraphs
                     FROM arxiv_citations WHERE citing_arxiv_id = %s
                     """,
                     (arxiv_id,)
@@ -296,7 +293,7 @@ class SQLArxivCitation:
                 cur.execute(
                     """
                     SELECT id, citing_arxiv_id, cited_arxiv_id, bib_title, bib_key,
-                           author_cited_paper, citing_sections, citing_paragraphs
+                           citing_sections, citing_paragraphs
                     FROM arxiv_citations WHERE cited_arxiv_id = %s
                     """,
                     (arxiv_id,)
@@ -358,7 +355,7 @@ class SQLArxivCitation:
         """
         Imports rows from a CSV with columns:
           ['citing_arxiv_id', 'cited_arxiv_id', 'bib_title', 'bib_key', 
-           'author_cited_paper', 'citing_sections', 'citing_paragraphs']
+           'citing_sections', 'citing_paragraphs']
         Ignores any 'id' column; DB assigns SERIAL ids.
         Skips conflicts and self-citations.
         
@@ -370,16 +367,13 @@ class SQLArxivCitation:
             return False
 
         df = pd.read_csv(csv_file)
-        required_cols = ['citing_arxiv_id', 'cited_arxiv_id', 'bib_title', 
-                        'bib_key']
+        required_cols = ['citing_arxiv_id', 'cited_arxiv_id', 'bib_title', 'bib_key']
         missing = [c for c in required_cols if c not in df.columns]
         if missing:
             print(f"Error: CSV is missing required columns: {missing}")
             return False
 
         # Add optional columns if missing
-        if 'author_cited_paper' not in df.columns:
-            df['author_cited_paper'] = None
         if 'citing_sections' not in df.columns:
             df['citing_sections'] = '[]'
         if 'citing_paragraphs' not in df.columns:
@@ -400,7 +394,6 @@ class SQLArxivCitation:
                 row['cited_arxiv_id'],
                 row['bib_title'] if pd.notna(row['bib_title']) else None,
                 row['bib_key'] if pd.notna(row['bib_key']) else None,
-                row['author_cited_paper'] if pd.notna(row['author_cited_paper']) else None,
                 citing_sections,
                 citing_paragraphs
             ))
@@ -417,7 +410,7 @@ class SQLArxivCitation:
                 """
                 INSERT INTO arxiv_citations 
                 (citing_arxiv_id, cited_arxiv_id, bib_title, bib_key, 
-                 author_cited_paper, citing_sections, citing_paragraphs)
+                 citing_sections, citing_paragraphs)
                 VALUES %s
                 ON CONFLICT ON CONSTRAINT unique_citation DO NOTHING
                 """,
@@ -507,7 +500,6 @@ class SQLArxivCitation:
                     citation['cited_arxiv_id'],
                     citation.get('bib_title', None),
                     citation.get('bib_key', None),
-                    citation.get('author_cited_paper', None),
                     citing_sections,
                     citing_paragraphs
                 ))
@@ -524,7 +516,7 @@ class SQLArxivCitation:
                     """
                     INSERT INTO arxiv_citations 
                     (citing_arxiv_id, cited_arxiv_id, bib_title, bib_key, 
-                     author_cited_paper, citing_sections, citing_paragraphs)
+                     citing_sections, citing_paragraphs)
                     VALUES %s
                     ON CONFLICT ON CONSTRAINT unique_citation DO NOTHING
                     """,
@@ -601,17 +593,8 @@ class SQLArxivCitation:
             try:
                 with open(json_path, 'r') as file:
                     file_json = json.load(file)
-                    print("len(file_json['citations'].values())")
-                    print(len(file_json['citations'].values()))
                     for citation in file_json['citations'].values():
                         cited_arxiv_id = citation.get('arxiv_id')
-                        
-                        # Skip citations without arXiv IDs (non-arXiv papers)
-                        # print("Cited arxiv id")
-                        # print(cited_arxiv_id)
-                        # if not cited_arxiv_id:
-                        #     continue
-                        
                         bib_key = citation.get('bib_key')
                         bib_title = citation.get('bib_title')
                         bib_author = citation.get('bib_author')
@@ -623,17 +606,15 @@ class SQLArxivCitation:
                             citing_section = context.get('section')
                             if citing_section:
                                 citing_sections.add(citing_section)
-                        # print("Inserting citation")
+
                         # Insert citation into database
                         self.insert_citation(
                             citing_arxiv_id=arxiv_id,
                             cited_arxiv_id=cited_arxiv_id,
                             citing_sections=list(citing_sections),
                             bib_title=bib_title,
-                            bib_key=bib_key,
-                            author_cited_paper=bib_author
+                            bib_key=bib_key
                         )
-
 
             except FileNotFoundError:
                 print(f"Error: The file '{json_path}' was not found.")
@@ -644,3 +625,152 @@ class SQLArxivCitation:
             except Exception as e:
                 print(f"An unexpected error occurred while processing {arxiv_id}: {e}")
                 continue
+
+        # Finally, postprocess all the citations that do not have valid cited arxiv id
+        result_df = paper_citation_crawling(arxiv_ids=arxiv_ids)
+        print("result_df")
+        print(result_df)
+        self.citation_matching_sql(df_cit=result_df, arxiv_ids=arxiv_ids)
+
+    def citation_matching_sql(
+        self,
+        df_cit,
+        arxiv_ids,
+        similarity_threshold=95
+    ):
+        """
+        Match citations from Semantic Scholar with bibliography entries from database.
+        Updates the database with matched arxiv IDs.
+        
+        Args:
+            df_cit: DataFrame with citation data from Semantic Scholar
+            arxiv_ids: List of arxiv IDs to process
+            similarity_threshold: Minimum fuzzy match score (default 95)
+        """
+        # Load bibkey from the database
+        df_bib = self.get_all_citations()
+        
+        if df_bib is None or df_bib.empty:
+            print("No bibliography entries found in database")
+            return
+        
+        # Convert arxiv_ids to strings for consistent comparison
+        arxiv_ids_str = [str(aid) for aid in arxiv_ids]
+        
+        # Convert citing_arxiv_id column to string
+        df_bib['citing_arxiv_id'] = df_bib['citing_arxiv_id'].astype(str)
+        
+        # Filter to only the arxiv_ids we care about AND where cited_arxiv_id is null/empty
+        def is_empty_or_null(x):
+            if pd.isna(x):
+                return True
+            if isinstance(x, str) and x.strip() == '':
+                return True
+            return False
+        
+        mask = (
+            df_bib['citing_arxiv_id'].isin(arxiv_ids_str) & 
+            df_bib['cited_arxiv_id'].apply(is_empty_or_null)
+        )
+        df_bib_filtered = df_bib[mask].copy()
+        
+        print(f"DEBUG: Total rows in database: {len(df_bib)}")
+        print(f"DEBUG: Arxiv IDs to match: {arxiv_ids_str}")
+        print(f"DEBUG: Rows with matching citing_arxiv_id: {df_bib['citing_arxiv_id'].isin(arxiv_ids_str).sum()}")
+        print(f"DEBUG: Rows with empty cited_arxiv_id: {df_bib['cited_arxiv_id'].apply(is_empty_or_null).sum()}")
+        print(f"DEBUG: Filtered rows for matching: {len(df_bib_filtered)}")
+        
+        if df_bib_filtered.empty:
+            print("No bibliography entries found for matching")
+            return
+        
+        df_bib_filtered["norm_bib_title"] = df_bib_filtered["bib_title"].apply(normalize_title)
+                
+        # Group bib titles by citing_arxiv_id, also track original id for updating
+        bib_groups = defaultdict(list)
+        for idx, row in df_bib_filtered.iterrows():
+            bib_groups[str(row["citing_arxiv_id"])].append({
+                'db_id': row["id"],
+                'bib_title': row["bib_title"],
+                'norm_bib_title': row["norm_bib_title"]
+            })
+        
+        # Ensure required columns exist in citation df
+        required_cols = ["citing_arxiv_id", "cited_arxiv_id", "cited_paper_name"]
+        for col in required_cols:
+            if col not in df_cit.columns:
+                raise ValueError(f"Missing required column: {col}")
+
+        results = []
+        updates = []  # Track updates to make to database
+        total = 0
+        matched = 0
+        no_match = 0
+
+        print(f"Processing {df_cit['citing_arxiv_id'].nunique()} unique citing papers...")
+        
+        for citing_id, group in df_cit.groupby("citing_arxiv_id"):
+            citing_id = str(citing_id)
+            if citing_id not in bib_groups:
+                continue
+
+            bib_entries = bib_groups[citing_id]
+            # Map normalized title -> (db_id, original_title)
+            norm_title_map = {
+                entry['norm_bib_title']: (entry['db_id'], entry['bib_title']) 
+                for entry in bib_entries
+            }
+            norm_title_list = list(norm_title_map.keys())
+
+            for _, row in group.iterrows():
+                total += 1
+                cited_name = normalize_title(row["cited_paper_name"])
+
+                # Fuzzy match
+                best = process.extractOne(
+                    cited_name,
+                    norm_title_list,
+                    scorer=fuzz.ratio,
+                    score_cutoff=similarity_threshold
+                )
+
+                if best:
+                    norm_match, score, _ = best
+                    db_id, matched_title = norm_title_map[norm_match]
+                    matched += 1
+
+                    results.append({
+                        "citing_arxiv_id": citing_id,
+                        "cited_arxiv_id": row["cited_arxiv_id"],
+                        "cited_paper_name": row["cited_paper_name"],
+                        "matched_bib_title": matched_title,
+                        "match_score": score
+                    })
+                    
+                    # Track update for database
+                    updates.append({
+                        'db_id': db_id,
+                        'cited_arxiv_id': row["cited_arxiv_id"]
+                    })
+                else:
+                    no_match += 1
+
+        # Apply updates to database
+        conn = self._get_connection()
+        try:
+            cur = conn.cursor()
+            for update in updates:
+                cur.execute(
+                    """
+                    UPDATE arxiv_citations 
+                    SET cited_arxiv_id = %s 
+                    WHERE id = %s
+                    """,
+                    (update['cited_arxiv_id'], update['db_id'])
+                )
+            cur.close()
+        finally:
+            conn.close()
+            
+        print(f"Matching complete: {matched} matched, {no_match} unmatched out of {total} total")
+        print(results)

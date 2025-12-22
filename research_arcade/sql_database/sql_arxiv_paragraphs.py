@@ -10,7 +10,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from ..arxiv_utils.multi_input.multi_download import MultiDownload
 from ..arxiv_utils.graph_constructor.node_processor import NodeConstructor
 from ..arxiv_utils.utils import arxiv_id_processor
-from ..arxiv_utils.utils import get_paragraph_num
+from ..arxiv_utils.utils import get_paragraph_num, arxiv_ids_hashing
 from ..arxiv_utils.paper_collector.paper_graph_processor import PaperGraphProcessor
 
 
@@ -52,13 +52,11 @@ class SQLArxivParagraphs:
                     paragraph_id VARCHAR(255) NOT NULL,
                     content TEXT,
                     paper_arxiv_id VARCHAR(100) NOT NULL,
-                    paper_section VARCHAR(255) NOT NULL
+                    paper_section VARCHAR(255) NOT NULL,
+                    section_id INTEGER,
+                    paragraph_in_paper_id INTEGER,
+                    CONSTRAINT ux_arxiv_paragraphs_unique UNIQUE (paragraph_id, paper_arxiv_id, paper_section)
                 )
-            """)
-            # Composite unique index for conflict prevention
-            cur.execute("""
-                CREATE UNIQUE INDEX IF NOT EXISTS ux_arxiv_paragraphs_unique
-                ON arxiv_paragraphs (paragraph_id, paper_arxiv_id, paper_section)
             """)
             cur.close()
         finally:
@@ -76,12 +74,12 @@ class SQLArxivParagraphs:
             cur = conn.cursor()
             cur.execute(
                 """
-                INSERT INTO arxiv_paragraphs (paragraph_id, content, paper_arxiv_id, paper_section)
-                VALUES (%s, %s, %s, %s)
+                INSERT INTO arxiv_paragraphs (paragraph_id, content, paper_arxiv_id, paper_section, section_id, paragraph_in_paper_id)
+                VALUES (%s, %s, %s, %s, %s, %s)
                 ON CONFLICT ON CONSTRAINT ux_arxiv_paragraphs_unique DO NOTHING
                 RETURNING id
                 """,
-                (paragraph_id, content, paper_arxiv_id, paper_section)
+                (paragraph_id, content, paper_arxiv_id, paper_section, section_id, paragraph_in_paper_id)
             )
             res = cur.fetchone()
             cur.close()
@@ -190,7 +188,7 @@ class SQLArxivParagraphs:
         conn = self._get_connection()
         try:
             query = """
-                SELECT id, paragraph_id, content, paper_arxiv_id, paper_section
+                SELECT id, paragraph_id, content, paper_arxiv_id, paper_section, section_id, paragraph_in_paper_id
                 FROM arxiv_paragraphs 
                 WHERE id = %s
             """
@@ -211,7 +209,7 @@ class SQLArxivParagraphs:
         conn = self._get_connection()
         try:
             query = """
-                SELECT id, paragraph_id, content, paper_arxiv_id, paper_section
+                SELECT id, paragraph_id, content, paper_arxiv_id, paper_section, section_id, paragraph_in_paper_id
                 FROM arxiv_paragraphs 
                 WHERE paper_arxiv_id = %s 
                 ORDER BY id
@@ -230,7 +228,7 @@ class SQLArxivParagraphs:
         conn = self._get_connection()
         try:
             query = """
-                SELECT id, paragraph_id, content, paper_arxiv_id, paper_section
+                SELECT id, paragraph_id, content, paper_arxiv_id, paper_section, section_id, paragraph_in_paper_id
                 FROM arxiv_paragraphs 
                 WHERE paper_arxiv_id = %s AND paper_section = %s
                 ORDER BY id
@@ -288,7 +286,7 @@ class SQLArxivParagraphs:
         conn = self._get_connection()
         try:
             query = """
-                SELECT id, paragraph_id, content, paper_arxiv_id, paper_section
+                SELECT id, paragraph_id, content, paper_arxiv_id, paper_section, section_id, paragraph_in_paper_id
                 FROM arxiv_paragraphs
                 ORDER BY id
             """
@@ -305,6 +303,7 @@ class SQLArxivParagraphs:
         """
         Imports rows from a CSV with columns:
             ['paragraph_id', 'content', 'paper_arxiv_id', 'paper_section']
+        Optional columns: ['section_id', 'paragraph_in_paper_id']
         Ignores any 'id' column; DB assigns SERIAL ids.
         Skips rows that violate the composite uniqueness (via ON CONFLICT DO NOTHING).
         """
@@ -319,7 +318,13 @@ class SQLArxivParagraphs:
             print(f"Error: External CSV is missing required columns: {missing}")
             return False
 
-        rows: List[Tuple] = list(df[required_cols].itertuples(index=False, name=None))
+        # Add optional columns if missing
+        for col in ['section_id', 'paragraph_in_paper_id']:
+            if col not in df.columns:
+                df[col] = None
+
+        cols = ['paragraph_id', 'content', 'paper_arxiv_id', 'paper_section', 'section_id', 'paragraph_in_paper_id']
+        rows: List[Tuple] = list(df[cols].itertuples(index=False, name=None))
         if not rows:
             print("No rows to import.")
             return True
@@ -331,7 +336,7 @@ class SQLArxivParagraphs:
             psycopg2.extras.execute_values(
                 cur,
                 """
-                INSERT INTO arxiv_paragraphs (paragraph_id, content, paper_arxiv_id, paper_section)
+                INSERT INTO arxiv_paragraphs (paragraph_id, content, paper_arxiv_id, paper_section, section_id, paragraph_in_paper_id)
                 VALUES %s
                 ON CONFLICT ON CONSTRAINT ux_arxiv_paragraphs_unique DO NOTHING
                 """,
@@ -362,7 +367,9 @@ class SQLArxivParagraphs:
                     "paragraph_id": 0,
                     "content": "This paper introduces the Transformer...",
                     "paper_arxiv_id": "1706.03762v7",
-                    "paper_section": "introduction"
+                    "paper_section": "introduction",
+                    "section_id": 1,
+                    "paragraph_in_paper_id": 0
                 },
                 ...
             ]
@@ -406,7 +413,9 @@ class SQLArxivParagraphs:
                     paragraph['paragraph_id'],
                     paragraph['content'],
                     paragraph['paper_arxiv_id'],
-                    paragraph['paper_section']
+                    paragraph['paper_section'],
+                    paragraph.get('section_id', None),
+                    paragraph.get('paragraph_in_paper_id', None)
                 ))
 
             if not rows:
@@ -419,7 +428,7 @@ class SQLArxivParagraphs:
                 psycopg2.extras.execute_values(
                     cur,
                     """
-                    INSERT INTO arxiv_paragraphs (paragraph_id, content, paper_arxiv_id, paper_section)
+                    INSERT INTO arxiv_paragraphs (paragraph_id, content, paper_arxiv_id, paper_section, section_id, paragraph_in_paper_id)
                     VALUES %s
                     ON CONFLICT ON CONSTRAINT ux_arxiv_paragraphs_unique DO NOTHING
                     """,
@@ -451,7 +460,7 @@ class SQLArxivParagraphs:
         data_dir_path = f"{dest_dir}/output"
         figures_dir_path = f"{dest_dir}/output/images"
         output_dir_path = f"{dest_dir}/output/paragraphs"
-        pgp = PaperGraphProcessor(data_dir=data_dir_path, figures_dir=figures_dir_path, output_dir=output_dir_path)
+        pgp = PaperGraphProcessor(data_dir=data_dir_path, figures_dir=figures_dir_path, output_dir=output_dir_path, arxiv_ids=arxiv_ids)
 
         papers = []
         for arxiv_id in arxiv_ids:
@@ -493,8 +502,10 @@ class SQLArxivParagraphs:
             paper_paths.append(f"{dest_dir}/output/{arxiv_id}.json")
         pgp.process_papers(paper_paths)
 
+        # We apply the hashing
+        prefix = arxiv_ids_hashing(arxiv_ids=arxiv_ids)
         # Build the paragraphs
-        paragraph_path = f"{dest_dir}/output/paragraphs/text_nodes.jsonl"
+        paragraph_path = f"{dest_dir}/output/paragraphs/{prefix}/text_nodes.jsonl"
         with open(paragraph_path) as f:
             data = [json.loads(line) for line in f]
         
@@ -522,4 +533,3 @@ class SQLArxivParagraphs:
             id_number = get_paragraph_num(paragraph_id)
             id_zero_based = id_number - section_min_paragraph[(paper_arxiv_id, paper_section)]
             self.insert_paragraph(paragraph_id=id_zero_based, content=content, paper_arxiv_id=paper_arxiv_id, paper_section=paper_section)
-

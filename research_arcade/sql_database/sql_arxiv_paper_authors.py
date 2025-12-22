@@ -41,14 +41,11 @@ class SQLArxivPaperAuthor:
             cur.execute("""
                 CREATE TABLE IF NOT EXISTS arxiv_paper_authors (
                     paper_arxiv_id VARCHAR(100) NOT NULL,
-                    author_id VARCHAR(100) NOT NULL,
-                    author_sequence INTEGER NOT NULL
+                    author_id VARCHAR(100),
+                    author_sequence INTEGER,
+                    author_name VARCHAR(255),
+                    CONSTRAINT ux_arxiv_paper_authors_unique UNIQUE (paper_arxiv_id, author_id)
                 )
-            """)
-            # Create composite unique index to prevent duplicates
-            cur.execute("""
-                CREATE UNIQUE INDEX IF NOT EXISTS ux_arxiv_paper_authors_unique
-                ON arxiv_paper_authors (paper_arxiv_id, author_id)
             """)
             cur.close()
         finally:
@@ -57,9 +54,9 @@ class SQLArxivPaperAuthor:
     # -------------------------
     # Insert
     # -------------------------
-    def insert_paper_author(self, paper_arxiv_id, author_id, author_sequence) -> bool:
+    def insert_paper_author(self, paper_arxiv_id, author_name, author_id=None, author_sequence=None) -> bool:
         """
-        Insert a (paper_arxiv_id, author_id, author_sequence) record.
+        Insert a (paper_arxiv_id, author_id, author_sequence, author_name) record.
         Returns True if inserted, False if already exists.
         """
         conn = self._get_connection()
@@ -67,11 +64,11 @@ class SQLArxivPaperAuthor:
             cur = conn.cursor()
             cur.execute(
                 """
-                INSERT INTO arxiv_paper_authors (paper_arxiv_id, author_id, author_sequence)
-                VALUES (%s, %s, %s)
+                INSERT INTO arxiv_paper_authors (paper_arxiv_id, author_id, author_sequence, author_name)
+                VALUES (%s, %s, %s, %s)
                 ON CONFLICT ON CONSTRAINT ux_arxiv_paper_authors_unique DO NOTHING
                 """,
-                (paper_arxiv_id, author_id, author_sequence)
+                (paper_arxiv_id, author_id, author_sequence, author_name)
             )
             inserted = cur.rowcount > 0  # 1 if inserted, 0 if conflict
             cur.close()
@@ -85,7 +82,7 @@ class SQLArxivPaperAuthor:
         try:
             cur = conn.cursor()
             cur.execute(
-                "SELECT paper_arxiv_id, author_id, author_sequence FROM arxiv_paper_authors"
+                "SELECT paper_arxiv_id, author_id, author_sequence, author_name FROM arxiv_paper_authors"
             )
             rows = cur.fetchall()
             cur.close()
@@ -102,7 +99,7 @@ class SQLArxivPaperAuthor:
             cur = conn.cursor()
             cur.execute(
                 """
-                SELECT paper_arxiv_id, author_id, author_sequence 
+                SELECT paper_arxiv_id, author_id, author_sequence, author_name
                 FROM arxiv_paper_authors 
                 WHERE paper_arxiv_id = %s
                 ORDER BY author_sequence ASC
@@ -124,7 +121,7 @@ class SQLArxivPaperAuthor:
             cur = conn.cursor()
             cur.execute(
                 """
-                SELECT paper_arxiv_id, author_id, author_sequence 
+                SELECT paper_arxiv_id, author_id, author_sequence, author_name
                 FROM arxiv_paper_authors 
                 WHERE author_id = %s
                 """,
@@ -202,6 +199,7 @@ class SQLArxivPaperAuthor:
             
         Expected CSV format:
             - Required columns: paper_arxiv_id, author_id, author_sequence
+            - Optional columns: author_name
             
         Returns:
             bool: True if successful, False otherwise
@@ -220,7 +218,11 @@ class SQLArxivPaperAuthor:
                 print(f"Error: External CSV is missing required columns: {missing_cols}")
                 return False
 
-            rows = list(df[required_cols].itertuples(index=False, name=None))
+            # Add optional column if missing
+            if 'author_name' not in df.columns:
+                df['author_name'] = None
+
+            rows = list(df[['paper_arxiv_id', 'author_id', 'author_sequence', 'author_name']].itertuples(index=False, name=None))
             if not rows:
                 print("No rows to import.")
                 return True
@@ -231,7 +233,7 @@ class SQLArxivPaperAuthor:
                 psycopg2.extras.execute_values(
                     cur,
                     """
-                    INSERT INTO arxiv_paper_authors (paper_arxiv_id, author_id, author_sequence)
+                    INSERT INTO arxiv_paper_authors (paper_arxiv_id, author_id, author_sequence, author_name)
                     VALUES %s
                     ON CONFLICT ON CONSTRAINT ux_arxiv_paper_authors_unique DO NOTHING
                     """,
@@ -261,7 +263,8 @@ class SQLArxivPaperAuthor:
                 {
                     "paper_arxiv_id": "1706.03762v7",
                     "author_id": "12345",
-                    "author_sequence": 1
+                    "author_sequence": 1,
+                    "author_name": "John Doe"
                 },
                 ...
             ]
@@ -272,7 +275,8 @@ class SQLArxivPaperAuthor:
                     {
                         "paper_arxiv_id": "1706.03762v7",
                         "author_id": "12345",
-                        "author_sequence": 1
+                        "author_sequence": 1,
+                        "author_name": "John Doe"
                     },
                     ...
                 ]
@@ -316,7 +320,8 @@ class SQLArxivPaperAuthor:
                 rows.append((
                     relation['paper_arxiv_id'],
                     relation['author_id'],
-                    relation['author_sequence']
+                    relation['author_sequence'],
+                    relation.get('author_name', None)
                 ))
 
             if not rows:
@@ -329,7 +334,7 @@ class SQLArxivPaperAuthor:
                 psycopg2.extras.execute_values(
                     cur,
                     """
-                    INSERT INTO arxiv_paper_authors (paper_arxiv_id, author_id, author_sequence)
+                    INSERT INTO arxiv_paper_authors (paper_arxiv_id, author_id, author_sequence, author_name)
                     VALUES %s
                     ON CONFLICT ON CONSTRAINT ux_arxiv_paper_authors_unique DO NOTHING
                     """,
@@ -351,15 +356,60 @@ class SQLArxivPaperAuthor:
             return False
 
     def construct_paper_authors_table_from_api(self, arxiv_ids, dest_dir):
-
-        # search for authors in the page.
+        """
+        Build paper-author relationships, linking to existing author IDs.
+        
+        Args:
+            arxiv_ids: List of arxiv IDs to process
+            dest_dir: Directory containing paper metadata
+        """
         for arxiv_id in arxiv_ids:
             metadata_path = f"{dest_dir}/{arxiv_id}/{arxiv_id}_metadata.json"
 
-            with open(metadata_path, 'r') as file:
-                metadata_json = json.load(file)
-                authors = metadata_json['authors']
-                i = 0
-                for author in authors:
-                    i += 1
-                    self.insert_paper_author(paper_arxiv_id=arxiv_id, author_name=author, author_sequence=i)
+            try:
+                with open(metadata_path, 'r') as file:
+                    metadata_json = json.load(file)
+                    authors = metadata_json['authors']
+                    
+                    for i, author_name in enumerate(authors, start=1):
+                        # Look up author_id by name from the authors table
+                        author_id = self._lookup_author_id_by_name(author_name)
+                
+                        self.insert_paper_author(
+                            paper_arxiv_id=arxiv_id, 
+                            author_name=author_name, 
+                            author_id=author_id,
+                            author_sequence=i
+                        )
+            except FileNotFoundError:
+                print(f"Error: Metadata file not found for {arxiv_id}")
+                continue
+            except json.JSONDecodeError:
+                print(f"Error: Could not decode JSON from metadata for {arxiv_id}")
+                continue
+            except Exception as e:
+                print(f"An unexpected error occurred for {arxiv_id}: {e}")
+                continue
+
+    def _lookup_author_id_by_name(self, author_name: str):
+        """
+        Look up author_id (semantic_scholar_id) by name from the authors table.
+        Returns the semantic_scholar_id if found, None otherwise.
+        """
+        conn = self._get_connection()
+        try:
+            cur = conn.cursor()
+            cur.execute(
+                """
+                SELECT semantic_scholar_id 
+                FROM authors 
+                WHERE name = %s
+                LIMIT 1
+                """,
+                (author_name,)
+            )
+            result = cur.fetchone()
+            cur.close()
+            return result[0] if result else None
+        finally:
+            conn.close()

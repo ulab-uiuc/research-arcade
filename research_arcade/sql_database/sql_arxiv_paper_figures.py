@@ -6,33 +6,32 @@ import json
 import os
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 
 def figure_iteration_recursive(figure_json):
+    """
+    Recursively extract figure information from nested figure JSON.
+    Returns a list of tuples: (path, caption, label)
+    """
+    path_to_info: List[Tuple[str, str, str]] = []
 
-        # Create a set of figures along with the
-        # list represents (path, caption, label)
-        path_to_info: List[Tuple[str, str, str]] = []
+    def figure_iteration(figure_json):
+        nonlocal path_to_info
 
-        # First iterate through parent, then go into the children
-
-        def figure_iteration(figure_json):
-            nonlocal path_to_info
-
-            if not figure_json:
-                return
-            if figure_json['figure_paths']:
-                path = figure_json['figure_paths'][0]
-                caption = figure_json['caption']
-                label = figure_json['label']
-                path_to_info.append((path, caption, label))
-            subfigures = figure_json['subfigures']
-            
-            for subfigure in subfigures:
-                figure_iteration(subfigure)
+        if not figure_json:
+            return
+        if figure_json['figure_paths']:
+            path = figure_json['figure_paths'][0]
+            caption = figure_json['caption']
+            label = figure_json['label']
+            path_to_info.append((path, caption, label))
+        subfigures = figure_json['subfigures']
         
-        figure_iteration(figure_json=figure_json)
-        return path_to_info
+        for subfigure in subfigures:
+            figure_iteration(subfigure)
+    
+    figure_iteration(figure_json=figure_json)
+    return path_to_info
 
 
 class SQLArxivPaperFigure:
@@ -68,13 +67,9 @@ class SQLArxivPaperFigure:
             cur.execute("""
                 CREATE TABLE IF NOT EXISTS arxiv_paper_figures (
                     paper_arxiv_id VARCHAR(100) NOT NULL,
-                    figure_id INTEGER NOT NULL
+                    figure_id INTEGER NOT NULL,
+                    CONSTRAINT ux_arxiv_paper_figures_unique UNIQUE (paper_arxiv_id, figure_id)
                 )
-            """)
-            # Composite unique index for conflict prevention
-            cur.execute("""
-                CREATE UNIQUE INDEX IF NOT EXISTS ux_arxiv_paper_figures_unique
-                ON arxiv_paper_figures (paper_arxiv_id, figure_id)
             """)
             cur.close()
         finally:
@@ -215,6 +210,39 @@ class SQLArxivPaperFigure:
             count = cur.rowcount
             cur.close()
             return count
+        finally:
+            conn.close()
+
+    def match_figure_id(self, paper_arxiv_id, label) -> Optional[int]:
+        """
+        Look up figure ID by paper_arxiv_id and label from the arxiv_figures table.
+        Returns the figure id if found, None otherwise.
+        
+        Args:
+            paper_arxiv_id: The arxiv ID of the paper
+            label: The label of the figure (e.g., 'fig:architecture')
+            
+        Returns:
+            The figure id if found, None otherwise
+        """
+        if label is None:
+            return None
+            
+        conn = self._get_connection()
+        try:
+            cur = conn.cursor()
+            cur.execute(
+                """
+                SELECT id 
+                FROM arxiv_figures 
+                WHERE paper_arxiv_id = %s AND label = %s
+                LIMIT 1
+                """,
+                (str(paper_arxiv_id), str(label))
+            )
+            result = cur.fetchone()
+            cur.close()
+            return result[0] if result else None
         finally:
             conn.close()
 
@@ -367,10 +395,14 @@ class SQLArxivPaperFigure:
             print(f"Error importing paper-figure relationships from JSON: {e}")
             return False
 
-
-
     def construct_paper_figures_table_from_api(self, arxiv_ids, dest_dir):
-
+        """
+        Construct paper-figure relationships from paper graph JSON files.
+        
+        Args:
+            arxiv_ids: List of arxiv IDs to process
+            dest_dir: Directory containing paper output files
+        """
         for arxiv_id in arxiv_ids:
             json_path = f"{dest_dir}/output/{arxiv_id}.json"
 
@@ -378,25 +410,25 @@ class SQLArxivPaperFigure:
                 with open(json_path, 'r') as file:
                     file_json = json.load(file)
             except FileNotFoundError:
-                print(f"Error: The file '{file_json}' was not found.")
+                print(f"Error: The file '{json_path}' was not found.")
                 continue
             except json.JSONDecodeError:
-                print(f"Error: Could not decode JSON from '{file_json}'. Check if the file contains valid JSON.")
+                print(f"Error: Could not decode JSON from '{json_path}'. Check if the file contains valid JSON.")
                 continue
             except Exception as e:
                 print(f"An unexpected error occurred: {e}")
                 continue
 
-
-            figure_jsons = file_json['figure']
+            figure_jsons = file_json.get('figure', [])
 
             for figure_json in figure_jsons:
-                
                 figures = figure_iteration_recursive(figure_json=figure_json)
 
                 for figure in figures:
                     path, caption, label = figure
+                    print(f"arxiv_id: {arxiv_id}")
+                    print(f"label: {label}")
                     figure_id = self.match_figure_id(paper_arxiv_id=arxiv_id, label=label)
 
-
-                    self.insert_paper_figure(paper_arxiv_id=arxiv_id, figure_id=figure_id)
+                    if figure_id is not None:
+                        self.insert_paper_figure(paper_arxiv_id=arxiv_id, figure_id=figure_id)
