@@ -179,7 +179,7 @@ class CSVArxivFigure:
                 except Exception as e:
                     print(f"[Warning] Failed to process papers: {e}")
                     continue
-
+            
             try:
                 with open(json_path, 'r') as file:
                     file_json = json.load(file)

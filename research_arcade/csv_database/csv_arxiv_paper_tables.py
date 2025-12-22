@@ -141,20 +141,19 @@ class CSVArxivPaperTable:
         if not os.path.exists(csv_path2):
             return None
         
-        df2 = pd.read_csv(csv_path2)
+        if label is None:
+            return None
+        
+        df2 = pd.read_csv(csv_path2, dtype={'paper_arxiv_id': str, 'label': str})
         
         mask = (
-            (df2['paper_arxiv_id'] == paper_arxiv_id) & 
-            (df2['label'] == label)
+            (df2['paper_arxiv_id'] == str(paper_arxiv_id)) & 
+            (df2['label'] == str(label))
         )
 
         matched_rows = df2[mask]
         
-        if len(matched_rows) > 0:
-            return matched_rows.iloc[0]['id']
-        else:
-            return None
-
+        return matched_rows.iloc[0]['id'] if len(matched_rows) > 0 else None
 
 
     def construct_table_from_csv(self, csv_file):

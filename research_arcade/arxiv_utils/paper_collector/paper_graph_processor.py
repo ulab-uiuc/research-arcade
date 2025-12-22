@@ -191,8 +191,6 @@ class PaperGraphProcessor:
         """
         # print("Here!")
         cites_ = self.find_cites(text)
-        print("cites_:")
-        print(cites_)
         cites = []
         for cite in cites_:
             cites.extend(cite.split(","))

@@ -305,19 +305,27 @@ class CSVArxivPaperFigure:
         if not os.path.exists(csv_path2):
             return None
         
-        df2 = pd.read_csv(csv_path2)
+        df2 = pd.read_csv(csv_path2, dtype={'paper_arxiv_id': str, 'label': str})
+        
+        # Convert inputs to strings for consistent comparison
+        paper_arxiv_id_str = str(paper_arxiv_id)
+        label_str = str(label) if label is not None else None
+        
+        if label_str is None:
+            return None
         
         mask = (
-            (df2['paper_arxiv_id'] == paper_arxiv_id) & 
-            (df2['label'] == label)
+            (df2['paper_arxiv_id'].astype(str) == paper_arxiv_id_str) & 
+            (df2['label'].astype(str) == label_str)
         )
         
         matched_rows = df2[mask]
+
         
         if len(matched_rows) > 0:
             return matched_rows.iloc[0]['id']
         else:
-            return None
+            return None        
 
     def construct_paper_figures_table_from_api(self, arxiv_ids, dest_dir):
 
@@ -337,7 +345,6 @@ class CSVArxivPaperFigure:
                 print(f"An unexpected error occurred: {e}")
                 continue
 
-
             figure_jsons = file_json['figure']
 
             for figure_json in figure_jsons:
@@ -346,7 +353,10 @@ class CSVArxivPaperFigure:
 
                 for figure in figures:
                     path, caption, label = figure
+                    print("arxiv_id")
+                    print(arxiv_id)
+                    print("label")
+                    print(label)
                     figure_id = self.match_figure_id(paper_arxiv_id=arxiv_id, label=label)
-
 
                     self.insert_paper_figure(paper_arxiv_id=arxiv_id, figure_id=figure_id)

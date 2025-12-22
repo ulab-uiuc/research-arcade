@@ -8,11 +8,12 @@ from collections import defaultdict
 from ..arxiv_utils.utils import get_paragraph_num, arxiv_ids_hashing
 from semanticscholar import SemanticScholar
 from dotenv import load_dotenv
+from ..arxiv_utils.citation_processing import citation_matching_csv
 load_dotenv()
-
 
 class CSVArxivParagraphCitation:
     def __init__(self, csv_dir: str):
+        self.csv_dir = csv_dir
         csv_path = f"{csv_dir}/arxiv_paragraph_citations.csv"
         self.csv_path = csv_path
         Path(csv_path).parent.mkdir(parents=True, exist_ok=True)
@@ -145,8 +146,6 @@ class CSVArxivParagraphCitation:
             id_zero_based = id_number - section_min_paragraph[key]
 
             cite_keys = paragraph.get("cites") or []
-            print("len(cite_keys)")
-            print(len(cite_keys))
             for bib_key in cite_keys:
                 self.insert_paragraph_reference(
                     paragraph_id=id_zero_based,
@@ -154,6 +153,12 @@ class CSVArxivParagraphCitation:
                     citing_arxiv_id=paper_arxiv_id,
                     bib_key=bib_key
                 )
+        
+        # update paragraph level citation with paper level citation
+
+
+
+
 
     def arxiv_match_bib_key_to_bib_title(self, arxiv_citations):
         df = self._load_data()
@@ -361,8 +366,80 @@ class CSVArxivParagraphCitation:
 
         print(f"Saved {len(out_df)} paragraph-reference rows to {output_csv_path}")
         return len(out_df)
+    
 
+    def update_paragraph_global_id(self, arxiv_ids):
+        df1 = self._load_data()
 
+        if df1.empty:
+            return 0
 
+        paragraph_csv = os.path.join(self.csv_dir, "arxiv_paragraphs.csv")
 
+        if not os.path.exists(paragraph_csv):
+            print(f"Paragraph CSV not found: {paragraph_csv}")
+            return 0
 
+        df2 = pd.read_csv(paragraph_csv)
+
+        # Build lookup: (paper_arxiv_id, paper_section, paragraph_in_paper_id) -> id
+        paragraph_lookup = {}
+        for _, row in df2.iterrows():
+            key = (str(row['paper_arxiv_id']), str(row['paper_section']), str(row['paragraph_in_paper_id']))
+            paragraph_id = row.get('id')
+            if pd.notna(paragraph_id):
+                paragraph_lookup[key] = paragraph_id
+
+        updated = 0
+
+        for idx, row in df1.iterrows():
+            arxiv_id = str(row['citing_arxiv_id'])
+            
+            if arxiv_id in arxiv_ids and (pd.isna(row['paragraph_global_id']) or row['paragraph_global_id'] == ''):
+                # Match df1 columns to df2 columns
+                lookup_key = (arxiv_id, str(row['paper_section']), str(row['paragraph_id']))
+                
+                if lookup_key in paragraph_lookup:
+                    df1.loc[idx, 'paragraph_global_id'] = paragraph_lookup[lookup_key]
+                    updated += 1
+
+        self._save_data(df1)
+        print(f"Updated {updated} paragraph_global_id entries")
+        return updated
+
+    def update_cited_paper_arxiv_ids(self, arxiv_ids):
+        df1 = self._load_data()
+        
+        if df1.empty:
+            return
+
+        citation_csv = os.path.join(self.csv_dir, "arxiv_citations.csv")
+        
+        if not os.path.exists(citation_csv):
+            print(f"Citation CSV not found: {citation_csv}")
+            return
+
+        df2 = pd.read_csv(citation_csv, dtype={"cited_arxiv_id": str}, keep_default_na=False)
+
+        # Create a lookup dictionary from df2: (citing_arxiv_id, bib_key) -> cited_arxiv_id
+        citation_lookup = {}
+        for _, row in df2.iterrows():
+            key = (str(row['citing_arxiv_id']), str(row['bib_key']))
+            cited_id = row.get('cited_arxiv_id')
+            if cited_id and cited_id != '':
+                citation_lookup[key] = cited_id
+
+        updated = 0
+
+        for idx, row in df1.iterrows():
+            citing_id = str(row['citing_arxiv_id'])
+            
+            # Check if this row matches our arxiv_ids filter and has empty cited_arxiv_id
+            if citing_id in arxiv_ids and (pd.isna(row['cited_arxiv_id']) or row['cited_arxiv_id'] == ''):
+                lookup_key = (citing_id, str(row['bib_key']))
+                
+                if lookup_key in citation_lookup:
+                    df1.loc[idx, 'cited_arxiv_id'] = citation_lookup[lookup_key]
+                    updated += 1
+
+        self._save_data(df1)

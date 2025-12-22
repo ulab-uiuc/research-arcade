@@ -76,9 +76,10 @@ def process_papers(arxiv_ids, db_type):
         'dest_dir': os.getenv('PAPER_FOLDER_PATH')
     }
 
-    ra.arxiv_paragraphs.construct_paragraphs_table_from_api(**config)
-    ra.arxiv_paragraph_reference.construct_paragraph_references_table_from_api(**config)
-    ra.arxiv_paragraph_citation.construct_citations_table_from_api(**config)
+    # ra.construct_tables_from_arxiv_ids(config=config)
+    # ra.construct_table_from_api(table="arxiv_paper_figures", config=config)
+    ra.construct_table_from_api(table="arxiv_paragraph_tables", config=config)
+
 
 
 def main():

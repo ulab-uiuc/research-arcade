@@ -142,7 +142,7 @@ class CSVArxivAuthors:
 
         print(f"Successfully imported {len(external_df)} authors from {csv_file}")
         return True
-    
+
     def get_all_authors(self, is_all_features=True):
         df = self._load_data()
         

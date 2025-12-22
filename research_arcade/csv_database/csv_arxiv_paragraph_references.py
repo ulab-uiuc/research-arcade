@@ -313,8 +313,8 @@ class CSVArxivParagraphReference:
                 # First search bib_key in databases.
                 # If presented in one of them, we can determine the type of reference
 
-                is_figure = ref_label.startswith("figure")
-                is_table = ref_label.startswith("table")
+                is_figure = ref_label.startswith("fig")
+                is_table = ref_label.startswith("tab")
                 if is_figure:
                     ref_type = 'figure'
                 elif is_table:

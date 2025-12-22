@@ -18,7 +18,7 @@ from .csv_database import (
     CSVArxivAuthors, CSVArxivCategory, CSVArxivCitation, CSVArxivFigure,
     CSVArxivPaperAuthor, CSVArxivPaperCategory, CSVArxivPaperFigure,
     CSVArxivPaperTable, CSVArxivPapers, CSVArxivParagraphReference,
-    CSVArxivParagraphs, CSVArxivSections, CSVArxivTable, CSVArxivParagraphCitation
+    CSVArxivParagraphs, CSVArxivSections, CSVArxivTable, CSVArxivParagraphCitation, CSVArxivParagraphFigure, CSVArxivParagraphTable
 )
 
 # Arxiv SQL
@@ -59,6 +59,8 @@ class ResearchArcade:
             self.arxiv_paper_table = CSVArxivPaperTable(**config)
             self.arxiv_paragraph_reference = CSVArxivParagraphReference(**config)
             self.arxiv_paragraph_citation = CSVArxivParagraphCitation(**config)
+            self.arxiv_paragraph_figure = CSVArxivParagraphFigure(**config)
+            self.arxiv_paragraph_table = CSVArxivParagraphTable(**config)
             
             """
             Below is the openreview dataset
@@ -94,6 +96,10 @@ class ResearchArcade:
             self.arxiv_paper_table = SQLArxivPaperTable(**config)
             self.arxiv_paragraph_reference = SQLArxivParagraphReference(**config)
             self.arxiv_paragraph_citation = SQLArxivParagraphCitation(**config)
+
+            #TODO: currently no sql version of these two classes
+            # self.arxiv_paragraph_figure = CSVArxivParagraphFigure(**config)
+            # self.arxiv_paragraph_table = CSVArxivParagraphTable(**config)
 
             
             """
@@ -293,6 +299,10 @@ class ResearchArcade:
             return self.arxiv_paper_table.insert_paper_table(**edge_features)
         elif table == 'arxiv_paragraph_reference':
             return self.arxiv_paragraph_reference.insert_paragraph_reference(**edge_features)
+        elif table == 'arxiv_paragraph_figure':
+            return self.arxiv_paragraph_figure.insert_paragraph_figure_table(**edge_features)
+        elif table == 'arxiv_paragraph_table':
+            return self.arxiv_paragraph_table.insert_paragraph_table_table(**edge_features)
         else:
             print(f"Table {table} not found.")
             return None
@@ -416,7 +426,28 @@ class ResearchArcade:
             else:
                 print("For arxiv_paragraph_reference, primary key should include 'paragraph_id' and/or 'reference_id'.")
                 return None
-        
+        elif table == 'arxiv_paragraph_figure':
+            # Expect keys: 'paragraph_id' and/or 'reference_id'
+            if "paragraph_id" in primary_key and "figure_id" in primary_key:
+                return self.arxiv_paragraph_figure.delete_paragraph_figure_by_paragraph_figure_id(**primary_key)
+            elif "paragraph_id" in primary_key:
+                return self.arxiv_paragraph_figure.delete_paragraph_figure_by_paragraph_id(**primary_key)
+            elif "figure_id" in primary_key:
+                return self.arxiv_paragraph_figure.delete_paragraph_figure_by_figure_id(**primary_key)
+            else:
+                print("For arxiv_paragraph_reference, primary key should include 'paragraph_id' and/or 'reference_id'.")
+                return None
+        elif table == 'arxiv_paragraph_table':
+            # Expect keys: 'paragraph_id' and/or 'reference_id'
+            if "paragraph_id" in primary_key and "table_id" in primary_key:
+                return self.arxiv_paragraph_table.delete_paragraph_table_by_paragraph_table_id(**primary_key)
+            elif "paragraph_id" in primary_key:
+                return self.arxiv_paragraph_table.delete_paragraph_table_by_paragraph_id(**primary_key)
+            elif "table_id" in primary_key:
+                return self.arxiv_paragraph_table.delete_paragraph_table_by_table_id(**primary_key)
+            else:
+                print("For arxiv_paragraph_reference, primary key should include 'paragraph_id' and/or 'reference_id'.")
+                return None
         else:
             print(f"Table {table} not found.")
             return None
@@ -447,6 +478,10 @@ class ResearchArcade:
             return self.arxiv_paper_table.get_all_paper_tables()
         elif table == 'arxiv_paragraph_reference':
             return self.arxiv_paragraph_reference.get_all_paragraph_references()
+        elif table == 'arxiv_paragraph_figure':
+            return self.arxiv_paragraph_figure.get_all_paragraph_figures()
+        elif table == 'arxiv_paragraph_table':
+            return self.arxiv_paragraph_table.get_all_paragraph_tables()
         else:
             print(f"Table {table} not found.")
             return None
@@ -543,7 +578,22 @@ class ResearchArcade:
             else:
                 print("For arxiv_paragraph_reference, provide 'paragraph_id' or 'reference_id'.")
                 return None
-
+        elif table == 'arxiv_paragraph_figure':
+            if "paragraph_id" in primary_key:
+                return self.arxiv_paragraph_figure.get_paragraph_neighboring_figures(**primary_key)
+            elif "figure_id" in primary_key:
+                return self.arxiv_paragraph_figure.get_figure_neighboring_paragraphs(**primary_key)
+            else:
+                print("For arxiv_paragraph_figure, provide 'paragraph_id' or 'figure_id'.")
+                return None
+        elif table == 'arxiv_paragraph_table':
+            if "paragraph_id" in primary_key:
+                return self.arxiv_paragraph_table.get_paragraph_neighboring_tables(**primary_key)
+            elif "table_id" in primary_key:
+                return self.arxiv_paragraph_table.get_table_neighboring_paragraphs(**primary_key)
+            else:
+                print("For arxiv_paragraph_table, provide 'paragraph_id' or 'table_id'.")
+                return None
         else:
             print(f"Table {table} not found.")
             return None
@@ -592,7 +642,7 @@ class ResearchArcade:
         elif table == "arxiv_paper_authors":
             self.arxiv_paper_authors.construct_papers_table_from_api(**config)
         elif table == "arxiv_paper_figures":
-            self.arxiv_paper_figure.construct_papers_table_from_api(**config)
+            self.arxiv_paper_figure.construct_paper_figures_table_from_api(**config)
         elif table == "arxiv_paper_tables":
             self.arxiv_paper_tables.construct_papers_table_from_api(**config)
         elif table == "arxiv_paper_categories":
@@ -603,6 +653,10 @@ class ResearchArcade:
             self.arxiv_paragraph_reference.construct_papers_table_from_api(**config)
         elif table == "arxiv_paragraph_citations":
             self.arxiv_paragraph_citation.construct_table_from_api(**config)
+        elif table == "arxiv_paragraph_figures":
+            self.arxiv_paragraph_figure.construct_paragraph_figures_table_from_api(**config)
+        elif table == "arxiv_paragraph_tables":
+            self.arxiv_paragraph_table.construct_paragraph_tables_table_from_api(**config)
         else:
             print(f"Table {table} does not support construction from API")
 
@@ -730,3 +784,5 @@ class ResearchArcade:
         self.arxiv_paragraphs.construct_paragraphs_table_from_api(**config)
         self.arxiv_paragraph_reference.construct_paragraph_references_table_from_api(**config)
         self.arxiv_paragraph_citation.construct_citations_table_from_api(**config)
+        self.arxiv_paragraph_figure.construct_paragraph_figures_table_from_api(**config)
+        self.arxiv_paragraph_table.construct_paragraph_tables_table_from_api(**config)

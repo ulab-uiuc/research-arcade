@@ -67,14 +67,14 @@ class CSVArxivParagraphFigure:
         return result.reset_index(drop=True)
 
 
-    def get_figure_neighboring_paragraphs(self, paragraph_figure_id: int) -> Optional[pd.DataFrame]:
+    def get_figure_neighboring_paragraphs(self, figure_id: int) -> Optional[pd.DataFrame]:
 
         df = self._load_data()
         
         if df.empty:
             return None
         
-        result = df[df['id'] == paragraph_figure_id].copy()
+        result = df[df['figure_id'] == figure_id].copy()
         
         if result.empty:
             return None
@@ -117,19 +117,20 @@ class CSVArxivParagraphFigure:
         
         return count
 
-    def delete_paragraph_figure_by_paragraph_figure_id(self, paragraph_figure_id: int) -> int:
+    def delete_paragraph_figure_by_paragraph_figure_id(self, paragraph_id: int, figure_id: int) -> int:
 
         df = self._load_data()
         
         if df.empty:
             return 0
-        
-        mask = df['id'] == paragraph_figure_id
+
+        mask = (df['paragraph_id'] == paragraph_id) & (df['figure_id'] == figure_id)
+
         count = mask.sum()
-        
+
         if count == 0:
             return 0
-        
+
         df = df[~mask]
         self._save_data(df)
         
@@ -271,7 +272,6 @@ class CSVArxivParagraphFigure:
             return False
 
 
-
     def construct_paragraph_figures_table_from_api(self, arxiv_ids, dest_dir=None):
         """
         Assume that we already have preprocessed paragraph-reference edges and figure nodes in the dataset.
@@ -288,20 +288,21 @@ class CSVArxivParagraphFigure:
         figure_path = f"{self.csv_dir}/arxiv_figures.csv"
         section_path = f"{self.csv_dir}/arxiv_sections.csv"
 
-        df2 = pd.read_csv(para_ref_path)
-        df3 = pd.read_csv(paragraph_path)
-        df4 = pd.read_csv(figure_path)
-        df5 = pd.read_csv(section_path)
-        
+        df2 = pd.read_csv(para_ref_path, dtype={'paper_arxiv_id': str})
+        df3 = pd.read_csv(paragraph_path, dtype={'paper_arxiv_id': str})
+        df4 = pd.read_csv(figure_path, dtype={'paper_arxiv_id': str})
+        df5 = pd.read_csv(section_path, dtype={'paper_arxiv_id': str})
+
         for arxiv_id in arxiv_ids:
             result = df2[(df2['paper_arxiv_id'] == arxiv_id) & (df2['reference_type'] == 'figure')].copy()
-
+            print("arxiv_id")
+            print(arxiv_id)
+            print(result)
             # Find two things: One is the exact paragraph, the other is the exact figure
             for idx, para_figure in result.iterrows():
                 paragraph_id = para_figure['paragraph_id']
                 paper_section = para_figure['paper_section']
                 reference_label = para_figure['reference_label']
-                
                 # Construct label - adjust format based on your actual data
                 label = f"\\label{{{reference_label}}}"
                 
@@ -315,6 +316,8 @@ class CSVArxivParagraphFigure:
                     continue
                 
                 global_paragraph_id = paragraph_result.iloc[0]['id']
+                print("global_paragraph_id")
+                print(global_paragraph_id)
                 
                 # Then we fetch figure id
                 figure_result = df4[(df4['label'] == label) & (df4['paper_arxiv_id'] == arxiv_id)]
@@ -327,7 +330,7 @@ class CSVArxivParagraphFigure:
                 
                 # We also need to search for the paper_section id
                 section_result = df5[(df5['paper_arxiv_id'] == arxiv_id) & 
-                                    (df5['section_in_paper_id'] == paper_section)]
+                                    (df5['title'] == paper_section)]
                 
                 if section_result.empty:
                     print(f"Warning: Section not found for arxiv_id={arxiv_id}, section={paper_section}")

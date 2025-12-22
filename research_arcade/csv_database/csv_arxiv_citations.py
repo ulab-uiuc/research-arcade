@@ -4,10 +4,11 @@ from pathlib import Path
 from typing import Optional
 import json
 import sys
+from typing import DefaultDict
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from ..arxiv_utils.multi_input.multi_download import MultiDownload
 from ..arxiv_utils.graph_constructor.node_processor import NodeConstructor
-
+from ..arxiv_utils.citation_processing import paper_citation_crawling, normalize_title
 
 class CSVArxivCitation:
     def __init__(self, csv_dir: str):
@@ -405,3 +406,113 @@ class CSVArxivCitation:
                 
                     #大切なこと
                     self.insert_citation(citing_arxiv_id=arxiv_id, cited_arxiv_id=cited_arxiv_id, citing_sections=list(citing_sections), bib_title=bib_title, bib_key=bib_key)
+        
+
+        # Finally, postprocess all the citations that do not have valid cited arxiv id
+        result_df = paper_citation_crawling(arxiv_ids=arxiv_ids)
+        self.citation_matching_csv(df_cit=result_df, arxiv_ids=arxiv_ids)
+        
+
+
+    def citation_matching_csv(
+        self,
+        df_cit,
+        arxiv_ids,
+        similarity_threshold=95
+    ):
+        """
+        Match citations from Semantic Scholar with bibliography entries from CSV.
+        Updates the original CSV file with matched arxiv IDs.
+        
+        Args:
+            df_cit: DataFrame with citations from paper_citation_crawling()
+            arxiv_ids: List of arxiv IDs to filter on
+            csv_path: Path to the CSV file containing bibliography data
+            similarity_threshold: Minimum fuzzy match score (0-100)
+        
+        Returns:
+            DataFrame with matched citations
+        """
+        # Load bibkey from the CSV
+        df_bib = self._load_data()
+        
+        # Filter to only the arxiv_ids we care about AND where cited_arxiv_id is null
+        mask = df_bib['citing_arxiv_id'].isin(arxiv_ids) & df_bib['cited_arxiv_id'].isna()
+        df_bib_filtered = df_bib[mask].copy()
+        
+        df_bib_filtered["norm_bib_title"] = df_bib_filtered["bib_title"].apply(normalize_title)
+        
+        # Group bib titles by citing_arxiv_id, also track original index for updating
+        bib_groups = DefaultDict(list)
+        for idx, row in df_bib_filtered.iterrows():
+            bib_groups[str(row["citing_arxiv_id"])].append({
+                'original_idx': idx,
+                'bib_title': row["bib_title"],
+                'norm_bib_title': row["norm_bib_title"]
+            })
+        
+        # Ensure required columns exist in citation df
+        required_cols = ["citing_arxiv_id", "cited_arxiv_id", "cited_paper_name"]
+        for col in required_cols:
+            if col not in df_cit.columns:
+                raise ValueError(f"Missing required column: {col}")
+
+        results = []
+        updates = []  # Track updates to make to original CSV
+        total = 0
+        matched = 0
+        no_match = 0
+
+        print(f"Processing {df_cit['citing_arxiv_id'].nunique()} unique citing papers...")
+        
+        for citing_id, group in df_cit.groupby("citing_arxiv_id"):
+            citing_id = str(citing_id)
+            if citing_id not in bib_groups:
+                continue
+
+            bib_entries = bib_groups[citing_id]
+            # Map normalized title -> (original_idx, original_title)
+            norm_title_map = {
+                entry['norm_bib_title']: (entry['original_idx'], entry['bib_title']) 
+                for entry in bib_entries
+            }
+            norm_title_list = list(norm_title_map.keys())
+
+            for _, row in group.iterrows():
+                total += 1
+                cited_name = normalize_title(row["cited_paper_name"])
+
+                # Fuzzy match
+                best = process.extractOne(
+                    cited_name,
+                    norm_title_list,
+                    scorer=fuzz.ratio,
+                    score_cutoff=similarity_threshold
+                )
+
+                if best:
+                    norm_match, score, _ = best
+                    original_idx, matched_title = norm_title_map[norm_match]
+                    matched += 1
+                    
+                    results.append({
+                        "citing_arxiv_id": citing_id,
+                        "cited_arxiv_id": row["cited_arxiv_id"],
+                        "cited_paper_name": row["cited_paper_name"],
+                        "matched_bib_title": matched_title,
+                        "match_score": score
+                    })
+                    
+                    # Track update for original CSV
+                    updates.append({
+                        'original_idx': original_idx,
+                        'cited_arxiv_id': row["cited_arxiv_id"]
+                    })
+                else:
+                    no_match += 1
+
+        # Apply updates to original DataFrame and save back to CSV
+        for update in updates:
+            df_bib.at[update['original_idx'], 'cited_arxiv_id'] = update['cited_arxiv_id']
+        
+        self._save_data(df_bib)

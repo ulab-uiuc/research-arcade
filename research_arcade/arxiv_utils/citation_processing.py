@@ -11,10 +11,6 @@ from dotenv import load_dotenv
 import pandas as pd
 from rapidfuzz import fuzz, process
 from collections import defaultdict
-
-import psycopg2
-from psycopg2.extras import execute_batch
-
 load_dotenv()
 
 
@@ -99,7 +95,7 @@ def citation_matching_csv(
     df_bib_filtered = df_bib[mask].copy()
     
     df_bib_filtered["norm_bib_title"] = df_bib_filtered["bib_title"].apply(normalize_title)
-
+    
     # Group bib titles by citing_arxiv_id, also track original index for updating
     bib_groups = defaultdict(list)
     for idx, row in df_bib_filtered.iterrows():
@@ -193,6 +189,9 @@ def citation_matching_sql(
     db_config,
     similarity_threshold=95
 ):
+    
+    import psycopg2
+    from psycopg2.extras import execute_batch
     """
     Match citations from Semantic Scholar with bibliography entries from PostgreSQL.
     Updates the original database with matched arxiv IDs.

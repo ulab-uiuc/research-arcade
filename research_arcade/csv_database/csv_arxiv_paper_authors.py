@@ -4,9 +4,9 @@ from pathlib import Path
 from typing import Optional
 import json
 
-
 class CSVArxivPaperAuthor:
     def __init__(self, csv_dir: str):
+        self.csv_dir = csv_dir
         csv_path = f"{csv_dir}/arxiv_paper_authors.csv"
         self.csv_path = csv_path
         Path(csv_path).parent.mkdir(parents=True, exist_ok=True)
@@ -253,16 +253,37 @@ class CSVArxivPaperAuthor:
             print(f"Error importing paper-author relationships from JSON: {e}")
             return False
 
-    def construct_paper_authors_table_from_api(self, arxiv_ids, dest_dir):
 
-        # search for authors in the page.
+
+    def construct_paper_authors_table_from_api(self, arxiv_ids, dest_dir):
+        """
+        Build paper-author relationships, linking to existing author IDs.
+        
+        Args:
+            arxiv_ids: List of arxiv IDs to process
+            dest_dir: Directory containing paper metadata
+            authors_csv_manager: Instance of CSVArxivAuthors to look up author IDs
+        """
         for arxiv_id in arxiv_ids:
             metadata_path = f"{dest_dir}/{arxiv_id}/{arxiv_id}_metadata.json"
 
             with open(metadata_path, 'r') as file:
                 metadata_json = json.load(file)
                 authors = metadata_json['authors']
-                i = 0
-                for author in authors:
-                    i += 1
-                    self.insert_paper_author(paper_arxiv_id=arxiv_id, author_name=author, author_sequence=i)
+                
+                for i, author_name in enumerate(authors, start=1):
+                    # Look up author_id by name from the authors table
+                    author_table = os.path.join(self.csv_dir, "arxiv_authors.csv")
+                    authors_df = pd.read_csv(author_table)
+                    if authors_df is not None:
+                        match = authors_df[authors_df['name'] == author_name]
+                        author_id = match['semantic_scholar_id'].iloc[0] if not match.empty else None
+                    else:
+                        author_id = None
+            
+                    self.insert_paper_author(
+                        paper_arxiv_id=arxiv_id, 
+                        author_name=author_name, 
+                        author_id=author_id,
+                        author_sequence=i
+                    )

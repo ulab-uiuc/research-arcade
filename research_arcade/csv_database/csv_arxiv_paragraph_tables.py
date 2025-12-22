@@ -13,6 +13,7 @@ from ..arxiv_utils.utils import get_paragraph_num
 
 class CSVArxivParagraphTable:
     def __init__(self, csv_dir: str):
+        self.csv_dir = csv_dir
         csv_path = f"{csv_dir}/arxiv_paragraph_tables.csv"
         self.csv_path = csv_path
         Path(csv_path).parent.mkdir(parents=True, exist_ok=True)
@@ -118,23 +119,25 @@ class CSVArxivParagraphTable:
         
         return count
 
-    def delete_paragraph_table_by_rtable_id(self, paragraph_table_id: int) -> int:
+    def delete_paragraph_table_by_paragraph_table_id(self, paragrapg_id: int, table_id: int) -> int:
 
         df = self._load_data()
         
         if df.empty:
             return 0
-        
-        mask = df['id'] == paragraph_table_id
+
+        mask = (df['paragraph_id'] == paragrapg_id) & (df['table_id'] == table_id)
+
         count = mask.sum()
-        
+
         if count == 0:
             return 0
-        
+
         df = df[~mask]
         self._save_data(df)
         
         return count
+
 
 
     def construct_table_from_csv(self, csv_file):
@@ -287,10 +290,10 @@ class CSVArxivParagraphTable:
         table_path = f"{self.csv_dir}/arxiv_tables.csv"
         section_path = f"{self.csv_dir}/arxiv_sections.csv"
 
-        df2 = pd.read_csv(para_ref_path)
-        df3 = pd.read_csv(paragraph_path)
-        df4 = pd.read_csv(table_path)
-        df5 = pd.read_csv(section_path)
+        df2 = pd.read_csv(para_ref_path, dtype={'paper_arxiv_id': str})
+        df3 = pd.read_csv(paragraph_path, dtype={'paper_arxiv_id': str})
+        df4 = pd.read_csv(table_path, dtype={'paper_arxiv_id': str})
+        df5 = pd.read_csv(section_path, dtype={'paper_arxiv_id': str})
         
         for arxiv_id in arxiv_ids:
             result = df2[(df2['paper_arxiv_id'] == arxiv_id) & (df2['reference_type'] == 'table')].copy()
@@ -326,7 +329,7 @@ class CSVArxivParagraphTable:
                 
                 # We also need to search for the paper_section id
                 section_result = df5[(df5['paper_arxiv_id'] == arxiv_id) & 
-                                    (df5['section_in_paper_id'] == paper_section)]
+                                    (df5['title'] == paper_section)]
                 
                 if section_result.empty:
                     print(f"Warning: Section not found for arxiv_id={arxiv_id}, section={paper_section}")
