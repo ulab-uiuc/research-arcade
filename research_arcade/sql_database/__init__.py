@@ -22,11 +22,13 @@ from .sql_arxiv_paper_categories import SQLArxivPaperCategory
 from .sql_arxiv_paper_figures import SQLArxivPaperFigure
 from .sql_arxiv_paper_tables import SQLArxivPaperTable
 from .sql_arxiv_papers import SQLArxivPapers
-from .sql_arxiv_paragraph_references import SQLArxivParagraphReference
 from .sql_arxiv_paragraphs import SQLArxivParagraphs
 from .sql_arxiv_sections import SQLArxivSections
 from .sql_arxiv_tables import SQLArxivTable
 from .sql_arxiv_paragraph_citations import SQLArxivParagraphCitation
+from .sql_arxiv_paragraph_references import SQLArxivParagraphReference
+from .sql_arxiv_paragraph_figures import SQLArxivParagraphFigure
+from .sql_arxiv_paragraph_tables import SQLArxivParagraphTable
 
 __all__ = [
     # --- OpenReview ---
@@ -54,5 +56,8 @@ __all__ = [
     'SQLArxivParagraphReference',
     'SQLArxivParagraphs',
     'SQLArxivSections',
-    'SQLArxivTable'
+    'SQLArxivTable',
+    'SQLArxivParagraphCitation',
+    'SQLArxivParagraphFigure',
+    'SQLArxivParagraphTable'
 ]

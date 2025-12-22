@@ -26,7 +26,7 @@ from .sql_database import (
     SQLArxivAuthors, SQLArxivCategory, SQLArxivCitation, SQLArxivFigure,
     SQLArxivPaperAuthor, SQLArxivPaperCategory, SQLArxivPaperFigure,
     SQLArxivPaperTable, SQLArxivPapers, SQLArxivParagraphReference,
-    SQLArxivParagraphs, SQLArxivSections, SQLArxivTable, SQLArxivParagraphCitation
+    SQLArxivParagraphs, SQLArxivSections, SQLArxivTable, SQLArxivParagraphCitation, SQLArxivParagraphFigure, SQLArxivParagraphTable
 )
 import os
 # from paper_crawler.crawler_job import CrawlerJob
@@ -34,6 +34,10 @@ import os
 from dotenv import load_dotenv
 from typing import Optional
 import pandas as pd
+from datetime import date, datetime, timedelta
+import os
+import time
+from arxiv_utils.continuous_crawling import run_single_crawl, get_interval_seconds
 
 class ResearchArcade:
     def __init__(self, db_type: str, config: dict) -> None:
@@ -96,6 +100,8 @@ class ResearchArcade:
             self.arxiv_paper_table = SQLArxivPaperTable(**config)
             self.arxiv_paragraph_reference = SQLArxivParagraphReference(**config)
             self.arxiv_paragraph_citation = SQLArxivParagraphCitation(**config)
+            self.arxiv_paragraph_figure = SQLArxivParagraphFigure(**config)
+            self.arxiv_paragraph_table = SQLArxivParagraphTable(**config)
 
             #TODO: currently no sql version of these two classes
             # self.arxiv_paragraph_figure = CSVArxivParagraphFigure(**config)
@@ -766,6 +772,7 @@ class ResearchArcade:
         else:
             print(f"Table {table} does not support construction from JSON")
 
+
     def construct_tables_from_arxiv_ids(self, config: dict) -> Optional[pd.DataFrame]:
 
         # Use sequential construction
@@ -786,4 +793,46 @@ class ResearchArcade:
         self.arxiv_paragraph_citation.construct_citations_table_from_api(**config)
         self.arxiv_paragraph_figure.construct_paragraph_figures_table_from_api(**config)
         self.arxiv_paragraph_table.construct_paragraph_tables_table_from_api(**config)
-    
+
+
+    def continuous_crawling(interval_days, delay_days, paper_category, dest_dir, arxiv_id_dest, db_type):
+        """
+        Runs the crawl process in an infinite loop.
+        
+        Args:
+            interval_days (int): How many days of papers to fetch per crawl.
+            delay_days (int): How many days to lag behind 'today' (to account for arXiv processing).
+            field (str): The arXiv category filter.
+            dest_dir (str): Directory to save downloaded papers.
+            arxiv_id_dest (str): Directory to save the list of processed IDs.
+            db_type (str): "csv" or "sql".
+        """
+        interval_seconds = get_interval_seconds(interval_days)
+
+        print(f"Starting continuous crawl mode")
+        print(f"  Interval: {interval_days} days")
+        print(f"  Delay: {delay_days} days")
+        print(f"  Field: {paper_category or 'all'}")
+        print(f"  Database Type: {db_type}")
+
+        while True:
+            # Calculate dynamic date window based on current time
+            # Example: if interval=2 and delay=2, it fetches papers from 5 days ago to 2 days ago.
+            start_date = (date.today() - timedelta(days=interval_days + delay_days + 1)).isoformat()
+            end_date = (date.today() - timedelta(days=delay_days)).isoformat() 
+
+            success = run_single_crawl(
+                start_date=start_date,
+                end_date=end_date,
+                paper_category=paper_category,
+                dest_dir=dest_dir,
+                arxiv_id_dest=arxiv_id_dest,
+                db_type=db_type
+            )
+
+            if success:
+                print(f"[{datetime.now()}] Batch completed. Sleeping for {interval_days} days...")
+            else:
+                print(f"[{datetime.now()}] Batch failed. Will retry after sleep.")
+                
+            time.sleep(interval_seconds)

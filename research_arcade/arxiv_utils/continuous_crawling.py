@@ -76,7 +76,7 @@ def get_interval_seconds(interval: int) -> int:
     """Convert interval string to seconds."""
     return int(interval) * 86400
 
-def run_single_crawl(start_date, end_date, field, dest_dir, arxiv_id_dest, db_type):
+def run_single_crawl(start_date, end_date, paper_category, dest_dir, arxiv_id_dest, db_type):
     """Run a single crawl iteration."""
     print(f"\n{'='*60}")
     print(f"[{datetime.now()}] Starting crawl: {start_date} to {end_date}")
@@ -96,7 +96,7 @@ def run_single_crawl(start_date, end_date, field, dest_dir, arxiv_id_dest, db_ty
             dest_dir=arxiv_id_dest,
             start_date=start_date,
             end_date=end_date,
-            field=field
+            field=paper_category
         )
         
         process_papers(arxiv_ids=ids_raw, db_type=db_type)
