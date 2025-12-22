@@ -12,7 +12,6 @@ from .sql_database import (
     SQLOpenReviewReviews, SQLOpenReviewRevisionsReviews, SQLOpenReviewRevisions,
     SQLOpenReviewParagraphs
 )
-
 # Arxiv CSV
 from .csv_database import (
     CSVArxivAuthors, CSVArxivCategory, CSVArxivCitation, CSVArxivFigure,
@@ -42,6 +41,7 @@ from arxiv_utils.continuous_crawling import run_single_crawl, get_interval_secon
 class ResearchArcade:
     def __init__(self, db_type: str, config: dict) -> None:
         load_dotenv()
+        self.db_type = db_type
         if db_type == 'csv':
             if config["csv_dir"] is None:
                 config["csv_dir"] = os.getenv('CSV_DATASET_FOLDER_PATH')
@@ -794,8 +794,19 @@ class ResearchArcade:
         self.arxiv_paragraph_figure.construct_paragraph_figures_table_from_api(**config)
         self.arxiv_paragraph_table.construct_paragraph_tables_table_from_api(**config)
 
+    def construct_tables_from_venue(self, config: dict) -> Optional[pd.DataFrame]:
+        self.openreview_arxiv.construct_openreview_arxiv_table_from_api(config)
+        self.openreview_authors.construct_authors_table_from_api(config)
+        self.openreview_papers.construct_papers_table_from_api(config)
+        self.openreview_reviews.construct_reviews_table_from_api(config)
+        self.openreview_paragraphs.construct_paragraphs_table_from_api(config)
+        self.openreview_revisions.construct_revisions_table_from_api(config)
+        self.openreview_papers_authors.construct_papers_authors_table_from_api(config)
+        self.openreview_papers_reviews.construct_papers_reviews_table_from_api(config)
+        self.openreview_papers_revisions.construct_papers_revisions_table_from_api(config)
 
-    def continuous_crawling(interval_days, delay_days, paper_category, dest_dir, arxiv_id_dest, db_type):
+
+    def continuous_crawling(self, interval_days, delay_days, paper_category, dest_dir, arxiv_id_dest):
         """
         Runs the crawl process in an infinite loop.
         
@@ -813,7 +824,6 @@ class ResearchArcade:
         print(f"  Interval: {interval_days} days")
         print(f"  Delay: {delay_days} days")
         print(f"  Field: {paper_category or 'all'}")
-        print(f"  Database Type: {db_type}")
 
         while True:
             # Calculate dynamic date window based on current time
@@ -827,7 +837,7 @@ class ResearchArcade:
                 paper_category=paper_category,
                 dest_dir=dest_dir,
                 arxiv_id_dest=arxiv_id_dest,
-                db_type=db_type
+                db_type=self.db_type
             )
 
             if success:
@@ -836,3 +846,6 @@ class ResearchArcade:
                 print(f"[{datetime.now()}] Batch failed. Will retry after sleep.")
                 
             time.sleep(interval_seconds)
+
+
+
