@@ -4,7 +4,9 @@ from pathlib import Path
 from typing import Optional
 import json
 import sys
-from typing import DefaultDict
+from rapidfuzz import fuzz, process
+from collections import defaultdict
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from ..arxiv_utils.multi_input.multi_download import MultiDownload
 from ..arxiv_utils.graph_constructor.node_processor import NodeConstructor
@@ -410,6 +412,8 @@ class CSVArxivCitation:
 
         # Finally, postprocess all the citations that do not have valid cited arxiv id
         result_df = paper_citation_crawling(arxiv_ids=arxiv_ids)
+        print("result_df")
+        print(result_df)
         self.citation_matching_csv(df_cit=result_df, arxiv_ids=arxiv_ids)
         
 
@@ -423,27 +427,45 @@ class CSVArxivCitation:
         """
         Match citations from Semantic Scholar with bibliography entries from CSV.
         Updates the original CSV file with matched arxiv IDs.
-        
-        Args:
-            df_cit: DataFrame with citations from paper_citation_crawling()
-            arxiv_ids: List of arxiv IDs to filter on
-            csv_path: Path to the CSV file containing bibliography data
-            similarity_threshold: Minimum fuzzy match score (0-100)
-        
-        Returns:
-            DataFrame with matched citations
         """
         # Load bibkey from the CSV
         df_bib = self._load_data()
         
-        # Filter to only the arxiv_ids we care about AND where cited_arxiv_id is null
-        mask = df_bib['citing_arxiv_id'].isin(arxiv_ids) & df_bib['cited_arxiv_id'].isna()
+        # Convert arxiv_ids to strings for consistent comparison
+        arxiv_ids_str = [str(aid) for aid in arxiv_ids]
+        
+        # Convert citing_arxiv_id column to string
+        df_bib['citing_arxiv_id'] = df_bib['citing_arxiv_id'].astype(str)
+        
+        # Filter to only the arxiv_ids we care about AND where cited_arxiv_id is null/empty
+        # Handle both NaN, None, and empty strings
+        def is_empty_or_null(x):
+            if pd.isna(x):
+                return True
+            if isinstance(x, str) and x.strip() == '':
+                return True
+            return False
+        
+        mask = (
+            df_bib['citing_arxiv_id'].isin(arxiv_ids_str) & 
+            df_bib['cited_arxiv_id'].apply(is_empty_or_null)
+        )
         df_bib_filtered = df_bib[mask].copy()
         
-        df_bib_filtered["norm_bib_title"] = df_bib_filtered["bib_title"].apply(normalize_title)
+        print(f"DEBUG: Total rows in CSV: {len(df_bib)}")
+        print(f"DEBUG: Arxiv IDs to match: {arxiv_ids_str}")
+        print(f"DEBUG: Rows with matching citing_arxiv_id: {df_bib['citing_arxiv_id'].isin(arxiv_ids_str).sum()}")
+        print(f"DEBUG: Rows with empty cited_arxiv_id: {df_bib['cited_arxiv_id'].apply(is_empty_or_null).sum()}")
+        print(f"DEBUG: Filtered rows for matching: {len(df_bib_filtered)}")
         
+        if df_bib_filtered.empty:
+            print("No bibliography entries found for matching")
+            return
+        
+        df_bib_filtered["norm_bib_title"] = df_bib_filtered["bib_title"].apply(normalize_title)
+                
         # Group bib titles by citing_arxiv_id, also track original index for updating
-        bib_groups = DefaultDict(list)
+        bib_groups = defaultdict(list)
         for idx, row in df_bib_filtered.iterrows():
             bib_groups[str(row["citing_arxiv_id"])].append({
                 'original_idx': idx,
@@ -494,7 +516,7 @@ class CSVArxivCitation:
                     norm_match, score, _ = best
                     original_idx, matched_title = norm_title_map[norm_match]
                     matched += 1
-                    
+
                     results.append({
                         "citing_arxiv_id": citing_id,
                         "cited_arxiv_id": row["cited_arxiv_id"],
@@ -514,5 +536,5 @@ class CSVArxivCitation:
         # Apply updates to original DataFrame and save back to CSV
         for update in updates:
             df_bib.at[update['original_idx'], 'cited_arxiv_id'] = update['cited_arxiv_id']
-        
+        print(results)
         self._save_data(df_bib)

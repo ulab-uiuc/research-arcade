@@ -78,8 +78,8 @@ def process_papers(arxiv_ids, db_type):
 
     # ra.construct_tables_from_arxiv_ids(config=config)
     # ra.construct_table_from_api(table="arxiv_paper_figures", config=config)
-    ra.construct_table_from_api(table="arxiv_paragraph_tables", config=config)
-
+    # ra.construct_table_from_api(table="arxiv_paragraph_tables", config=config)
+    ra.construct_table_from_api(table="arxiv_citations",config=config)
 
 
 def main():
