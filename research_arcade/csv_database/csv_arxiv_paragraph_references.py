@@ -22,8 +22,17 @@ class CSVArxivParagraphReference:
         df.to_csv(self.csv_path, index=False)
         print(f"Created paragraph_references CSV at {self.csv_path}")
 
-    def _load_data(self): 
-        return pd.read_csv(self.csv_path) if os.path.exists(self.csv_path) else pd.DataFrame()
+    def _load_data(self) -> pd.DataFrame:
+        if os.path.exists(self.csv_path):
+            dtype_map = {
+                "paper_arxiv_id": str
+            }
+            # df = pd.read_csv(self.csv_path)
+            df = pd.read_csv(self.csv_path, dtype=dtype_map)
+            return df
+        return pd.DataFrame()
+    
+
     def _save_data(self, df): 
         df.to_csv(self.csv_path, index=False)
 

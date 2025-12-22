@@ -24,7 +24,11 @@ class CSVArxivTable:
 
     def _load_data(self) -> pd.DataFrame:
         if os.path.exists(self.csv_path):
-            df = pd.read_csv(self.csv_path)
+            dtype_map = {
+                "paper_arxiv_id": str
+            }
+            # df = pd.read_csv(self.csv_path)
+            df = pd.read_csv(self.csv_path, dtype=dtype_map)
             return df
         return pd.DataFrame()
     

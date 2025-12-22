@@ -28,10 +28,15 @@ class CSVArxivSections:
 
     def _load_data(self) -> pd.DataFrame:
         if os.path.exists(self.csv_path):
-            df = pd.read_csv(self.csv_path)
+            dtype_map = {
+                "paper_arxiv_id": str,
+                "title": str
+            }
+            # df = pd.read_csv(self.csv_path)
+            df = pd.read_csv(self.csv_path, dtype=dtype_map)
             return df
         return pd.DataFrame()
-    
+
     def _save_data(self, df: pd.DataFrame):
         df.to_csv(self.csv_path, index=False)
 

@@ -30,7 +30,14 @@ class CSVArxivCitation:
         print(f"Created citations CSV at {self.csv_path}")
 
     def _load_data(self): 
-        return pd.read_csv(self.csv_path) if os.path.exists(self.csv_path) else pd.DataFrame()
+        dtype_map = {
+            "citing_arxiv_id": str,
+            "cited_arxiv_id": str,
+            "bib_key": str
+        }
+        # return pd.read_csv(self.csv_path) if os.path.exists(self.csv_path) else pd.DataFrame()
+        return pd.read_csv(self.csv_path, dtype=dtype_map) if os.path.exists(self.csv_path) else pd.DataFrame()
+    
     def _save_data(self, df): 
         df.to_csv(self.csv_path, index=False)
 
