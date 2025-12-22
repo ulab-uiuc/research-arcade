@@ -15,9 +15,21 @@ config = {
 
 research_arcade = ResearchArcade(db_type=db_type, config=config)
 
+# config = {"venue": "EMNLP/2023/Conference"}
+# client_v1 = openreview.Client(
+#             baseurl='https://api.openreview.net'
+#         )
+# client_v2 = openreview.api.OpenReviewClient(
+#             baseurl='https://api2.openreview.net'
+#         )
+
+# submission = client_v2.get_all_notes(invitation=f'{config["venue"]}/-/Submission', details="replies")
+# print(len(submission))
+# print(submission)
 ########## openreview_authors ##########
 # construct_from_api
 # config = {"venue": "ICLR.cc/2025/Conference"}
+# config = {"venue": "NeurIPS.cc/2021/Conference"}
 # research_arcade.construct_table_from_api("openreview_authors", config)
 
 # construct_from_csv
@@ -269,7 +281,7 @@ research_arcade = ResearchArcade(db_type=db_type, config=config)
 # filter_list = ["Under review as a conference paper at ICLR 2017", "Published as a conference paper at ICLR 2017"]
 # pdf_dir = "/data/jingjunx/openreview_pdfs_2017/"
 # log_file = "./log/failed_ids_revisions_2017.log"
-# config = {"venue": venue, "filter_list": filter_list, "pdf_dir": pdf_dir, "log_file": log_file, "is_paper": True, "is_revision": True, "is_pdf_delete": False}
+# config = {"venue": venue, "filter_list": filter_list, "pdf_dir": pdf_dir, "log_file": log_file, "is_paper": True, "is_revision": False, "is_pdf_delete": False}
 # research_arcade.construct_table_from_api("openreview_paragraphs", config)
 
 # construct_from_csv

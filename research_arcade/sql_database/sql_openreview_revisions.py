@@ -195,7 +195,7 @@ class SQLOpenReviewRevisions:
             # 处理所有行的content字段，如果是dict则转换为JSON字符串
             processed_rows = []
             for row in rows:
-                row_list = list(row[1:])
+                row_list = list(row)
                 if isinstance(row_list[3], dict):
                     row_list[3] = json.dumps(row_list[3])
                 processed_rows.append(row_list)

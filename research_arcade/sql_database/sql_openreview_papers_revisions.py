@@ -152,7 +152,6 @@ class SQLOpenReviewPapersRevisions:
     
     def get_papers_revisions_by_venue(self, venue: str) -> Optional[pd.DataFrame]:
         # TODO: papers_revisions is undefined
-        papers_revisions = None
         self.cur.execute("""
         SELECT venue, paper_openreview_id, revision_openreview_id, title, time FROM openreview_papers_revisions
         WHERE venue = %s;
@@ -161,7 +160,7 @@ class SQLOpenReviewPapersRevisions:
         openreview_papers_revisions = self.cur.fetchall()
         
         if openreview_papers_revisions is not None:
-            papers_revisions_df = pd.DataFrame(papers_revisions, columns=["venue", "paper_openreview_id", "revision_openreview_id", "title", "time"])
+            papers_revisions_df = pd.DataFrame(openreview_papers_revisions, columns=["venue", "paper_openreview_id", "revision_openreview_id", "title", "time"])
             return papers_revisions_df
         else:
             return None

@@ -21,7 +21,7 @@ class OpenReviewCrawler:
         
     def crawl_paper_data_from_api(self, venue: str) -> list[dict]:
         paper_data = []
-        if "2023" in venue or "2022" in venue or "2021" in venue or "2020" in venue or "2019" in venue or "2018" in venue:
+        if ("2023" in venue or "2022" in venue or "2021" in venue or "2020" in venue or "2019" in venue or "2018" in venue) and ("ICML" not in venue) and ("NeurIPS.cc/2023" not in venue) and ("EMNLP" not in venue):
             submissions = self.client_v1.get_all_notes(invitation=f'{venue}/-/Blind_Submission', details='replies')
             if submissions is None:
                 print(f"No submissions found for venue: {venue}")
@@ -129,7 +129,7 @@ class OpenReviewCrawler:
     def crawl_author_data_from_api(self, venue: str) -> list[dict]:
         author_data = []
         author_set = set()
-        if "2023" in venue or "2022" in venue or "2021" in venue or "2020" in venue or "2019" in venue or "2018" in venue:
+        if ("2023" in venue or "2022" in venue or "2021" in venue or "2020" in venue or "2019" in venue or "2018" in venue) and ("ICML" not in venue) and ("NeurIPS.cc/2023" not in venue) and ("EMNLP" not in venue):
             submissions = self.client_v1.get_all_notes(invitation=f'{venue}/-/Blind_Submission')
             if submissions is None:
                 print(f"No submissions found for venue: {venue}")
@@ -226,7 +226,7 @@ class OpenReviewCrawler:
         
     def crawl_review_data_from_api(self, venue: str) -> list[dict]:
         review_data = []
-        if "2023" in venue or "2022" in venue or "2021" in venue or "2020" in venue or "2019" in venue or "2018" in venue:
+        if ("2023" in venue or "2022" in venue or "2021" in venue or "2020" in venue or "2019" in venue or "2018" in venue) and ("ICML" not in venue) and ("NeurIPS.cc/2023" not in venue) and ("EMNLP" not in venue):
             submissions = self.client_v1.get_all_notes(invitation=f'{venue}/-/Blind_Submission', details='replies')
             if submissions is None:
                 print(f"No submissions found for venue: {venue}")
@@ -352,7 +352,7 @@ class OpenReviewCrawler:
     def crawl_revision_data_from_api(self, venue: str, filter_list: list, pdf_dir: str, log_file: str) -> list[dict]:
         import time
         revision_data = []
-        if "2023" in venue or "2022" in venue or "2021" in venue or "2020" in venue or "2019" in venue or "2018" in venue or "2017" in venue or "2014" in venue or "2013" in venue:
+        if ("2023" in venue or "2022" in venue or "2021" in venue or "2020" in venue or "2019" in venue or "2018" in venue or "2017" in venue or "2014" in venue or "2013" in venue) and ("ICML" not in venue) and ("NeurIPS.cc/2023" not in venue) and ("EMNLP" not in venue):
             if "2023" in venue or "2022" in venue or "2021" in venue or "2020" in venue or "2019" in venue or "2018" in venue:
                 submissions = self.client_v1.get_all_notes(invitation=f'{venue}/-/Blind_Submission', details='revisions')
             elif "2017" in venue or "2014" in venue or "2013" in venue:
@@ -505,7 +505,7 @@ class OpenReviewCrawler:
         # TODO: original_id is undefined
         original_id = None
         paragraph_data = []
-        if "2023" in venue or "2022" in venue or "2021" in venue or "2020" in venue or "2019" in venue or "2018" in venue or "2017" in venue or "2014" in venue or "2013" in venue:
+        if ("2023" in venue or "2022" in venue or "2021" in venue or "2020" in venue or "2019" in venue or "2018" in venue or "2017" in venue or "2014" in venue or "2013" in venue) and ("ICML" not in venue) and ("NeurIPS.cc/2023" not in venue) and ("EMNLP" not in venue):
             if "2023" in venue or "2022" in venue or "2021" in venue or "2020" in venue or "2019" in venue or "2018" in venue:
                 submissions = self.client_v1.get_all_notes(invitation=f'{venue}/-/Blind_Submission', details='revisions')
             elif "2017" in venue or "2014" in venue or "2013" in venue:
@@ -514,7 +514,7 @@ class OpenReviewCrawler:
                 print(f"No submissions found for venue: {venue}")
                 return []
             else:
-                for submission in tqdm(submissions[0:5]):
+                for submission in tqdm(submissions):
                     # get paper openreview id
                     paper_id = submission.id
                     if is_paper:
@@ -639,7 +639,7 @@ class OpenReviewCrawler:
                 print(f"No submissions found for venue: {venue}")
                 return []
             else:
-                for submission in tqdm(submissions[0:5]):
+                for submission in tqdm(submissions):
                     # get paper decision and remove withdrawn papers
                     decision = submission.content["venueid"]["value"].split('/')[-1]
                     if decision == "Withdrawn_Submission":
@@ -760,7 +760,7 @@ class OpenReviewCrawler:
         
     def crawl_papers_authors_data_from_api(self, venue: str) -> list[dict]:
         papers_authors_data = []
-        if "2023" in venue or "2022" in venue or "2021" in venue or "2020" in venue or "2019" in venue or "2018" in venue or "2017" in venue or "2014" in venue or "2013" in venue:
+        if ("2023" in venue or "2022" in venue or "2021" in venue or "2020" in venue or "2019" in venue or "2018" in venue or "2017" in venue or "2014" in venue or "2013" in venue) and ("ICML" not in venue) and ("NeurIPS.cc/2023" not in venue) and ("EMNLP" not in venue):
             if "2023" in venue or "2022" in venue or "2021" in venue or "2020" in venue or "2019" in venue or "2018" in venue:
                 submissions = self.client_v1.get_all_notes(invitation=f'{venue}/-/Blind_Submission', details='replies')
             elif "2017" in venue or "2014" in venue or "2013" in venue:
@@ -804,7 +804,7 @@ class OpenReviewCrawler:
     def crawl_papers_revisions_data_from_api(self, venue: str) -> list[dict]:
         import time
         papers_revisions_data = []
-        if "2023" in venue or "2022" in venue or "2021" in venue or "2020" in venue or "2019" in venue or "2018" in venue or "2017" in venue or "2014" in venue or "2013" in venue:
+        if ("2023" in venue or "2022" in venue or "2021" in venue or "2020" in venue or "2019" in venue or "2018" in venue or "2017" in venue or "2014" in venue or "2013" in venue) and ("ICML" not in venue) and ("NeurIPS.cc/2023" not in venue) and ("EMNLP" not in venue):
             if "2023" in venue or "2022" in venue or "2021" in venue or "2020" in venue or "2019" in venue or "2018" in venue:
                 submissions = self.client_v1.get_all_notes(invitation=f'{venue}/-/Blind_Submission', details='revisions')
             elif "2017" in venue or "2014" in venue or "2013" in venue:
@@ -880,7 +880,7 @@ class OpenReviewCrawler:
 
     def crawl_papers_reviews_from_api(self, venue: str) -> list[dict]:
         papers_reviews_data = []
-        if "2023" in venue or "2022" in venue or "2021" in venue or "2020" in venue or "2019" in venue or "2018" in venue:
+        if ("2023" in venue or "2022" in venue or "2021" in venue or "2020" in venue or "2019" in venue or "2018" in venue) and ("ICML" not in venue) and ("NeurIPS.cc/2023" not in venue) and ("EMNLP" not in venue):
             submissions = self.client_v1.get_all_notes(invitation=f'{venue}/-/Blind_Submission', details='replies')
             if submissions is None:
                 print(f"No submissions found for venue: {venue}")
@@ -990,7 +990,7 @@ class OpenReviewCrawler:
                 
     def crawl_openreview_arxiv_data_from_api(self, venue: str) -> list[dict]:
         openreview_arxiv_data = []
-        if "2023" in venue or "2022" in venue or "2021" in venue or "2020" in venue or "2019" in venue or "2018" in venue or "2017" in venue or "2014" in venue or "2013" in venue:
+        if ("2023" in venue or "2022" in venue or "2021" in venue or "2020" in venue or "2019" in venue or "2018" in venue or "2017" in venue or "2014" in venue or "2013" in venue) and ("ICML" not in venue) and ("NeurIPS.cc/2023" not in venue) and ("EMNLP" not in venue):
             if "2023" in venue or "2022" in venue or "2021" in venue or "2020" in venue or "2019" in venue or "2018" in venue:
                 submissions = self.client_v1.get_all_notes(invitation=f'{venue}/-/Blind_Submission')
             elif "2017" in venue or "2014" in venue or "2013" in venue:
@@ -1006,6 +1006,8 @@ class OpenReviewCrawler:
                     title = submission.content["title"]
                     # get arxiv id if exists
                     arxiv_id = self._search_title_with_name(title)
+                    import time
+                    time.sleep(1)
                     openreview_arxiv_data.append({
                         "venue": venue,
                         "paper_openreview_id": openreview_id,
@@ -1030,6 +1032,8 @@ class OpenReviewCrawler:
                         title = submission.content["title"]["value"]
                         # get arxiv id if exists
                         arxiv_id = self._search_title_with_name(title)
+                        import time
+                        time.sleep(1)
                         openreview_arxiv_data.append({
                             "venue": venue,
                             "paper_openreview_id": paper_id,
@@ -1060,5 +1064,8 @@ class OpenReviewCrawler:
             for result in search.results():
                 if (self._title_cleaner(result.title) == self._title_cleaner(title)):
                     return result.entry_id
+        except arxiv.HTTPError as e:
+            print(f"Error with the request: {e}")
+            return None
         except UnexpectedEmptyPageError:
             return None
