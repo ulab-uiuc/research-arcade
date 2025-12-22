@@ -1,0 +1,31 @@
+[tool.poetry]
+name = "research-arcade"
+version = "0.1.4"
+description = "A graph interface for academic tasks"
+authors = ["Jingjun XU <jingjunxu596@gmail.com>", "Chongshan LIN <chongshan0lin@gmail.com>"]
+license = "Apache 2.0 License"
+readme = "README.md"
+packages = [{ include = "research_arcade" }]
+
+[tool.poetry.dependencies]
+python = ">=3.10, <3.12"
+arxiv = "*"
+openreview-py = "*"
+pandas = "^2.3.3"
+pdfminer-six = "*"
+psycopg2-binary = "^2.9.10"
+requests = "*"
+tqdm = "^4.67.1"
+rapidfuzz = "^3.14.1"
+paperscraper = "*"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.mypy]
+ignore_missing_imports = true
+check_untyped_defs = true
+follow_imports = "normal"
+strict = true
+plugins = ["pydantic.mypy"]
