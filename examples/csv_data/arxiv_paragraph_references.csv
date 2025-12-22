@@ -1,0 +1,11 @@
+id,paragraph_id,paper_section,paper_arxiv_id,reference_label,reference_type
+923760,36,Proof Adversarial Robustness in Two-Stage Learning-to-Defer,2502.01027,lemma:surrogate_class,table
+1143450,25,Experimental results,2503.03230,fig:sim-05-localC-R,
+2109595,139,Our construction,2501.16838,lema:BCD,
+1232592,5,Constructing a Hierarchy of Stationary Solutions,2502.00037,otrConditionExplicitMatrixS,
+7662526,102,Proofs of Results in Main Paper,2010.03697,fig:syn_exp_full,figure
+8155248,25,Proofs,2409.19157,prop:payoff_lemma,
+477488,11,Co-Simulation results,2508.00637,fig:MDLAABigLFCUFLS,figure
+6498045,0,Oneta enhancement results,2506.23547,fig:supp_qual_29,figure
+672934,3,Introduction,2501.00799,sec:numerical,
+4635994,0,Experiments and Results,2508.00549,fig:scatter,figure

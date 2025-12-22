@@ -148,7 +148,8 @@ dmypy.json
 cython_debug/
 
 #.idea/
-*.csv
+# *.csv
+.app/
 
 experiment_output/
 final_paragraph_generation_model/
@@ -159,7 +160,7 @@ paragraph_generation_models/
 paragraph_generation_models/*
 token_embedding_cache/
 wandb/
-*.json
+# *.json
 <<<<<<< Updated upstream
 .DS_Store
 =======

@@ -1,0 +1,11 @@
+id,paragraph_id,paper_section,citing_arxiv_id,bib_key,cited_arxiv_id,paragraph_global_id
+3583565,2,Limitations and Customization,2405.05073,DeLiraSalvatierra2015,,
+46826,2,Related Work,2508.00410,li2025confidence,,
+3119142,1,Introduction,2007.00077v2,openai2018compute,,
+221614,4,Resources and Material Sources,2501.01168,kaneko-bollegala-2021-debiasing,,
+1928150,32,Open problems in mechanistic interpretability methods and foundations,2501.16496,hani2024mathematicalmodels,,
+390400,1,Methodology,2501.14951,sutskever2014sequence,,
+2823953,15,Experiemntal Details,2506.08022,wang2024enhancing,,
+646756,3,Methods,2508.00393,fas25,,
+3631708,3,Numerical method and validations,2404.11832,kimImplicitVelocityDecoupling2002,,
+1280869,387,Results and discussion,2501.16044,widyasariBugsInPyDatabaseExisting2020,,

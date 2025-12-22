@@ -1,0 +1,209 @@
+[
+  {
+    "id": "410",
+    "citing_arxiv_id": "1802.08773",
+    "cited_arxiv_id": "812.4905",
+    "bib_title": "Kronecker graphs: An approach to modeling networks.",
+    "bib_key": "leskovec2010kronecker",
+    "citing_sections": "[\"Further Related Work\", \"Introduction and Related Work\", \"Experiments\"]",
+    "citing_paragraphs": "[]"
+  },
+  {
+    "id": "411",
+    "citing_arxiv_id": "1802.08773",
+    "cited_arxiv_id": "705.4485",
+    "bib_title": "Mixed membership stochastic blockmodels.",
+    "bib_key": "airoldi2008mixed",
+    "citing_sections": "[\"Introduction and Related Work\", \"Experiments\"]",
+    "citing_paragraphs": "[]"
+  },
+  {
+    "id": "414",
+    "citing_arxiv_id": "1802.08773",
+    "cited_arxiv_id": "1312.6114",
+    "bib_title": "Auto-encoding variational bayes.",
+    "bib_key": "kingma2013auto",
+    "citing_sections": "[\"Introduction and Related Work\", \"Proposed Approach\"]",
+    "citing_paragraphs": "[]"
+  },
+  {
+    "id": "417",
+    "citing_arxiv_id": "1802.08773",
+    "cited_arxiv_id": "1803.10459",
+    "bib_title": "Graphite: Iterative generative modeling of graphs.",
+    "bib_key": "grovergraphite",
+    "citing_sections": "[\"Further Related Work\", \"Introduction and Related Work\", \"Proposed Approach\"]",
+    "citing_paragraphs": "[]"
+  },
+  {
+    "id": "418",
+    "citing_arxiv_id": "1802.08773",
+    "cited_arxiv_id": "1802.0348",
+    "bib_title": "GraphVAE: Towards generation of small graphs using variational   autoencoders, 2018.",
+    "bib_key": "simonovsky2018graphvae",
+    "citing_sections": "[\"Further Related Work\", \"Appendix\", \"Introduction and Related Work\", \"Experiments\"]",
+    "citing_paragraphs": "[]"
+  },
+  {
+    "id": "421",
+    "citing_arxiv_id": "1802.08773",
+    "cited_arxiv_id": "1709.05584",
+    "bib_title": "Representation learning on graphs: Methods and applications.",
+    "bib_key": "hamilton2017representation",
+    "citing_sections": "[\"Proposed Approach\"]",
+    "citing_paragraphs": "[]"
+  },
+  {
+    "id": "422",
+    "citing_arxiv_id": "1802.08773",
+    "cited_arxiv_id": "1412.3555",
+    "bib_title": "Empirical evaluation of gated recurrent neural networks on sequence   modeling.",
+    "bib_key": "chung2014empirical",
+    "citing_sections": "[\"Proposed Approach\"]",
+    "citing_paragraphs": "[]"
+  },
+  {
+    "id": "427",
+    "citing_arxiv_id": "1802.08773",
+    "cited_arxiv_id": "1511.01844",
+    "bib_title": "A note on the evaluation of generative models.",
+    "bib_key": "Theis2016a",
+    "citing_sections": "[\"Experiments\"]",
+    "citing_paragraphs": "[]"
+  },
+  {
+    "id": "429",
+    "citing_arxiv_id": "1802.08773",
+    "cited_arxiv_id": "1704.07555",
+    "bib_title": "Molecular de novo design through deep reinforcement learning.",
+    "bib_key": "olivecrona2017molecular",
+    "citing_sections": "[\"Further Related Work\"]",
+    "citing_paragraphs": "[]"
+  },
+  {
+    "id": "430",
+    "citing_arxiv_id": "1802.08773",
+    "cited_arxiv_id": "1701.01329",
+    "bib_title": "Generating focussed molecule libraries for drug discovery with   recurrent neural networks.",
+    "bib_key": "segler2017generating",
+    "citing_sections": "[\"Further Related Work\"]",
+    "citing_paragraphs": "[]"
+  },
+  {
+    "id": "431",
+    "citing_arxiv_id": "1802.08773",
+    "cited_arxiv_id": "1802.08786",
+    "bib_title": "Syntax-directed variational autoencoder for structured data.",
+    "bib_key": "dai2018syntax-directed",
+    "citing_sections": "[\"Further Related Work\"]",
+    "citing_paragraphs": "[]"
+  },
+  {
+    "id": "437",
+    "citing_arxiv_id": "1806.02473",
+    "cited_arxiv_id": "1712.07449",
+    "bib_title": "In silico generation of novel, drug-like chemical matter using the   LSTM neural network.",
+    "bib_key": "DBLP:journals/corr/abs-1712-07449",
+    "citing_sections": "[\"Introduction\"]",
+    "citing_paragraphs": "[]"
+  },
+  {
+    "id": "440",
+    "citing_arxiv_id": "1806.02473",
+    "cited_arxiv_id": "1802.08786",
+    "bib_title": "Syntax-directed variational autoencoder for structured data.",
+    "bib_key": "dai2018syntax",
+    "citing_sections": "[\"Experiments\", \"Introduction\"]",
+    "citing_paragraphs": "[]"
+  },
+  {
+    "id": "441",
+    "citing_arxiv_id": "1806.02473",
+    "cited_arxiv_id": "1704.07555",
+    "bib_title": "Molecular de-novo design through deep reinforcement learning.",
+    "bib_key": "Olivecrona2017",
+    "citing_sections": "[\"Related Work\", \"Introduction\"]",
+    "citing_paragraphs": "[]"
+  },
+  {
+    "id": "453",
+    "citing_arxiv_id": "1806.02473",
+    "cited_arxiv_id": "1609.02907",
+    "bib_title": "Semi-supervised classification with graph convolutional networks.",
+    "bib_key": "kipf2016semi",
+    "citing_sections": "[\"Introduction\", \"Proposed Method\"]",
+    "citing_paragraphs": "[]"
+  },
+  {
+    "id": "454",
+    "citing_arxiv_id": "1806.02473",
+    "cited_arxiv_id": "1509.09292",
+    "bib_title": "Convolutional networks on graphs for learning molecular fingerprints.",
+    "bib_key": "duvenaud2015convolutional",
+    "citing_sections": "[\"Introduction\", \"Proposed Method\"]",
+    "citing_paragraphs": "[]"
+  },
+  {
+    "id": "457",
+    "citing_arxiv_id": "1806.02473",
+    "cited_arxiv_id": "1803.03324",
+    "bib_title": "Learning deep generative models of graphs.",
+    "bib_key": "li2018learning",
+    "citing_sections": "[\"Related Work\", \"Proposed Method\"]",
+    "citing_paragraphs": "[]"
+  },
+  {
+    "id": "459",
+    "citing_arxiv_id": "1806.02473",
+    "cited_arxiv_id": "1609.05473",
+    "bib_title": "Seqgan: Sequence generative adversarial nets with policy gradient.",
+    "bib_key": "yu2017seqgan",
+    "citing_sections": "[\"Proposed Method\"]",
+    "citing_paragraphs": "[]"
+  },
+  {
+    "id": "463",
+    "citing_arxiv_id": "1806.02473",
+    "cited_arxiv_id": "1706.02216",
+    "bib_title": "Inductive representation learning on large graphs.",
+    "bib_key": "hamilton2017inductive",
+    "citing_sections": "[\"Proposed Method\"]",
+    "citing_paragraphs": "[]"
+  },
+  {
+    "id": "464",
+    "citing_arxiv_id": "1806.02473",
+    "cited_arxiv_id": "1707.06347",
+    "bib_title": "Proximal policy optimization algorithms.",
+    "bib_key": "DBLP:journals/corr/SchulmanWDRK17",
+    "citing_sections": "[\"Proposed Method\"]",
+    "citing_paragraphs": "[]"
+  },
+  {
+    "id": "468",
+    "citing_arxiv_id": "1806.02473",
+    "cited_arxiv_id": "1606.0154",
+    "bib_title": "Openai gym.",
+    "bib_key": "DBLP:journals/corr/BrockmanCPSSTZ16",
+    "citing_sections": "[\"Experiments\"]",
+    "citing_paragraphs": "[]"
+  },
+  {
+    "id": "470",
+    "citing_arxiv_id": "1806.02473",
+    "cited_arxiv_id": "1502.03167",
+    "bib_title": "Batch normalization: Accelerating deep network training by reducing   internal covariate shift.",
+    "bib_key": "pmlr-v37-ioffe15",
+    "citing_sections": "[\"Experiments\"]",
+    "citing_paragraphs": "[]"
+  },
+  {
+    "id": "472",
+    "citing_arxiv_id": "1806.02473",
+    "cited_arxiv_id": "1802.0348",
+    "bib_title": "Graphvae: Towards generation of small graphs using variational   autoencoders.",
+    "bib_key": "simonovsky2018graphvae",
+    "citing_sections": "[\"Experiments\"]",
+    "citing_paragraphs": "[]"
+  }
+]
