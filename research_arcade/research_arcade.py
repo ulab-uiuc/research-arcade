@@ -805,18 +805,9 @@ class ResearchArcade:
         self.openreview_papers_reviews.construct_papers_reviews_table_from_api(config)
         self.openreview_papers_revisions.construct_papers_revisions_table_from_api(config)
 
-
     def continuous_crawling(self, interval_days, delay_days, paper_category, dest_dir, arxiv_id_dest):
         """
         Runs the crawl process in an infinite loop.
-        
-        Args:
-            interval_days (int): How many days of papers to fetch per crawl.
-            delay_days (int): How many days to lag behind 'today' (to account for arXiv processing).
-            field (str): The arXiv category filter.
-            dest_dir (str): Directory to save downloaded papers.
-            arxiv_id_dest (str): Directory to save the list of processed IDs.
-            db_type (str): "csv" or "sql".
         """
         interval_seconds = get_interval_seconds(interval_days)
 
@@ -826,26 +817,26 @@ class ResearchArcade:
         print(f"  Field: {paper_category or 'all'}")
 
         while True:
-            # Calculate dynamic date window based on current time
-            # Example: if interval=2 and delay=2, it fetches papers from 5 days ago to 2 days ago.
             start_date = (date.today() - timedelta(days=interval_days + delay_days + 1)).isoformat()
             end_date = (date.today() - timedelta(days=delay_days)).isoformat() 
 
-            success = run_single_crawl(
+            arxiv_ids = run_single_crawl(
                 start_date=start_date,
                 end_date=end_date,
                 paper_category=paper_category,
                 dest_dir=dest_dir,
-                arxiv_id_dest=arxiv_id_dest,
-                db_type=self.db_type
+                arxiv_id_dest=arxiv_id_dest
             )
-
-            if success:
+        
+            if arxiv_ids is not None:
+                # Process papers using self
+                config = {
+                    'arxiv_ids': arxiv_ids,
+                    'dest_dir': os.getenv('PAPER_FOLDER_PATH')
+                }
+                self.construct_tables_from_arxiv_ids(config=config)
                 print(f"[{datetime.now()}] Batch completed. Sleeping for {interval_days} days...")
             else:
                 print(f"[{datetime.now()}] Batch failed. Will retry after sleep.")
                 
             time.sleep(interval_seconds)
-
-
-
