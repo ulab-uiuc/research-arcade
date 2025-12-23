@@ -804,7 +804,6 @@ class ResearchArcade:
         self.openreview_papers_authors.construct_papers_authors_table_from_api(config)
         self.openreview_papers_reviews.construct_papers_reviews_table_from_api(config)
         self.openreview_papers_revisions.construct_papers_revisions_table_from_api(config)
-
     def continuous_crawling(self, interval_days, delay_days, paper_category, dest_dir, arxiv_id_dest):
         """
         Runs the crawl process in an infinite loop.
@@ -814,11 +813,11 @@ class ResearchArcade:
         print(f"Starting continuous crawl mode")
         print(f"  Interval: {interval_days} days")
         print(f"  Delay: {delay_days} days")
-        print(f"  Field: {paper_category or 'all'}")
+        print(f"  Paper Categories: {paper_category or 'all'}")
 
         while True:
-            start_date = (date.today() - timedelta(days=interval_days + delay_days + 1)).isoformat()
-            end_date = (date.today() - timedelta(days=delay_days)).isoformat() 
+            start_date = (date.today() - timedelta(days=interval_days + delay_days - 1)).isoformat()
+            end_date = (date.today() - timedelta(days=delay_days)).isoformat()
 
             arxiv_ids = run_single_crawl(
                 start_date=start_date,
@@ -827,7 +826,7 @@ class ResearchArcade:
                 dest_dir=dest_dir,
                 arxiv_id_dest=arxiv_id_dest
             )
-        
+
             if arxiv_ids is not None:
                 # Process papers using self
                 config = {
