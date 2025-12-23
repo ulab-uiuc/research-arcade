@@ -10,7 +10,7 @@ from ..arxiv_utils.graph_constructor.node_processor import NodeConstructor
 
 class CSVArxivSections:
     def __init__(self, csv_dir: str):
-        csv_path = f"{csv_dir}/arxiv_sections.csv"
+        csv_path = os.path.join(csv_dir, 'arxiv_sections.csv')
         self.csv_path = csv_path
         # Set up the target directory
         # Automatically create the csv path

@@ -10,7 +10,7 @@ from ..arxiv_utils.graph_constructor.node_processor import NodeConstructor
 from ..arxiv_utils.utils import arxiv_id_processor, figure_iteration_recursive
 class CSVArxivFigure:
     def __init__(self, csv_dir: str):
-        csv_path = f"{csv_dir}/arxiv_figures.csv"
+        csv_path = os.path.join(csv_dir, 'arxiv_figures.csv')
         self.csv_path = csv_path
         Path(csv_path).parent.mkdir(parents=True, exist_ok=True)
         if not os.path.exists(csv_path):

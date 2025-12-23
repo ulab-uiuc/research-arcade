@@ -8,7 +8,7 @@ from ..arxiv_utils.utils import get_paragraph_num, arxiv_ids_hashing
 
 class CSVArxivParagraphReference:
     def __init__(self, csv_dir: str):
-        csv_path = f"{csv_dir}/arxiv_paragraph_references.csv"
+        csv_path = os.path.join(csv_dir, 'arxiv_paragraph_references.csv')
         self.csv_path = csv_path
         Path(csv_path).parent.mkdir(parents=True, exist_ok=True)
         if not os.path.exists(csv_path):
