@@ -145,6 +145,44 @@ class CSVArxivCitation:
         else:
             print(f"Citation not found: {citing_paper_id} -> {cited_paper_id}")
             return False
+        
+    def delete_citation_by_citing_id(self, citing_paper_id):
+        df = self._load_data()
+        
+        if df.empty:
+            return False
+        
+        mask = (df['citing_arxiv_id'] == citing_paper_id)
+        
+        if not df[mask].empty:
+
+            df = df[~mask]
+            self._save_data(df)
+            print(f"Deleted citation with citing paper: {citing_paper_id} ")
+            return True
+        else:
+            print(f"Citation not found with citing paper: {citing_paper_id}")
+            return False
+
+    def delete_citation_by_cited_id(self, cited_paper_id):
+
+        df = self._load_data()
+        
+        if df.empty:
+            return False
+        
+        mask =(df['cited_arxiv_id'] == cited_paper_id)
+        
+        if not df[mask].empty:
+
+            df = df[~mask]
+            self._save_data(df)
+            print(f"Deleted citation with cited paper: {cited_paper_id}")
+            return True
+        else:
+            print(f"Citation not found with cited paper: {cited_paper_id}")
+            return False
+
     
     def get_all_citations(self, is_all_features=True):
         df = self._load_data()

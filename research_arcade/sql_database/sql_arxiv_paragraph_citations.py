@@ -67,9 +67,207 @@ class SQLArxivParagraphCitation:
         finally:
             conn.close()
 
-    # -------------------------
-    # CRUD Operations
-    # -------------------------
+    # ==================== CONSTRUCT TABLE METHODS ====================
+
+    def construct_table_from_csv(self, csv_file: str) -> bool:
+        """
+        Construct the paragraph-citation relationships from an external CSV file.
+        
+        Args:
+            csv_file: Path to the CSV file
+            
+        Expected CSV format:
+            - Required columns: paragraph_id, paper_section, citing_arxiv_id, bib_key
+            - Optional columns: cited_arxiv_id, paragraph_global_id, bib_title
+            
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        if not os.path.exists(csv_file):
+            print(f"Error: CSV file {csv_file} does not exist.")
+            return False
+
+        try:
+            dtype_map = {
+                "citing_arxiv_id": str,
+                "cited_arxiv_id": str,
+                "bib_key": str
+            }
+            external_df = pd.read_csv(csv_file, dtype=dtype_map)
+
+            # Check for required columns
+            required_cols = ['paragraph_id', 'paper_section', 'citing_arxiv_id', 'bib_key']
+            missing_cols = [col for col in required_cols if col not in external_df.columns]
+
+            if missing_cols:
+                print(f"Error: External CSV is missing required columns: {missing_cols}")
+                return False
+
+            # Add optional columns if not present
+            if 'cited_arxiv_id' not in external_df.columns:
+                external_df['cited_arxiv_id'] = None
+            if 'paragraph_global_id' not in external_df.columns:
+                external_df['paragraph_global_id'] = None
+            if 'bib_title' not in external_df.columns:
+                external_df['bib_title'] = None
+
+            # Prepare rows for insertion
+            rows = []
+            for _, row in external_df.iterrows():
+                rows.append((
+                    row['paragraph_id'],
+                    row['paper_section'],
+                    row['citing_arxiv_id'],
+                    row['bib_key'],
+                    row.get('cited_arxiv_id'),
+                    row.get('paragraph_global_id'),
+                    row.get('bib_title')
+                ))
+
+            if not rows:
+                print("No data to insert from CSV.")
+                return False
+
+            conn = self._get_connection()
+            try:
+                cur = conn.cursor()
+                execute_values(
+                    cur,
+                    """
+                    INSERT INTO arxiv_paragraph_citations 
+                    (paragraph_id, paper_section, citing_arxiv_id, bib_key, 
+                     cited_arxiv_id, paragraph_global_id, bib_title)
+                    VALUES %s
+                    """,
+                    rows,
+                    page_size=1000
+                )
+                cur.close()
+                print(f"Successfully imported {len(rows)} paragraph-citation relationships from {csv_file}")
+                return True
+            finally:
+                conn.close()
+            
+        except Exception as e:
+            print(f"Error importing paragraph-citation relationships from CSV: {e}")
+            return False
+
+    def construct_table_from_json(self, json_file: str) -> bool:
+        """
+        Construct the paragraph-citation relationships from an external JSON file.
+        
+        Args:
+            json_file: Path to the JSON file
+            
+        Expected JSON format:
+            [
+                {
+                    "paragraph_id": 0,
+                    "paper_section": "Introduction",
+                    "citing_arxiv_id": "1810.04805v2",
+                    "bib_key": "vaswani2017attention",
+                    "cited_arxiv_id": "1706.03762v7",  // optional
+                    "paragraph_global_id": 1,  // optional
+                    "bib_title": "Attention Is All You Need"  // optional
+                },
+                ...
+            ]
+            
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        if not os.path.exists(json_file):
+            print(f"Error: JSON file {json_file} does not exist.")
+            return False
+
+        try:
+            # Load JSON data
+            with open(json_file, 'r', encoding='utf-8') as f:
+                json_data = json.load(f)
+            
+            # Handle different JSON structures
+            if isinstance(json_data, dict):
+                if 'paragraph_citations' in json_data:
+                    citations_list = json_data['paragraph_citations']
+                elif 'citations' in json_data:
+                    citations_list = json_data['citations']
+                else:
+                    citations_list = [json_data]
+            elif isinstance(json_data, list):
+                citations_list = json_data
+            else:
+                print("Error: JSON file must contain either a list or a dictionary")
+                return False
+            
+            if not citations_list:
+                print("Error: No paragraph-citation data found in JSON file")
+                return False
+
+            # Convert to DataFrame for easier processing
+            external_df = pd.DataFrame(citations_list)
+
+            # Check for required columns
+            required_cols = ['paragraph_id', 'paper_section', 'citing_arxiv_id', 'bib_key']
+            missing_cols = [col for col in required_cols if col not in external_df.columns]
+
+            if missing_cols:
+                print(f"Error: JSON data is missing required fields: {missing_cols}")
+                return False
+
+            # Add optional columns if not present
+            if 'cited_arxiv_id' not in external_df.columns:
+                external_df['cited_arxiv_id'] = None
+            if 'paragraph_global_id' not in external_df.columns:
+                external_df['paragraph_global_id'] = None
+            if 'bib_title' not in external_df.columns:
+                external_df['bib_title'] = None
+
+            # Prepare rows for insertion
+            rows = []
+            for _, row in external_df.iterrows():
+                rows.append((
+                    row['paragraph_id'],
+                    row['paper_section'],
+                    str(row['citing_arxiv_id']),
+                    str(row['bib_key']),
+                    str(row['cited_arxiv_id']) if pd.notna(row.get('cited_arxiv_id')) else None,
+                    row.get('paragraph_global_id'),
+                    row.get('bib_title')
+                ))
+
+            if not rows:
+                print("No data to insert from JSON.")
+                return False
+
+            conn = self._get_connection()
+            try:
+                cur = conn.cursor()
+                execute_values(
+                    cur,
+                    """
+                    INSERT INTO arxiv_paragraph_citations 
+                    (paragraph_id, paper_section, citing_arxiv_id, bib_key, 
+                     cited_arxiv_id, paragraph_global_id, bib_title)
+                    VALUES %s
+                    """,
+                    rows,
+                    page_size=1000
+                )
+                cur.close()
+                print(f"Successfully imported {len(rows)} paragraph-citation relationships from {json_file}")
+                return True
+            finally:
+                conn.close()
+
+        except json.JSONDecodeError as e:
+            print(f"Error: Invalid JSON file - {e}")
+            return False
+        except Exception as e:
+            print(f"Error importing paragraph-citation relationships from JSON: {e}")
+            return False
+
+    # ==================== INSERT/DELETE METHODS ====================
+
     def insert_paragraph_reference(
         self,
         paragraph_id: int,
@@ -108,6 +306,92 @@ class SQLArxivParagraphCitation:
         finally:
             conn.close()
 
+    def delete_paragraph_citation_by_paragraph_id(self, paragraph_id: int) -> int:
+        """
+        Delete paragraph citations by paragraph_id.
+        Returns count of deleted rows.
+        """
+        conn = self._get_connection()
+        try:
+            cur = conn.cursor()
+            cur.execute(
+                """
+                DELETE FROM arxiv_paragraph_citations 
+                WHERE paragraph_id = %s
+                """,
+                (paragraph_id,)
+            )
+            count = cur.rowcount
+            cur.close()
+            return count
+        finally:
+            conn.close()
+
+    def delete_paragraph_citation_by_citing_arxiv_id(self, citing_arxiv_id: str) -> int:
+        """
+        Delete all citations from a given citing paper.
+        Returns count of deleted rows.
+        """
+        conn = self._get_connection()
+        try:
+            cur = conn.cursor()
+            cur.execute(
+                """
+                DELETE FROM arxiv_paragraph_citations 
+                WHERE citing_arxiv_id = %s
+                """,
+                (str(citing_arxiv_id),)
+            )
+            count = cur.rowcount
+            cur.close()
+            return count
+        finally:
+            conn.close()
+
+    def delete_paragraph_citation_by_cited_arxiv_id(self, cited_arxiv_id: str) -> int:
+        """
+        Delete all citations to a given cited paper.
+        Returns count of deleted rows.
+        """
+        conn = self._get_connection()
+        try:
+            cur = conn.cursor()
+            cur.execute(
+                """
+                DELETE FROM arxiv_paragraph_citations 
+                WHERE cited_arxiv_id = %s
+                """,
+                (str(cited_arxiv_id),)
+            )
+            count = cur.rowcount
+            cur.close()
+            return count
+        finally:
+            conn.close()
+
+    def delete_paragraph_citation_by_id(self, id: int) -> bool:
+        """
+        Delete a specific citation by its id.
+        Returns True if deleted, False otherwise.
+        """
+        conn = self._get_connection()
+        try:
+            cur = conn.cursor()
+            cur.execute(
+                """
+                DELETE FROM arxiv_paragraph_citations 
+                WHERE id = %s
+                """,
+                (id,)
+            )
+            deleted = cur.rowcount > 0
+            cur.close()
+            return deleted
+        finally:
+            conn.close()
+
+    # ==================== GET METHODS ====================
+
     def get_all_paragraph_references(self) -> Optional[pd.DataFrame]:
         """
         Get all paragraph references from the database.
@@ -142,30 +426,100 @@ class SQLArxivParagraphCitation:
         finally:
             conn.close()
 
-    def delete_paragraph_citation_by_paragraph_id(self, paragraph_id: int) -> int:
+    def get_paragraph_neighboring_citations(self, paragraph_id: int) -> Optional[pd.DataFrame]:
         """
-        Delete paragraph citations by paragraph_id.
-        Returns count of deleted rows.
+        Get all citations for a given paragraph_id.
+        
+        Args:
+            paragraph_id: The paragraph ID (local within section)
+            
+        Returns:
+            DataFrame with all citations for this paragraph, or None if empty
         """
         conn = self._get_connection()
         try:
-            cur = conn.cursor()
-            cur.execute(
-                """
-                DELETE FROM arxiv_paragraph_citations 
+            query = """
+                SELECT id, paragraph_id, paper_section, citing_arxiv_id, 
+                       bib_key, cited_arxiv_id, paragraph_global_id, bib_title
+                FROM arxiv_paragraph_citations
                 WHERE paragraph_id = %s
-                """,
-                (paragraph_id,)
-            )
-            count = cur.rowcount
-            cur.close()
-            return count
+            """
+            df = pd.read_sql(query, conn, params=(paragraph_id,))
+            return None if df.empty else df.reset_index(drop=True)
         finally:
             conn.close()
 
-    # -------------------------
-    # Bulk Operations
-    # -------------------------
+    def get_paragraph_global_id_neighboring_citations(self, paragraph_global_id: int) -> Optional[pd.DataFrame]:
+        """
+        Get all citations for a given paragraph_global_id.
+        
+        Args:
+            paragraph_global_id: The global paragraph ID
+            
+        Returns:
+            DataFrame with all citations for this paragraph, or None if empty
+        """
+        conn = self._get_connection()
+        try:
+            query = """
+                SELECT id, paragraph_id, paper_section, citing_arxiv_id, 
+                       bib_key, cited_arxiv_id, paragraph_global_id, bib_title
+                FROM arxiv_paragraph_citations
+                WHERE paragraph_global_id = %s
+            """
+            df = pd.read_sql(query, conn, params=(paragraph_global_id,))
+            return None if df.empty else df.reset_index(drop=True)
+        finally:
+            conn.close()
+
+    def get_citations_by_citing_arxiv_id(self, citing_arxiv_id: str) -> Optional[pd.DataFrame]:
+        """
+        Get all citations from a given citing paper.
+        
+        Args:
+            citing_arxiv_id: The arXiv ID of the citing paper
+            
+        Returns:
+            DataFrame with all citations from this paper, or None if empty
+        """
+        conn = self._get_connection()
+        try:
+            query = """
+                SELECT id, paragraph_id, paper_section, citing_arxiv_id, 
+                       bib_key, cited_arxiv_id, paragraph_global_id, bib_title
+                FROM arxiv_paragraph_citations
+                WHERE citing_arxiv_id = %s
+            """
+            df = pd.read_sql(query, conn, params=(str(citing_arxiv_id),))
+            return None if df.empty else df.reset_index(drop=True)
+        finally:
+            conn.close()
+
+    def get_citations_by_cited_arxiv_id(self, cited_arxiv_id: str) -> Optional[pd.DataFrame]:
+        """
+        Get all citations to a given cited paper.
+        
+        Args:
+            cited_arxiv_id: The arXiv ID of the cited paper
+            
+        Returns:
+            DataFrame with all citations to this paper, or None if empty
+        """
+        conn = self._get_connection()
+        try:
+            query = """
+                SELECT id, paragraph_id, paper_section, citing_arxiv_id, 
+                       bib_key, cited_arxiv_id, paragraph_global_id, bib_title
+                FROM arxiv_paragraph_citations
+                WHERE cited_arxiv_id = %s
+            """
+            df = pd.read_sql(query, conn, params=(str(cited_arxiv_id),))
+            return None if df.empty else df.reset_index(drop=True)
+        finally:
+            conn.close()
+
+    # ==================== BULK OPERATIONS ====================
+
     def construct_citations_table_from_api(self, arxiv_ids: List[str], dest_dir: str):
         """
         Construct the paragraph citations table from API-generated paragraph data.
@@ -252,9 +606,8 @@ class SQLArxivParagraphCitation:
         finally:
             conn.close()
 
-    # -------------------------
-    # Matching Operations
-    # -------------------------
+    # ==================== MATCHING OPERATIONS ====================
+
     def arxiv_match_bib_key_to_bib_title(self, arxiv_citations):
         """
         Match bib_key to bib_title using arxiv_citations object.
@@ -676,7 +1029,6 @@ class SQLArxivParagraphCitation:
         finally:
             conn.close()
 
-
     def save_paragraph_with_reference(
         self, 
         arxiv_paragraphs,
@@ -703,7 +1055,6 @@ class SQLArxivParagraphCitation:
                 WHERE cited_arxiv_id IS NOT NULL 
                 AND paragraph_global_id IS NOT NULL
             """
-            
             
             df = pd.read_sql(query, conn)
             
