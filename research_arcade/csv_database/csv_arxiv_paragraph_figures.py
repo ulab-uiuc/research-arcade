@@ -12,7 +12,7 @@ from ..arxiv_utils.utils import get_paragraph_num
 class CSVArxivParagraphFigure:
     def __init__(self, csv_dir: str):
         self.csv_dir = csv_dir
-        csv_path = f"{csv_dir}/arxiv_paragraph_figures.csv"
+        csv_path = os.path.join(csv_dir, 'arxiv_paragraph_figures.csv')
         self.csv_path = csv_path
         Path(csv_path).parent.mkdir(parents=True, exist_ok=True)
         if not os.path.exists(csv_path):

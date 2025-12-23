@@ -7,7 +7,7 @@ import json
 class CSVArxivPaperTable:
     def __init__(self, csv_dir: str):
         self.csv_dir = csv_dir
-        csv_path = f"{csv_dir}/arxiv_paper_tables.csv"
+        csv_path = os.path.join(csv_dir, 'arxiv_paper_tables.csv')
         self.csv_path = csv_path
         Path(csv_path).parent.mkdir(parents=True, exist_ok=True)
         if not os.path.exists(csv_path):

@@ -14,7 +14,7 @@ from ..arxiv_utils.citation_processing import paper_citation_crawling, normalize
 
 class CSVArxivCitation:
     def __init__(self, csv_dir: str):
-        csv_path = f"{csv_dir}/arxiv_citations.csv"
+        csv_path = os.path.join(csv_dir, 'arxiv_citations.csv')
         self.csv_path = csv_path
         Path(csv_path).parent.mkdir(parents=True, exist_ok=True)
         if not os.path.exists(csv_path):

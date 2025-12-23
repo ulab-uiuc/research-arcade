@@ -8,7 +8,7 @@ from typing import Optional, Union
 
 class CSVOpenReviewReviews:
     def __init__(self, csv_dir: str) -> None:
-        self.csv_path = csv_dir + "openreview_reviews.csv"
+        self.csv_path = os.path.join(csv_dir, 'openreview_reviews.csv')
         self.crawler = OpenReviewCrawler()
         
         if not os.path.exists(self.csv_path):

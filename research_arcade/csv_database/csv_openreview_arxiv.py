@@ -7,7 +7,7 @@ from typing import Optional
 
 class CSVOpenReviewArxiv:
     def __init__(self, csv_dir: str) -> None:
-        self.csv_path = csv_dir + "openreview_arxiv.csv"
+        self.csv_path = os.path.join(csv_dir, 'openreview_arxiv.csv')
         self.openreview_crawler = OpenReviewCrawler()
         
         # 如果CSV文件不存在，创建空的DataFrame

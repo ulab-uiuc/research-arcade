@@ -16,7 +16,7 @@ from ..arxiv_utils.utils import arxiv_id_processor
 
 class CSVArxivPapers:
     def __init__(self, csv_dir: str):
-        csv_path = f"{csv_dir}/arxiv_papers.csv"
+        csv_path = os.path.join(csv_dir, 'arxiv_papers.csv')
         self.csv_path = csv_path
         # Set up the target directory
         # Automatically create the csv path
