@@ -803,6 +803,12 @@ class ResearchArcade:
         self.openreview_papers_authors.construct_papers_authors_table_from_api(config)
         self.openreview_papers_reviews.construct_papers_reviews_table_from_api(config)
         self.openreview_papers_revisions.construct_papers_revisions_table_from_api(config)
+        #
+        papers_reviews_df = self.get_all_edge_features("openreview_papers_reviews")
+        papers_revisions_df = self.get_all_edge_features("openreview_papers_revisions")
+        new_config = {"papers_reviews_df": papers_reviews_df, "papers_revisions_df": papers_revisions_df}
+        self.openreview_revisions_reviews.construct_revisions_reviews_table("openreview_revisions_reviews", new_config)
+        
     def continuous_crawling(self, interval_days, delay_days, paper_category, dest_dir, arxiv_id_dest):
         """
         Runs the crawl process in an infinite loop.
