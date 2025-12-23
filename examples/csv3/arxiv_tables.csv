@@ -1,0 +1,86 @@
+id,paper_arxiv_id,path,caption,label,table_text
+2,1706.03762v7,,Performance comparison,label,Table content here
+3,1903.03894v4,,\caption{\namelong compared to \textsc{Grad} baseline in feature importance map using cross entropy.},\label{tab:results_pr},"\begin{tabular}{@{}llll@{}}
+\toprule
+              & \textsc{Mutag} & \textsc{BA-Community} & \textsc{Tree-Cycles} \\ 
+            %   & Precision & Recall  & Precision & Recall & Precision & Recall \\ \midrule
+Grad       & $0.907$ & $0.183$  & $0.785$ \\
+\gnn     & $\mathbf{0.221}$ & $\mathbf{0.003}$  & $\mathbf{0.024}$   \\
+\end{tabular}"
+4,1806.08804v4,,\caption{Classification accuracies in percent. The far-right column gives the relative increase in accuracy compared to the baseline \textsc{GraphSage} approach.},\label{tab:results},"\begin{tabular}{@{}clcccccc@{}}\cmidrule[\heavyrulewidth]{2-8}
+& \multirow{3}{*}{\vspace*{8pt}\textbf{Method}}&\multicolumn{5}{c}{\textbf{Data Set}}\\\cmidrule{3-8}
+& & {\textsc{Enzymes}} & {\textsc{D\&D}} & {\textsc{Reddit-Multi-12k}} & {\textsc{Collab}} & {\textsc{Proteins}} & {\text{Gain}}
+\\ \cmidrule{2-8}
+\multirow{4}{*}{\rotatebox{90}{\hspace*{-6pt}Kernel}} 
+& \textsc{Graphlet}  & 41.03 & 74.85 &  21.73 & 64.66 & 72.91 &  \\ 
+& \textsc{Shortest-path} & 42.32 & 78.86 & 36.93 & 59.10  & 76.43 &   \\     
+& \text{1-WL} &  53.43 & 74.02 &  39.03 &  78.61 & 73.76 &  \\     
+& \text{WL-OA} & 60.13  & 79.04	 & 44.38  & 80.74  & 75.26  &   \\       \cmidrule{2-8}
+% GNN
+& \textsc{PatchySan} & -- & 76.27	 & 41.32   & 72.60 &  75.00  & 4.17 \\ 
+\multirow{7}{*}{\rotatebox{90}{GNN}} 
+& \textsc{GraphSage} &  54.25 & 75.42 	 & 42.24  & 68.25  & 70.48 &  --\\ 
+& \textsc{ECC}  & 53.50  & 74.10 & 41.73  & 67.79 &   72.65  & 0.11 \\	
+& \textsc{Set2set} &  60.15 & 78.12  & 43.49 & 71.75 & 74.29 & 3.32 \\ 
+& \textsc{SortPool} & 57.12 & 79.37  & 41.82 & 73.76  & 75.54  & 3.39 \\     
+& \textsc{\name-Det} & 58.33 & 75.47 & 46.18 & \textbf{82.13} & 75.62 & 5.42 \\ 
+& \textsc{\name-NoLP} & 61.95  & 79.98	 & 46.65  & 75.58   &  76.22  &  5.95 \\ 
+& \textsc{\name} & \textbf{62.53}  & \textbf{80.64}	 & \textbf{47.08}  & 75.48   &  \textbf{76.25}  & \textbf{6.27}\\     
+\cmidrule[\heavyrulewidth]{2-8}
+\end{tabular}"
+5,1806.08804v4,,\caption{Accuracy results of applying \name to \textsc{S2V}.},\label{tab:results2},"\begin{tabular}{@{}clccc@{}}\cmidrule[\heavyrulewidth]{2-5}
+& \multirow{3}{*}{\vspace*{8pt}\textbf{Data Set}}&\multicolumn{3}{c}{\textbf{Method}}\\\cmidrule{3-5}
+& & {\textsc{S2V}} & {\textsc{S2V with 1 DiffPool}} & {\textsc{S2V with 2 DiffPool}}
+\\ \cmidrule{2-5}
+& \textsc{Enzymes}  & 	61.10 & 62.86   & \textbf{63.33}  \\ 
+& \textsc{D\&D} & 78.92 & 80.75 &   \textbf{82.07}  \\     
+\cmidrule[\heavyrulewidth]{2-5}
+\end{tabular}"
+6,1706.03762v7,,Performance comparison,label,Table content here
+7,1706.03762v7,,Performance comparison,label,Table content here
+8,1903.03894v4,,\caption{Illustration of synthetic datasets (refer to ``Synthetic datasets'' for details) together with performance evaluation of \name and alternative baseline explainability approaches.},\label{fig:synth_datasets},
+9,1903.03894v4,,\caption{\namelong compared to baselines in identifying subgraphs using AUC. \marinka{Add a column with Tree-Grid results? Mutag as well?}},\label{tab:results_pr},"\begin{tabular}{@{}llll@{}}
+\toprule
+              & \textsc{BA-Shapes} & \textsc{BA-Community} & \textsc{Tree-Cycles} & \textsc{Tree-Grid} \\ 
+            %   & Precision & Recall  & Precision & Recall & Precision & Recall \\ \midrule
+GAT      & $81.5$ & $0.73.9$  & $ 82.4$   &   $61.2$   \\
+Grad       & $88.2$ & $0.75.0$  & $ 90.5$ & $66,7$ \\
+\gnn  & $\mathbf{92.5}$ & $\mathbf{0.83.6}$  & $\mathbf{0.94.8}$  & $\mathbf{76.1}$ \\
+\end{tabular}"
+10,1903.03894v4,,\caption{\namelong compared to \textsc{Grad} baseline in feature importance map using cross entropy.},\label{tab:results_pr},"\begin{tabular}{@{}llll@{}}
+\toprule
+              & \textsc{Mutag} & \textsc{BA-Community} & \textsc{Tree-Cycles} \\ 
+            %   & Precision & Recall  & Precision & Recall & Precision & Recall \\ \midrule
+Grad       & $0.907$ & $0.183$  & $0.785$ \\
+\gnn     & $\mathbf{0.221}$ & $\mathbf{0.003}$  & $\mathbf{0.024}$   \\
+\end{tabular}"
+11,1806.08804v4,,\caption{Classification accuracies in percent. The far-right column gives the relative increase in accuracy compared to the baseline \textsc{GraphSage} approach.},\label{tab:results},"\begin{tabular}{@{}clcccccc@{}}\cmidrule[\heavyrulewidth]{2-8}
+& \multirow{3}{*}{\vspace*{8pt}\textbf{Method}}&\multicolumn{5}{c}{\textbf{Data Set}}\\\cmidrule{3-8}
+& & {\textsc{Enzymes}} & {\textsc{D\&D}} & {\textsc{Reddit-Multi-12k}} & {\textsc{Collab}} & {\textsc{Proteins}} & {\text{Gain}}
+\\ \cmidrule{2-8}
+\multirow{4}{*}{\rotatebox{90}{\hspace*{-6pt}Kernel}} 
+& \textsc{Graphlet}  & 41.03 & 74.85 &  21.73 & 64.66 & 72.91 &  \\ 
+& \textsc{Shortest-path} & 42.32 & 78.86 & 36.93 & 59.10  & 76.43 &   \\     
+& \text{1-WL} &  53.43 & 74.02 &  39.03 &  78.61 & 73.76 &  \\     
+& \text{WL-OA} & 60.13  & 79.04	 & 44.38  & 80.74  & 75.26  &   \\       \cmidrule{2-8}
+% GNN
+& \textsc{PatchySan} & -- & 76.27	 & 41.32   & 72.60 &  75.00  & 4.17 \\ 
+\multirow{7}{*}{\rotatebox{90}{GNN}} 
+& \textsc{GraphSage} &  54.25 & 75.42 	 & 42.24  & 68.25  & 70.48 &  --\\ 
+& \textsc{ECC}  & 53.50  & 74.10 & 41.73  & 67.79 &   72.65  & 0.11 \\	
+& \textsc{Set2set} &  60.15 & 78.12  & 43.49 & 71.75 & 74.29 & 3.32 \\ 
+& \textsc{SortPool} & 57.12 & 79.37  & 41.82 & 73.76  & 75.54  & 3.39 \\     
+& \textsc{\name-Det} & 58.33 & 75.47 & 46.18 & \textbf{82.13} & 75.62 & 5.42 \\ 
+& \textsc{\name-NoLP} & 61.95  & 79.98	 & 46.65  & 75.58   &  76.22  &  5.95 \\ 
+& \textsc{\name} & \textbf{62.53}  & \textbf{80.64}	 & \textbf{47.08}  & 75.48   &  \textbf{76.25}  & \textbf{6.27}\\     
+\cmidrule[\heavyrulewidth]{2-8}
+\end{tabular}"
+12,1806.08804v4,,\caption{Accuracy results of applying \name to \textsc{S2V}.},\label{tab:results2},"\begin{tabular}{@{}clccc@{}}\cmidrule[\heavyrulewidth]{2-5}
+& \multirow{3}{*}{\vspace*{8pt}\textbf{Data Set}}&\multicolumn{3}{c}{\textbf{Method}}\\\cmidrule{3-5}
+& & {\textsc{S2V}} & {\textsc{S2V with 1 DiffPool}} & {\textsc{S2V with 2 DiffPool}}
+\\ \cmidrule{2-5}
+& \textsc{Enzymes}  & 	61.10 & 62.86   & \textbf{63.33}  \\ 
+& \textsc{D\&D} & 78.92 & 80.75 &   \textbf{82.07}  \\     
+\cmidrule[\heavyrulewidth]{2-5}
+\end{tabular}"
+13,1706.03762v7,,Performance comparison,label,Table content here

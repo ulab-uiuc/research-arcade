@@ -1,0 +1,1030 @@
+id,paragraph_id,content,paper_arxiv_id,paper_section,section_id,paragraph_in_paper_id
+2,1,Updated paragraph content,1903.03894v4,Introduction,,
+3,2,"Despite their strengths, {\gnn}\gnns lack transparency as they do not easily allow for a human-intelligible explanation of their predictions.
+Yet, the ability to understand \gnn's predictions is important and useful for several reasons: (i) it can increase trust in the \gnn model, (ii) it improves model's transparency in a growing number of decision-critical applications pertaining to fairness, privacy and other safety challenges~\citep{doshi-velez_towards_2017}, and (iii) it allows practitioners to get an understanding of the network characteristics, identify and correct systematic patterns of mistakes made by models before deploying them in the real world.",1903.03894v4,Introduction,,
+4,3,"While currently there are no methods for explaining \gnns, recent approaches for explaining other types of neural networks have taken one of two main routes. One line of work locally approximates models with simpler surrogate models, which are then probed for explanations~\citep{lakkaraju_interpretable_2017,ribeiro_why_2016, schmitz_ann-dt:_1999}. Other methods carefully examine models for relevant features and find good qualitative interpretations of high level features~\citep{chen2018learning,Erhan2009VisualizingHF,lundberg_unified_2017, sundararajan_axiomatic_nodate} or identify influential input instances~\citep{koh_understanding_2017, DBLP:journals/corr/abs-1811-09720}.
+However, these approaches fall short in their ability to incorporate relational information, the essence of graphs. Since this aspect is crucial for the success of machine learning on graphs, any explanation of {\gnn}\gnn's predictions\textbf{} should leverage rich relational information provided by the graph as well as node features.",1903.03894v4,Introduction,,
+5,4,"Here we propose {\em \namelong}\em \namelong, an approach for explaining predictions made by \gnns. \name takes a trained \gnn and its prediction(s), and it returns an explanation in the form of a small subgraph of the input graph together with a small subset of node features that are most influential for the prediction(s) (Figure~\ref{fig:explainer-intro}). The approach is model-agnostic and can explain predictions of any \gnn on any machine learning task for graphs, including node classification, link prediction, and graph classification.  It handles single- as well as multi-instance explanations. In the case of single-instance explanations, \name explains a \gnn's prediction for one particular instance (\ie, a node label, a new link, a graph-level label). In the case of multi-instance explanations, \name provides an explanation that consistently explains a set of instances (\eg, nodes of a given class).",1903.03894v4,Introduction,,
+6,5,"\name specifies an explanation as a rich subgraph of the entire graph the \gnn was trained on, such that the subgraph maximizes the mutual information with \gnn's prediction(s). This is achieved by formulating a mean field variational approximation and learning a real-valued {\em graph mask}\em graph mask which selects the important subgraph of the \gnn's computation graph. Simultaneously, \name also learns a {\em feature mask}\em feature mask that masks out unimportant node features (Figure~\ref{fig:explainer-intro}).",1903.03894v4,Introduction,,
+7,6,"\cut{
+\jure{The issue with this paragraph was that it was too focused on numbers (quantitative comparison). But given that we are the first method to do explanatations, I think the focuse should be claiming it works well and only cite numbers as evidence. I fixed it as follows:}}
+\jure{The issue with this paragraph was that it was too focused on numbers (quantitative comparison). But given that we are the first method to do explanatations, I think the focuse should be claiming it works well and only cite numbers as evidence. I fixed it as follows:}The issue with this paragraph was that it was too focused on numbers (quantitative comparison). But given that we are the first method to do explanatations, I think the focuse should be claiming it works well and only cite numbers as evidence. I fixed it as follows:
+We evaluate \namelong on synthetic as well as real-world graphs. 
+Experiments show that \name provides consistent and concise explanations of \gnn's predictions. 
+On synthetic graphs with planted network motifs, which play a role in determining node labels, we show that \name accurately identifies the subgraphs/motifs as well as node features that determine node labels outperforming alternative baseline approaches by up to 43.0\% in explanation accuracy. Further, using two real-world datasets we show how \name can provide important domain insights by robustly identifying important graph structures and node features that influence a \gnn's predictions. Specifically, using molecular graphs and social interaction networks, we show that \name can identify important domain-specific graph structures, such as $NO_2$NO_2 chemical groups or ring structures in molecules, and star structures in Reddit threads.
+Overall, experiments demonstrate that \name provides consistent and concise explanations for \gnn-based models for different machine learning tasks on graphs.",1903.03894v4,Introduction,,
+8,7,"\hide{
+We extensively validate \namelong on synthetic and real-world graphs. Experiments show that \name provides consistent and concise explanations of \gnn's predictions. We demonstrate our method on both single- as well as multi-instance explanations. Using carefully designed synthetic data with ``planted'' pathways important for prediction, we show that \name can accurately identify important topological structures used by the given \gnn. Furthermore, we show \name can also robustly identify most important features that influence \gnn's prediction the most. We also demonstrate \name on two real-world datasets: molecule classification and social network classification. We show that \name is able to explain the graph structures that a given \gnn model learned to use for prediction. For example, in the molecule classification task \name identified important and domain-relevant topological structures, such as $NO_2$ functional groups and ring structures in molecules. Overall, experiments demonstrate that \name provides consistent and concise explanations for \gnn-based models for different machine learning tasks on graphs.
+}
+We extensively validate \namelong on synthetic and real-world graphs. Experiments show that \name provides consistent and concise explanations of \gnn's predictions. We demonstrate our method on both single- as well as multi-instance explanations. Using carefully designed synthetic data with ``planted'' pathways important for prediction, we show that \name can accurately identify important topological structures used by the given \gnn. Furthermore, we show \name can also robustly identify most important features that influence \gnn's prediction the most. We also demonstrate \name on two real-world datasets: molecule classification and social network classification. We show that \name is able to explain the graph structures that a given \gnn model learned to use for prediction. For example, in the molecule classification task \name identified important and domain-relevant topological structures, such as $NO_2$NO_2 functional groups and ring structures in molecules. Overall, experiments demonstrate that \name provides consistent and concise explanations for \gnn-based models for different machine learning tasks on graphs.",1903.03894v4,Introduction,,
+9,8,"\hide{
+In handling these data structures, initial approaches relied on handcrafted features and measures. Following a similar trend as the machine learning community at large, manual heuristics have progressively been replaced with data-driven, automatic feature extractors. These networks learn to decide what is relevant in a given prediction task thanks to learnable filters, which can incorporate node features but also the inductive bias provided by the edges connecting instances.",1903.03894v4,Introduction,,
+10,9,"This differentiable formulation, known as Graph Neural Networks ({\gnn}s), is able to handle a wide range of tasks, across domains. They are able to learn global graph representations, which can be leveraged to classify entire graphs, for example to predict the anti-cancer properties of a given molecule. One of the most popular settings however is node classification, wherein a label is to be inferred for individual nodes on the graph. Applications of this task are abundant, for example predicting the customer type in an online purchase graph or the role of a protein in a biological network.",1903.03894v4,Introduction,,
+11,10,"Many early successes came in problems with a semi-supervised formulation, where the graph is fixed but there are missing node labels within it. The power of deep learning on graphs has been further demonstrated by the development of new methods that work in the inductive setting, where the classifier is able to generalize to entirely unseen graphs. To do so, the network must be able to effectively learn not only from the node's feature but also incorporate information from its neighbours, leveraging the graph topology to do so. However, obvious successes in terms of task accuracy have been tarnished by a lack of transparency into the results: neural models remain notoriously difficult to interpret. As deep learning on graphs progresses to more critical applications, \eg, drug-discovery or medical diagnoses, this interpretability component becomes crucial to ensure trust in the model's predictions.
+}
+In handling these data structures, initial approaches relied on handcrafted features and measures. Following a similar trend as the machine learning community at large, manual heuristics have progressively been replaced with data-driven, automatic feature extractors. These networks learn to decide what is relevant in a given prediction task thanks to learnable filters, which can incorporate node features but also the inductive bias provided by the edges connecting instances.",1903.03894v4,Introduction,,
+12,11,"This differentiable formulation, known as Graph Neural Networks ({\gnn}\gnns), is able to handle a wide range of tasks, across domains. They are able to learn global graph representations, which can be leveraged to classify entire graphs, for example to predict the anti-cancer properties of a given molecule. One of the most popular settings however is node classification, wherein a label is to be inferred for individual nodes on the graph. Applications of this task are abundant, for example predicting the customer type in an online purchase graph or the role of a protein in a biological network.",1903.03894v4,Introduction,,
+13,12,"Many early successes came in problems with a semi-supervised formulation, where the graph is fixed but there are missing node labels within it. The power of deep learning on graphs has been further demonstrated by the development of new methods that work in the inductive setting, where the classifier is able to generalize to entirely unseen graphs. To do so, the network must be able to effectively learn not only from the node's feature but also incorporate information from its neighbours, leveraging the graph topology to do so. However, obvious successes in terms of task accuracy have been tarnished by a lack of transparency into the results: neural models remain notoriously difficult to interpret. As deep learning on graphs progresses to more critical applications, \eg, drug-discovery or medical diagnoses, this interpretability component becomes crucial to ensure trust in the model's predictions.",1903.03894v4,Introduction,,
+14,0,\label{sec:related},1903.03894v4,Related work,,
+15,1,"Although the problem of explaining GNNs is not well-studied, the related problems of interpretability and neural debugging received substantial attention in machine learning. At a high level, we can group those interpretability methods for non-graph neural networks into two main families.",1903.03894v4,Related work,,
+16,2,"Methods in the first family formulate simple proxy models of full neural networks. This can be done in a model-agnostic way, usually by learning a locally faithful approximation around the prediction, for example through linear models~\citep{ribeiro_why_2016} or sets of rules, representing sufficient conditions on the prediction~\citep{augasta_reverse_2012,lakkaraju_interpretable_2017,calders_deepred_2016}. Methods in the second family identify important aspects of the computation, for example, through feature gradients~\citep{Erhan2009VisualizingHF,fleet_visualizing_2014}, backpropagation of neurons' contributions to the input features~\citep{chen2018learning,shrikumar_learning_2017,sundararajan_axiomatic_nodate}, and counterfactual reasoning~\citep{Kang2019explaine}. 
+However, the saliency maps~\citep{fleet_visualizing_2014} produced by these methods have been shown to be misleading in some instances~\citep{2018sanity} and prone to issues like gradient saturation~\citep{shrikumar_learning_2017,sundararajan_axiomatic_nodate}. These issues are exacerbated on discrete inputs such as graph adjacency matrices since the gradient values can be very large but only on very small intervals. Because of that, such approaches are not suitable for explaining predictions made by neural networks on graphs.",1903.03894v4,Related work,,
+17,3,"Instead of creating new, inherently interpretable models, post-hoc interpretability methods~\citep{adadi_peeking_2018,fisher_all_2018,guidotti_survey_2018,hooker_discovering_2004,koh_understanding_2017,DBLP:journals/corr/abs-1811-09720} consider models as black boxes and then probe them for relevant information. 
+However, no work has been done to leverage relational structures like graphs. The lack of methods for explaining predictions on graph-structured data is problematic, as in many cases, predictions on graphs are induced by a complex combination of nodes and paths of edges between them. For example, in some tasks, an edge is important only when another alternative path exists in the graph to form a cycle, and those two features, only when considered together, can accurately predict node labels ~\citep{mutag,duvenaud_convolutional_2015}. Their joint contribution thus cannot be modeled as a simple linear combinations of individual contributions.",1903.03894v4,Related work,,
+18,4,"Finally, recent \gnn models augment interpretability via attention mechanisms~\citep{neil2018interpretable, velickovic2018graph,PhysRevLett.120.145301}. However, although the learned edge attention values can indicate important graph structure, the values are the same for predictions across all nodes. Thus, this contradicts with many applications where an edge is essential for predicting the label of one node but not the label of another node. Furthermore, these approaches are either limited to specific \gnn architectures or cannot explain predictions by jointly considering both graph structure and node feature information.",1903.03894v4,Related work,,
+19,5,"\hide{
+Methods in the first family formulate a simpler proxy model for the full neural network. This can be done in a model-agnostic way, usually by learning a locally faithful approximation around the prediction, for example with a linear model~\cite{ribeiro_why_2016} or a set of rules, representing sufficient conditions on the prediction~\cite{augasta_reverse_2012,calders_deepred_2016,lakkaraju_interpretable_2017}. 
+Global distillations of the main model have also been proposed, for instance by reducing deep neural networks to decision trees~\cite{calders_deepred_2016, schmitz_ann-dt:_1999}. However, such approaches often produce intractably large surrogate models, which in practice are uninterpretable.",1903.03894v4,Related work,,
+20,6,"A second family of models instead aims to highlight relevant aspects of the computation within the provided model. The main approach here is to inspect feature gradients~\cite{Erhan2009VisualizingHF} but many other related ideas have also been proposed~\cite{sundararajan_axiomatic_nodate, shrikumar_learning_2017}. When overlayed to the input data, these methods produce a saliency map~\cite{fleet_visualizing_2014} which reveals important features or raw pixels. However, saliency maps have been shown to be misleading in some instances~\cite{2018sanity} and prone to issues such as gradient saturation~\cite{sundararajan_axiomatic_nodate, shrikumar_learning_2017}. These issues are exacerbated on discrete inputs such as graph adjacency matrices, since the gradient values can be very large but on a very small interval. This means such approaches are unsuitable for explaining relational structure of a \gnn, which is our goal here.
+%editing the adjacency matrix will not cause large changes in the interpretation despite significantly impacting the network itself.",1903.03894v4,Related work,,
+21,7,"Last, algorithms that find patterns of the input data~\cite{koh_understanding_2017, DBLP:journals/corr/abs-1811-09720} to identify influential samples are an example of post-hoc interpretability methods. Instead of creating new, inherently interpretable models, thse approaches consider the model as a black box~\cite{guidotti_survey_2018, adadi_peeking_2018} and then probe it for relevant information. Most techniques isolate individual input samples, with some methods allowing for important interactions to be highlighted~\cite{fisher_all_2018, hooker_discovering_2004}. However, no work has been done to leverage stronger relational structures like graphs. In contrast, in many cases prediction on graphs can be induced by a complex composition of nodes and their paths. For example, in some tasks an edge could be important only when another alternative path exists to form a cycle, which determines the class of the node. Therefore their joint contribution cannot be modeled well using linear combinations of individual contributions. %While it is important to discover the entire subgraph structure, this process is highly non-linear.
+}
+Methods in the first family formulate a simpler proxy model for the full neural network. This can be done in a model-agnostic way, usually by learning a locally faithful approximation around the prediction, for example with a linear model~\cite{ribeiro_why_2016} or a set of rules, representing sufficient conditions on the prediction~\cite{augasta_reverse_2012,calders_deepred_2016,lakkaraju_interpretable_2017}. 
+Global distillations of the main model have also been proposed, for instance by reducing deep neural networks to decision trees~\cite{calders_deepred_2016, schmitz_ann-dt:_1999}. However, such approaches often produce intractably large surrogate models, which in practice are uninterpretable.",1903.03894v4,Related work,,
+22,8,"A second family of models instead aims to highlight relevant aspects of the computation within the provided model. The main approach here is to inspect feature gradients~\cite{Erhan2009VisualizingHF} but many other related ideas have also been proposed~\cite{sundararajan_axiomatic_nodate, shrikumar_learning_2017}. When overlayed to the input data, these methods produce a saliency map~\cite{fleet_visualizing_2014} which reveals important features or raw pixels. However, saliency maps have been shown to be misleading in some instances~\cite{2018sanity} and prone to issues such as gradient saturation~\cite{sundararajan_axiomatic_nodate, shrikumar_learning_2017}. These issues are exacerbated on discrete inputs such as graph adjacency matrices, since the gradient values can be very large but on a very small interval. This means such approaches are unsuitable for explaining relational structure of a \gnn, which is our goal here.",1903.03894v4,Related work,,
+23,9,"Last, algorithms that find patterns of the input data~\cite{koh_understanding_2017, DBLP:journals/corr/abs-1811-09720} to identify influential samples are an example of post-hoc interpretability methods. Instead of creating new, inherently interpretable models, thse approaches consider the model as a black box~\cite{guidotti_survey_2018, adadi_peeking_2018} and then probe it for relevant information. Most techniques isolate individual input samples, with some methods allowing for important interactions to be highlighted~\cite{fisher_all_2018, hooker_discovering_2004}. However, no work has been done to leverage stronger relational structures like graphs. In contrast, in many cases prediction on graphs can be induced by a complex composition of nodes and their paths. For example, in some tasks an edge could be important only when another alternative path exists to form a cycle, which determines the class of the node. Therefore their joint contribution cannot be modeled well using linear combinations of individual contributions.",1903.03894v4,Related work,,
+24,10,"\hide{
+Recent instances of \gnn models have been proposed to augment the interpretability properties of \gnns~\cite{PhysRevLett.120.145301, neil2018interpretable, velickovic2018graph}. However, in contrast to our work here, \rex{these approaches are limited to their own \gnn architecture, and cannot make explanations using both features and subgraph structure jointly.}
+%these approaches design a novel \gnn architectures explicitly for the purpose of interpretability. 
+\rex{Notably, although the edge attention values in graph attention networks can serve as indication of structure importance, it is the same for predictions on all nodes. Thus it contradicts with many application scenario where an edge is important for predictions on one node, but not the other.
+(or maybe move to experiments)}
+\rex{remove?} Our goal here is different, as we are already given a trained model in the \gnn-family and aim to explain its predictions.
+}
+Recent instances of \gnn models have been proposed to augment the interpretability properties of \gnns~\cite{PhysRevLett.120.145301, neil2018interpretable, velickovic2018graph}. However, in contrast to our work here, \rex{these approaches are limited to their own \gnn architecture, and cannot make explanations using both features and subgraph structure jointly.}these approaches are limited to their own \gnn architecture, and cannot make explanations using both features and subgraph structure jointly.
+\rex{Notably, although the edge attention values in graph attention networks can serve as indication of structure importance, it is the same for predictions on all nodes. Thus it contradicts with many application scenario where an edge is important for predictions on one node, but not the other.
+(or maybe move to experiments)}Notably, although the edge attention values in graph attention networks can serve as indication of structure importance, it is the same for predictions on all nodes. Thus it contradicts with many application scenario where an edge is important for predictions on one node, but not the other.
+(or maybe move to experiments)
+\rex{remove?}remove? Our goal here is different, as we are already given a trained model in the \gnn-family and aim to explain its predictions.",1903.03894v4,Related work,,
+25,11,"\hide{
+% Maybe merge with Background
+\xhdr{Graph Neural Networks} Graph Neural Networks (\gnn)~\cite{scarselli} obtain node embeddings by recursively propagating information from its neighbours. This framework was later unified into a general Neural Message-Passing scheme~\cite{gilmer2017neural}, and more recently into the relational inductive bias model~\cite{battaglia}. For a more detailed review of recent developments we please refer the reader to~\cite{zhang_deep_2018, zhou_graph_2018, battaglia,hamilton2017representation}.
+%
+Under this model, \gnns have achieved state-of-the-art performance across a variety of tasks, such as node classification~\cite{kipf2016semi, graphsage}, link prediction~\cite{zhang2018link, schlichtkrull2018modeling}, graph clustering~\cite{defferrard2016convolutional, ying2018hierarchical} or graph classification~\cite{ying2018hierarchical, dai2016discriminative, duvenaud_convolutional_2015}. These tasks occur in domains where the graph structure is ubiquitous, such as social networks~\cite{backstrom2011supervised}, content graphs~\cite{pinsage}, biology~\cite{agrawal2018large}, and chemoinformatics~\cite{duvenaud_convolutional_2015,jin2017predicting,zitnik2018decagon}.
+%
+Recent instances of \gnn models have been proposed to augment the interpretability properties of \gnns~\cite{PhysRevLett.120.145301, neil2018interpretable, velickovic2018graph}. However, in contrast to our work here, \rex{these approaches are limited to their own \gnn architecture, and cannot make explanations using both features and subgraph structure jointly.}
+%these approaches design a novel \gnn architectures explicitly for the purpose of interpretability. 
+\rex{Notably, although the edge attention values in graph attention networks can serve as indication of structure importance, it is the same for predictions on all nodes. Thus it contradicts with many application scenario where an edge is important for predictions on one node, but not the other.
+(or maybe move to experiments)}
+\rex{remove?} Our goal here is different, as we are already given a trained model in the \gnn-family and aim to explain its predictions.
+%, an approach that is at odds with our goal of post-hoc interpretation for any generic \gnn~ model.",1903.03894v4,Related work,,
+26,12,"%\xhdr{Relation to adverserial attacks}
+}
+\xhdr{Graph Neural Networks}Graph Neural Networks Graph Neural Networks (\gnn)~\cite{scarselli} obtain node embeddings by recursively propagating information from its neighbours. This framework was later unified into a general Neural Message-Passing scheme~\cite{gilmer2017neural}, and more recently into the relational inductive bias model~\cite{battaglia}. For a more detailed review of recent developments we please refer the reader to~\cite{zhang_deep_2018, zhou_graph_2018, battaglia,hamilton2017representation}.
+Under this model, \gnns have achieved state-of-the-art performance across a variety of tasks, such as node classification~\cite{kipf2016semi, graphsage}, link prediction~\cite{zhang2018link, schlichtkrull2018modeling}, graph clustering~\cite{defferrard2016convolutional, ying2018hierarchical} or graph classification~\cite{ying2018hierarchical, dai2016discriminative, duvenaud_convolutional_2015}. These tasks occur in domains where the graph structure is ubiquitous, such as social networks~\cite{backstrom2011supervised}, content graphs~\cite{pinsage}, biology~\cite{agrawal2018large}, and chemoinformatics~\cite{duvenaud_convolutional_2015,jin2017predicting,zitnik2018decagon}.
+Recent instances of \gnn models have been proposed to augment the interpretability properties of \gnns~\cite{PhysRevLett.120.145301, neil2018interpretable, velickovic2018graph}. However, in contrast to our work here, \rex{these approaches are limited to their own \gnn architecture, and cannot make explanations using both features and subgraph structure jointly.}these approaches are limited to their own \gnn architecture, and cannot make explanations using both features and subgraph structure jointly.
+\rex{Notably, although the edge attention values in graph attention networks can serve as indication of structure importance, it is the same for predictions on all nodes. Thus it contradicts with many application scenario where an edge is important for predictions on one node, but not the other.
+(or maybe move to experiments)}Notably, although the edge attention values in graph attention networks can serve as indication of structure importance, it is the same for predictions on all nodes. Thus it contradicts with many application scenario where an edge is important for predictions on one node, but not the other.
+(or maybe move to experiments)
+\rex{remove?}remove? Our goal here is different, as we are already given a trained model in the \gnn-family and aim to explain its predictions.",1903.03894v4,Related work,,
+27,0,\label{sec:explainer},1903.03894v4,Formulating explanations for graph neural networks,,
+28,1,"Let $G$G denote a graph on edges $E$E and nodes $V$V that are associated with $d$d-dimensional node features $\mathcal{X} = \{x_1, \ldots, x_n\}$\mathcal{X} = \{x_1, \ldots, x_n\}, $x_i \in \mathbb{R}^d$x_i \in \mathbb{R}^d. Without loss of generality, we consider the problem of explaining a node classification task (see Section~\ref{sec:other-tasks} for other tasks). 
+Let $f$f denote a label function on nodes $f: V \mapsto \{1, \ldots, C\}$f: V \mapsto \{1, \ldots, C\} that maps every node in $V$V to one of $C$C classes. 
+The \gnn model $\Phi$\Phi is optimized on all nodes in the training set and is then used for prediction, \ie, to approximate $f$f on new nodes.",1903.03894v4,Formulating explanations for graph neural networks,,
+29,2,"\subsection{Background on graph neural networks}
+\label{sec:background}",1903.03894v4,Formulating explanations for graph neural networks,,
+30,3,"At layer $l$l, the update of \gnn model $\Phi$\Phi involves three key computations~\citep{battaglia,zhang_deep_2018,zhou_graph_2018}. (1) First, the model computes neural messages between every pair of nodes. The message for node pair $(v_i, v_j)$(v_i, v_j) is a function \textsc{Msg} of $v_i$v_i's  and $v_j$v_j's representations $\mathbf{h}_i^{l-1}$\mathbf{h}_i^{l-1}l-1 and $\mathbf{h}_j^{l-1}$\mathbf{h}_j^{l-1}l-1 in the previous layer and of the relation $r_{ij}$r_{ij}ij between the nodes: $m_{ij}^l = \textsc{Msg}(\mathbf{h}_i^{l-1}, \mathbf{h}_j^{l-1}, r_{ij}).$m_{ij}ij^l = \textsc{Msg}(\mathbf{h}_i^{l-1}l-1, \mathbf{h}_j^{l-1}l-1, r_{ij}ij).
+(2)
+Second, for each node $v_i$v_i, \gnn aggregates messages from $v_i$v_i's neighborhood $\mathcal{N}_{v_i}$\mathcal{N}_{v_i}v_i and calculates an aggregated message $M_i$M_i via an aggregation method \textsc{Agg}~\citep{graphsage,xu2018powerful}: 
+$M_{i}^l = \textsc{Agg}(\{m_{ij}^l | v_j \in \mathcal{N}_{v_i}\}),$M_{i}i^l = \textsc{Agg}(\{m_{ij}ij^l | v_j \in \mathcal{N}_{v_i}v_i\}),
+where $\mathcal{N}_{v_i}$\mathcal{N}_{v_i}v_i is neighborhood of node $v_i$v_i whose definition depends on a particular GNN variant. (3) Finally, \gnn takes the aggregated message $M_i^l$M_i^l along with $v_i$v_i's representation $\mathbf{h}_i^{l-1}$\mathbf{h}_i^{l-1}l-1 from the previous layer, and it non-linearly transforms them to obtain $v_i$v_i's representation $\mathbf{h}_i^l$\mathbf{h}_i^l at layer $l$l:
+$\mathbf{h}_{i}^l  = \textsc{Update}(M_i^l, \mathbf{h}_i^{l-1}).$\mathbf{h}_{i}i^l  = \textsc{Update}(M_i^l, \mathbf{h}_i^{l-1}l-1).
+The final embedding for node $v_i$v_i after $L$L layers of computation is $\mathbf{z}_i = \mathbf{h}_i^L$\mathbf{z}_i = \mathbf{h}_i^L. 
+Our \name provides explanations for any \gnn that can be formulated in terms of \textsc{Msg}, \textsc{Agg}, and \textsc{Update} computations.",1903.03894v4,Formulating explanations for graph neural networks,,
+31,4,"\hide{
+%\xhdr{Computation Graphs}
+%
+In the context of a neural network architecture, the information that a \gnn relies on for computing $\mathbf{z}_i$ is completely determined by $v_i$'s computation graph, which is defined by Eq.~\ref{eq:agg}. The \gnn uses that computation graph to generate $v_i$'s representation $\mathbf{z}_i$ (Eqs.~\ref{eq:msg} and~\ref{eq:update}). Importantly, the structure of the computation graph is different for each node $v_i$, and depends on how the neighborhood $\mathcal{N}_{v_i}$ is defined. Let $G_c(v_i)$ denote the computation graph used by the \gnn to compute representation $\mathbf{z}_i$ of node $v_i$.
+The $G_c(v_i)$ can be obtained by performing a graph traversal of arbitrary depth $L$, \eg, a Breadth-First Search (BFS), using $\mathcal{N}_{v_i}$ as the neighborhood definition. We further define $A_c(v_i)$ as the adjacency matrix corresponding to the computation graph $G_c(v_i)$.",1903.03894v4,Formulating explanations for graph neural networks,,
+32,5,"Following this definition, in Graph Convolutional Networks (GCNs)~\citep{kipf2016semi}, the computation graph $G_c(v_i)$ is simply an $L$-hop neighborhood of $v_i$ in the input graph $G$. However, in other \gnn models, such as Jumping Knowledge Networks~\citep{xujumping}, attention-based networks~\cite{velickovic2018graph}, and Line-Graph NNs~\citep{chen2018supervised}, the computation graph $G_c(v_i)$ will be different from the exhaustive $L$-hop neighborhood.
+}
+In the context of a neural network architecture, the information that a \gnn relies on for computing $\mathbf{z}_i$\mathbf{z}_i is completely determined by $v_i$v_i's computation graph, which is defined by Eq.~\ref{eq:agg}. The \gnn uses that computation graph to generate $v_i$v_i's representation $\mathbf{z}_i$\mathbf{z}_i (Eqs.~\ref{eq:msg} and~\ref{eq:update}). Importantly, the structure of the computation graph is different for each node $v_i$v_i, and depends on how the neighborhood $\mathcal{N}_{v_i}$\mathcal{N}_{v_i}v_i is defined. Let $G_c(v_i)$G_c(v_i) denote the computation graph used by the \gnn to compute representation $\mathbf{z}_i$\mathbf{z}_i of node $v_i$v_i.
+The $G_c(v_i)$G_c(v_i) can be obtained by performing a graph traversal of arbitrary depth $L$L, \eg, a Breadth-First Search (BFS), using $\mathcal{N}_{v_i}$\mathcal{N}_{v_i}v_i as the neighborhood definition. We further define $A_c(v_i)$A_c(v_i) as the adjacency matrix corresponding to the computation graph $G_c(v_i)$G_c(v_i).",1903.03894v4,Formulating explanations for graph neural networks,,
+33,6,"Following this definition, in Graph Convolutional Networks (GCNs)~\citep{kipf2016semi}, the computation graph $G_c(v_i)$G_c(v_i) is simply an $L$L-hop neighborhood of $v_i$v_i in the input graph $G$G. However, in other \gnn models, such as Jumping Knowledge Networks~\citep{xujumping}, attention-based networks~\cite{velickovic2018graph}, and Line-Graph NNs~\citep{chen2018supervised}, the computation graph $G_c(v_i)$G_c(v_i) will be different from the exhaustive $L$L-hop neighborhood.",1903.03894v4,Formulating explanations for graph neural networks,,
+34,7,"\hide{
+\subsection{Desired Features of \name}
+\label{subsec:desiderata}",1903.03894v4,Formulating explanations for graph neural networks,,
+35,8,"%To tackle the task of explaining \gnn~ predictions, we first formulate our desiderata of a good \gnn~ model explanation.",1903.03894v4,Formulating explanations for graph neural networks,,
+36,9,"An essential criterion for explanations is that they must be interpretable, \ie, provide a qualitative understanding of the relationship between the input nodes and the prediction. Such a requirement implies that explanations should be easy to understand while remaining exhaustive. This means that a \gnn explainer should take into account both the structure of the underlying graph $G$ as well as the associated features, if they are available. More specifically, the following aspects of a \gnn model should be incorporated into the design of explanations:
+\begin{enumerate}[leftmargin=*]
+\item \textbf{Local edge fidelity:}
+The explanation needs to identify the relational inductive bias used by the \gnn. This means it needs to identify which message-passing edges in the computation graph $G_c$ represent essential relationships for a prediction.
+\item \textbf{Local node fidelity:}
+The explanation should not only incorporate the specific node $v_i$'s features $\mathbf{x}_i$, but also a number of important features from the set $X_c(v_i)$ of features from other nodes present in computation graph $G_c(v_i)$.
+\item \textbf{Single-instance vs. multi-instance explanations:}
+The explanation should summarize where in a graph $G$ the \gnn model looks for evidence for its prediction and identify the subgraph of $G$ most responsible for a given prediction. The \gnn explainer should also be able to provide an explanation for a set of predictions, \eg, by capturing  a distribution of computation graphs for all nodes that belong to the same class.
+%In addition to providing an explanation for a given prediction, providing a global perspective is important to ascertain trust in explanations. 
+\item \textbf{Any \gnn model:} 
+A \gnn explainer should be able to explain {\em any} model in \gnn-family and be model-agostic, \ie, treat \gnn as a black box without requiring modifications of neural architecture or re-training.
+\item \textbf{Any prediction task on graphs:}
+A \gnn explainer should be applicable to {\em any} machine learning task on graphs: node classification, link prediction, and graph classification. \rex{these are repeating the intro}
+\end{enumerate}
+%
+%Existing approaches to interpreting deep neural networks have not considered these aspects that are especially critical to the success of neural networks operating on graphs.
+%\rex{mention challenges?}\marinka{Tried to formulate desiderata such that CNN explainers, LIME, etc. do not apply.} 
+}
+\subsection{Desired Features of \name}
+\label{subsec:desiderata}",1903.03894v4,Formulating explanations for graph neural networks,,
+37,10,"An essential criterion for explanations is that they must be interpretable, \ie, provide a qualitative understanding of the relationship between the input nodes and the prediction. Such a requirement implies that explanations should be easy to understand while remaining exhaustive. This means that a \gnn explainer should take into account both the structure of the underlying graph $G$G as well as the associated features, if they are available. More specifically, the following aspects of a \gnn model should be incorporated into the design of explanations:",1903.03894v4,Formulating explanations for graph neural networks,,
+38,11,"\item \textbf{Local edge fidelity:}
+The explanation needs to identify the relational inductive bias used by the \gnn. This means it needs to identify which message-passing edges in the computation graph $G_c$G_c represent essential relationships for a prediction.
+\item \textbf{Local node fidelity:}
+The explanation should not only incorporate the specific node $v_i$v_i's features $\mathbf{x}_i$\mathbf{x}_i, but also a number of important features from the set $X_c(v_i)$X_c(v_i) of features from other nodes present in computation graph $G_c(v_i)$G_c(v_i).
+\item \textbf{Single-instance vs. multi-instance explanations:}
+The explanation should summarize where in a graph $G$G the \gnn model looks for evidence for its prediction and identify the subgraph of $G$G most responsible for a given prediction. The \gnn explainer should also be able to provide an explanation for a set of predictions, \eg, by capturing  a distribution of computation graphs for all nodes that belong to the same class.
+\item \textbf{Any \gnn model:} 
+A \gnn explainer should be able to explain {\em any}\em any model in \gnn-family and be model-agostic, \ie, treat \gnn as a black box without requiring modifications of neural architecture or re-training.
+\item \textbf{Any prediction task on graphs:}
+A \gnn explainer should be applicable to {\em any}\em any machine learning task on graphs: node classification, link prediction, and graph classification. \rex{these are repeating the intro}these are repeating the intro",1903.03894v4,Formulating explanations for graph neural networks,,
+39,12,\subsection{\name: Problem formulation},1903.03894v4,Formulating explanations for graph neural networks,,
+40,13,"Our key insight is the observation that the computation graph of node $v$v, which is defined by the GNN's neighborhood-based aggregation (Figure~\ref{fig:definition-node-features}), fully determines all the information the \gnn uses to generate prediction $\hat{y}$\hat{y} at node $v$v. In particular, $v$v's computation graph tells the GNN how to generate $v$v's embedding $\mathbf{z}$\mathbf{z}. Let us denote that computation graph by $G_c(v)$G_c(v), the associated binary adjacency matrix by $A_c(v) \in \{0,1\}^{n \times n}$A_c(v) \in \{0,1\}^{n \times n}n \times n, and the associated feature set by $X_c(v) = \{x_j | v_j \in G_c(v)\}$X_c(v) = \{x_j | v_j \in G_c(v)\}. The \gnn model $\Phi$\Phi learns a conditional distribution $P_\Phi(Y | G_c, X_c)$P_\Phi(Y | G_c, X_c), where $Y$Y is a random variable representing labels $\{1, \ldots, C\}$\{1, \ldots, C\}, indicating the probability of nodes belonging to each of $C$C classes.",1903.03894v4,Formulating explanations for graph neural networks,,
+41,14,"A \gnn's prediction is given by $\hat{y} = \Phi(G_c(v), X_c(v))$\hat{y} = \Phi(G_c(v), X_c(v)), meaning that it is fully determined by the model $\Phi$\Phi, graph structural information $G_c(v)$G_c(v), and node feature information $X_c(v)$X_c(v). In effect, this observation implies that we only need to consider graph structure $G_c(v)$G_c(v) and node features $X_c(v)$X_c(v) to explain $\hat{y}$\hat{y} (Figure~\ref{fig:definition-node-features}A).
+Formally, \name generates explanation for prediction $\hat{y}$\hat{y} as $(G_S,X_S^F)$(G_S,X_S^F), where $G_S$G_S is a small subgraph of the computation graph. $X_S$X_S is the associated feature of $G_S$G_S, and $X_S^F$X_S^F is a small subset of node features (masked out by the mask $F$F, \ie, $X_S^F = \{x_j^F|v_j \in G_S\}$X_S^F = \{x_j^F|v_j \in G_S\}) that are most important for explaining $\hat{y}$\hat{y} (Figure~\ref{fig:definition-node-features}B).",1903.03894v4,Formulating explanations for graph neural networks,,
+42,15,"\hide{
+The information that a \gnn~ relies on for computing $\mathbf{z}_i$ can be completely described by its computation graph $G_c(v_i)$ and the associated feature set $X_c(v_i) = \{x_j | v_j \in G_c(v_i)\}.$
+%\dylan{should we specify the case of the node's self features?}. M: Yes
+%
+We thus use these elements as inputs to the \gnn~model $\hat{y} = \Phi(G_c(v_i), X_c(v_i))$.
+Therefore, when constructing a local explanation for the prediction a \gnn has made on $v_i$, we only consider structural information present in $G_c(v_i)$, and node features from $X_c(v_i)$.
+}
+The information that a \gnn~ relies on for computing $\mathbf{z}_i$\mathbf{z}_i can be completely described by its computation graph $G_c(v_i)$G_c(v_i) and the associated feature set $X_c(v_i) = \{x_j | v_j \in G_c(v_i)\}.$X_c(v_i) = \{x_j | v_j \in G_c(v_i)\}.
+We thus use these elements as inputs to the \gnn~model $\hat{y} = \Phi(G_c(v_i), X_c(v_i))$\hat{y} = \Phi(G_c(v_i), X_c(v_i)).
+Therefore, when constructing a local explanation for the prediction a \gnn has made on $v_i$v_i, we only consider structural information present in $G_c(v_i)$G_c(v_i), and node features from $X_c(v_i)$X_c(v_i).",1903.03894v4,Formulating explanations for graph neural networks,,
+43,16,"\hide{
+\subsection{Problem formulation}",1903.03894v4,Formulating explanations for graph neural networks,,
+44,17,"\marinka{
+Moved from background, it is crucial for defining single-instance explanations:
+The information that a \gnn~ relies on for computing $\mathbf{z}_i$ can be completely described by its computation graph $G_c(v_i)$ and the associated feature set $X_c(v_i) = \{x_j | v_j \in G_c(v_i)\}.$
+%\dylan{should we specify the case of the node's self features?}. M: Yes
+%
+We thus use these elements as inputs to the \gnn~model $\hat{y} = \Phi(G_c(v_i), X_c(v_i))$.
+Therefore, when constructing a local explanation for the prediction a \gnn has made on $v_i$, we only consider structural information present in $G_c(v_i)$, and node features from $X_c(v_i)$.
+}",1903.03894v4,Formulating explanations for graph neural networks,,
+45,18,"In this section, we concretely describe the setting in which \name is used for explaining \gnn~ predictions.
+Without loss of generality, we use \name to explain the \gnn~ predictions of a node classification task, but \name can be easily adapted to the task of link prediction and graph classification.",1903.03894v4,Formulating explanations for graph neural networks,,
+46,19,"In a node classification task, a graph, defined as $G = (V, E)$, a set of nodes $V$ connected through edges $E$, is associated with a set of node features $\mathcal{X} = \{\mathbf{x}_1, \ldots, \mathbf{x}_n\}$, $x_i \in \mathbb{R}^d$, and a label function on nodes $f: V \mapsto \{1, \ldots, C\}$ that maps every node in $V$ to one of the $C$ classes. 
+The \gnn~ model $\Phi$ is optimized for all nodes in the training set, such that $\Phi$ can be used to approximate $f$ on nodes in the test set. During this phase model is only exposed to $G=(V, E_{\mathrm{train}})$, leaving a subset of edges and labels on nodes unobserved.",1903.03894v4,Formulating explanations for graph neural networks,,
+47,20,"Once the \gnn~ model $\Phi$ is trained, we can harness \name as a tool to analyze individual node predictions, but also as the decision boundary of node classes, in order to provide insights on what the model has learned. Given the architecture of GNN models, this explanation will be supported by highlighting which edge connectivity patterns and node features are leveraged the most in the \gnn~ predictions.",1903.03894v4,Formulating explanations for graph neural networks,,
+48,21,"In our setting, we assume that the \gnn~ model $\Phi$ is already trained, and that \name is able to access $\Phi$ in terms of forward and backward propagation. This places \name in the family of post-hoc interpretability methods.",1903.03894v4,Formulating explanations for graph neural networks,,
+49,22,"\name relies on this general formulation, but is agnostic to the specific form of \gnn . 
+We then discuss the desired form of explanations for \gnn s, which present notable differences from the explanations of other classes of models.",1903.03894v4,Formulating explanations for graph neural networks,,
+50,23,\subsection{Overview of GNN-Explainer},1903.03894v4,Formulating explanations for graph neural networks,,
+51,24,"In this work, we introduce GNN-Explainer, a tool for post-hoc interpretation of predictions generated by a pre-trained \gnn. The approach is able to identify nodes that are locally relevant to a given prediction, similarly to existing interpretation methods. However, it is also able to identify relevant structures in the induced computation graph, which is a sample of a given node's neighborhood. We also present an extension to provide insight into global structures in the graph that are relevant to a given class of nodes.",1903.03894v4,Formulating explanations for graph neural networks,,
+52,25,"To achieve these goals, we define a useful \gnn~ explanation as being composed of two key components: a local explainer (\lexp) and a global explainer (\gexp). The local explainer \lexp~ identifies, among the computation graph $G_c(v_i)$ of each node $v_i$, the particular feature dimensions and message-passing pathways that most contribute to the prediction made by the model for the given node's label.",1903.03894v4,Formulating explanations for graph neural networks,,
+53,26,"In other words, we aim to identify a subgraph of the computation graph $G_c(v_i)$, among all possible subgraphs of $G_c(v_i)$, and a subset of feature dimensions for node features, that is the most influential in the model's prediction.
+In this process both important message-passing and node features are jointly determined, due to the message aggregation scheme of \gnn s, which incorporates both aspects in a single forward pass.",1903.03894v4,Formulating explanations for graph neural networks,,
+54,27,"In a second step, the global explainer \gexp~ will aggregate, in a class-specific way, information from the local explainer \lexp. This way, the local explanations are summarized into a prototype computation graph. The global explainer \gexp~ therefore allows the comparison of different computation graphs across different nodes in graphs, offering insights into the distribution of computation graphs for nodes in a certain label class.",1903.03894v4,Formulating explanations for graph neural networks,,
+55,28,"\rex{How to use explainer}
+}
+\subsection{Problem formulation}",1903.03894v4,Formulating explanations for graph neural networks,,
+56,29,"\marinka{
+Moved from background, it is crucial for defining single-instance explanations:
+The information that a \gnn~ relies on for computing $\mathbf{z}_i$ can be completely described by its computation graph $G_c(v_i)$ and the associated feature set $X_c(v_i) = \{x_j | v_j \in G_c(v_i)\}.$
+%\dylan{should we specify the case of the node's self features?}. M: Yes
+%
+We thus use these elements as inputs to the \gnn~model $\hat{y} = \Phi(G_c(v_i), X_c(v_i))$.
+Therefore, when constructing a local explanation for the prediction a \gnn has made on $v_i$, we only consider structural information present in $G_c(v_i)$, and node features from $X_c(v_i)$.
+}
+Moved from background, it is crucial for defining single-instance explanations:
+The information that a \gnn~ relies on for computing $\mathbf{z}_i$\mathbf{z}_i can be completely described by its computation graph $G_c(v_i)$G_c(v_i) and the associated feature set $X_c(v_i) = \{x_j | v_j \in G_c(v_i)\}.$X_c(v_i) = \{x_j | v_j \in G_c(v_i)\}.
+We thus use these elements as inputs to the \gnn~model $\hat{y} = \Phi(G_c(v_i), X_c(v_i))$\hat{y} = \Phi(G_c(v_i), X_c(v_i)).
+Therefore, when constructing a local explanation for the prediction a \gnn has made on $v_i$v_i, we only consider structural information present in $G_c(v_i)$G_c(v_i), and node features from $X_c(v_i)$X_c(v_i).",1903.03894v4,Formulating explanations for graph neural networks,,
+57,30,"In this section, we concretely describe the setting in which \name is used for explaining \gnn~ predictions.
+Without loss of generality, we use \name to explain the \gnn~ predictions of a node classification task, but \name can be easily adapted to the task of link prediction and graph classification.",1903.03894v4,Formulating explanations for graph neural networks,,
+58,31,"In a node classification task, a graph, defined as $G = (V, E)$G = (V, E), a set of nodes $V$V connected through edges $E$E, is associated with a set of node features $\mathcal{X} = \{\mathbf{x}_1, \ldots, \mathbf{x}_n\}$\mathcal{X} = \{\mathbf{x}_1, \ldots, \mathbf{x}_n\}, $x_i \in \mathbb{R}^d$x_i \in \mathbb{R}^d, and a label function on nodes $f: V \mapsto \{1, \ldots, C\}$f: V \mapsto \{1, \ldots, C\} that maps every node in $V$V to one of the $C$C classes. 
+The \gnn~ model $\Phi$\Phi is optimized for all nodes in the training set, such that $\Phi$\Phi can be used to approximate $f$f on nodes in the test set. During this phase model is only exposed to $G=(V, E_{\mathrm{train}})$G=(V, E_{\mathrm{train}}\mathrm{train}), leaving a subset of edges and labels on nodes unobserved.",1903.03894v4,Formulating explanations for graph neural networks,,
+59,32,"Once the \gnn~ model $\Phi$\Phi is trained, we can harness \name as a tool to analyze individual node predictions, but also as the decision boundary of node classes, in order to provide insights on what the model has learned. Given the architecture of GNN models, this explanation will be supported by highlighting which edge connectivity patterns and node features are leveraged the most in the \gnn~ predictions.",1903.03894v4,Formulating explanations for graph neural networks,,
+60,33,"In our setting, we assume that the \gnn~ model $\Phi$\Phi is already trained, and that \name is able to access $\Phi$\Phi in terms of forward and backward propagation. This places \name in the family of post-hoc interpretability methods.",1903.03894v4,Formulating explanations for graph neural networks,,
+61,34,"\name relies on this general formulation, but is agnostic to the specific form of \gnn . 
+We then discuss the desired form of explanations for \gnn s, which present notable differences from the explanations of other classes of models.",1903.03894v4,Formulating explanations for graph neural networks,,
+62,35,\subsection{Overview of GNN-Explainer},1903.03894v4,Formulating explanations for graph neural networks,,
+63,36,"In this work, we introduce GNN-Explainer, a tool for post-hoc interpretation of predictions generated by a pre-trained \gnn. The approach is able to identify nodes that are locally relevant to a given prediction, similarly to existing interpretation methods. However, it is also able to identify relevant structures in the induced computation graph, which is a sample of a given node's neighborhood. We also present an extension to provide insight into global structures in the graph that are relevant to a given class of nodes.",1903.03894v4,Formulating explanations for graph neural networks,,
+64,37,"To achieve these goals, we define a useful \gnn~ explanation as being composed of two key components: a local explainer (\lexp) and a global explainer (\gexp). The local explainer \lexp~ identifies, among the computation graph $G_c(v_i)$G_c(v_i) of each node $v_i$v_i, the particular feature dimensions and message-passing pathways that most contribute to the prediction made by the model for the given node's label.",1903.03894v4,Formulating explanations for graph neural networks,,
+65,38,"In other words, we aim to identify a subgraph of the computation graph $G_c(v_i)$G_c(v_i), among all possible subgraphs of $G_c(v_i)$G_c(v_i), and a subset of feature dimensions for node features, that is the most influential in the model's prediction.
+In this process both important message-passing and node features are jointly determined, due to the message aggregation scheme of \gnn s, which incorporates both aspects in a single forward pass.",1903.03894v4,Formulating explanations for graph neural networks,,
+66,39,"In a second step, the global explainer \gexp~ will aggregate, in a class-specific way, information from the local explainer \lexp. This way, the local explanations are summarized into a prototype computation graph. The global explainer \gexp~ therefore allows the comparison of different computation graphs across different nodes in graphs, offering insights into the distribution of computation graphs for nodes in a certain label class.",1903.03894v4,Formulating explanations for graph neural networks,,
+67,40,\rex{How to use explainer}How to use explainer,1903.03894v4,Formulating explanations for graph neural networks,,
+68,0,\label{sec:exp},1903.03894v4,Experiments,,
+69,1,"\hide{
+Results in Table 1:",1903.03894v4,Experiments,,
+70,2,"0.925/0.815 = 13.5
+0.925/0.882 = 4.9",1903.03894v4,Experiments,,
+71,3,"0.836/0.739 = 13.1
+0.836/0.750 = 11.4",1903.03894v4,Experiments,,
+72,4,"0.948/0.824 = 15.0
+0.948/0.905 = 4.7",1903.03894v4,Experiments,,
+73,5,"0.875/0.612 = 43.0
+0.875/0.667 = 31.2",1903.03894v4,Experiments,,
+74,6,"Average = 17.1
+}
+Results in Table 1:",1903.03894v4,Experiments,,
+75,7,"0.925/0.815 = 13.5
+0.925/0.882 = 4.9",1903.03894v4,Experiments,,
+76,8,"0.836/0.739 = 13.1
+0.836/0.750 = 11.4",1903.03894v4,Experiments,,
+77,9,"0.948/0.824 = 15.0
+0.948/0.905 = 4.7",1903.03894v4,Experiments,,
+78,10,"0.875/0.612 = 43.0
+0.875/0.667 = 31.2",1903.03894v4,Experiments,,
+79,11,Average = 17.1,1903.03894v4,Experiments,,
+80,12,"We begin by describing the graphs, alternative baseline approaches, and experimental setup. We then present experiments on explaining \gnns for node classification and graph classification tasks. Our qualitative and quantitative analysis demonstrates that \name is accurate and effective in identifying explanations, both in terms of graph structure and node features.",1903.03894v4,Experiments,,
+81,13,"\xhdr{Synthetic datasets}Synthetic datasets 
+We construct four kinds of node classification datasets (Table~1). (1) In \textsc{BA-Shapes}, we start with a base Barab\'{a}si-Albert (BA) graph on 300 nodes and a set of 80 five-node ``house''-structured network motifs, which are attached to randomly selected nodes of the base graph. The resulting graph is further perturbed by adding $0.1N$0.1N random edges. Nodes are assigned to 4 classes based on their structural roles. 
+In a house-structured motif, there are 3 types of roles: the top, middle and bottom node of the house. Therefore there are 4 different classes, corresponding to nodes at the top, middle, bottom of houses, and nodes that do not belong to a house.
+(2) \textsc{BA-Community} dataset is a union of two \textsc{BA-Shapes} graphs. Nodes have normally distributed feature vectors and are assigned to one of 8 classes based on their structural roles and community memberships.
+(3) In \textsc{Tree-Cycles}, we start with a base 8-level balanced binary tree and 80 six-node cycle motifs, which are attached to random nodes of the base graph.
+(4) \textsc{Tree-Grid} is the same as \textsc{Tree-Cycles} except that 3-by-3 grid motifs are attached to the base tree graph in place of cycle motifs.",1903.03894v4,Experiments,,
+82,14,"\xhdr{Real-world datasets}Real-world datasets
+We consider two graph classification datasets: (1) \textsc{Mutag} is a dataset of $4{,}337$4{,},337 molecule graphs labeled according to their mutagenic effect on the Gram-negative bacterium \textit{S. typhimurium}~\citep{mutag}. 
+(2)  \textsc{Reddit-Binary} is a dataset of $2{,}000$2{,},000 graphs, each representing an online discussion thread on Reddit. In each graph, nodes are users participating in a thread, and edges indicate that one user replied to another user's comment. Graphs are labeled according to the type of user interactions in the thread: \textit{r/IAmA} and \textit{r/AskReddit} contain Question-Answer interactions, while 
+\textit{r/TrollXChromosomes} and \textit{r/atheism} contain Online-Discussion interactions~\citep{yanardag2015deep}.",1903.03894v4,Experiments,,
+83,15,"\hide{\marinka{(1) Consider adding vertical lines spanning the bottom three lines to make it look more like a table. (2) Can we get rid of node colors? It is confusing because colors do not represent node labels/classes. (3) Can we drop ``Number of classes''? It takes space. Also, it is not crucial for explainability? (4) Can we say ``No features'' instead ``Constant features''?}}\marinka{(1) Consider adding vertical lines spanning the bottom three lines to make it look more like a table. (2) Can we get rid of node colors? It is confusing because colors do not represent node labels/classes. (3) Can we drop ``Number of classes''? It takes space. Also, it is not crucial for explainability? (4) Can we say ``No features'' instead ``Constant features''?}(1) Consider adding vertical lines spanning the bottom three lines to make it look more like a table. (2) Can we get rid of node colors? It is confusing because colors do not represent node labels/classes. (3) Can we drop ``Number of classes''? It takes space. Also, it is not crucial for explainability? (4) Can we say ``No features'' instead ``Constant features''?",1903.03894v4,Experiments,,
+84,16,"\hide{
+We first construct four synthetic datasets to assess the approach for different aspects detailed in the desiderata in a controlled environment.These are detailed in Fig.~\ref{fig:synth_datasets}.
+}
+We first construct four synthetic datasets to assess the approach for different aspects detailed in the desiderata in a controlled environment.These are detailed in Fig.~\ref{fig:synth_datasets}.",1903.03894v4,Experiments,,
+85,17,"\cut{
+\begin{enumerate}[leftmargin=*]
+\item \xhdr{\textsc{BA-Shapes}} Given a base \ba (BA) graph of size $300$, a set of $80$ five-node house-structure network motifs are attached to random nodes. The resulting graph is further perturbed by uniformly randomly adding $0.1 n$ edges, where $n$ is the size of the graph. In order to isolate structural information gathered by the \gnn~ model, nodes are equipped with a set of constant features. Each node is assigned a label based on its role in the motif. There are $4$ label classes.
+\item \xhdr{\textsc{BA-Community}} A union of $2$ \textsc{BA-Shapes} graphs. These two graphs are then randomly connected, forming two bridged communities. Nodes have normally distributed feature vectors. 
+To test feature explanation together with structure explanation,
+for dimension $2$, 
+The mean of the feature distribution for different communities differs by $1$ standard deviation. 
+The rest of the unimportant feature dimensions are drawn from the same distribution for all nodes in both communities.
+The label of each node is based on both its structural role and its community; hence there are $8$ label classes.
+\item \xhdr{\textsc{Tree-Cycles}} We construct a balanced binary tree of height $8$. 
+A set of $80$ six-node cycle motifs are attached the same way as \textsc{BA-Shapes}.
+This tests the model's ability to reach for multi-hop structural information in the assessment of a prediction.
+This task is more challenging since the degree distributions for nodes in the tree and the motif are similar.
+\item \xhdr{\textsc{Tree-Grid}} Same as \textsc{Tree-Cycles} except that a more complex $3$-by-$3$ grid is attached to the tree instead of cycles.
+\end{enumerate}
+}",1903.03894v4,Experiments,,
+86,18,"\item \xhdr{\textsc{BA-Shapes}}\textsc{BA-Shapes} Given a base \ba (BA) graph of size $300$300, a set of $80$80 five-node house-structure network motifs are attached to random nodes. The resulting graph is further perturbed by uniformly randomly adding $0.1 n$0.1 n edges, where $n$n is the size of the graph. In order to isolate structural information gathered by the \gnn~ model, nodes are equipped with a set of constant features. Each node is assigned a label based on its role in the motif. There are $4$4 label classes.
+\item \xhdr{\textsc{BA-Community}}\textsc{BA-Community} A union of $2$2 \textsc{BA-Shapes} graphs. These two graphs are then randomly connected, forming two bridged communities. Nodes have normally distributed feature vectors. 
+To test feature explanation together with structure explanation,
+for dimension $2$2, 
+The mean of the feature distribution for different communities differs by $1$1 standard deviation. 
+The rest of the unimportant feature dimensions are drawn from the same distribution for all nodes in both communities.
+The label of each node is based on both its structural role and its community; hence there are $8$8 label classes.
+\item \xhdr{\textsc{Tree-Cycles}}\textsc{Tree-Cycles} We construct a balanced binary tree of height $8$8. 
+A set of $80$80 six-node cycle motifs are attached the same way as \textsc{BA-Shapes}.
+This tests the model's ability to reach for multi-hop structural information in the assessment of a prediction.
+This task is more challenging since the degree distributions for nodes in the tree and the motif are similar.
+\item \xhdr{\textsc{Tree-Grid}}\textsc{Tree-Grid} Same as \textsc{Tree-Cycles} except that a more complex $3$3-by-$3$3 grid is attached to the tree instead of cycles.",1903.03894v4,Experiments,,
+87,19,"\xhdr{Alternative baseline approaches}Alternative baseline approaches Many explainability methods cannot be directly applied to graphs (Section~\ref{sec:related}). Nevertheless, we here consider the following alternative approaches that can provide insights into predictions made by \gnns: (1) \textsc{Grad} is a gradient-based method. We compute gradient of the \gnn's loss function with respect to the adjacency matrix and the associated node features, similar to a saliency map approach. (2) \textsc{Att} is a graph attention \gnn (GAT)~\citep{velickovic2018graph} that learns attention weights for edges in the computation graph, which we use as a proxy measure of edge importance. While \textsc{Att} does consider graph structure, it does not explain using node features and can only explain GAT models.  
+Furthermore, in \textsc{Att} it is not obvious which attention weights need to be used for edge importance, since a 1-hop neighbor of a node can also be a 2-hop neighbor of the same node due to cycles. Each edge's importance is thus computed as the average attention weight across all layers.",1903.03894v4,Experiments,,
+88,20,"\xhdr{Setup and implementation details}Setup and implementation details
+For each dataset, we first train a single \gnn for each dataset, and use \textsc{Grad} and \name to explain the predictions made by the \gnn. Note that the \textsc{Att} baseline requires using a graph attention architecture like GAT~\citep{velickovic2018graph}. We thus train a separate GAT model on the same dataset and use the learned edge attention weights for explanation.
+Hyperparameters $K_M, K_F$K_M, K_F control the size of subgraph and feature explanations respectively, which is informed by prior knowledge about the dataset. For synthetic datasets, we set $K_M$K_M to be the size of ground truth.
+On real-world datasets, we set $K_M = 10$K_M = 10.
+We set $K_F = 5$K_F = 5 for all datasets.
+We further fix our weight regularization hyperparameters across all node and graph classification experiments. We refer readers to the Appendix for more training details (Code and datasets are available at https://github.com/RexYing/gnn-model-explainer).",1903.03894v4,Experiments,,
+89,21,"\hide{
+To extract the explanation subgraph $G_S$, we first compute the importance weights on edges (gradients for \textsc{Grad} baseline, attention weights for \textsc{Att} baseline, and masked adjacency for \namelong). 
+A threshold is used to remove low-weight edges, and identify the explanation subgraph $G_S$.
+The ground truth explanations of all datasets are connected subgraphs. Therefore, we identify the explanation as the connected component containing the explained node in $G_S$. For graph classification, we identify the explanation by the maximum connected component of $G_S$.
+For all methods, we perform a search to find the maximum threshold such that the explanation is at least of size $K$. When multiple edges have tied importance weights, all of them are included in the explanation.
+}
+To extract the explanation subgraph $G_S$G_S, we first compute the importance weights on edges (gradients for \textsc{Grad} baseline, attention weights for \textsc{Att} baseline, and masked adjacency for \namelong). 
+A threshold is used to remove low-weight edges, and identify the explanation subgraph $G_S$G_S.
+The ground truth explanations of all datasets are connected subgraphs. Therefore, we identify the explanation as the connected component containing the explained node in $G_S$G_S. For graph classification, we identify the explanation by the maximum connected component of $G_S$G_S.
+For all methods, we perform a search to find the maximum threshold such that the explanation is at least of size $K$K. When multiple edges have tied importance weights, all of them are included in the explanation.",1903.03894v4,Experiments,,
+90,22,"\hide{
+\begin{enumerate}[leftmargin=*]
+\item \xhdr{\textsc{Grad}} Gradient-based method. We compute the gradient of model loss with respect to adjacency matrix and node features to be classified, and pick edges that have the highest absolute gradients, similar to saliency map. In graph classification, the gradient with respect to node features are averaged across nodes.
+This method allows explaining important subgraphs as well as features.
+\item \xhdr{\textsc{Att}} Graph Attention Network (GAT) provides explanation by attention weights on edges, serving as a proxy for edge importance in the computation graph~\cite{velickovic2018graph}. However, this method cannot be directly estimate feature importance, and cannot be used as post-hoc analysis for other \gnn models.
+\end{enumerate}
+}",1903.03894v4,Experiments,,
+91,23,"\item \xhdr{\textsc{Grad}}\textsc{Grad} Gradient-based method. We compute the gradient of model loss with respect to adjacency matrix and node features to be classified, and pick edges that have the highest absolute gradients, similar to saliency map. In graph classification, the gradient with respect to node features are averaged across nodes.
+This method allows explaining important subgraphs as well as features.
+\item \xhdr{\textsc{Att}}\textsc{Att} Graph Attention Network (GAT) provides explanation by attention weights on edges, serving as a proxy for edge importance in the computation graph~\cite{velickovic2018graph}. However, this method cannot be directly estimate feature importance, and cannot be used as post-hoc analysis for other \gnn models.",1903.03894v4,Experiments,,
+92,24,"\xhdr{Results}Results
+We investigate questions: Does \name provide sensible explanations? How do explanations compare to the ground-truth knowledge? How does \name perform on various graph-based prediction tasks? Can it explain predictions made by different GNNs?",1903.03894v4,Experiments,,
+93,25,"\xhdr{1) Quantitative analyses}1) Quantitative analyses 
+Results on node classification datasets are shown in Table~\ref{fig:synth_datasets}. We have ground-truth explanations for synthetic datasets and we use them to calculate explanation accuracy for all explanation methods. Specifically, we formalize the explanation problem as a binary classification task, where edges in the ground-truth explanation are treated as labels and importance weights given by explainability method are viewed as prediction scores. A better explainability method predicts high scores for edges that are in the ground-truth explanation, and thus achieves higher explanation accuracy. 
+Results show that \name outperforms alternative approaches by 17.1\% on average. Further, \name achieves up to 43.0\% higher accuracy on the hardest \textsc{Tree-Grid} dataset.",1903.03894v4,Experiments,,
+94,26,"\hide{
+We also quantitatively evaluate \name on synthetic datasets where ground-truth explanations are available. Specifically, we formalize the explanation problem as a binary classification task, where edges in ground-truth explanations are treated as labels, while the importance weights given by different models are viewed as prediction scores. A good explanation model will predict high scores for edges in ground-truth explanations, thus will have better performance in this classification task. We compute the standard accuracy score for each model. As is shown in Table \ref{fig:synth_datasets}, \name significantly out-performs the baselines by an average of 9.5\%.
+% \namelong also performs well quantitatively, on synthetic dataset explanation where groundtruth is available. For any given threshold, the edges included in the explanation are compared with groundtruths (cycle, house, grid). We then plot a PR curve to compute the AUC score. \name significantly out-performs the baselines by a large margin (see Fig.~\ref{fig:synth_datasets}).
+%thanks to its ability to sever unimportant, and potentially damaging, information pathways, as described in Figure~\ref{fig:explainer-motivation}.",1903.03894v4,Experiments,,
+95,27,"The explanation should also highlight relevant feature information, not only from itself but even within the set of neighbours that propagated on its most influential message-passing pathways\footnote{Feature explanations are shown for the two datasets with node features, \ie, \textsc{Mutag} and \textsc{BA-Community}.}. In an experiment such as \textsc{BA-Comm}, the explainer is forced to also integrate information from a restricted number of feature dimensions. While \namelong indeed highlights a compact feature representation in Figure~\ref{fig:feat_importance}, gradient-based approaches struggle to cope with the added noise, giving high importance scores to irrelevant feature dimensions. We also re-iterate the model's ability to learn structure and feature-based information jointly in Figure~\ref{fig:subgraph}, where \namelong is again able to identify the correct substructure, as is the Attention-based baseline.
+}
+We also quantitatively evaluate \name on synthetic datasets where ground-truth explanations are available. Specifically, we formalize the explanation problem as a binary classification task, where edges in ground-truth explanations are treated as labels, while the importance weights given by different models are viewed as prediction scores. A good explanation model will predict high scores for edges in ground-truth explanations, thus will have better performance in this classification task. We compute the standard accuracy score for each model. As is shown in Table \ref{fig:synth_datasets}, \name significantly out-performs the baselines by an average of 9.5\%.",1903.03894v4,Experiments,,
+96,28,"The explanation should also highlight relevant feature information, not only from itself but even within the set of neighbours that propagated on its most influential message-passing pathways\footnote{Feature explanations are shown for the two datasets with node features, \ie, \textsc{Mutag} and \textsc{BA-Community}.}. In an experiment such as \textsc{BA-Comm}, the explainer is forced to also integrate information from a restricted number of feature dimensions. While \namelong indeed highlights a compact feature representation in Figure~\ref{fig:feat_importance}, gradient-based approaches struggle to cope with the added noise, giving high importance scores to irrelevant feature dimensions. We also re-iterate the model's ability to learn structure and feature-based information jointly in Figure~\ref{fig:subgraph}, where \namelong is again able to identify the correct substructure, as is the Attention-based baseline.",1903.03894v4,Experiments,,
+97,29,"\xhdr{2) Qualitative analyses}2) Qualitative analyses 
+Results are shown in Figures~\ref{fig:subgraph_node}--\ref{fig:feat_importance}. In a topology-based prediction task with no node features, \emph{e.g.} \textsc{BA-Shapes} and \textsc{Tree-Cycles}, \namelong correctly identifies network motifs that explain node labels, \ie  structural labels (Figure~\ref{fig:subgraph_node}). 
+As illustrated in the figures, house, cycle and tree motifs are identified by \name but not by baseline methods. 
+In Figure~\ref{fig:subgraph_graph}, we investigate explanations for graph classification task.
+In \textsc{Mutag} example, colors indicate node features, which represent atoms (hydrogen H, carbon C, \textit{etc}). \name correctly identifies carbon ring as well as chemical groups $NH_2$NH_2 and $NO_2$NO_2, which are known to be mutagenic~\cite{mutag}.",1903.03894v4,Experiments,,
+98,30,"Further, in \textsc{Reddit-Binary} example, we see that Question-Answer graphs (2nd row in Figure~\ref{fig:subgraph_graph}B) have 2-3 high degree nodes that simultaneously connect to many low degree nodes, which makes sense because in QA threads on Reddit we typically have 2-3 experts who all answer many different questions~\citep{kumar2018community}.
+Conversely, we observe that discussion patterns commonly exhibit tree-like patterns (2nd row in Figure~\ref{fig:subgraph_graph}A), since a thread on Reddit is usually a reaction to a single topic~\citep{kumar2018community}. On the other hand, \textsc{Grad} and \textsc{Att} methods give incorrect or incomplete explanations. For example, both baseline methods miss cycle motifs in \textsc{Mutag} dataset and more complex grid motifs in \textsc{Tree-Grid} dataset.
+Furthermore, although edge attention weights in \textsc{Att} can be interpreted as importance scores for message passing, the weights are shared across all nodes in input the graph, and as such \textsc{Att} fails to provide high quality single-instance explanations.",1903.03894v4,Experiments,,
+99,31,"An essential criterion for explanations is that they must be interpretable, \ie, provide a qualitative understanding of the relationship between the input nodes and the prediction. Such a requirement implies that explanations should be easy to understand while remaining exhaustive. This means that a \gnn explainer should take into account both the structure of the underlying graph as well as the associated features when they are available. 
+Figure~\ref{fig:feat_importance} shows results of an experiment in which \name jointly considers structural information as well as information from a small number of feature dimensions\footnote{Feature explanations are shown for the two datasets with node features, \ie, \textsc{Mutag} and \textsc{BA-Community}.}. While \namelong indeed highlights a compact feature representation in Figure~\ref{fig:feat_importance}, gradient-based approaches struggle to cope with the added noise, giving high importance scores to irrelevant feature dimensions.",1903.03894v4,Experiments,,
+100,32,Further experiments on multi-instance explanations using graph prototypes are in Appendix.,1903.03894v4,Experiments,,
+101,33,"\hide{
+%\marinka{Consistency: We use 3 names for our method :-): ``\textsc{GNNExplainer}'', \textit{GNN-Explainer}'' and ``GNN Explainer''?}
+%\marinka{We skip the evaluation/discussion of multi-instance in the experiments. Need to have a single sententece pointing to appendix.}
+First, we show the explainer's local edge fidelity (single-instance explanations) through its ability to highlight relevant message-passing pathways. 
+In a strictly topology-based prediction task such \textsc{BA-Shapes} and \textsc{Tree-Cycles}, \namelong correctly identifies the motifs required for accurate classification (top 2 rows of Figure~\ref{fig:subgraph_node}). 
+%In these synthetic node classification tasks, the red node indicates the node to be classified. 
+As illustrated, \namelong looks for a concise subgraph of the computation graph that best explains the prediction for a single queried node. 
+All of house, cycle and tree motifs are correctly identified in almost all instances.",1903.03894v4,Experiments,,
+102,34,"In Figure~\ref{fig:subgraph_node}, we compare explanations generated for graph classification models.
+For the \textsc{Mutag} example, colors indicate node features, which represent the atom in question (hydrogen, carbon, \textit{etc}). Here, the carbon ring, as well as the functional groups $NH_2$ and $NO_2$, that are known to be mutagenic, are correctly identified~\cite{mutag}. 
+In the \textsc{Reddit-Binary} dataset, QA graphs ($2$-nd row to the right) have 2-3 high degree nodes that simultaneously connect to many low degree nodes, due to 2-3 experts all answering many different questions.
+In comparison, we observe that discussion patterns commonly exhibit tree-like patterns, since the threads are usually reactions to a single topic. The second row of Figure~\ref{fig:subgraph_node} shows that such pattern is consistently identified by \namelong.",1903.03894v4,Experiments,,
+103,35,"On the other hand, the Gradient- and Attention-based methods often give incorrect or incomplete patterns as an explanation. For example, they miss the cycles in \textsc{Mutag} or the more complex grid structure of \textsc{Tree-Grid}.
+Furthermore, although an edge's attention weights in the \textsc{Att} baseline can be interpreted as its importance in message passing, the graph attention weights are shared for all nodes in the graph. Therefore it fails to provide high quality single instance explanations.",1903.03894v4,Experiments,,
+104,36,"%In addition, both gradient and the attention baselines suffer from disconnectedness.
+%Low threshold for pruning results in highly disconnected components in the case of node classification. However, we know a priori that for node classification, only the connected component containing the node to be classified can influence the node classification, and hence we only plot the connected component containing the node to be classified. 
+%In comparison, the objective and regularization in \name effectively ensure good properties of computation subgraph, the baselines often struggle in this.",1903.03894v4,Experiments,,
+105,37,"\marinka{An essential criterion for explanations is that they must be interpretable, \ie, provide a qualitative understanding of the relationship between the input nodes and the prediction. Such a requirement implies that explanations should be easy to understand while remaining exhaustive. This means that a \gnn explainer should take into account both the structure of the underlying graph $G$ as well as the associated features, if they are available. ...}",1903.03894v4,Experiments,,
+106,38,"Further experiments on multi-instance explanations using graph prototypes are in the Appendix.
+}
+First, we show the explainer's local edge fidelity (single-instance explanations) through its ability to highlight relevant message-passing pathways. 
+In a strictly topology-based prediction task such \textsc{BA-Shapes} and \textsc{Tree-Cycles}, \namelong correctly identifies the motifs required for accurate classification (top 2 rows of Figure~\ref{fig:subgraph_node}). 
+As illustrated, \namelong looks for a concise subgraph of the computation graph that best explains the prediction for a single queried node. 
+All of house, cycle and tree motifs are correctly identified in almost all instances.",1903.03894v4,Experiments,,
+107,39,"In Figure~\ref{fig:subgraph_node}, we compare explanations generated for graph classification models.
+For the \textsc{Mutag} example, colors indicate node features, which represent the atom in question (hydrogen, carbon, \textit{etc}). Here, the carbon ring, as well as the functional groups $NH_2$NH_2 and $NO_2$NO_2, that are known to be mutagenic, are correctly identified~\cite{mutag}. 
+In the \textsc{Reddit-Binary} dataset, QA graphs ($2$2-nd row to the right) have 2-3 high degree nodes that simultaneously connect to many low degree nodes, due to 2-3 experts all answering many different questions.
+In comparison, we observe that discussion patterns commonly exhibit tree-like patterns, since the threads are usually reactions to a single topic. The second row of Figure~\ref{fig:subgraph_node} shows that such pattern is consistently identified by \namelong.",1903.03894v4,Experiments,,
+108,40,"On the other hand, the Gradient- and Attention-based methods often give incorrect or incomplete patterns as an explanation. For example, they miss the cycles in \textsc{Mutag} or the more complex grid structure of \textsc{Tree-Grid}.
+Furthermore, although an edge's attention weights in the \textsc{Att} baseline can be interpreted as its importance in message passing, the graph attention weights are shared for all nodes in the graph. Therefore it fails to provide high quality single instance explanations.",1903.03894v4,Experiments,,
+109,41,"\marinka{An essential criterion for explanations is that they must be interpretable, \ie, provide a qualitative understanding of the relationship between the input nodes and the prediction. Such a requirement implies that explanations should be easy to understand while remaining exhaustive. This means that a \gnn explainer should take into account both the structure of the underlying graph $G$ as well as the associated features, if they are available. ...}An essential criterion for explanations is that they must be interpretable, \ie, provide a qualitative understanding of the relationship between the input nodes and the prediction. Such a requirement implies that explanations should be easy to understand while remaining exhaustive. This means that a \gnn explainer should take into account both the structure of the underlying graph $G$G as well as the associated features, if they are available. ...",1903.03894v4,Experiments,,
+110,42,Further experiments on multi-instance explanations using graph prototypes are in the Appendix.,1903.03894v4,Experiments,,
+111,43,"\hide{
+\subsection{Multi-instance prototype}",1903.03894v4,Experiments,,
+112,44,"In the context of multi-instance explanations, an explainer must not only highlight information locally relevant to a particular prediction, but also help emphasize higher-level correlations across instances. These instances can be related in arbitrary ways, but the most evident is class-membership. The assumption is that members of a class share common characteristics, and the model should help highlight them. For example, mutagenic compounds are often found to have certain characteristic functional groups that such $NO_2$, a pair of Oxygen atoms with a Nitrogen. While Figure~\ref{fig:subgraph} already hints to their presence, which the trained eye might recognize. The evidence grows stronger when a prototype is generated by \namelong, shown in Figure~\ref{fig:prototype}. The model is able to pick-up on this functional structure, and promote it as archetypal of mutagenic compounds.",1903.03894v4,Experiments,,
+113,45,"In the context of multi-instance explanations, an explainer must not only highlight information locally relevant to a particular prediction, but also help emphasize higher-level correlations across instances. These instances can be related in arbitrary ways, but the most evident is class-membership. The assumption is that members of a class share common characteristics, and the model should help highlight them. For example, mutagenic compounds are often found to have certain characteristic functional groups that such $NO_2$NO_2, a pair of Oxygen atoms with a Nitrogen. While Figure~\ref{fig:subgraph} already hints to their presence, which the trained eye might recognize. The evidence grows stronger when a prototype is generated by \namelong, shown in Figure~\ref{fig:prototype}. The model is able to pick-up on this functional structure, and promote it as archetypal of mutagenic compounds.",1903.03894v4,Experiments,,
+114,46,"\centering
+    \includegraphics[width=0.8\columnwidth]{figs/prototype}
+    \caption{\longname is able to provide a prototype for a given node class, which can help identify functional subgraphs, e.g. a mutagenic compound from the \textsc{Mutag} dataset.}
+    \label{fig:prototype}
+    \vspace{-3mm}",1903.03894v4,Experiments,,
+115,47,\end{table},1903.03894v4,Experiments,,
+116,48,"\end{table}
+}",1903.03894v4,Experiments,,
+117,49,\centering,1903.03894v4,Experiments,,
+118,50,"\caption{\namelong compared to baselines in identifying subgraphs using AUC. \marinka{Add a column with Tree-Grid results? Mutag as well?}}
+\label{tab:results_pr}",1903.03894v4,Experiments,,
+119,51,\vspace{-6mm},1903.03894v4,Experiments,,
+120,52,\centering,1903.03894v4,Experiments,,
+121,53,"\caption{\namelong compared to \textsc{Grad} baseline in feature importance map using cross entropy.}
+\label{tab:results_pr}",1903.03894v4,Experiments,,
+122,54,\vspace{-4mm},1903.03894v4,Experiments,,
+123,55,"\centering
+    [b]{\columnwidth}\columnwidth
+    \includegraphics[width=\textwidth]{figs/local_subgraph}
+    
+    [b]{\columnwidth}\columnwidth
+        \includegraphics[width=\textwidth]{figs/grad_subgraph}
+    
+    \caption{Caption}
+    \label{fig:my_label}",1903.03894v4,Experiments,,
+124,0,\label{sec:conclusion},1903.03894v4,Conclusion,,
+125,1,"We present \longname, a novel method for explaining predictions of any GNN on any graph-based machine learning task without requiring modification of the underlying GNN architecture or re-training. 
+We show how \name can leverage recursive neighborhood-aggregation scheme of graph neural networks to identify important graph pathways as well as highlight relevant node feature information that is passed along edges of the pathways.
+While the problem of explainability of machine-learning predictions has received substantial attention in recent literature, our work is unique in the sense that it presents an approach that operates on relational structures---graphs with rich node features---and provides a straightforward interface for making sense out of GNN predictions, debugging GNN models, and identifying systematic patterns of mistakes.",1903.03894v4,Conclusion,,
+126,2,"\hide{
+In this paper, we present \longname, a novel approach for explaining predictions of any GNN on any graph-based machine learning task. 
+which provides insights into any \gnn that satisfies the neural message-passing scheme, without any modification to its architecture or re-training, and across any prediction task on graphs. 
+It is able to leverage the recursive neighborhood-aggregation scheme of graph neural networks to identify not only important computational pathways but also highlight the relevant feature information that is passed along these edges. 
+%To provide useful explanations in the context of graphs, where attributes are interleaved in relational information, explanations should ensure that both edges' and nodes' importances are faithfully represented. This is true at a local scale - for individual predictions - but also at a global scale, where prototypes for sets of nodes can be provided. Our model is able to handle both.
+}
+In this paper, we present \longname, a novel approach for explaining predictions of any GNN on any graph-based machine learning task. 
+which provides insights into any \gnn that satisfies the neural message-passing scheme, without any modification to its architecture or re-training, and across any prediction task on graphs. 
+It is able to leverage the recursive neighborhood-aggregation scheme of graph neural networks to identify not only important computational pathways but also highlight the relevant feature information that is passed along these edges.",1903.03894v4,Conclusion,,
+127,3,"\subsubsection*{Acknowledgments}
+Jure Leskovec is a Chan Zuckerberg Biohub investigator.
+We gratefully acknowledge the support of 
+DARPA under FA865018C7880 (ASED) and MSC; 
+NIH under No. U54EB020405 (Mobilize); 
+ARO under No. 38796-Z8424103 (MURI); 
+IARPA under No. 2017-17071900005 (HFC),
+NSF under No. OAC-1835598 (CINES) and HDR; 
+Stanford Data Science Initiative, 
+Chan Zuckerberg Biohub, 
+JD.com, Amazon, Boeing, Docomo, Huawei, Hitachi, Observe, Siemens, UST Global.
+The U.S. Government is authorized to reproduce and distribute reprints for Governmental purposes notwithstanding any copyright notation thereon. Any opinions, findings, and conclusions or recommendations expressed in this material are those of the authors and do not necessarily reflect the views, policies, or endorsements, either expressed or implied, of DARPA, NIH, ONR, or the U.S. Government.",1903.03894v4,Conclusion,,
+128,4,"\bibliographystyle{plain}plain
+\bibliography{refs}",1903.03894v4,Conclusion,,
+129,0,The problem of multi-instance explanations for graph neural networks is challenging and an important area to study.,1903.03894v4,Multi-instance explanations,,
+130,1,"Here we propose a solution based on \name to find common components of explanations for a set of 10 explanations for 10 different instances in the same label class. More research in this area is necessary to design efficient Multi-instance explanation methods.
+The main challenges in practice is mainly due to the difficulty to perform graph alignment under noise and variances of node neighborhood structures for nodes in the same class. The problem is closely related to finding the maximum common subgraphs of explanation graphs, which is an NP-hard problem. In the following we introduces a neural approach to this problem. However, note that existing graph libraries (based on heuristics or integer programming relaxation) to find the maximal common subgraph of graphs can be employed to replace the neural components of the following procedure, when trying to identify and align with a prototype.",1903.03894v4,Multi-instance explanations,,
+131,2,"The output of a single-instance \name indicates what graph structural and node feature information  is important for a given prediction. To obtain an understanding of ``why is a given set of nodes classified with label $y$y'', we want to also obtain a global explanation of the class, which can shed light on how the identified structure for a given node is related to a prototypical structure unique for its label. To this end, we propose an alignment-based multi-instance \name.",1903.03894v4,Multi-instance explanations,,
+132,3,"For any given class, we first choose a reference node. Intuitively, this node should be a prototypical node for the class. Such node can be found by computing the mean of the embeddings of all nodes in the class, and choose the node whose embedding is the closest to the mean. Alternatively, if one has prior knowledge about the important computation subgraph, one can choose one which matches most to the prior knowledge.",1903.03894v4,Multi-instance explanations,,
+133,4,"Given the reference node for class $c$c, $v_c$v_c, and its associated important computation subgraph $G_S(v_c)$G_S(v_c), 
+we align each of the identified computation subgraphs for all nodes in class $c$c to the reference $G_S(v_c)$G_S(v_c).
+Utilizing the idea in the context of differentiable pooling~\cite{ying2018hierarchical}, we use the a relaxed alignment matrix to find correspondence between nodes in an computation subgraph $G_S(v)$G_S(v) and nodes in the reference computation subgraph $G_S(v_c)$G_S(v_c).
+Let $A_v$A_v and $X_v$X_v be the adjacency matrix and the associated feature matrix of the to-be-aligned computation subgraph. Similarly let $A^*$A^* be the adjacency matrix and associated feature matrix of the reference computation subgraph.
+Then we optimize the relaxed alignment matrix $P \in \mathbb{R}^{n_v \times n^*}$P \in \mathbb{R}^{n_v \times n^*}n_v \times n^*, where $n_v$n_v is the number of nodes in $G_S(v)$G_S(v), and $n^*$n^* is the number of nodes in $G_S(v_c)$G_S(v_c) as follows:
+\begin{equation}
+    \label{eq:glob}
+    \min_P | P^T A_v P - A^*| + |P^T X_v - X^*|.
+\end{equation}\begin{equation}
+    \label{eq:glob}
+    \min_P | P^T A_v P - A^*| + |P^T X_v - X^*|.
+\end{equation}
+    \label{eq:glob}
+    \min_P | P^T A_v P - A^*| + |P^T X_v - X^*|.",1903.03894v4,Multi-instance explanations,,
+134,5,"The first term in Eq.~(\ref{eq:glob}) specifies that after alignment, the aligned adjacency for $G_S(v)$G_S(v) should be as close to $A^*$A^* as possible. The second term in the equation specifies that the features should for the aligned nodes should also be close.",1903.03894v4,Multi-instance explanations,,
+135,6,"In practice, it is often non-trivial for the relaxed graph matching to find a good optimum for matching 2 large graphs. 
+However, thanks to the single-instance explainer, which produces concise subgraphs for important message-passing, a matching that is close to the best alignment can be efficiently computed.",1903.03894v4,Multi-instance explanations,,
+136,7,"\xhdr{Prototype by alignment}Prototype by alignment
+We align the adjacency matrices of all nodes in class $c$c, such that they are aligned with respect to the ordering defined by the reference adjacency matrix. We then use median to generate a prototype that is resistent to outliers,
+$A_{\mathrm{proto}} = \mathrm{median}( A_i)$A_{\mathrm{proto}}\mathrm{proto} = \mathrm{median}( A_i), where $A_i$A_i is the aligned adjacency matrix representing explanation for $i$i-th node in class $c$c.
+Prototype $A_{\mathrm{proto}}$A_{\mathrm{proto}}\mathrm{proto} allows users to gain insights into structural graph patterns shared between nodes that belong to the same class. Users can then investigate a particular node by comparing its explanation to the class prototype.",1903.03894v4,Multi-instance explanations,,
+137,0,"In the context of multi-instance explanations, an explainer must not only highlight information locally relevant to a particular prediction, but also help emphasize higher-level correlations across instances. These instances can be related in arbitrary ways, but the most evident is class-membership. The assumption is that members of a class share common characteristics, and the model should help highlight them. For example, mutagenic compounds are often found to have certain characteristic functional groups that such $NO_2$NO_2, a pair of Oxygen atoms together with a Nitrogen atom. A trained eye might notice that Figure~\ref{fig:prototype} already hints at their presence. The evidence grows stronger when a prototype is generated by \namelong, shown in Figure~\ref{fig:prototype}. The model is able to pick-up on this functional structure, and promote it as archetypal of mutagenic compounds.",1903.03894v4,Experiments on multi-instance explanations and prototypes,,
+138,0,"\xhdr{Training details}Training details
+We use the Adam optimizer to train both the GNN and explaination methods. All GNN models are trained for 1000 epochs with learning rate 0.001, reaching accuracy of at least 85\% for graph classification datasets, and 95\% for node classification datasets. The train/validation/test split is $80/10/10\%$80/10/10\% for all datasets.
+In \name, we use the same optimizer and learning rate, and train for 100 - 300 epochs. This is efficient since \name only needs to be trained on a local computation graph with $<100$<100 nodes.",1903.03894v4,Further implementation details,,
+139,1,"\xhdr{Regularization}Regularization
+In addition to graph size constraint and graph laplacian constraint, we further impose the feature size constraint, which constrains that the number of unmasked features do not exceed a threshold.
+The regularization hyperparameters for subgraph size is $0.005$0.005; for laplacian is $0.5$0.5; for feature explanation is $0.1$0.1.
+The same values of hyperparameters are used across all experiments.",1903.03894v4,Further implementation details,,
+140,2,"\xhdr{Subgraph extraction}Subgraph extraction
+To extract the explanation subgraph $G_S$G_S, we first compute the importance weights on edges (gradients for \textsc{Grad} baseline, attention weights for \textsc{Att} baseline, and masked adjacency for \namelong). 
+A threshold is used to remove low-weight edges, and identify the explanation subgraph $G_S$G_S.
+The ground truth explanations of all datasets are connected subgraphs. Therefore, we identify the explanation as the connected component containing the explained node in $G_S$G_S. For graph classification, we identify the explanation by the maximum connected component of $G_S$G_S.
+For all methods, we perform a search to find the maximum threshold such that the explanation is at least of size $K_M$K_M. When multiple edges have tied importance weights, all of them are included in the explanation.",1903.03894v4,Further implementation details,,
+141,0,"\label{sec:intro}
+In recent years there has been a surge of interest in developing graph neural networks (GNNs)---general deep learning architectures that can operate over graph structured data, such as social network data \cite{hamilton2017inductive,kipf2017semi,Vel+2018} or graph-based representations of molecules \cite{dai2016discriminative,Duv+2015,Gil+2017}.
+The general approach with GNNs is to view the underlying graph as a computation graph and learn neural network primitives that generate individual node embeddings by passing, transforming, and aggregating node feature information across the graph~\cite{Gil+2017,hamilton2017inductive}.
+The generated node embeddings can then be used as input to any differentiable prediction layer, e.g., for node classification \cite{hamilton2017inductive} or link prediction \cite{Sch+2017}, and the whole model can be trained in an end-to-end fashion.",1806.08804v4,Introduction,,
+142,1,"However, a major limitation of current GNN architectures is that they are inherently {\em flat}\em flat as they only propagate information across the edges of the graph and are unable to infer and aggregate the information in a \textit{hierarchical} way. 
+For example, in order to successfully encode the graph structure of organic molecules, one would ideally want to encode the local molecular structure (e.g., individual atoms and their direct bonds) as well as the coarse-grained structure of the molecular graph (e.g., groups of atoms and bonds representing functional units in a molecule).
+This lack of hierarchical structure is especially problematic for the task of graph classification, where the goal is to predict the label associated with an \textit{entire graph}. When applying GNNs to graph classification, the standard approach is to generate embeddings for all the nodes in the graph and then to {\em globally pool}\em globally pool all these node embeddings together, e.g., using a simple summation or neural network that operates over sets \cite{dai2016discriminative,Duv+2015,Gil+2017,Li+2016}. This global pooling approach ignores any hierarchical structure that might be present in the graph, and it prevents researchers from building effective GNN models for predictive tasks over entire graphs.",1806.08804v4,Introduction,,
+143,2,"Here we propose \name, a differentiable graph pooling module that can be adapted to various graph neural network architectures in an hierarchical and end-to-end fashion (Figure~\ref{fig:illustration}). 
+\name allows for developing deeper GNN models that can learn to operate on hierarchical representations of a graph. We develop a graph analogue of the spatial pooling operation in CNNs \cite{krizhevsky2012imagenet}, which allows for deep CNN architectures to iteratively operate on coarser and coarser representations of an image. The challenge in the GNN setting---compared to standard CNNs---is that graphs contain no natural notion of spatial locality, i.e., one cannot simply pool together all nodes in a ``$m \times m$m \times m patch'' on a graph, because the complex topological structure of graphs precludes any straightforward, deterministic definition of a ``patch''. Moreover, unlike image data, graph data sets often contain graphs with varying numbers of nodes and edges, which makes defining a general graph pooling operator even more challenging.",1806.08804v4,Introduction,,
+144,3,"In order to solve the above challenges, we require a model that learns how to cluster together nodes to build a hierarchical multi-layer scaffold on top of the underlying graph. 
+Our approach \name learns a differentiable soft assignment at each layer of a deep GNN, mapping nodes to a set of clusters based on their learned embeddings. 
+In this framework, we generate deep GNNs by ``stacking'' GNN layers in a hierarchical fashion (Figure~\ref{fig:illustration}): the input nodes at the layer $l$l GNN module correspond to the clusters learned at the layer $l-1$l-1 GNN module. 
+Thus, each layer of \name coarsens the input graph more and more, and \name is able to generate a hierarchical representation of any input graph after training.
+We show that \name\ can be combined with various GNN approaches, resulting in an average 7\% gain in accuracy and a new state of the art on four out of five benchmark graph classification tasks. 
+Finally,  we show that \name\ can learn interpretable hierarchical clusters that correspond to well-defined communities in the input graphs.
+\cut{
+\jure{Say much much more about our method, how it works and why it is cool.}",1806.08804v4,Introduction,,
+145,4,\chris{Maybe add highlevel visualization of the idea.},1806.08804v4,Introduction,,
+146,5,"\jure{ I strongly agree, we need a Figure 1 with an illustration of the method.
+For example, a graph and then a hierarchical multi-layer scaffold on top of it.
+Will, you are great at creating good figures. Do you want to give it a try?}
+\will{Yes, I will brainstorm with Rex today about a figure and put something together :)}",1806.08804v4,Introduction,,
+147,6,"\chris{Quickly sketched this. I think it somehow explains the high-level idea. Guess the equations are too much.}
+}
+\jure{Say much much more about our method, how it works and why it is cool.}Say much much more about our method, how it works and why it is cool.",1806.08804v4,Introduction,,
+148,7,\chris{Maybe add highlevel visualization of the idea.}Maybe add highlevel visualization of the idea.,1806.08804v4,Introduction,,
+149,8,"\jure{ I strongly agree, we need a Figure 1 with an illustration of the method.
+For example, a graph and then a hierarchical multi-layer scaffold on top of it.
+Will, you are great at creating good figures. Do you want to give it a try?} I strongly agree, we need a Figure 1 with an illustration of the method.
+For example, a graph and then a hierarchical multi-layer scaffold on top of it.
+Will, you are great at creating good figures. Do you want to give it a try?
+\will{Yes, I will brainstorm with Rex today about a figure and put something together :)}Yes, I will brainstorm with Rex today about a figure and put something together :)",1806.08804v4,Introduction,,
+150,9,\chris{Quickly sketched this. I think it somehow explains the high-level idea. Guess the equations are too much.}Quickly sketched this. I think it somehow explains the high-level idea. Guess the equations are too much.,1806.08804v4,Introduction,,
+151,0,Our work builds upon a rich line of recent research on graph neural networks and graph classification.,1806.08804v4,Related Work,,
+152,1,"\xhdr{General graph neural networks}General graph neural networks
+A wide variety of graph neural network (GNN) models have been proposed in recent years, including methods inspired by convolutional neural networks \cite{Bru+2014,Def+2015,Duv+2015,hamilton2017inductive,kipf2017semi,Lei+2017,niepert2016learning, Vel+2018}, recurrent neural networks \cite{Li+2016}, recursive neural networks~\cite{bianchini2001,Sca+2009} and loopy belief propagation \cite{dai2016discriminative}. 
+Most of these approaches fit within the framework of ``neural message passing'' proposed by Gilmer \etal~\cite{Gil+2017}. 
+In the message passing framework, a GNN is viewed as a message passing algorithm where node representations are iteratively computed from the features of their neighbor nodes using a differentiable aggregation function.
+Hamilton \etal~\cite{Ham+2017a} provides a conceptual review of recent advancements in this area, and Bronstein \etal \cite{bronstein2017geometric} outlines connections to spectral graph convolutions.",1806.08804v4,Related Work,,
+153,2,"\xhdr{Graph classification with graph neural networks}Graph classification with graph neural networks
+GNNs have been applied to a wide variety of tasks, including node classification \cite{hamilton2017inductive,kipf2017semi}, link prediction \cite{kipf2018}, graph classification \cite{dai2016discriminative,Duv+2015,zhang2018end}, and chemoinformatics~\cite{Mer+2005,Lus+2013,Fou+2017,Jin+2018,Sch+2017}. 
+In the context of graph classification---the task that we study here---a major challenge in applying GNNs is going from node embeddings, which are the output of GNNs, to a representation of the entire graph. 
+Common approaches to this problem include simply summing up or averaging all the node embeddings in a final layer \cite{Duv+2015}, introducing a ``virtual node'' that is connected to all the nodes in the graph \cite{Li+2016}, or aggregating the node embeddings using a deep learning architecture that operates over sets \cite{Gil+2017}.
+However, all of these methods have the limitation that they do not learn hierarchical representations (i.e., all the node embeddings are globally pooled together in a single layer), and thus are unable to capture the natural structures of many real-world graphs.
+Some recent approaches have also proposed applying CNN architectures to the concatenation of all the node embeddings \cite{niepert2016learning,zhang2018end}, but this requires a specifying (or learning) a canonical ordering over nodes, which is in general very difficult and equivalent to solving graph isomorphism.",1806.08804v4,Related Work,,
+154,3,"Lastly, there are some recent works that learn hierarchical graph representations by combining GNNs with deterministic graph clustering algorithms \cite{Def+2015,simonovsky2017dynamic,Fey+2018}, following a two-stage approach. However, unlike these previous approaches, we seek to {\em learn}\em learn the hierarchical structure in an end-to-end fashion, rather than relying on a deterministic graph clustering subroutine.",1806.08804v4,Related Work,,
+155,4,"\cut{
+% Will: Let's try to move some of this to related work
+\rex{need to be removed probably. there are some points i think are important which is not illustrated in related work}
+To achieve this task. recent works have made several attempts.
+Recent attempts include the use of linearization of graphs. A graph can be linearized to a vector representation using ``canonical ordering'' \cite{niepert2016learning}. Pooling or striding is easy to carry out on the 1D representation. However, it is non-trivial to specify a canonical ordering that also preserves graph structure. For example, nodes that are distant in graph might be adjacent to each other in the linearized representation.",1806.08804v4,Related Work,,
+156,5,"Another intuitive pooling strategy is to pool using a graph clustering or coarsening strategy \cite{safro2015advanced}, which can be applied hierarchically and produce coarser and coarser graphs.
+However, a variety of clustering and coarsening strategies have been designed, and significant hand-engineering is required to find the best strategy for a specific classification task at hand.
+}
+\rex{need to be removed probably. there are some points i think are important which is not illustrated in related work}need to be removed probably. there are some points i think are important which is not illustrated in related work
+To achieve this task. recent works have made several attempts.
+Recent attempts include the use of linearization of graphs. A graph can be linearized to a vector representation using ``canonical ordering'' \cite{niepert2016learning}. Pooling or striding is easy to carry out on the 1D representation. However, it is non-trivial to specify a canonical ordering that also preserves graph structure. For example, nodes that are distant in graph might be adjacent to each other in the linearized representation.",1806.08804v4,Related Work,,
+157,6,"Another intuitive pooling strategy is to pool using a graph clustering or coarsening strategy \cite{safro2015advanced}, which can be applied hierarchically and produce coarser and coarser graphs.
+However, a variety of clustering and coarsening strategies have been designed, and significant hand-engineering is required to find the best strategy for a specific classification task at hand.",1806.08804v4,Related Work,,
+158,7,"\cut{
+\xhdr{Graph kernels}",1806.08804v4,Related Work,,
+159,8,"In recent years, various graph kernels have been proposed, which
+implicitly or explicitly map graphs to a Hilbert space. Gärtner \etal\cite{Gae+2003}
+and Kashima \etal~\cite{Kas+2003} simultaneously proposed
+graph kernels based on random walks, which count the number of walks
+two graphs have in common. Since then, random walk kernels have been
+studied intensively, e.g., see~\cite{Sug+2015}.
+Kernels based on shortest paths were first proposed in~\cite{Borgwardt2005}.",1806.08804v4,Related Work,,
+160,9,"A different line in the development of graph kernels focused
+particularly on scalable graph kernels. These kernels are typically
+computed efficiently by explicit feature maps, which allow to bypass
+the computation of a gram matrix, and allow applying scalable linear
+classification algorithms. Prominent examples are kernels based on
+subgraphs up to a fixed size, so called
+{graphlets}~\cite{She+2009}. Other approaches of this category encode
+the neighborhood of every node by different techniques, e.g.,
+see~\cite{Hid+2009, Neu+2016}, and most notably the
+Weisfeiler-Lehman subtree kernel~\cite{She+2011} and its higher-order
+variants~\cite{Mor+2017}. Subgraph and Weisfeiler-Lehman kernels have
+been successfully employed within frameworks for smoothed and deep
+graph kernels~\cite{Yan+2015,Yan+2015a}. Recent developments include
+assignment-based approaches~\cite{kriege2016valid,Nik+2017,Joh+2015} and
+spectral approaches~\cite{Kon+2016}. Although graph kernels have shown good performance in the past, they lack the ability to adapt to they give data distribution at hand, since they mostly rely on precomputed features. Moreover, they may not scale to large data sets due to the quadratic overhead to compute the gram matrix.",1806.08804v4,Related Work,,
+161,10,"Niepert \etal~\cite{niepert2016learning} extracted canonical vector representations of neighborhoods of nodes,  based on heuristics such as the Weisfeiler-Lehman algorithm~\cite{She+2011}, to compute a graph embeddings and then used neural networks for the classification task. Moreover, recently graph neural networks (GNN) for node and graph classification became popular. Most of these
+approaches fit into the framework proposed by~\cite{Gil+2017}. Here a GNN is viewed as a message passing approach where node
+features are iteratively computed from the features of the
+node's neighbors by using a differentialable neighborhood aggregation function. The parameters of this function are 
+learned together with the parameters of the neural network used for the
+classification task in an end-to-end fashion. Up to now, naïve global mean pooling or precomputed clustering methods were applied to compute graph embeddings from the features of each single node.",1806.08804v4,Related Work,,
+162,11,"Notable instances of this model include Neural
+Fingerprints~\cite{Duv+2015}, Gated Graph Neural
+Networks~\cite{Li+2016}, and spectral approaches proposed
+in~\cite{Bru+2014,Def+2015,kipf2017semi}. Dai \etal\cite{dai2016discriminative}
+proposed an approach inspired by mean-field inference
+and Lei \etal\cite{Lei+2017} showed that the generated
+feature maps lie in the same Hilbert space as some popular graph
+kernels and successfully applied them in the domain of
+chemoinformatics~\cite{Jin+2018}. In~\cite{simonovsky2017dynamic} GNN were extended to include edge features and various precomputed pooling heuristics based on clustering methods were applied. Attention-based extensions were explored in~\cite{Vel+2018}. In order to make GNNs scale to large graphs Hamilton \etal\cite{hamilton2017inductive} and Chen \etal\cite{Che+2018} devised stochastic versions of GNNs. Recently, a differentiable pooling mechanism to compute graph embeddings based on node features using differentiable sorting was proposed~\cite{zhang2018end}.",1806.08804v4,Related Work,,
+163,12,"Moreover, GNNs were applied for protein-protein
+interaction prediction~\cite{Fou+2017} and quantum interactions in
+molecules~\cite{Sch+2017}. An approach for unsupervised learning based
+on GNNs was presented in~\cite{Gar+2017}. Early
+approaches were published in~\cite{Mer+2005} and~\cite{Sca+2009,
+Sca+2009a}. A survey can be found in~\cite{Ham+2017a}.",1806.08804v4,Related Work,,
+164,13,"}
+\xhdr{Graph kernels}Graph kernels",1806.08804v4,Related Work,,
+165,14,"In recent years, various graph kernels have been proposed, which
+implicitly or explicitly map graphs to a Hilbert space. Gärtner \etal\cite{Gae+2003}
+and Kashima \etal~\cite{Kas+2003} simultaneously proposed
+graph kernels based on random walks, which count the number of walks
+two graphs have in common. Since then, random walk kernels have been
+studied intensively, e.g., see~\cite{Sug+2015}.
+Kernels based on shortest paths were first proposed in~\cite{Borgwardt2005}.",1806.08804v4,Related Work,,
+166,15,"A different line in the development of graph kernels focused
+particularly on scalable graph kernels. These kernels are typically
+computed efficiently by explicit feature maps, which allow to bypass
+the computation of a gram matrix, and allow applying scalable linear
+classification algorithms. Prominent examples are kernels based on
+subgraphs up to a fixed size, so called
+{graphlets}graphlets~\cite{She+2009}. Other approaches of this category encode
+the neighborhood of every node by different techniques, e.g.,
+see~\cite{Hid+2009, Neu+2016}, and most notably the
+Weisfeiler-Lehman subtree kernel~\cite{She+2011} and its higher-order
+variants~\cite{Mor+2017}. Subgraph and Weisfeiler-Lehman kernels have
+been successfully employed within frameworks for smoothed and deep
+graph kernels~\cite{Yan+2015,Yan+2015a}. Recent developments include
+assignment-based approaches~\cite{kriege2016valid,Nik+2017,Joh+2015} and
+spectral approaches~\cite{Kon+2016}. Although graph kernels have shown good performance in the past, they lack the ability to adapt to they give data distribution at hand, since they mostly rely on precomputed features. Moreover, they may not scale to large data sets due to the quadratic overhead to compute the gram matrix.",1806.08804v4,Related Work,,
+167,16,"Niepert \etal~\cite{niepert2016learning} extracted canonical vector representations of neighborhoods of nodes,  based on heuristics such as the Weisfeiler-Lehman algorithm~\cite{She+2011}, to compute a graph embeddings and then used neural networks for the classification task. Moreover, recently graph neural networks (GNN) for node and graph classification became popular. Most of these
+approaches fit into the framework proposed by~\cite{Gil+2017}. Here a GNN is viewed as a message passing approach where node
+features are iteratively computed from the features of the
+node's neighbors by using a differentialable neighborhood aggregation function. The parameters of this function are 
+learned together with the parameters of the neural network used for the
+classification task in an end-to-end fashion. Up to now, naïve global mean pooling or precomputed clustering methods were applied to compute graph embeddings from the features of each single node.",1806.08804v4,Related Work,,
+168,17,"Notable instances of this model include Neural
+Fingerprints~\cite{Duv+2015}, Gated Graph Neural
+Networks~\cite{Li+2016}, and spectral approaches proposed
+in~\cite{Bru+2014,Def+2015,kipf2017semi}. Dai \etal\cite{dai2016discriminative}
+proposed an approach inspired by mean-field inference
+and Lei \etal\cite{Lei+2017} showed that the generated
+feature maps lie in the same Hilbert space as some popular graph
+kernels and successfully applied them in the domain of
+chemoinformatics~\cite{Jin+2018}. In~\cite{simonovsky2017dynamic} GNN were extended to include edge features and various precomputed pooling heuristics based on clustering methods were applied. Attention-based extensions were explored in~\cite{Vel+2018}. In order to make GNNs scale to large graphs Hamilton \etal\cite{hamilton2017inductive} and Chen \etal\cite{Che+2018} devised stochastic versions of GNNs. Recently, a differentiable pooling mechanism to compute graph embeddings based on node features using differentiable sorting was proposed~\cite{zhang2018end}.",1806.08804v4,Related Work,,
+169,18,"Moreover, GNNs were applied for protein-protein
+interaction prediction~\cite{Fou+2017} and quantum interactions in
+molecules~\cite{Sch+2017}. An approach for unsupervised learning based
+on GNNs was presented in~\cite{Gar+2017}. Early
+approaches were published in~\cite{Mer+2005} and~\cite{Sca+2009,
+Sca+2009a}. A survey can be found in~\cite{Ham+2017a}.",1806.08804v4,Related Work,,
+170,0,\label{sec:proposed},1806.08804v4,Proposed Method,,
+171,1,"The key idea of \name is that it enables the construction of deep, multi-layer GNN models by providing a differentiable module to hierarchically pool graph nodes. 
+In this section, we outline the \name module and show how it is applied in a deep GNN architecture.",1806.08804v4,Proposed Method,,
+172,2,"\subsection{Preliminaries}
+\label{sec:setting}",1806.08804v4,Proposed Method,,
+173,3,"We represent a graph $G$G as $(A,F)$(A,F), where $A\in \{0, 1\}^{n\times n}$A\in \{0, 1\}^{n\times n}n\times n is the adjacency matrix, and $F \in \mathbb{R}^{n\times d}$F \in \mathbb{R}^{n\times d}n\times d is the node feature matrix assuming each node has $d$d features.\footnote{We do not consider edge features, although one can easily extend the algorithm to support edge features using techniques introduced in \cite{simonovsky2017dynamic}.}
+Given a set of labeled graphs $\mathcal{D}=\{(G_1,y_1),(G_2,y_2),...\}$\mathcal{D}=\{(G_1,y_1),(G_2,y_2),...\} where $y_i \in \mathcal{Y}$y_i \in \mathcal{Y} is the label corresponding to graph $G_i \in \mathcal{G}$G_i \in \mathcal{G}, the goal of graph classification is to learn a mapping $f : \mathcal{G} \to \mathcal{Y}$f : \mathcal{G} \to \mathcal{Y} that maps graphs to the set of labels. 
+The challenge---compared to standard supervised machine learning setup---is that we need a way to extract useful feature vectors from these input graphs.
+That is, in order to apply standard machine learning methods for classification, e.g., neural networks, we need a procedure to convert each graph to an finite dimensional vector in $\mathbb{R}^D$\mathbb{R}^D.",1806.08804v4,Proposed Method,,
+174,4,"\xhdr{Graph neural networks}Graph neural networks
+In this work, we build upon graph neural networks in order to learn useful representations for graph classification in an end-to-end fashion. 
+In particular, we consider GNNs that employ the following general ``message-passing'' architecture:
+\begin{equation}\label{eq:gnn}
+     H^{(k)} = M(A,H^{(k-1)};\theta^{(k)}),
+\end{equation}\begin{equation}\label{eq:gnn}
+     H^{(k)} = M(A,H^{(k-1)};\theta^{(k)}),
+\end{equation}\label{eq:gnn}
+     H^{(k)}(k) = M(A,H^{(k-1)}(k-1);\theta^{(k)}(k)),",1806.08804v4,Proposed Method,,
+175,5,"where $H^{(k)} \in \mathbb{R}^{n \times d}$H^{(k)}(k) \in \mathbb{R}^{n \times d}n \times d are the node embeddings (i.e., ``messages'') computed after $k$k steps of the GNN and $M$M is the message propagation function, which depends on the adjacency matrix, trainable parameters $\theta^{(k)}$\theta^{(k)}(k), and the node embeddings $H^{(k-1)}$H^{(k-1)}(k-1) generated from the previous message-passing step.\footnote{For notational convenience, we assume that the embedding dimension is $d$ for all $H^{(k)}$; however, in general this restriction is not necessary.}
+The input node embeddings $H^{(0)}$H^{(0)}(0) at the initial message-passing iteration $(k=1)$(k=1), are initialized using
+the node features on the graph, $H^{(0)} = F$H^{(0)}(0) = F.",1806.08804v4,Proposed Method,,
+176,6,"There are many possible implementations of the propagation function $M$M \cite{Gil+2017,hamilton2017inductive}.
+For example, one popular variant of GNNs---Kipf's \etal \cite{kipf2017semi} Graph Convolutional Networks (GCNs)---implements $M$M using a combination of linear transformations and ReLU non-linearities:
+\begin{equation}
+    \label{eq:gcn}
+    H^{(k)} =  M(A,H^{(k-1)};W^{(k)}) = \textrm{ReLU}(\tilde{D}^{-\frac{1}{2}}\tilde{A}\tilde{D}^{-\frac{1}{2}} H^{(k-1)} W^{(k-1)}),
+\end{equation}\begin{equation}
+    \label{eq:gcn}
+    H^{(k)} =  M(A,H^{(k-1)};W^{(k)}) = \textrm{ReLU}(\tilde{D}^{-\frac{1}{2}}\tilde{A}\tilde{D}^{-\frac{1}{2}} H^{(k-1)} W^{(k-1)}),
+\end{equation}
+    \label{eq:gcn}
+    H^{(k)}(k) =  M(A,H^{(k-1)}(k-1);W^{(k)}(k)) = \textrm{ReLU}(\tilde{D}^{-\frac{1}{2}}-\frac{1}{2}\tilde{A}\tilde{D}^{-\frac{1}{2}}-\frac{1}{2} H^{(k-1)}(k-1) W^{(k-1)}(k-1)),",1806.08804v4,Proposed Method,,
+177,7,"where $\tilde{A}=A+I$\tilde{A}=A+I, $\tilde{D}=\sum_j\tilde{A}_{ij}$\tilde{D}=\sum_j\tilde{A}_{ij}ij and $W^{(k)} \in \mathbb{R}^{d \times d}$W^{(k)}(k) \in \mathbb{R}^{d \times d}d \times d is a trainable weight matrix.
+The differentiable pooling model we propose can be applied to any GNN model implementing Equation \eqref{eq:gnn}, and is agnostic with regards to the specifics of how $M$M is implemented.",1806.08804v4,Proposed Method,,
+178,8,"A full GNN module will run $K$K iterations of Equation \eqref{eq:gnn} to generate the final output node embeddings $Z=H^{(K)} \in \mathbb{R}^{n \times d}$Z=H^{(K)}(K) \in \mathbb{R}^{n \times d}n \times d, where $K$K is usually in the range 2-6.
+For simplicity, in the following sections we will abstract away the internal structure of the GNNs and use $Z = \gnn(A, X)$Z = \gnn(A, X) to denote an arbitrary GNN module implementing $K$K iterations of message passing according to some adjacency matrix $A$A and initial input node features $X$X.",1806.08804v4,Proposed Method,,
+179,9,"\xhdr{Stacking GNNs and pooling layers}Stacking GNNs and pooling layers
+GNNs implementing Equation \eqref{eq:gnn} are inherently flat, as they only propagate information across edges of a graph.
+The goal of this work is to define a general, end-to-end differentiable strategy that allows one to {\em stack}\em stack multiple GNN modules in a hierarchical fashion. 
+Formally, given $Z = \gnn(A, X)$Z = \gnn(A, X), the output of a GNN module, and a graph adjacency matrix $A \in \mathbb{R}^{n \times n}$A \in \mathbb{R}^{n \times n}n \times n, we seek to define a strategy to output a new coarsened graph containing $m<n$m<n nodes, with weighted adjacency matrix $A^{'} \in \R^{m \times m}$A^{'}' \in \R^{m \times m}m \times m and node embeddings $Z^{'} \in \mathbb{R}^{m\times d}$Z^{'}' \in \mathbb{R}^{m\times d}m\times d.
+This new coarsened graph can then be used as input to another GNN layer, and this whole process can be repeated $L$L times, generating a model with $L$L GNN layers that operate on a series of coarser and coarser versions of the input graph (Figure~\ref{fig:illustration}).
+Thus, our goal is to learn how to cluster or pool together nodes using the output of a GNN, so that we can use this coarsened graph as input to another GNN layer.
+What makes designing such a pooling layer for GNNs especially challenging---compared to the usual graph coarsening task---is that our goal is not to simply cluster the nodes in one graph, but to provide a general recipe to hierarchically pool nodes across a broad set of input graphs. 
+That is, we need our model to learn a pooling strategy that will generalize across graphs with different nodes, edges, and that can adapt to the various graph structures during inference.",1806.08804v4,Proposed Method,,
+180,10,"\cut{
+\chris{I think the paragraph below repeats some of the points of the prev. paragraph}
+The key challenge for graph pooling with GNNs is designing a pooling layer that respects the hierarchical structure of the input graph.
+Similar to how CNNs on images stack filters with increasingly large receptive fields, the pooling layers in a GNN should be stacked hierarchically, extracting coarser and coarser subgraph structures to allow the GNN to obtain a more global view of the graph at the final layers. 
+%Firstly, the pooling layer should respect the hierarchical structure of graph.
+%In the context of ConvNets for images, a deep neural network is only effective if the architecture allows a larger and larger receptive field.
+%Similarly, it is desirable to have graph pooling layers to be stacked hierarchically, extracting larger subgraph structures and allow GNN to obtain a more global view at higher level.
+%At the same time, the pooling layer should retain the structural information of the graph.
+%Intuitively, each pooling results in a more coarsened graph representation, where another layer of graph convolution can be applied.
+%There are several key ingredients for an effective pooling strategy. 
+%Thus, in terms of graph structure, the pooling layer should effectively partition the graph into modular components . 
+%As a result, a good pooling strategy should generally comply with the property of homophily on graphs,
+%\emph{i.e.} the idea that nodes that are close to each other in graph should be pooled.
+Moreover, what makes designing a pooling layer for GNNs especially challenging---compared to the usual graph coarsening task---is that our goal is not to simply cluster the nodes in one graph, but to provide a general recipe to hierarchically pool nodes across a broad set of input graphs. 
+That is, we need our model to encode a pooling strategy that will generalize across graphs with different nodes, edges, and that can adapt to the various graph structures during inference. 
+Finally, a key desideratum of a pooling module is that we want it to be able to {\em learn} a good strategy from the training data, rather than relying on deterministic graph coarsening functions. 
+For instance, one could simply use edge contractions or non-negative matrix factorization to assign nodes to clusters, but these approaches are incapable of adapting their pooling strategy based on training data. 
+}
+\chris{I think the paragraph below repeats some of the points of the prev. paragraph}I think the paragraph below repeats some of the points of the prev. paragraph
+The key challenge for graph pooling with GNNs is designing a pooling layer that respects the hierarchical structure of the input graph.
+Similar to how CNNs on images stack filters with increasingly large receptive fields, the pooling layers in a GNN should be stacked hierarchically, extracting coarser and coarser subgraph structures to allow the GNN to obtain a more global view of the graph at the final layers. 
+Moreover, what makes designing a pooling layer for GNNs especially challenging---compared to the usual graph coarsening task---is that our goal is not to simply cluster the nodes in one graph, but to provide a general recipe to hierarchically pool nodes across a broad set of input graphs. 
+That is, we need our model to encode a pooling strategy that will generalize across graphs with different nodes, edges, and that can adapt to the various graph structures during inference. 
+Finally, a key desideratum of a pooling module is that we want it to be able to {\em learn}\em learn a good strategy from the training data, rather than relying on deterministic graph coarsening functions. 
+For instance, one could simply use edge contractions or non-negative matrix factorization to assign nodes to clusters, but these approaches are incapable of adapting their pooling strategy based on training data.",1806.08804v4,Proposed Method,,
+181,11,"\subsection{Differentiable Pooling via Learned Assignments}
+\cut{
+\jure{This is our main contribution. We need to discuss why our approach is sound and what is the intuition behind it.
+It would be good to talk about possible strategies to learn this (factorization, etc.) but why our approach of learning to assign nodes to clusters is appropriate one.
+We need a model that can for any network structure learn what is the right hierarchical pooling structure in order to aggregate information. 
+I think such discussion is important as it let's reader to think and appreciate the problem. If we simply introduce the solution too quickly people won't appreciate it.}
+\will{I tried to add more motivation in the paragraph above, and Rex and I are trying to add in more intuition behind the method in the paragraphs below.}
+}
+\jure{This is our main contribution. We need to discuss why our approach is sound and what is the intuition behind it.
+It would be good to talk about possible strategies to learn this (factorization, etc.) but why our approach of learning to assign nodes to clusters is appropriate one.
+We need a model that can for any network structure learn what is the right hierarchical pooling structure in order to aggregate information. 
+I think such discussion is important as it let's reader to think and appreciate the problem. If we simply introduce the solution too quickly people won't appreciate it.}This is our main contribution. We need to discuss why our approach is sound and what is the intuition behind it.
+It would be good to talk about possible strategies to learn this (factorization, etc.) but why our approach of learning to assign nodes to clusters is appropriate one.
+We need a model that can for any network structure learn what is the right hierarchical pooling structure in order to aggregate information. 
+I think such discussion is important as it let's reader to think and appreciate the problem. If we simply introduce the solution too quickly people won't appreciate it.
+\will{I tried to add more motivation in the paragraph above, and Rex and I are trying to add in more intuition behind the method in the paragraphs below.}I tried to add more motivation in the paragraph above, and Rex and I are trying to add in more intuition behind the method in the paragraphs below.",1806.08804v4,Proposed Method,,
+182,12,"Our proposed approach, \name, addresses the above challenges by learning a cluster assignment matrix over the nodes using the output of a GNN model.
+The key intuition is that we stack $L$L GNN modules and learn to assign nodes to clusters at layer $l$l in an end-to-end fashion, using embeddings generated from a GNN at layer $l-1$l-1.
+Thus, we are using GNNs to both extract node embeddings that are useful for graph classification, as well to extract node embeddings that are useful for hierarchical pooling.
+Using this construction, the GNNs in \name learn to encode a general pooling strategy that is useful for a large set of training graphs. 
+We first describe how the \name\ module pools nodes at each layer given an assignment matrix; following this, we discuss how we generate the assignment matrix using a GNN architecture.",1806.08804v4,Proposed Method,,
+183,13,"\xhdr{Pooling with an assignment matrix}Pooling with an assignment matrix
+We denote the learned cluster assignment matrix at layer $l$l as $S^{(l)} \in \mathbb{R}^{n_l \times n_{l+1}}$S^{(l)}(l) \in \mathbb{R}^{n_l \times n_{l+1}}n_l \times n_{l+1}l+1. 
+Each row of $S^{(l)}$S^{(l)}(l) corresponds to one of the $n_l$n_l nodes (or clusters) at layer $l$l, and each column of $S^{(l)}$S^{(l)}(l) corresponds to one of the $n_{l+1}$n_{l+1}l+1 clusters at the next layer $l+1$l+1. 
+Intuitively, $S^{(l)}$S^{(l)}(l) provides a soft assignment of each node at layer $l$l to a cluster in the next coarsened layer $l+1$l+1.",1806.08804v4,Proposed Method,,
+184,14,"Suppose that $S^{(l)}$S^{(l)}(l) has already been computed, i.e., that we have computed the assignment matrix at the $l$l-th layer of our model.
+We denote the input adjacency matrix at this layer as $A^{(l)}$A^{(l)}(l) and denote the input node embedding matrix at this layer as $Z^{(l)}$Z^{(l)}(l).
+Given these inputs, the \name layer $(A^{(l+1)},X^{(l+1)}) = \textsc{DiffPool}(A^{(l)},Z^{(l)})$(A^{(l+1)}(l+1),X^{(l+1)}(l+1)) = \textsc{DiffPool}(A^{(l)}(l),Z^{(l)}(l)) coarsens the input graph, generating a new coarsened adjacency matrix $A^{(l+1)}$A^{(l+1)}(l+1) and a new matrix of embeddings $X^{(l+1)}$X^{(l+1)}(l+1) for each of the nodes/clusters in this coarsened graph.
+In particular, we apply the two following equations:
+\begin{align}
+\label{eq:4}
+&X^{(l+1)} = {S^{(l)}}^T Z^{(l)}\in \mathbb{R}^{n_{l+1} \times d},\\
+\label{eq:5}
+&A^{(l+1)} = {S^{(l)}}^T A^{(l)}{S^{(l)}} \in \mathbb{R}^{n_{l+1} \times n_{l+1}}.
+\end{align}\begin{align}
+\label{eq:4}
+&X^{(l+1)} = {S^{(l)}}^T Z^{(l)}\in \mathbb{R}^{n_{l+1} \times d},\\
+\label{eq:5}
+&A^{(l+1)} = {S^{(l)}}^T A^{(l)}{S^{(l)}} \in \mathbb{R}^{n_{l+1} \times n_{l+1}}.
+\end{align}
+\label{eq:4}
+&X^{(l+1)}(l+1) = {S^{(l)}}S^{(l)}(l)^T Z^{(l)}(l)\in \mathbb{R}^{n_{l+1} \times d}n_{l+1}l+1 \times d,\\
+\label{eq:5}
+&A^{(l+1)}(l+1) = {S^{(l)}}S^{(l)}(l)^T A^{(l)}(l){S^{(l)}}S^{(l)}(l) \in \mathbb{R}^{n_{l+1} \times n_{l+1}}n_{l+1}l+1 \times n_{l+1}l+1.",1806.08804v4,Proposed Method,,
+185,15,"Equation \eqref{eq:4} takes the node embeddings $Z^{(l)}$Z^{(l)}(l) and aggregates these embeddings according to the cluster assignments $S^{(l)}$S^{(l)}(l), generating embeddings for each of the $n_{l+1}$n_{l+1}l+1 clusters.
+Similarly, Equation \eqref{eq:5} takes the adjacency matrix $A^{(l)}$A^{(l)}(l) and generates a coarsened adjacency matrix denoting the connectivity strength between each pair of clusters.",1806.08804v4,Proposed Method,,
+186,16,"Through Equations \eqref{eq:4} and \eqref{eq:5}, the \name layer coarsens the graph: the next layer adjacency matrix $A^{(l+1)}$A^{(l+1)}(l+1) represents a coarsened graph with $n_{l+1}$n_{l+1}l+1 nodes or {\em cluster nodes}\em cluster nodes, where each individual cluster node in the new coarsened graph corresponds to a cluster of nodes in the graph at layer $l$l.
+Note that $A^{(l+1)}$A^{(l+1)}(l+1) is a real matrix and represents a fully connected edge-weighted  graph; each entry $A^{(l+1)}_{ij}$A^{(l+1)}(l+1)_{ij}ij can be viewed as the connectivity strength between cluster $i$i and cluster $j$j. 
+Similarly, the $i$i-th row of $X^{(l+1)}$X^{(l+1)}(l+1) corresponds to the embedding of cluster $i$i. 
+Together, the coarsened adjacency matrix $A^{(l+1)}$A^{(l+1)}(l+1) and cluster embeddings $X^{(l+1)}$X^{(l+1)}(l+1) can be used as input to another GNN layer, a process which we describe in detail below.",1806.08804v4,Proposed Method,,
+187,17,"\xhdr{Learning the assignment matrix}Learning the assignment matrix
+In the following we describe the architecture of \name, i.e., how \name\ generates the assignment matrix $S^{(l)}$S^{(l)}(l) and embedding matrices $Z^{(l)}$Z^{(l)}(l) that are used in Equations \eqref{eq:4} and \eqref{eq:5}.
+We generate these two matrices using two separate GNNs that are both applied to the input cluster node features $X^{(l)}$X^{(l)}(l) and coarsened adjacency matrix $A^{(l)}$A^{(l)}(l).
+The {\em embedding GNN}\em embedding GNN at layer $l$l is a standard GNN module applied to these inputs:
+\begin{align}\label{eq:embedgnn}
+   Z^{(l)} = \gnn_{l, \textrm{embed}}(A^{(l)}, X^{(l)}),
+\end{align}\begin{align}\label{eq:embedgnn}
+   Z^{(l)} = \gnn_{l, \textrm{embed}}(A^{(l)}, X^{(l)}),
+\end{align}\label{eq:embedgnn}
+   Z^{(l)}(l) = \gnn_{l, \textrm{embed}}l, \textrm{embed}(A^{(l)}(l), X^{(l)}(l)),",1806.08804v4,Proposed Method,,
+188,18,"i.e., we take the adjacency matrix between the cluster nodes at layer $l$l (from Equation \ref{eq:5}) and the pooled features for the clusters (from Equation \ref{eq:4}) and pass these matrices through a standard GNN to get new embeddings $Z^{(l)}$Z^{(l)}(l) for the cluster nodes. 
+In contrast, the {\em pooling GNN}\em pooling GNN at layer $l$l, uses the input cluster features $X^{(l)}$X^{(l)}(l) and cluster adjacency matrix $A^{(l)}$A^{(l)}(l) to generate an assignment matrix:
+\begin{align}\label{eq:poolgnn}
+    S^{(l)} = \textrm{softmax}\left(\gnn_{l,\text{pool}}(A^{(l)}, X^{(l)})\right),
+\end{align}\begin{align}\label{eq:poolgnn}
+    S^{(l)} = \textrm{softmax}\left(\gnn_{l,\text{pool}}(A^{(l)}, X^{(l)})\right),
+\end{align}\label{eq:poolgnn}
+    S^{(l)}(l) = \textrm{softmax}\left(\gnn_{l,\text{pool}}l,\text{pool}(A^{(l)}(l), X^{(l)}(l))\right),",1806.08804v4,Proposed Method,,
+189,19,"where the softmax function is applied in a row-wise fashion.
+The output dimension of $\gnn_{l,\text{pool}}$\gnn_{l,\text{pool}}l,\text{pool} corresponds to a pre-defined maximum number of clusters in layer $l$l, and is a hyperparameter of the model.",1806.08804v4,Proposed Method,,
+190,20,"Note that these two GNNs consume the same input data but have distinct parameterizations and play separate roles:
+The embedding GNN generates new embeddings for the input nodes at this layer, while the pooling GNN generates a probabilistic assignment of the input nodes to $n_{l+1}$n_{l+1}l+1 clusters.",1806.08804v4,Proposed Method,,
+191,21,"In the base case, the inputs to Equations \eqref{eq:embedgnn} and Equations \eqref{eq:poolgnn} at layer $l=0$l=0 are simply the input adjacency matrix $A$A and the node features $F$F for the original graph.
+At the penultimate layer $L-1$L-1 of a deep GNN model using \name, we set the assignment matrix $S^{(L-1)}$S^{(L-1)}(L-1) be a vector of $1$1's, i.e., all nodes at the final layer $L$L are assigned to a single cluster, generating a final embedding vector corresponding to the entire graph.
+This final output embedding can then be used as feature input to a differentiable classifier (e.g., a softmax layer), and the entire system can be trained end-to-end using stochastic gradient descent.",1806.08804v4,Proposed Method,,
+192,22,"\xhdr{Permutation invariance}Permutation invariance
+Note that in order to be useful for graph classification, the pooling layer should be invariant under node permutations. For \name we get the following positive result, which shows that any deep GNN model based on \name\ is permutation invariant, as long as the component GNNs are permutation invariant. 
+\begin{proposition}
+\label{prop:permute}
+Let $P\in \{0,1\}^{n\times n}$ be any permutation matrix, then $\text{\sc \name}(A, Z) = \text{\sc \name}(PAP^T,PX)$ as long as $\gnn(A, X) = \gnn(PAP^T, X)$ (i.e., as long as the GNN method used is permutation invariant).
+\end{proposition}\begin{proposition}
+\label{prop:permute}
+Let $P\in \{0,1\}^{n\times n}$ be any permutation matrix, then $\text{\sc \name}(A, Z) = \text{\sc \name}(PAP^T,PX)$ as long as $\gnn(A, X) = \gnn(PAP^T, X)$ (i.e., as long as the GNN method used is permutation invariant).
+\end{proposition}
+\label{prop:permute}
+Let $P\in \{0,1\}^{n\times n}$P\in \{0,1\}^{n\times n}n\times n be any permutation matrix, then $\text{\sc \name}(A, Z) = \text{\sc \name}(PAP^T,PX)$\text{\sc \name}(A, Z) = \text{\sc \name}(PAP^T,PX) as long as $\gnn(A, X) = \gnn(PAP^T, X)$\gnn(A, X) = \gnn(PAP^T, X) (i.e., as long as the GNN method used is permutation invariant).",1806.08804v4,Proposed Method,,
+193,23,"\begin{proof}
+Equations \eqref{eq:embedgnn} and \eqref{eq:poolgnn} are permutation invariant by the assumption that the GNN module is permutation invariant. 
+And since any permutation matrix is orthogonal, applying $P^T P=I$ to Equation (\ref{eq:4}) and (\ref{eq:5}) finishes the proof.
+\end{proof}\begin{proof}
+Equations \eqref{eq:embedgnn} and \eqref{eq:poolgnn} are permutation invariant by the assumption that the GNN module is permutation invariant. 
+And since any permutation matrix is orthogonal, applying $P^T P=I$ to Equation (\ref{eq:4}) and (\ref{eq:5}) finishes the proof.
+\end{proof}
+Equations \eqref{eq:embedgnn} and \eqref{eq:poolgnn} are permutation invariant by the assumption that the GNN module is permutation invariant. 
+And since any permutation matrix is orthogonal, applying $P^T P=I$P^T P=I to Equation (\ref{eq:4}) and (\ref{eq:5}) finishes the proof.",1806.08804v4,Proposed Method,,
+194,24,\subsection{Auxiliary Link Prediction Objective and Entropy Regularization},1806.08804v4,Proposed Method,,
+195,25,"In practice, it can be difficult to train the pooling GNN (Equation \ref{eq:5}) using only gradient signal from the graph classification task.
+Intuitively, we have a non-convex optimization problem and it can be difficult to push the pooling GNN away from spurious local minima early in training.
+To alleviate this issue, we train the pooling GNN with an auxiliary link prediction objective, which encodes the intuition that nearby nodes should be pooled together. 
+\cut{
+Controlling input features and representation dimension is still insufficient for $g_\phi$ to learn and extract meaningful cluster information from a graph. We additionally supply side objectives as regularizations for $g_\phi$. 
+Intuitively, $g_\phi$ should learn to assign nodes that are close together in terms of connectivity into the same clusters. 
+Hence, we use a link prediction objective to further encourage similarity of cluster assignments.}
+Controlling input features and representation dimension is still insufficient for $g_\phi$g_\phi to learn and extract meaningful cluster information from a graph. We additionally supply side objectives as regularizations for $g_\phi$g_\phi. 
+Intuitively, $g_\phi$g_\phi should learn to assign nodes that are close together in terms of connectivity into the same clusters. 
+Hence, we use a link prediction objective to further encourage similarity of cluster assignments.
+In particular, at each layer $l$l, we minimize
+$L_{\text{LP}} = ||A^{(l)}, S^{(l)} S^{{(l)}^T}||_F$L_{\text{LP}}\text{LP} = ||A^{(l)}(l), S^{(l)}(l) S^{{(l)}^T}{(l)}(l)^T||_F, where $||\cdot||_F$||\cdot||_F denotes the Frobenius norm. 
+Note that the adjacency matrix $A^{(l)}$A^{(l)}(l) at deeper layers is a function of lower level assignment matrices, and changes during training.",1806.08804v4,Proposed Method,,
+196,26,"Another important characteristic of the pooling GNN (Equation \ref{eq:5})  is that the output cluster assignment for each node should generally be close to a one-hot vector, so that the membership for each cluster or subgraph is clearly defined. We therefore regularize the entropy of the cluster assignment by minimizing $L_{\text{E}} = \frac{1}{n} \sum_{i=1}^n H(S_i)$L_{\text{E}}\text{E} = \frac{1}{n} \sum_{i=1}i=1^n H(S_i), where $H$H denotes the entropy function, and $S_i$S_i is the $i$i-th row of $S$S.",1806.08804v4,Proposed Method,,
+197,27,"During training, $L_{\text{LP}}$L_{\text{LP}}\text{LP} and $L_{\text{E}}$L_{\text{E}}\text{E} from each layer are added to the classification loss.
+In practice we observe that training with the side objective takes longer to converge, but nevertheless achieves better performance and more interpretable cluster assignments.",1806.08804v4,Proposed Method,,
+198,28,"\cut{
+\subsection{Behavior on sparse and dense graphs}
+\label{sec:sparse_dense}
+The sparsity of (sub)graphs has a large impact on the behavior of the assignment layer  $M(A^{(l)},H^{(l)};\phi^{(l)})$.
+In particular, we find that \name\ is most effective in sparse graphs that exhibit hierarchical partitions, whereas in very dense (sub)graphs \name\ simply learns to map all nodes to a single cluster.
+Moreover, within a particular layer of a deep GNN model, \name\ will tend to collapse densely-connected connected subgraphs into a single hyper-node. 
+This trend is supported by our empirical studies (Section \ref{sec:ex})---e.g., where \name\ leads to state-of-the-art results on all data sets except \textsc{Collab}, which involves exceptionally dense graphs---and this trend can be understood based on the following theoretical intuitions.",1806.08804v4,Proposed Method,,
+199,29,"First, note that if a subgraph of the input graph is dense, then the entries of the corresponding subgraph adjacency matrix will be mostly ones. 
+And since  $\mathbf{1} \mathbf{1}^T$ is a matrix of all ones, an assignment matrix for the subgraph, where one column is a vector of ones and the others are zero vectors, will be close to a minimum of the link prediction auxiliary objective.
+Thus, the objective will tend to group all nodes of a dense subgraph into one cluster.",1806.08804v4,Proposed Method,,
+200,30,"\rex{formalizing: for a graph with n cliques, the network with linkpred objective will almost deterministically assign all nodes in each clique to a distinct cluster}",1806.08804v4,Proposed Method,,
+201,31,"Moreover, in terms of GNN computation, collapsing dense subgraphs in this way is intuitively an optimal pooling (or partitioning) strategy.
+In particular, it is known that GNNs can efficiently perform message-passing on dense, clique-like subgraphs (due to their small diameter) \cite{liao2018graph}, and hence \name\ can pool together nodes in such a dense subgraph without losing any significant structural information.
+In contrast, sparse subgraphs may contain many interesting structures, including path-, cycle- and tree-like structures, and given the high-diameter induced by sparsity, GNN message-passing may fail to capture these structures. 
+Thus, by separately pooling distinct parts of a sparse subgraph, \name can learn to capture the meaningful structures present 
+in sparse graph regions. 
+}
+\subsection{Behavior on sparse and dense graphs}
+\label{sec:sparse_dense}
+The sparsity of (sub)graphs has a large impact on the behavior of the assignment layer  $M(A^{(l)},H^{(l)};\phi^{(l)})$M(A^{(l)}(l),H^{(l)}(l);\phi^{(l)}(l)).
+In particular, we find that \name\ is most effective in sparse graphs that exhibit hierarchical partitions, whereas in very dense (sub)graphs \name\ simply learns to map all nodes to a single cluster.
+Moreover, within a particular layer of a deep GNN model, \name\ will tend to collapse densely-connected connected subgraphs into a single hyper-node. 
+This trend is supported by our empirical studies (Section \ref{sec:ex})---e.g., where \name\ leads to state-of-the-art results on all data sets except \textsc{Collab}, which involves exceptionally dense graphs---and this trend can be understood based on the following theoretical intuitions.",1806.08804v4,Proposed Method,,
+202,32,"First, note that if a subgraph of the input graph is dense, then the entries of the corresponding subgraph adjacency matrix will be mostly ones. 
+And since  $\mathbf{1} \mathbf{1}^T$\mathbf{1} \mathbf{1}^T is a matrix of all ones, an assignment matrix for the subgraph, where one column is a vector of ones and the others are zero vectors, will be close to a minimum of the link prediction auxiliary objective.
+Thus, the objective will tend to group all nodes of a dense subgraph into one cluster.",1806.08804v4,Proposed Method,,
+203,33,"\rex{formalizing: for a graph with n cliques, the network with linkpred objective will almost deterministically assign all nodes in each clique to a distinct cluster}formalizing: for a graph with n cliques, the network with linkpred objective will almost deterministically assign all nodes in each clique to a distinct cluster",1806.08804v4,Proposed Method,,
+204,34,"Moreover, in terms of GNN computation, collapsing dense subgraphs in this way is intuitively an optimal pooling (or partitioning) strategy.
+In particular, it is known that GNNs can efficiently perform message-passing on dense, clique-like subgraphs (due to their small diameter) \cite{liao2018graph}, and hence \name\ can pool together nodes in such a dense subgraph without losing any significant structural information.
+In contrast, sparse subgraphs may contain many interesting structures, including path-, cycle- and tree-like structures, and given the high-diameter induced by sparsity, GNN message-passing may fail to capture these structures. 
+Thus, by separately pooling distinct parts of a sparse subgraph, \name can learn to capture the meaningful structures present 
+in sparse graph regions.",1806.08804v4,Proposed Method,,
+205,35,"\cut{
+This interpretation matches our pooling objective well. Intuitively, a clique-like subgraph contains very little interesting structure, and message passing is efficient due to small graph diameter, and hence it could be directly pooled together without losing much structural information in the pooled embedding matrix $Z$. However, a sparse subgraph may contain many interesting structures, including path-, cycle- and tree-like ones. Therefore, message passing may miss these fine-grained structures. Subsequently, each part of the subgraph should be assigned and pooled differently, to capture these meaningful structures. }
+This interpretation matches our pooling objective well. Intuitively, a clique-like subgraph contains very little interesting structure, and message passing is efficient due to small graph diameter, and hence it could be directly pooled together without losing much structural information in the pooled embedding matrix $Z$Z. However, a sparse subgraph may contain many interesting structures, including path-, cycle- and tree-like ones. Therefore, message passing may miss these fine-grained structures. Subsequently, each part of the subgraph should be assigned and pooled differently, to capture these meaningful structures.",1806.08804v4,Proposed Method,,
+206,36,"\cut{
+Hence the objective will tend to group all nodes into one cluster. \chris{We could also formalize it and prove it.}This  implies that all nodes in the dense subgraph are clustered into a single hyper-node. In contrast, when a subgraph is sparse, the resulting assignment tends to have higher entropy, and nodes could be assigned to different clusters, so that the elements of $S S^T$ are small.}
+Hence the objective will tend to group all nodes into one cluster. \chris{We could also formalize it and prove it.}We could also formalize it and prove it.This  implies that all nodes in the dense subgraph are clustered into a single hyper-node. In contrast, when a subgraph is sparse, the resulting assignment tends to have higher entropy, and nodes could be assigned to different clusters, so that the elements of $S S^T$S S^T are small.
+\cut{
+\subsection{Learning to Pool with Side Information}
+\label{sec:pooling}",1806.08804v4,Proposed Method,,
+207,37,"Although the assignment matrix $S$ and the embedding matrix $Z$ are both computed using the GCN architecture, they have distinct interpretations. In particular, the embedding matrix at each layer is used as an intermediate representations of nodes and subgraphs at different coarsening scales. In comparison, the assignment matrix at each layer is used to determine the clustering assignment, and determines which nodes and subgraphs should be pooled together. Therefore it is important to create asymmetry in the computation of both $S$ and $Z$, in order to differentiate their purposes. We achieve this in three ways.",1806.08804v4,Proposed Method,,
+208,38,"\xhdr{Input Features}
+\note{note to rex himself: more experim - identity feat input?}
+The goal of $Z$ is to learn node and subgraph representations such that when pooled together, subsequent classifier can easily map the representations to labels. 
+Since the labels might be a complex function of all node features, e.g., homophily and structural properties of the input graph, we use a variety of features as inputs to $f_\theta$ to compute $Z$, including structural features such as degree and clustering coefficient features, or node features.
+In comparison, the assignment network should learn to predict cluster indices mainly based on homophily property. Therefore structural features such as degree and clustering coefficients are removed from the input features, which is essential in obtaining meaningful clusters that also benefit the classification task.",1806.08804v4,Proposed Method,,
+209,39,"\xhdr{Representation dimension}
+At deeper layers, the embedding matrix $Z$ provides representations for hyper-nodes corresponding to larger subgraphs. Therefore, more dimensions should be used when encoding larger subgraphs. This is analogous to CNNs for images~\cite{?}, where the number of channels increases after each convolutional layer.  In contrast, the assignment matrix $S$ aims to map hyper-nodes into a fewer number of clusters, allowing hyper-nodes to gain a more global \rex{what is better wording?} \chris{higher-order?} view of connectivities between subgraphs. Therefore, at deeper layers, the output dimension of $g_\phi$ decreases exponentially. Here the dimension reduction ratio $\alpha$ is a hyper-parameter. In practice, we discover that performance is insensitive for $0.1 < \alpha < 0.5$. The network outputs a sparse $S$ if the number of intuitive clusters are much less than the output dimension.",1806.08804v4,Proposed Method,,
+210,40,"\xhdr{Auxiliary objectives}
+Controlling input features and representation dimension is still insufficient for $g_\phi$ to learn and extract meaningful cluster information from a graph. We additionally supply side objectives as regularizations for $g_\phi$. 
+Intuitively, $g_\phi$ should learn to assign nodes that are close together in terms of connectivity into the same clusters. 
+Hence, we use a link prediction objective to further encourage similarity of cluster assignments.
+Particularly, at each layer $l$, we minimize
+$L_{\text{LP}} ||A^{(l)}, S^{(l)} S^{{(l)}^T}||_F$, where $||\cdot||_F$ denotes the Frobinus norm. 
+Note that the (soft) adjacency matrix $A^{(l)}$ at deeper layers is a function of lower level assignment matrices, and changes during training.",1806.08804v4,Proposed Method,,
+211,41,"Another important characteristic of $g_\phi$ is that the output cluster assignment for each node should generally be close to a one-hot vector, so that the membership for each cluster or subgraph is clearly defined, except in rare cases where a node serves as a bridge between multiple clusters. We therefore regularize the entropy of the cluster assignment by minimizing $L_{\text{E}} = \frac{1}{n} \sum_{i=1}^n H(S_i)$, where $H$ denotes the entropy function, and $S_i$ is the $i$-th row of $S$.",1806.08804v4,Proposed Method,,
+212,42,"During training, $L_{\text{LP}}$ and $L_{\text{E}}$ from each layer are added to the classification loss, in order to obtain meaningful assignment matrices at all layers. In practice we observe that training with the side objective takes longer to converge, but nevertheless achieves better performance and more interpretable cluster assignment.",1806.08804v4,Proposed Method,,
+213,43,"\note{Note to Rex himself: try curriculum training}
+\chris{Where is $g_\phi$ and $f_\theta$ defined}",1806.08804v4,Proposed Method,,
+214,44,"\xhdr{Relation to low rank matrix factorization}
+We note that by approximating $A$ with $S S^T$, the link prediction auxiliary objective bears close resemblance to a low rank matrix factorization of $A$, and well-separated pair decomposition (WSPD). 
+Similar to matrix factorization, we require that at each layer, $S$ is able to capture most of the distance information between nodes, while using less dimensions than that of $A$. However, low rank matrix factorization is non-convex and has many local minimums. When trained end-to-end in the graph classification task, \name tends to find local minimum that is better suited for the task. This explains our observation that DiffPool consistently out-performs a two-step procedure of graph clustering followed by GCN that pools over these clusters.
+$\mathrm{WSPD}$ computes small number of pairs of clusters, such that for any pair of points $(p, q)$, we can find a pair of clusters $(A, B)$ such that $p\in A, q\in B$, and $d(p, q) \approx d(A, B)$. In the case of \name, the goal of the auxiliary objective is to let the connectivity strength between any node pair $(p, q)$ to be reflected by the connectivity strength between their corresponding clusters. However, unlike WSPD, the assignment in \name is soft to allow differentiability, which enables end-to-end training and avoids the high computation cost of WSPD in high dimensions.",1806.08804v4,Proposed Method,,
+215,45,"\xhdr{Behavior on sparse and dense networks}
+The sparsity of graphs also affects the behavior of the assignment network $g_\phi$.
+Suppose a subgraph of the input graph is dense, therefore the entries of the corresponding subgraph adjacency matrix are mostly ones. Since  $\mathbf{1} \mathbf{1}^T$ is a matrix of all ones, an assignment matrix for the subgraph, where one column is a vector of ones and the others are zero vectors, will be close to a minimum of the link prediction auxiliary objective. Hence the objective will tend to group all nodes into one cluster. \chris{We could also formalize it and prove it.}This  implies that all nodes in the dense subgraph are clustered into a single hyper-node. In contrast, when a subgraph is sparse, the resulting assignment tends to have higher entropy, and nodes could be assigned to different clusters, so that the elements of $S S^T$ are small.",1806.08804v4,Proposed Method,,
+216,46,"This interpretation matches our pooling objective well. Intuitively, a clique-like subgraph contains very little interesting structure, and message passing is efficient due to small graph diameter, and hence it could be directly pooled together without losing much structural information in the pooled embedding matrix. However, a sparse subgraph may contain many interesting structures, including path-, cycle- and tree-like ones. Therefore, message passing may miss these fine-grained structures. Subsequently, each part of the subgraph should be assigned and pooled differently, to capture these meaningful structures.",1806.08804v4,Proposed Method,,
+217,47,"}
+\subsection{Learning to Pool with Side Information}
+\label{sec:pooling}",1806.08804v4,Proposed Method,,
+218,48,"Although the assignment matrix $S$S and the embedding matrix $Z$Z are both computed using the GCN architecture, they have distinct interpretations. In particular, the embedding matrix at each layer is used as an intermediate representations of nodes and subgraphs at different coarsening scales. In comparison, the assignment matrix at each layer is used to determine the clustering assignment, and determines which nodes and subgraphs should be pooled together. Therefore it is important to create asymmetry in the computation of both $S$S and $Z$Z, in order to differentiate their purposes. We achieve this in three ways.",1806.08804v4,Proposed Method,,
+219,49,"\xhdr{Input Features}Input Features
+\note{note to rex himself: more experim - identity feat input?}note to rex himself: more experim - identity feat input?
+The goal of $Z$Z is to learn node and subgraph representations such that when pooled together, subsequent classifier can easily map the representations to labels. 
+Since the labels might be a complex function of all node features, e.g., homophily and structural properties of the input graph, we use a variety of features as inputs to $f_\theta$f_\theta to compute $Z$Z, including structural features such as degree and clustering coefficient features, or node features.
+In comparison, the assignment network should learn to predict cluster indices mainly based on homophily property. Therefore structural features such as degree and clustering coefficients are removed from the input features, which is essential in obtaining meaningful clusters that also benefit the classification task.",1806.08804v4,Proposed Method,,
+220,50,"\xhdr{Representation dimension}Representation dimension
+At deeper layers, the embedding matrix $Z$Z provides representations for hyper-nodes corresponding to larger subgraphs. Therefore, more dimensions should be used when encoding larger subgraphs. This is analogous to CNNs for images~\cite{?}, where the number of channels increases after each convolutional layer.  In contrast, the assignment matrix $S$S aims to map hyper-nodes into a fewer number of clusters, allowing hyper-nodes to gain a more global \rex{what is better wording?}what is better wording? \chris{higher-order?}higher-order? view of connectivities between subgraphs. Therefore, at deeper layers, the output dimension of $g_\phi$g_\phi decreases exponentially. Here the dimension reduction ratio $\alpha$\alpha is a hyper-parameter. In practice, we discover that performance is insensitive for $0.1 < \alpha < 0.5$0.1 < \alpha < 0.5. The network outputs a sparse $S$S if the number of intuitive clusters are much less than the output dimension.",1806.08804v4,Proposed Method,,
+221,51,"\xhdr{Auxiliary objectives}Auxiliary objectives
+Controlling input features and representation dimension is still insufficient for $g_\phi$g_\phi to learn and extract meaningful cluster information from a graph. We additionally supply side objectives as regularizations for $g_\phi$g_\phi. 
+Intuitively, $g_\phi$g_\phi should learn to assign nodes that are close together in terms of connectivity into the same clusters. 
+Hence, we use a link prediction objective to further encourage similarity of cluster assignments.
+Particularly, at each layer $l$l, we minimize
+$L_{\text{LP}} ||A^{(l)}, S^{(l)} S^{{(l)}^T}||_F$L_{\text{LP}}\text{LP} ||A^{(l)}(l), S^{(l)}(l) S^{{(l)}^T}{(l)}(l)^T||_F, where $||\cdot||_F$||\cdot||_F denotes the Frobinus norm. 
+Note that the (soft) adjacency matrix $A^{(l)}$A^{(l)}(l) at deeper layers is a function of lower level assignment matrices, and changes during training.",1806.08804v4,Proposed Method,,
+222,52,"Another important characteristic of $g_\phi$g_\phi is that the output cluster assignment for each node should generally be close to a one-hot vector, so that the membership for each cluster or subgraph is clearly defined, except in rare cases where a node serves as a bridge between multiple clusters. We therefore regularize the entropy of the cluster assignment by minimizing $L_{\text{E}} = \frac{1}{n} \sum_{i=1}^n H(S_i)$L_{\text{E}}\text{E} = \frac{1}{n} \sum_{i=1}i=1^n H(S_i), where $H$H denotes the entropy function, and $S_i$S_i is the $i$i-th row of $S$S.",1806.08804v4,Proposed Method,,
+223,53,"During training, $L_{\text{LP}}$L_{\text{LP}}\text{LP} and $L_{\text{E}}$L_{\text{E}}\text{E} from each layer are added to the classification loss, in order to obtain meaningful assignment matrices at all layers. In practice we observe that training with the side objective takes longer to converge, but nevertheless achieves better performance and more interpretable cluster assignment.",1806.08804v4,Proposed Method,,
+224,54,"\note{Note to Rex himself: try curriculum training}Note to Rex himself: try curriculum training
+\chris{Where is $g_\phi$ and $f_\theta$ defined}Where is $g_\phi$g_\phi and $f_\theta$f_\theta defined",1806.08804v4,Proposed Method,,
+225,55,"\xhdr{Relation to low rank matrix factorization}Relation to low rank matrix factorization
+We note that by approximating $A$A with $S S^T$S S^T, the link prediction auxiliary objective bears close resemblance to a low rank matrix factorization of $A$A, and well-separated pair decomposition (WSPD). 
+Similar to matrix factorization, we require that at each layer, $S$S is able to capture most of the distance information between nodes, while using less dimensions than that of $A$A. However, low rank matrix factorization is non-convex and has many local minimums. When trained end-to-end in the graph classification task, \name tends to find local minimum that is better suited for the task. This explains our observation that DiffPool consistently out-performs a two-step procedure of graph clustering followed by GCN that pools over these clusters.
+$\mathrm{WSPD}$\mathrm{WSPD} computes small number of pairs of clusters, such that for any pair of points $(p, q)$(p, q), we can find a pair of clusters $(A, B)$(A, B) such that $p\in A, q\in B$p\in A, q\in B, and $d(p, q) \approx d(A, B)$d(p, q) \approx d(A, B). In the case of \name, the goal of the auxiliary objective is to let the connectivity strength between any node pair $(p, q)$(p, q) to be reflected by the connectivity strength between their corresponding clusters. However, unlike WSPD, the assignment in \name is soft to allow differentiability, which enables end-to-end training and avoids the high computation cost of WSPD in high dimensions.",1806.08804v4,Proposed Method,,
+226,56,"\xhdr{Behavior on sparse and dense networks}Behavior on sparse and dense networks
+The sparsity of graphs also affects the behavior of the assignment network $g_\phi$g_\phi.
+Suppose a subgraph of the input graph is dense, therefore the entries of the corresponding subgraph adjacency matrix are mostly ones. Since  $\mathbf{1} \mathbf{1}^T$\mathbf{1} \mathbf{1}^T is a matrix of all ones, an assignment matrix for the subgraph, where one column is a vector of ones and the others are zero vectors, will be close to a minimum of the link prediction auxiliary objective. Hence the objective will tend to group all nodes into one cluster. \chris{We could also formalize it and prove it.}We could also formalize it and prove it.This  implies that all nodes in the dense subgraph are clustered into a single hyper-node. In contrast, when a subgraph is sparse, the resulting assignment tends to have higher entropy, and nodes could be assigned to different clusters, so that the elements of $S S^T$S S^T are small.",1806.08804v4,Proposed Method,,
+227,57,"This interpretation matches our pooling objective well. Intuitively, a clique-like subgraph contains very little interesting structure, and message passing is efficient due to small graph diameter, and hence it could be directly pooled together without losing much structural information in the pooled embedding matrix. However, a sparse subgraph may contain many interesting structures, including path-, cycle- and tree-like ones. Therefore, message passing may miss these fine-grained structures. Subsequently, each part of the subgraph should be assigned and pooled differently, to capture these meaningful structures.",1806.08804v4,Proposed Method,,
+228,0,\label{sec:ex},1806.08804v4,Experiments,,
+229,1,"We evaluate the benefits of \name\ against a number of state-of-the-art graph classification approaches, with the goal of answering the following questions:
+\begin{enumerate}[leftmargin=20pt]
+\item[{\bf Q1}] How does  \name\ compare to other pooling methods proposed for GNNs (e.g., using sort pooling~\cite{zhang2018end} or the \textsc{Set2Set} method \cite{Gil+2017})?
+\item[{\bf Q2}] How does  \name\ combined with GNNs compare to the state-of-the-art for graph classification task, including both GNNs and kernel-based methods?
+\item[{\bf Q3}] Does  \name  compute meaningful and interpretable clusters on the input graphs?
+\end{enumerate}\begin{enumerate}[leftmargin=20pt]
+\item[{\bf Q1}] How does  \name\ compare to other pooling methods proposed for GNNs (e.g., using sort pooling~\cite{zhang2018end} or the \textsc{Set2Set} method \cite{Gil+2017})?
+\item[{\bf Q2}] How does  \name\ combined with GNNs compare to the state-of-the-art for graph classification task, including both GNNs and kernel-based methods?
+\item[{\bf Q3}] Does  \name  compute meaningful and interpretable clusters on the input graphs?
+\end{enumerate}
+\item[{\bf Q1}] How does  \name\ compare to other pooling methods proposed for GNNs (e.g., using sort pooling~\cite{zhang2018end} or the \textsc{Set2Set} method \cite{Gil+2017})?
+\item[{\bf Q2}] How does  \name\ combined with GNNs compare to the state-of-the-art for graph classification task, including both GNNs and kernel-based methods?
+\item[{\bf Q3}] Does  \name  compute meaningful and interpretable clusters on the input graphs?",1806.08804v4,Experiments,,
+230,2,"\xhdr{Data sets}Data sets
+To probe the ability of \name to learn complex hierarchical structures from graphs in different domains, we evaluate on a variety of relatively large graph data sets chosen from benchmarks commonly used in graph classification \cite{KKMMN2016}. We use protein data sets including \textsc{Enzymes}, \textsc{Proteins}~\cite{Borgwardt2005a, Fer+2013}, \textsc{D\&D}~\cite{Dob+2003}, the social network data set \textsc{Reddit-Multi-12k}~\cite{Yan+2015a}, and the scientific collaboration data set \textsc{Collab}~\cite{Yan+2015a}. See Appendix A for statistics and properties.
+For all these data sets, we perform 10-fold cross-validation to evaluate model performance, and report the accuracy averaged over 10 folds. 
+\xhdr{Model configurations}Model configurations
+In our experiments, the GNN model used for \name\ is built on top of the \textsc{GraphSage} architecture, as we found this architecture to have superior performance compared to the standard GCN approach as introduced in \cite{kipf2017semi}. 
+We use the ``mean'' variant of \textsc{GraphSage}~\cite{hamilton2017inductive} and apply a \name layer after every two \textsc{GraphSage} layers in our architecture.
+A total of 2 \name layers are used for the datasets. For small datasets such as \textsc{Enzymes} and \textsc{Collab}, 1 \name layer can achieve similar performance.
+After each \name layer, 3 layers of graph convolutions are performed, before the next \name layer, or the readout layer.
+The embedding matrix and the assignment matrix are computed by two separate \textsc{GraphSage} models respectively.
+In the 2 \name layer architecture, the number of clusters is set as $25\%$25\% of the number of nodes before applying \name,
+while in the 1 \name layer architecture, the number of clusters is set as $10\%$10\%.
+Batch normalization \cite{ioffe2015batch} is applied after every layer of \textsc{GraphSage}. 
+We also found that adding an $\ell_2$\ell_2 normalization to the node embeddings at each layer made the training more stable. 
+In Section \ref{sec:s2v}, we also test an analogous variant of \name on the \textsc{Structure2Vec} \cite{dai2016discriminative} architecture, in order to demonstrate how \name\ can be applied on top of other GNN models. 
+All models are trained for 3\,000 epochs with early stopping applied when the validation loss starts to drop.
+We also evaluate two simplified versions of \name:
+\begin{itemize}[leftmargin=15pt, topsep=-5pt, parsep=0pt]
+ \item \textsc{\name-Det}, is a \name\ model where assignment matrices are generated using a deterministic graph clustering algorithm~\cite{dhillon2007weighted}.% This follows the approach used in \cite{Def+2015}, but uses a better performing GNN archicture and clustering algorithm. 
+    \item
+    \textsc{DiffPool-NoLP} is a variant of \textsc{\name} where the link prediction side objective is turned off.
+\end{itemize}\begin{itemize}[leftmargin=15pt, topsep=-5pt, parsep=0pt]
+ \item \textsc{\name-Det}, is a \name\ model where assignment matrices are generated using a deterministic graph clustering algorithm~\cite{dhillon2007weighted}.% This follows the approach used in \cite{Def+2015}, but uses a better performing GNN archicture and clustering algorithm. 
+    \item
+    \textsc{DiffPool-NoLP} is a variant of \textsc{\name} where the link prediction side objective is turned off.
+\end{itemize}
+ \item \textsc{\name-Det}, is a \name\ model where assignment matrices are generated using a deterministic graph clustering algorithm~\cite{dhillon2007weighted}.\item
+    \textsc{DiffPool-NoLP} is a variant of \textsc{\name} where the link prediction side objective is turned off.",1806.08804v4,Experiments,,
+231,3,"\subsection{Baseline Methods}
+In the performance comparison on graph classification, we consider baselines based upon GNNs (combined with different pooling methods) as well as state-of-the-art kernel-based approaches.",1806.08804v4,Experiments,,
+232,4,"\xhdr{GNN-based methods}GNN-based methods 
+\begin{itemize}[leftmargin=15pt, topsep=-5pt, parsep=0pt]
+    \item \textsc{GraphSage} with global mean-pooling \cite{hamilton2017inductive}. Other GNN variants such as those proposed in \cite{kipf2017semi} are omitted as empirically GraphSAGE obtained higher performance in the task.
+    \item \textsc{Structure2Vec} (\textsc{S2V})~\cite{dai2016discriminative} is a state-of-the-art graph representation learning algorithm that combines a latent variable model with GNNs. It uses global mean pooling.
+    \item Edge-conditioned filters in CNN for graphs (\textsc{ECC})~\cite{simonovsky2017dynamic} incorporates edge information into the GCN model and performs pooling using a graph coarsening algorithm. %\chris{Are we using the version with clustering here?}
+    \item \textsc{PatchySan}~\cite{niepert2016learning} defines a receptive field (neighborhood) for each node, and using a canonical node ordering, applies convolutions on linear sequences of node embeddings. 
+    \item \textsc{Set2Set} replaces the global mean-pooling in the traditional GNN architectures by the aggregation used in \textsc{Set2Set}~\cite{vinyals2015order}. Set2Set aggregation has been shown to perform better than mean pooling in previous work \cite{Gil+2017}. We use \textsc{GraphSage} as the base GNN model. 
+    \item  \textsc{SortPool}~\cite{zhang2018end} applies a GNN architecture and then performs a single layer of soft pooling followed by 1D convolution on sorted node embeddings. 
+\end{itemize}\begin{itemize}[leftmargin=15pt, topsep=-5pt, parsep=0pt]
+    \item \textsc{GraphSage} with global mean-pooling \cite{hamilton2017inductive}. Other GNN variants such as those proposed in \cite{kipf2017semi} are omitted as empirically GraphSAGE obtained higher performance in the task.
+    \item \textsc{Structure2Vec} (\textsc{S2V})~\cite{dai2016discriminative} is a state-of-the-art graph representation learning algorithm that combines a latent variable model with GNNs. It uses global mean pooling.
+    \item Edge-conditioned filters in CNN for graphs (\textsc{ECC})~\cite{simonovsky2017dynamic} incorporates edge information into the GCN model and performs pooling using a graph coarsening algorithm. %\chris{Are we using the version with clustering here?}
+    \item \textsc{PatchySan}~\cite{niepert2016learning} defines a receptive field (neighborhood) for each node, and using a canonical node ordering, applies convolutions on linear sequences of node embeddings. 
+    \item \textsc{Set2Set} replaces the global mean-pooling in the traditional GNN architectures by the aggregation used in \textsc{Set2Set}~\cite{vinyals2015order}. Set2Set aggregation has been shown to perform better than mean pooling in previous work \cite{Gil+2017}. We use \textsc{GraphSage} as the base GNN model. 
+    \item  \textsc{SortPool}~\cite{zhang2018end} applies a GNN architecture and then performs a single layer of soft pooling followed by 1D convolution on sorted node embeddings. 
+\end{itemize}
+    \item \textsc{GraphSage} with global mean-pooling \cite{hamilton2017inductive}. Other GNN variants such as those proposed in \cite{kipf2017semi} are omitted as empirically GraphSAGE obtained higher performance in the task.
+    \item \textsc{Structure2Vec} (\textsc{S2V})~\cite{dai2016discriminative} is a state-of-the-art graph representation learning algorithm that combines a latent variable model with GNNs. It uses global mean pooling.
+    \item Edge-conditioned filters in CNN for graphs (\textsc{ECC})~\cite{simonovsky2017dynamic} incorporates edge information into the GCN model and performs pooling using a graph coarsening algorithm. \item \textsc{PatchySan}~\cite{niepert2016learning} defines a receptive field (neighborhood) for each node, and using a canonical node ordering, applies convolutions on linear sequences of node embeddings. 
+    \item \textsc{Set2Set} replaces the global mean-pooling in the traditional GNN architectures by the aggregation used in \textsc{Set2Set}~\cite{vinyals2015order}. Set2Set aggregation has been shown to perform better than mean pooling in previous work \cite{Gil+2017}. We use \textsc{GraphSage} as the base GNN model. 
+    \item  \textsc{SortPool}~\cite{zhang2018end} applies a GNN architecture and then performs a single layer of soft pooling followed by 1D convolution on sorted node embeddings.",1806.08804v4,Experiments,,
+233,5,"\medskip
+For all the GNN baselines, we use 10-fold cross validation numbers reported by the original authors when possible. 
+For the \textsc{GraphSage} and \textsc{Set2Set} baselines, we use the base implementation and hyperparameter sweeps as in our \name\ approach.
+When baseline approaches did not have the necessary published numbers, we contacted the original authors and used \textbf{}their code (if available) to run the model, performing a hyperparameter search based on the original author's guidelines.",1806.08804v4,Experiments,,
+234,6,"\xhdr{Kernel-based algorithms}Kernel-based algorithms
+We use the \textsc{Graphlet}~\cite{She+2009}, the \textsc{Shortest-Path}~\cite{Borgwardt2005}, \textsc{Weisfeiler-Lehman} kernel (\textsc{WL})~\cite{She+2011}, and \textsc{Weisfeiler-Lehman Optimal Assignment kernel} (\textsc{WL-OA})~\cite{kriege2016valid} as kernel baselines. For each kernel, we computed the normalized gram matrix. We computed the classification accuracies using the $C$C-SVM implementation of \textsc{LibSvm}~\cite{Cha+11}, using 10-fold cross validation. The $C$C parameter was selected from $\{10^{-3}, 10^{-2}, \dotsc, 10^{2},$\{10^{-3}-3, 10^{-2}-2, \dotsc, 10^{2}2, $10^{3}\}$10^{3}3\} by 10-fold cross validation on the training folds. Moreover, for \textsc{WL} and \textsc{WL-OA} we additionally selected the number of iteration from $\{0, \dots, 5\}$\{0, \dots, 5\}.",1806.08804v4,Experiments,,
+235,7,"\subsection{Results for Graph Classification}\label{sec:classification}
+Table \ref{tab:results} compares the performance of \name\ to these state-of-the-art graph classification baselines.
+These results provide positive answers to our motivating questions {\bf Q1}\bf Q1 and {\bf Q2}\bf Q2:
+We observe that our \name approach obtains the highest average performance among all pooling approaches for GNNs, improves upon the base \textsc{GraphSage} architecture by an average of $6.27\%$6.27\%, and achieves state-of-the-art results on 4 out of 5 benchmarks. Interestingly, our simplified model variant, \textsc{\name-Det}, achieves state-of-the-art performance on the \textsc{Collab} benchmark. This is because many collaboration graphs in \textsc{Collab} show only single-layer community structures, which can be captured well with pre-computed graph clustering algorithm~\cite{dhillon2007weighted}.
+One observation is that despite significant performance improvement, \name could be unstable to train, and there is significant variation in accuracy across different runs, even with the same hyperparameter setting. It is observed that adding the link predictioin objective makes training more stable, and reduces the standard deviation of accuracy across different runs.
+\cut{
+Among the baseline methods, the kernel-based \textsc{WL-OA} also performs quite well, achieving the second-best accuracy on the \textsc{Collab} benchmark, which contains exceptionally dense graphs. 
+applied on top of \textsc{GraphSage} with GNNs using other pooling methods, as well as kernel-based methods. In the last column we report the percentage gain of each GNN pooling baseline over \textsc{GraphSage} with naive mean pooling.
+\textsc{Set2Set} aggregation has shown to give significant gains in many data sets, achieving an average of $3.23\%$ improvement compared to the naive baseline of \textsc{GraphSage} with global pooling. However, \textsc{Set2Set} aggregation has longer running time: it runs $12$ times slower than \name on average.
+In comparison, \textsc{PatchySan}, \textsc{SortPool} and \textsc{ClusterPool}  all achieve better results, due to their ability to pool according to structures of the graphs. 
+%Notably, ClusterPool achieves an improvement of XX$\%$ over \textbf{GraphSAGE}, due to it's ability to capture hierarchies of clusters.
+}
+Among the baseline methods, the kernel-based \textsc{WL-OA} also performs quite well, achieving the second-best accuracy on the \textsc{Collab} benchmark, which contains exceptionally dense graphs. 
+applied on top of \textsc{GraphSage} with GNNs using other pooling methods, as well as kernel-based methods. In the last column we report the percentage gain of each GNN pooling baseline over \textsc{GraphSage} with naive mean pooling.
+\textsc{Set2Set} aggregation has shown to give significant gains in many data sets, achieving an average of $3.23\%$3.23\% improvement compared to the naive baseline of \textsc{GraphSage} with global pooling. However, \textsc{Set2Set} aggregation has longer running time: it runs $12$12 times slower than \name on average.
+In comparison, \textsc{PatchySan}, \textsc{SortPool} and \textsc{ClusterPool}  all achieve better results, due to their ability to pool according to structures of the graphs.",1806.08804v4,Experiments,,
+236,8,"\cut{
+One notable data set that demonstrates the expressivity of \name is \textsc{Reddit-Multi-12k}, in which each graph represents an online discussion thread between users/nodes (an edge is formed when a user replies to another user). It contains rich hierarchical structures due to the tree-structured nature of Reddit discussions: there are small clusters of discussion among small numbers of users occurring at the leaves of the discussion threads, and the small clusters themselves are grouped into larger clusters based on higher-level threads/topics. 
+\name significantly outperforms other methods on this data set, as it can automatically extract meaningful clusters (in a hierarchical fashion) from these natural thread-based graphs. 
+}
+One notable data set that demonstrates the expressivity of \name is \textsc{Reddit-Multi-12k}, in which each graph represents an online discussion thread between users/nodes (an edge is formed when a user replies to another user). It contains rich hierarchical structures due to the tree-structured nature of Reddit discussions: there are small clusters of discussion among small numbers of users occurring at the leaves of the discussion threads, and the small clusters themselves are grouped into larger clusters based on higher-level threads/topics. 
+\name significantly outperforms other methods on this data set, as it can automatically extract meaningful clusters (in a hierarchical fashion) from these natural thread-based graphs.",1806.08804v4,Experiments,,
+237,9,"\cut{
+Graphs in the \textsc{Collab} data set, in contrast, are very dense and do not have a hierarchical structure. As illustrated in Section \ref{sec:sparse_dense}, \name tends to assign nodes in densely connected subgraphs into a single cluster. In practice, we observe that hierarchies deeper than two do not result in performance improvement in this data set, which again stresses that it does not contain any hierarchical structure.}
+Graphs in the \textsc{Collab} data set, in contrast, are very dense and do not have a hierarchical structure. As illustrated in Section \ref{sec:sparse_dense}, \name tends to assign nodes in densely connected subgraphs into a single cluster. In practice, we observe that hierarchies deeper than two do not result in performance improvement in this data set, which again stresses that it does not contain any hierarchical structure.",1806.08804v4,Experiments,,
+238,10,"\xhdr{Differentiable Pooling on \textsc{Structure2Vec}}Differentiable Pooling on \textsc{Structure2Vec}\label{sec:s2v}
+\name can be applied to other GNN architectures besides \textsc{GraphSage} to capture hierarchical structure in the graph data.
+To further support answering {\bf Q1}\bf Q1, we also applied \name on Structure2Vec (\textsc{S2V}). 
+We ran experiments using \textsc{S2V} with three layer architecture, as reported in \cite{dai2016discriminative}.
+In the first variant, one \name layer is applied after the first layer of \textsc{S2V}, and two more \textsc{S2V} layers are stacked on top of the output of \name. The second variant applies one \name layer after the first and second layer of \textsc{S2V} respectively. 
+In both variants, \textsc{S2V} model is used to compute the embedding matrix, while \textsc{GraphSage} model is used to compute the assignment matrix.",1806.08804v4,Experiments,,
+239,11,"The results in terms of classification accuracy are summarized in Table \ref{tab:results2}.
+We observe that \name significantly improves the performance of S2V on both \textsc{Enzymes} and \textsc{D\&D} data sets. Similar performance trends are also observed on other data sets.
+The results demonstrate that \name is a general strategy to pool over hierarchical structure that can benefit different GNN architectures.",1806.08804v4,Experiments,,
+240,12,"\xhdr{Running time}Running time Although applying \name requires additional computation of an assignment matrix, we observed that \name did not incur substantial additional running time in practice.
+This is because each \name layer reduces the size of graphs by extracting a coarser representation of the graph, which speeds up the graph convolution operation in the next layer.
+Concretely, we found that \textsc{GraphSage} with \name\ was 12$\times$\times faster than the $\textsc{GraphSage}$\textsc{GraphSage} model with $\textsc{Set2Set}$\textsc{Set2Set} pooling, while still achieving significantly higher accuracy on all benchmarks.",1806.08804v4,Experiments,,
+241,13,"\subsection{Analysis of Cluster Assignment in \name}
+\label{sec:assignment_vis}",1806.08804v4,Experiments,,
+242,14,"\xhdr{Hierarchical cluster structure}Hierarchical cluster structure
+To address {\bf Q3}\bf Q3, we investigated the extent to which \name learns meaningful node clusters by visualizing the cluster assignments in different layers. Figure \ref{fig:assignment_vis} shows such a visualization of node assignments in the first and second layers on a graph from \textsc{Collab} data set, where node color indicates its cluster membership. Node cluster membership is determined by taking the $\argmax$\argmax of its cluster assignment probabilities. We observe that even when learning cluster assignment based solely on the graph classification objective, \name can still capture the hierarchical community structure. We also observe significant improvement in membership assignment quality with link prediction auxiliary objectives.",1806.08804v4,Experiments,,
+243,15,"\xhdr{Dense vs. sparse subgraph structure}Dense vs. sparse subgraph structure
+In addition, we observe that \name learns to collapse nodes into soft clusters in a non-uniform way, with a tendency to collapse densely-connected subgraphs into clusters. 
+Since GNNs can efficiently perform message-passing on dense, clique-like subgraphs (due to their small diameters) \cite{liao2018graph}, pooling together nodes in such a dense subgraph is not likely to lead to any loss of structural information. 
+This intuitively explains why collapsing dense subgraphs is a useful pooling strategy for \name. 
+In contrast, sparse subgraphs may contain many interesting structures, including path-, cycle- and tree-like structures, and given the high-diameter induced by sparsity, GNN message-passing may fail to capture these structures. 
+Thus, by separately pooling distinct parts of a sparse subgraph, \name can learn to capture the meaningful structures present in sparse graph regions (e.g., as in Figure~\ref{fig:assignment_vis}).",1806.08804v4,Experiments,,
+244,16,"\xhdr{Assignment for nodes with similar representations}Assignment for nodes with similar representations
+Since the assignment network computes the soft cluster assignment based on features of input nodes and their neighbors, nodes with both similar input features and neighborhood structure will have similar cluster assignment.
+In fact, one can construct synthetic cases where 2 nodes, although far away, have exactly the same neighborhood structure and features for self and all neighbors. In this case the pooling network is forced to assign them into the same cluster, which is different from the concept of pooling in other architectures such as image ConvNets. In some cases we do observe that disconnected nodes are pooled together.",1806.08804v4,Experiments,,
+245,17,"In practice we rely on the identifiability assumption similar to Theorem 1 in GraphSAGE \cite{hamilton2017inductive}, where nodes are identifiable via their features. This holds in many real datasets \footnote{However, some chemistry molecular graph datasets contain many nodes that are structurally similar, and assignment network is observed to pool together nodes that are far away.}. 
+The auxiliary link prediction objective is observed to also help discouraging nodes that are far away to be pooled together. Furthermore, it is possible to use more sophisticated GNN aggregation function such as high-order moments \cite{verma2018graph} to distinguish nodes that are similar in structure and feature space. The overall framework remains unchanged.",1806.08804v4,Experiments,,
+246,18,"\xhdr{Sensitivity of the Pre-defined Maximum Number of Clusters}Sensitivity of the Pre-defined Maximum Number of Clusters
+We found that the assignment varies according to the depth of the network and $C$C, the maximum number of clusters. With larger $C$C, the pooling GNN can model more complex hierarchical structure. The trade-off is that very large $C$C results in more noise and less efficiency. 
+Although the value of $C$C is a pre-defined parameter, the pooling net learns to use the appropriate number of clusters by end-to-end training. 
+In particular, some clusters might not be used by the assignment matrix. Column corresponding to unused cluster has low values for all nodes. This is observed in Figure \ref{fig:assignment_vis}(c), where nodes are assigned predominantly into 3 clusters.",1806.08804v4,Experiments,,
+247,19,"\centering
+    \includegraphics[width=0.8\textwidth]{figs/diffpool_vis.pdf}
+    \caption{Visualization of hierarchical cluster assignment over two \name\ layers, using an example graph from \textsc{Collab}.
+      Nodes in the right-hand side plot correspond to cluster in the original graph (left-hand side). Colors are used to connect the nodes/clusters across the graphs, and dotted lines are used to indicate clusters.}
+    \label{fig:assignment_vis}",1806.08804v4,Experiments,,
+248,0,"We introduced a differentiable pooling method for GNNs that is able to extract the complex hierarchical structure of real-world graphs. By using the proposed pooling layer in conjunction with existing GNN models, we achieved new state-of-the-art results on several graph classification benchmarks. 
+Interesting future directions include learning hard cluster assignments to further reduce computational cost in higher layers while also ensuring differentiability, and applying the hierarchical pooling method to other downstream tasks that require modeling of the entire graph structure.",1806.08804v4,Conclusion,,
+249,0,"This research has been supported in part by DARPA SIMPLEX, Stanford Data
+Science Initiative, Huawei, JD and Chan Zuckerberg Biohub.
+Christopher Morris is funded by the German Science Foundation (DFG) within the Collaborative Research Center SFB 876 “Providing Information by Resource-Constrained Data Analysis”, project A6 “Resource-efficient Graph Mining”. 
+The authors also thank Marinka Zitnik for help in visualizing the high-level illustration of the proposed methods.",1806.08804v4,Acknowledgement,,
+250,1,"\bibliography{refs}
+\bibliographystyle{abbrv}abbrv",1806.08804v4,Acknowledgement,,
+251,1,"Recurrent neural networks, long short-term memory and gated recurrent neural networks in particular, have been firmly established as state of the art approaches in sequence modeling and transduction problems such as language modeling and machine translation.",1706.03762v7,Introduction,1.0,1.0
+252,2,Numerous efforts have since continued to push the boundaries of recurrent language models and encoder-decoder architectures. Recurrent models typically factor computation along the symbol positions of the input and output sequences.,1706.03762v7,Introduction,1.0,2.0
+253,3,"Aligning the positions to steps in computation time, they generate a sequence of hidden states h_t, as a function of the previous hidden state h_{t-1} and the input for position t. This inherently sequential nature precludes parallelization within training examples, which becomes critical at longer sequence lengths, as memory constraints limit batching across examples.",1706.03762v7,Introduction,1.0,3.0
+254,4,"Attention mechanisms have become an integral part of compelling sequence modeling and transduction models in various tasks, allowing modeling of dependencies without regard to their distance in the input or output sequences.",1706.03762v7,Introduction,1.0,4.0
+255,5,"In this work we propose the Transformer, a model architecture eschewing recurrence and instead relying entirely on an attention mechanism to draw global dependencies between input and output. The Transformer allows for significantly more parallelization and can reach a new state of the art in translation quality after being trained for as little as twelve hours on eight P100 GPUs.",1706.03762v7,Introduction,1.0,5.0
+256,0,"\centering
+    \includegraphics[width=0.6\columnwidth]{figs/explainer-motivation.pdf}
+    \vspace{-2mm}
+    \caption{\gnn computation graph $G_c$ for making a prediction $\hat{y}$ at node $v$. Some edges form important message-passing pathways (green) while others do not (orange). \gnn model aggregates informative as well as non-informative messages to form a prediction at node $v$. The goal of \name is to identify a small set of important features and pathways (green) that are crucial for prediction.
+    }
+    \label{fig:explainer-motivation}
+    \vspace{-4mm}",1903.03894v4,Introduction,,

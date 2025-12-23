@@ -128,14 +128,14 @@ class CSVArxivParagraphTable:
         
         return count
 
-    def delete_paragraph_table_by_paragraph_table_id(self, paragrapg_id: int, table_id: int) -> int:
+    def delete_paragraph_table_by_paragraph_table_id(self, paragraph_id: int, table_id: int) -> int:
 
         df = self._load_data()
         
         if df.empty:
             return 0
 
-        mask = (df['paragraph_id'] == paragrapg_id) & (df['table_id'] == table_id)
+        mask = (df['paragraph_id'] == paragraph_id) & (df['table_id'] == table_id)
 
         count = mask.sum()
 
