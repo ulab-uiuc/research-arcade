@@ -1006,12 +1006,13 @@ class OpenReviewCrawler:
                     title = submission.content["title"]
                     # get arxiv id if exists
                     arxiv_id = self._search_title_with_name(title)
+                    processed_arxiv_id = re.sub(r"^https?://arxiv\.org/abs/", "", arxiv_id)
                     import time
                     time.sleep(1)
                     openreview_arxiv_data.append({
                         "venue": venue,
                         "paper_openreview_id": openreview_id,
-                        "arxiv_id": arxiv_id,
+                        "arxiv_id": processed_arxiv_id,
                         "title": title
                     })
                 return openreview_arxiv_data
@@ -1032,12 +1033,13 @@ class OpenReviewCrawler:
                         title = submission.content["title"]["value"]
                         # get arxiv id if exists
                         arxiv_id = self._search_title_with_name(title)
+                        processed_arxiv_id = re.sub(r"^https?://arxiv\.org/abs/", "", arxiv_id)
                         import time
                         time.sleep(1)
                         openreview_arxiv_data.append({
                             "venue": venue,
                             "paper_openreview_id": paper_id,
-                            "arxiv_id": arxiv_id,
+                            "arxiv_id": processed_arxiv_id,
                             "title": title
                         })
                 return openreview_arxiv_data

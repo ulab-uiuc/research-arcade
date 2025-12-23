@@ -10,6 +10,7 @@ paragraph_generation_output/
 json/
 experiments/
 arxiv_ids/
+pdfs/
 # C extensions
 *.so
 !./data/openreview/figures.csv

@@ -181,9 +181,6 @@ class CSVArxivCategory:
                 print(e)
                 print(f"Paper {arxiv_id} does not have category found")
 
-
-
-
     def construct_table_from_csv(self, csv_file):
 
         if not os.path.exists(csv_file):

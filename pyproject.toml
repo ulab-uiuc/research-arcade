@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "research-arcade"
-version = "0.1.4"
+version = "0.1.5"
 description = "A graph interface for academic tasks"
 authors = ["Jingjun XU <jingjunxu596@gmail.com>", "Chongshan LIN <chongshan0lin@gmail.com>"]
 license = "Apache 2.0 License"
@@ -10,7 +10,7 @@ packages = [{ include = "research_arcade" }]
 [tool.poetry.dependencies]
 python = ">=3.10, <3.12"
 arxiv = "*"
-openreview-py = "*"
+openreview-py = ""
 pandas = "^2.3.3"
 pdfminer-six = "*"
 psycopg2-binary = "^2.9.10"

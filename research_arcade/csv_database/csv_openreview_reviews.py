@@ -21,14 +21,32 @@ class CSVOpenReviewReviews:
         empty_df.to_csv(self.csv_path, index=False)
         print(f"Created empty CSV file at {self.csv_path}")
     
+    def _parse_content(self, x):
+        if pd.isna(x) or x == "":
+            return {}
+        if isinstance(x, dict):
+            return x
+        if not isinstance(x, str):
+            return {}
+
+        x = x.strip()
+        try:
+            return json.loads(x)   # 先按标准 JSON 解析
+        except json.JSONDecodeError:
+            # 常见：Python dict 字符串（单引号、None/True/False）
+            try:
+                v = ast.literal_eval(x)
+                return v if isinstance(v, dict) else {"_value": v}
+            except Exception:
+                # 实在不行：保留原始内容，避免全表读取失败
+                return {"_raw": x}
+    
     def _load_data(self) -> Optional[pd.DataFrame]:
         if os.path.exists(self.csv_path):
             df = pd.read_csv(self.csv_path)
             # 将content列从JSON字符串转换为字典
             if not df.empty:
-                df['content'] = df['content'].apply(
-                    lambda x: json.loads(x) if pd.notna(x) and x != '' else {}
-                )
+                df['content'] = df['content'].apply(self._parse_content)
             return df
         else:
             return None

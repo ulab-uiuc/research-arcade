@@ -61,10 +61,10 @@ class CSVArxivAuthors:
         """Delete an author by its id. Returns True if deleted, False if not found."""
         df = self._load_data()
         
-        if id not in df['id'].values:
+        if id not in df['semantic_scholar_id'].values:
             return False
         
-        df = df[df['id'] != id]
+        df = df[df['semantic_scholar_id'] != id]
         self._save_data(df)
         return True
 
@@ -91,7 +91,7 @@ class CSVArxivAuthors:
         """Get an author by its id. Returns a DataFrame with the author or None if not found."""
         df = self._load_data()
         
-        if df.empty or semantic_scholar_id not in df['id'].values:
+        if df.empty or semantic_scholar_id not in df['semantic_scholar_id'].values:
             return None
         
         author = df[df['semantic_scholar_id'] == semantic_scholar_id]

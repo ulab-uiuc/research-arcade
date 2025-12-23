@@ -204,10 +204,6 @@ class CSVArxivFigure:
             except Exception as e:
                 print(f"An unexpected error occurred: {e}")
                 continue
-
-
-
-
                 
     def construct_table_from_csv(self, csv_file):
         """

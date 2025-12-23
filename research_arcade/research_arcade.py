@@ -181,7 +181,6 @@ class ResearchArcade:
             return self.arxiv_paragraphs.delete_paragraph_by_id(**primary_key)
         elif table == 'arxiv_sections':
             return self.arxiv_sections.delete_section_by_id(**primary_key)
-
         else:
             print(f"Table {table} not found.")
             return None
