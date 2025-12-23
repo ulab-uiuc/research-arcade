@@ -308,6 +308,8 @@ class ResearchArcade:
             return self.arxiv_paragraph_figure.insert_paragraph_figure_table(**edge_features)
         elif table == 'arxiv_paragraph_table':
             return self.arxiv_paragraph_table.insert_paragraph_table_table(**edge_features)
+        elif table == 'arxiv_paragraph_citation':
+            return self.arxiv_paragraph_citation.insert_paragraph_reference(**edge_features)
         else:
             print(f"Table {table} not found.")
             return None
@@ -453,6 +455,18 @@ class ResearchArcade:
             else:
                 print("For arxiv_paragraph_reference, primary key should include 'paragraph_id' and/or 'reference_id'.")
                 return None
+        elif table == 'arxiv_paragraph_citation':
+            if "paragraph_id" in primary_key:
+                return self.arxiv_paragraph_citation.delete_paragraph_citation_by_paragraph_id(**primary_key)
+            elif "citing_arxiv_id" in primary_key:
+                return self.arxiv_paragraph_citation.delete_paragraph_citation_by_citing_arxiv_id(**primary_key)
+            elif "cited_arxiv_id" in primary_key:
+                return self.arxiv_paragraph_citation.delete_paragraph_citation_by_cited_arxiv_id(**primary_key)
+            elif "id" in primary_key:
+                return self.arxiv_paragraph_citation.delete_paragraph_citation_by_id(**primary_key)
+            else:
+                print("For arxiv_paragraph_citation, primary key should include 'paragraph_id', 'citing_arxiv_id', 'cited_arxiv_id', or 'id'.")
+                return None
         else:
             print(f"Table {table} not found.")
             return None
@@ -487,6 +501,8 @@ class ResearchArcade:
             return self.arxiv_paragraph_figure.get_all_paragraph_figures()
         elif table == 'arxiv_paragraph_table':
             return self.arxiv_paragraph_table.get_all_paragraph_tables()
+        elif table == 'arxiv_paragraph_citation':
+            return self.arxiv_paragraph_citation.get_all_paragraph_references()
         else:
             print(f"Table {table} not found.")
             return None
@@ -598,6 +614,18 @@ class ResearchArcade:
                 return self.arxiv_paragraph_table.get_table_neighboring_paragraphs(**primary_key)
             else:
                 print("For arxiv_paragraph_table, provide 'paragraph_id' or 'table_id'.")
+                return None
+        elif table == 'arxiv_paragraph_citation':
+            if "paragraph_id" in primary_key:
+                return self.arxiv_paragraph_citation.get_paragraph_neighboring_citations(**primary_key)
+            elif "paragraph_global_id" in primary_key:
+                return self.arxiv_paragraph_citation.get_paragraph_global_id_neighboring_citations(**primary_key)
+            elif "citing_arxiv_id" in primary_key:
+                return self.arxiv_paragraph_citation.get_citations_by_citing_arxiv_id(**primary_key)
+            elif "cited_arxiv_id" in primary_key:
+                return self.arxiv_paragraph_citation.get_citations_by_cited_arxiv_id(**primary_key)
+            else:
+                print("For arxiv_paragraph_citation, provide 'paragraph_id', 'paragraph_global_id', 'citing_arxiv_id', or 'cited_arxiv_id'.")
                 return None
         else:
             print(f"Table {table} not found.")
@@ -715,6 +743,12 @@ class ResearchArcade:
             self.arxiv_paper_table.construct_table_from_csv(**config)
         elif table == "arxiv_paragraph_reference":
             self.arxiv_paragraph_reference.construct_table_from_csv(**config)
+        elif table == "arxiv_paragraph_figure":
+            self.arxiv_paragraph_figure.construct_table_from_csv(**config)
+        elif table == "arxiv_paragraph_table":
+            self.arxiv_paragraph_table.construct_table_from_csv(**config)
+        elif table == "arxiv_paragraph_citation":
+            self.arxiv_paragraph_citation.construct_table_from_csv(**config)
         else:
             print(f"Table {table} does not support construction from CSV")
 
@@ -768,6 +802,12 @@ class ResearchArcade:
             self.arxiv_paper_table.construct_table_from_json(**config)
         elif table == "arxiv_paragraph_reference":
             self.arxiv_paragraph_reference.construct_table_from_json(**config)
+        elif table == "arxiv_paragraph_figure":
+            self.arxiv_paragraph_figure.construct_table_from_json(**config)
+        elif table == "arxiv_paragraph_table":
+            self.arxiv_paragraph_table.construct_table_from_json(**config)
+        elif table == "arxiv_paragraph_citation":
+            self.arxiv_paragraph_citation.construct_table_from_json(**config)
         else:
             print(f"Table {table} does not support construction from JSON")
 
