@@ -3,7 +3,8 @@
 <p align="center">
     <a href="https://ulab-uiuc.github.io/research-arcade/">🌐 Project Page</a> |
     <a href="https://arxiv.org/abs/2511.22036">📜 arXiv</a> |
-    <a href="https://huggingface.co/collections/ulab-ai/researcharcade">🔗 Dataset</a>
+    <a href="https://huggingface.co/collections/ulab-ai/researcharcade">🔗 Dataset</a> |
+    <a href="https://colab.research.google.com/github/ulab-uiuc/research-arcade/blob/main/examples/tutorials.ipynb">📚 Colab</a>
 <p>
 
 <div align="center">
@@ -13,6 +14,7 @@
 # 🗞️ News
 
 - Nov 27, 2025 — Our paper is out on arXiv (<a href="https://arxiv.org/abs/2511.22036">2511.22036</a>)
+- Dec 24, 2025 — Our tutorial is out on Colab (<a href="https://colab.research.google.com/github/ulab-uiuc/research-arcade/blob/main/examples/tutorials.ipynb">tutorial.ipynb</a>)
 
 <!-- # 👋🏻 Introduction
 

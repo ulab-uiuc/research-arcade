@@ -11,6 +11,7 @@ json/
 experiments/
 arxiv_ids/
 pdfs/
+*.zip
 # C extensions
 *.so
 !./data/openreview/figures.csv
