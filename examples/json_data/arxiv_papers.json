@@ -1,6 +1,6 @@
 [
   {
-    "id": "24210",
+    "id": 24210,
     "arxiv_id": "2506.22911",
     "base_arxiv_id": "2506.22911",
     "version": "",
@@ -12,7 +12,7 @@
     "method_description": ""
   },
   {
-    "id": "9519",
+    "id": 9519,
     "arxiv_id": "2505.05183",
     "base_arxiv_id": "2505.05183",
     "version": "",
@@ -24,7 +24,7 @@
     "method_description": ""
   },
   {
-    "id": "63669",
+    "id": 63669,
     "arxiv_id": "1812.04778",
     "base_arxiv_id": "1812.04778",
     "version": "",
@@ -36,7 +36,7 @@
     "method_description": ""
   },
   {
-    "id": "52547",
+    "id": 52547,
     "arxiv_id": "2105.12277",
     "base_arxiv_id": "2105.12277",
     "version": "",
@@ -48,7 +48,7 @@
     "method_description": ""
   },
   {
-    "id": "64776",
+    "id": 64776,
     "arxiv_id": "2408.07958",
     "base_arxiv_id": "2408.07958",
     "version": "",
@@ -60,7 +60,7 @@
     "method_description": ""
   },
   {
-    "id": "2905",
+    "id": 2905,
     "arxiv_id": "2501.15943",
     "base_arxiv_id": "2501.15943",
     "version": "",
@@ -72,7 +72,7 @@
     "method_description": "Here is a concise summary of the main methodology or approach used:\n\nThe approach involves solving a random coupled parabolic problem using Fourier integral transforms. The method builds upon previous work that used Fourier transforms and random Gaussian quadrature rules, but overcomes the limitation of decreased accuracy for highly oscillatory Fourier kernels in large domains. The new approach uses an appropriate truncation of the infinite integral and employs quadrature rules that can handle highly oscillatory integrands. The solution involves algebraic manipulations, including the use of matrix exponential and logarithmic operator norms, and the application of Ostrowski's theorem to establish bounds on the eigenvalues of certain matrices."
   },
   {
-    "id": "63230",
+    "id": 63230,
     "arxiv_id": "2405.13424",
     "base_arxiv_id": "2405.13424",
     "version": "",
@@ -84,7 +84,7 @@
     "method_description": ""
   },
   {
-    "id": "57982",
+    "id": 57982,
     "arxiv_id": "2404.06400",
     "base_arxiv_id": "2404.06400",
     "version": "",
@@ -96,7 +96,7 @@
     "method_description": "This is not a research paper, but rather a document providing guidelines for authors submitting papers to IOP Publishing journals. The text describes the LaTeX template and formatting requirements for submissions, including the use of the \"iopart.cls\" style file and the \"cjk.sty\" package for including Chinese, Japanese, and Korean characters in author names. There is no methodology or approach to summarize."
   },
   {
-    "id": "15396",
+    "id": 15396,
     "arxiv_id": "2504.10653",
     "base_arxiv_id": "2504.10653",
     "version": "",
@@ -108,7 +108,7 @@
     "method_description": ""
   },
   {
-    "id": "52605",
+    "id": 52605,
     "arxiv_id": "2402.10058",
     "base_arxiv_id": "2402.10058",
     "version": "",

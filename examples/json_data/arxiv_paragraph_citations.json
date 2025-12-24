@@ -1,6 +1,6 @@
 [
   {
-    "id": "3583565",
+    "id": 3583565,
     "paragraph_id": "2",
     "paper_section": "Limitations and Customization",
     "citing_arxiv_id": "2405.05073",
@@ -9,7 +9,7 @@
     "paragraph_global_id": ""
   },
   {
-    "id": "46826",
+    "id": 46826,
     "paragraph_id": "2",
     "paper_section": "Related Work",
     "citing_arxiv_id": "2508.00410",
@@ -18,7 +18,7 @@
     "paragraph_global_id": ""
   },
   {
-    "id": "3119142",
+    "id": 3119142,
     "paragraph_id": "1",
     "paper_section": "Introduction",
     "citing_arxiv_id": "2007.00077v2",
@@ -27,7 +27,7 @@
     "paragraph_global_id": ""
   },
   {
-    "id": "221614",
+    "id": 221614,
     "paragraph_id": "4",
     "paper_section": "Resources and Material Sources",
     "citing_arxiv_id": "2501.01168",
@@ -36,7 +36,7 @@
     "paragraph_global_id": ""
   },
   {
-    "id": "1928150",
+    "id": 1928150,
     "paragraph_id": "32",
     "paper_section": "Open problems in mechanistic interpretability methods and foundations",
     "citing_arxiv_id": "2501.16496",
@@ -45,7 +45,7 @@
     "paragraph_global_id": ""
   },
   {
-    "id": "390400",
+    "id": 390400,
     "paragraph_id": "1",
     "paper_section": "Methodology",
     "citing_arxiv_id": "2501.14951",
@@ -54,7 +54,7 @@
     "paragraph_global_id": ""
   },
   {
-    "id": "2823953",
+    "id": 2823953,
     "paragraph_id": "15",
     "paper_section": "Experiemntal Details",
     "citing_arxiv_id": "2506.08022",
@@ -63,7 +63,7 @@
     "paragraph_global_id": ""
   },
   {
-    "id": "646756",
+    "id": 646756,
     "paragraph_id": "3",
     "paper_section": "Methods",
     "citing_arxiv_id": "2508.00393",
@@ -72,7 +72,7 @@
     "paragraph_global_id": ""
   },
   {
-    "id": "3631708",
+    "id": 3631708,
     "paragraph_id": "3",
     "paper_section": "Numerical method and validations",
     "citing_arxiv_id": "2404.11832",
@@ -81,7 +81,7 @@
     "paragraph_global_id": ""
   },
   {
-    "id": "1280869",
+    "id": 1280869,
     "paragraph_id": "387",
     "paper_section": "Results and discussion",
     "citing_arxiv_id": "2501.16044",

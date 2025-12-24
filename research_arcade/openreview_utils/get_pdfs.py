@@ -4,7 +4,7 @@ import requests
 from tqdm import tqdm
 import time
 
-def get_paper_pdf(link, pdf_path, log_file):
+def get_pdf_by_link(link, pdf_path, log_file):
     pdf_url = "https://openreview.net"+link
     
     headers = {
@@ -25,7 +25,7 @@ def get_paper_pdf(link, pdf_path, log_file):
         with open(log_file, "a") as log:
             log.write(f"{link}\n")
 
-def get_revision_pdf(venue, id, pdf_path, log_file):
+def get_pdf_by_venueid(venue, id, pdf_path, log_file):
     if "2024" in venue or "2025" in venue:
         pdf_url = "https://openreview.net/notes/edits/attachment?id="+id+"&name=pdf"
     elif  "EMNLP" in venue:
@@ -78,7 +78,7 @@ if __name__ == "__main__":
                     if os.path.isfile(pdf_path):
                         continue
                     else:
-                        get_paper_pdf(pdf_link, pdf_path, log_file)
+                        get_pdf_by_link(pdf_link, pdf_path, log_file)
                 
                 revisions = client_v1.get_references(referent=paper_id, original=True)
                 time.sleep(1)
@@ -96,7 +96,7 @@ if __name__ == "__main__":
                         if os.path.isfile(pdf_path):
                             continue
                         else:
-                            get_revision_pdf(venue, pdf_revision_id, pdf_path, log_file)
+                            get_pdf_by_venueid(venue, pdf_revision_id, pdf_path, log_file)
                             time.sleep(1)
     else:
         submissions = client_v2.get_all_notes(invitation=f'{venue}/-/Submission', details='revisions')
@@ -116,7 +116,7 @@ if __name__ == "__main__":
                         if os.path.isfile(pdf_path):
                             continue
                         else:
-                            get_paper_pdf(pdf_link, pdf_path, log_file)
+                            get_pdf_by_link(pdf_link, pdf_path, log_file)
                             # get_revision_pdf(venue, paper_id, pdf_path, log_file)
                             time.sleep(1)
                             
@@ -131,5 +131,5 @@ if __name__ == "__main__":
                                 continue
                             else:
                                 time.sleep(1)
-                                get_revision_pdf(venue, pdf_revision_id, pdf_path, log_file)
+                                get_pdf_by_venueid(venue, pdf_revision_id, pdf_path, log_file)
                                 time.sleep(1)

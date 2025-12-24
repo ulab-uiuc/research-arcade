@@ -760,37 +760,8 @@ Lower values of $\rho$\rho result in lower EE bounds, as demonstrated in the sup
 
 
 ",Estimation Error Bounds: Local Properties,False,2304.09802v1,4.0
-352950,"
-\label{sec:prelims}
-In this section, we provide the necessary background on DNN verification and existing works on traditional DNN interpretability with sparse decision layers.
-While our method is applicable to general architectures, for simplicity, we focus on a $l$l-layer feedforward DNN $N : \mathbb{R}^{d_{0}} \rightarrow \mathbb{R}^{d_{l}}$N : \mathbb{R}^{d_{0}}d_{0}0 \rightarrow \mathbb{R}^{d_{l}}d_{l}l for the rest of this paper. Each layer $i$i except the final one applies the transformation $X_i=\sigma_i(W_i\cdot X_{i-1}+B_i)$X_i=\sigma_i(W_i\cdot X_{i-1}i-1+B_i) where $W_i \in \mathbb{R}^{d_{i} \times d_{i-1}}$W_i \in \mathbb{R}^{d_{i} \times d_{i-1}}d_{i}i \times d_{i-1}i-1 and $B_i\in \mathbb{R}^{d_{i}}$B_i\in \mathbb{R}^{d_{i}}d_{i}i are respectively the weights and biases of the affine transformation and $\sigma_i$\sigma_iis a non-linear activation like ReLU, Sigmoid, etc. corresponding to layer $i$i.   
-The final layer only applies the affine transformation and the network output is a vector $Y=W_l \cdot X_{l-1} + B_l$Y=W_l \cdot X_{l-1}l-1 + B_l. 
-\\
-\noindent \textbf{DNN verification.}
-At a high level, DNN verification involves proving that the network outputs $Y=N(X)$Y=N(X) corresponding to all inputs $X$X from an input region specified by $\inreg$\inreg, satisfy a logical specification $\outprop$\outprop.
-A common property is - the local robustness where the output specification $\outprop$\outprop is defined as 
-linear inequality over the elements of the output vector of the neural network.   
-The output specification, in this case, is written as $\outprop(Y) = (C^{T} Y \geq 0)$\outprop(Y) = (C^{T}T Y \geq 0) where $C \in \mathbb{R}^{d_{l}}$C \in \mathbb{R}^{d_{l}}d_{l}l defines the linear inequality for encoding the robustness property.
-For the rest of the paper, we refer to the input region $\inreg$\inreg and output specification $\outprop$\outprop together as \textit{property}  $(\inreg, \outprop)$(\inreg, \outprop). 
-\\
-Next, we briefly discuss how DNN robustness verifiers work. A DNN verifier $\ver$\ver symbolically computes a possibly over-approximated output region $\abstraction \subseteq \mathbb{R}^{d_{l}}$\abstraction \subseteq \mathbb{R}^{d_{l}}d_{l}l containing all possible outputs of $N$N corresponding to $\inreg$\inreg.
-Let, $\lb(\abstraction) = \min_{Y \in \abstraction} C^TY$\lb(\abstraction) = \min_{Y \in \abstraction}Y \in \abstraction C^TY denote the minimum value of $C^TY$C^TY where $Y \in \abstraction$Y \in \abstraction. Then $N$N satisfies property $(\inreg, \outprop)$(\inreg, \outprop) if $\lb(\abstraction) \geq 0$\lb(\abstraction) \geq 0.
-Most existing DNN verifiers~\cite{singh2018fast,singh2019abstract,zhang2018crown} are exact for affine transformations. 
-However, for non-linear activation functions, these verifiers compute convex regions that over-approximate the output of the activation function.
-Note that, due to the over-approximations, DNN verifiers are sound but not complete - the verifier may not always prove property even if it holds.
-For piecewise linear activation functions like ReLU, complete verifiers exist handling the activation exactly, which in theory always prove a property if it holds.
-Nevertheless, complete verification in the worst case takes exponential time, making them practically infeasible.
-In the rest of the paper, we focus on deterministic, sound, and incomplete verifiers which are more scalable than complete verifiers. \\
-\noindent \textbf{DNN interpretation with sparse decision layer.} 
-DNNs considered in this paper, have complex multi-layer structures, making them harder to interpret. 
-Instead of interpreting what each layer of the network is doing, recent works \cite{wong2021leveraging, liao2022automated} treat DNNs as the composition of a \textit{deep feature extractor} and an affine \textit{decision layer}.
-The output of each neuron of the penultimate layer represents a single deep feature and the final affine layer linearly combines these deep features to compute the network output.
-This perspective enables us to identify the set of features used by the network to compute its output and to investigate their semantic meaning using the existing feature visualization techniques \cite{ribeiro2016should, DBLP:journals/corr/SimonyanVZ13}.
-However, visualizing each feature is practically infeasible for large DNNs where the penultimate layer can contain hundreds of neurons.
-To address this, the work of \cite{wong2021leveraging} tries to identify a smaller set of features that are sufficient to maintain the perfomance of the network. 
-This smaller but sufficient feature set retains only the most important features corresponding to a given input. 
-It is shown empirically \cite{wong2021leveraging} 
-that a subset of these features of size less than 10 is sufficient to maintain the accuracy of state-of-the-art models.
-
-
-",Preliminaries,False,2301.13845v1,3.0
+544410,"Most competitive neural sequence transduction models have an encoder-decoder structure. Here, the encoder maps an input sequence of symbol representations...",Background,False,1706.03762v7,2.0
+544411,"Most neural sequence transduction models have an encoder-decoder structure. The Transformer follows this overall architecture using stacked self-attention and point-wise, fully connected layers...",Model Architecture,False,1706.03762v7,3.0
+544412,In this section we describe the training regime for our models...,Training,False,1706.03762v7,4.0
+544413,"On the WMT 2014 English-to-German translation task, the big transformer model outperforms the best previously reported models...",Results,False,1706.03762v7,5.0
+544414,"In this work, we presented the Transformer, the first sequence transduction model based entirely on attention, replacing the recurrent layers...",Conclusion,False,1706.03762v7,6.0

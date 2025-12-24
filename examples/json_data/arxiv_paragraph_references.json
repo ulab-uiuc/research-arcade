@@ -1,79 +1,79 @@
 [
   {
-    "id": "923760",
-    "paragraph_id": "36",
+    "id": 923760,
+    "paragraph_id": 36,
     "paper_section": "Proof Adversarial Robustness in Two-Stage Learning-to-Defer",
     "paper_arxiv_id": "2502.01027",
     "reference_label": "lemma:surrogate_class",
     "reference_type": "table"
   },
   {
-    "id": "1143450",
-    "paragraph_id": "25",
+    "id": 1143450,
+    "paragraph_id": 25,
     "paper_section": "Experimental results",
     "paper_arxiv_id": "2503.03230",
     "reference_label": "fig:sim-05-localC-R",
     "reference_type": ""
   },
   {
-    "id": "2109595",
-    "paragraph_id": "139",
+    "id": 2109595,
+    "paragraph_id": 139,
     "paper_section": "Our construction",
     "paper_arxiv_id": "2501.16838",
     "reference_label": "lema:BCD",
     "reference_type": ""
   },
   {
-    "id": "1232592",
-    "paragraph_id": "5",
+    "id": 1232592,
+    "paragraph_id": 5,
     "paper_section": "Constructing a Hierarchy of Stationary Solutions",
     "paper_arxiv_id": "2502.00037",
     "reference_label": "otrConditionExplicitMatrixS",
     "reference_type": ""
   },
   {
-    "id": "7662526",
-    "paragraph_id": "102",
+    "id": 7662526,
+    "paragraph_id": 102,
     "paper_section": "Proofs of Results in Main Paper",
     "paper_arxiv_id": "2010.03697",
     "reference_label": "fig:syn_exp_full",
     "reference_type": "figure"
   },
   {
-    "id": "8155248",
-    "paragraph_id": "25",
+    "id": 8155248,
+    "paragraph_id": 25,
     "paper_section": "Proofs",
     "paper_arxiv_id": "2409.19157",
     "reference_label": "prop:payoff_lemma",
     "reference_type": ""
   },
   {
-    "id": "477488",
-    "paragraph_id": "11",
+    "id": 477488,
+    "paragraph_id": 11,
     "paper_section": "Co-Simulation results",
     "paper_arxiv_id": "2508.00637",
     "reference_label": "fig:MDLAABigLFCUFLS",
     "reference_type": "figure"
   },
   {
-    "id": "6498045",
-    "paragraph_id": "0",
+    "id": 6498045,
+    "paragraph_id": 0,
     "paper_section": "Oneta enhancement results",
     "paper_arxiv_id": "2506.23547",
     "reference_label": "fig:supp_qual_29",
     "reference_type": "figure"
   },
   {
-    "id": "672934",
-    "paragraph_id": "3",
+    "id": 672934,
+    "paragraph_id": 3,
     "paper_section": "Introduction",
     "paper_arxiv_id": "2501.00799",
     "reference_label": "sec:numerical",
     "reference_type": ""
   },
   {
-    "id": "4635994",
-    "paragraph_id": "0",
+    "id": 4635994,
+    "paragraph_id": 0,
     "paper_section": "Experiments and Results",
     "paper_arxiv_id": "2508.00549",
     "reference_label": "fig:scatter",

@@ -304,7 +304,7 @@ class CSVArxivAuthors:
             if not current_df.empty:
                 existing_ids = set(current_df['semantic_scholar_id'].values)
                 external_df = external_df[~external_df['semantic_scholar_id'].isin(existing_ids)]
-
+            
             if external_df.empty:
                 print("No new authors to import (all authors already exist)")
                 return True

@@ -36,3 +36,7 @@ the qubits to be coupled to the OCS transmon identically for easier control: $g^
 22879780,67,"Esta relación la reescribimos en la forma
 \label{eq:theta}
 \theta e^{c_2 \theta}c_2 \theta \geq c_1 n .",2502.13231,La teoría de la elección social y Bonami se encuentran,254554.0,244.0
+27428268,2,Updated paragraph content,1706.03762v7,Introduction,1.0,2.0
+27428269,3,"Aligning the positions to steps in computation time, they generate a sequence of hidden states h_t, as a function of the previous hidden state h_{t-1} and the input for position t. This inherently sequential nature precludes parallelization within training examples, which becomes critical at longer sequence lengths, as memory constraints limit batching across examples.",1706.03762v7,Introduction,1.0,3.0
+27428270,4,"Attention mechanisms have become an integral part of compelling sequence modeling and transduction models in various tasks, allowing modeling of dependencies without regard to their distance in the input or output sequences.",1706.03762v7,Introduction,1.0,4.0
+27428271,5,"In this work we propose the Transformer, a model architecture eschewing recurrence and instead relying entirely on an attention mechanism to draw global dependencies between input and output. The Transformer allows for significantly more parallelization and can reach a new state of the art in translation quality after being trained for as little as twelve hours on eight P100 GPUs.",1706.03762v7,Introduction,1.0,5.0

@@ -19,7 +19,6 @@ from .csv_database import (
     CSVArxivPaperTable, CSVArxivPapers, CSVArxivParagraphReference,
     CSVArxivParagraphs, CSVArxivSections, CSVArxivTable, CSVArxivParagraphCitation, CSVArxivParagraphFigure, CSVArxivParagraphTable
 )
-
 # Arxiv SQL
 from .sql_database import (
     SQLArxivAuthors, SQLArxivCategory, SQLArxivCitation, SQLArxivFigure,
@@ -28,7 +27,6 @@ from .sql_database import (
     SQLArxivParagraphs, SQLArxivSections, SQLArxivTable, SQLArxivParagraphCitation, SQLArxivParagraphFigure, SQLArxivParagraphTable
 )
 import os
-# from paper_crawler.crawler_job import CrawlerJob
 
 from dotenv import load_dotenv
 from typing import Optional
@@ -36,7 +34,9 @@ import pandas as pd
 from datetime import date, datetime, timedelta
 import os
 import time
+from tqdm import tqdm
 from arxiv_utils.continuous_crawling import run_single_crawl, get_interval_seconds
+from openreview_utils.openreview_crawler import OpenReviewCrawler
 
 class ResearchArcade:
     def __init__(self, db_type: str, config: dict) -> None:
@@ -790,7 +790,7 @@ class ResearchArcade:
         elif table == "arxiv_paragraphs":
             self.arxiv_paragraphs.construct_table_from_json(**config)
         # ArXiv tables - EDGES
-        elif table == "arxiv_paper_citation":
+        elif table == "arxiv_citations":
             self.arxiv_citation.construct_table_from_json(**config)
         elif table == "arxiv_paper_author":
             self.arxiv_paper_author.construct_table_from_json(**config)
@@ -811,9 +811,7 @@ class ResearchArcade:
         else:
             print(f"Table {table} does not support construction from JSON")
 
-
     def construct_tables_from_arxiv_ids(self, config: dict) -> Optional[pd.DataFrame]:
-
         # Use sequential construction
         self.arxiv_papers.construct_papers_table_from_api(**config)
         self.arxiv_sections.construct_sections_table_from_api(**config)
@@ -832,22 +830,22 @@ class ResearchArcade:
         self.arxiv_paragraph_citation.construct_citations_table_from_api(**config)
         self.arxiv_paragraph_figure.construct_paragraph_figures_table_from_api(**config)
         self.arxiv_paragraph_table.construct_paragraph_tables_table_from_api(**config)
-
+    
     def construct_tables_from_venue(self, config: dict) -> Optional[pd.DataFrame]:
-        self.openreview_arxiv.construct_openreview_arxiv_table_from_api(config)
-        self.openreview_authors.construct_authors_table_from_api(config)
-        self.openreview_papers.construct_papers_table_from_api(config)
-        self.openreview_reviews.construct_reviews_table_from_api(config)
-        self.openreview_paragraphs.construct_paragraphs_table_from_api(config)
-        self.openreview_revisions.construct_revisions_table_from_api(config)
-        self.openreview_papers_authors.construct_papers_authors_table_from_api(config)
-        self.openreview_papers_reviews.construct_papers_reviews_table_from_api(config)
-        self.openreview_papers_revisions.construct_papers_revisions_table_from_api(config)
+        self.openreview_papers.construct_papers_table_from_api(config["venue"])
+        self.openreview_authors.construct_authors_table_from_api(config["venue"])
+        self.openreview_reviews.construct_reviews_table_from_api(config["venue"])
+        self.openreview_papers_authors.construct_papers_authors_table_from_api(config["venue"])
+        self.openreview_papers_reviews.construct_papers_reviews_table_from_api(config["venue"])
+        self.openreview_papers_revisions.construct_papers_revisions_table_from_api(config["venue"])
+        self.openreview_revisions.construct_revisions_table_from_api(**config)
+        self.openreview_paragraphs.construct_paragraphs_table_from_api(**config)
+        self.openreview_arxiv.construct_openreview_arxiv_table_from_api(config["venue"])
         #
         papers_reviews_df = self.get_all_edge_features("openreview_papers_reviews")
         papers_revisions_df = self.get_all_edge_features("openreview_papers_revisions")
         new_config = {"papers_reviews_df": papers_reviews_df, "papers_revisions_df": papers_revisions_df}
-        self.openreview_revisions_reviews.construct_revisions_reviews_table("openreview_revisions_reviews", new_config)
+        self.openreview_revisions_reviews.construct_revisions_reviews_table(new_config)
         
     def continuous_crawling(self, interval_days, delay_days, paper_category, dest_dir, arxiv_id_dest):
         """
@@ -884,3 +882,11 @@ class ResearchArcade:
                 print(f"[{datetime.now()}] Batch failed. Will retry after sleep.")
                 
             time.sleep(interval_seconds)
+    
+    def get_pdfs_from_venue(self, venue: str, pdf_dir: str, log_file: str, start_idx: int = 0, end_idx: int = -1) -> bool:
+        crawler = OpenReviewCrawler()
+        try:
+            crawler.get_pdfs_from_venue(venue=venue, pdf_dir=pdf_dir, log_file=log_file, start_idx=start_idx, end_idx=end_idx)
+            return True
+        except:
+            return False
