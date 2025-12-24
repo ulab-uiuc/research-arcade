@@ -2,7 +2,7 @@
 
 <p align="center">
     <a href="https://ulab-uiuc.github.io/research-arcade/">🌐 Project Page</a> |
-    <a href="TODO">📜 arXiv</a> |
+    <a href="https://arxiv.org/abs/2511.22036">📜 arXiv</a> |
     <a href="https://huggingface.co/collections/ulab-ai/researcharcade">🔗 Dataset</a>
 <p>
 
