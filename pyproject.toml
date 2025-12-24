@@ -9,14 +9,15 @@ packages = [{ include = "research_arcade" }]
 
 [tool.poetry.dependencies]
 python = ">=3.10, <3.12"
+openreview-py = "*"
 arxiv = "*"
-openreview-py = ""
-pandas = "^2.3.3"
-pdfminer-six = "*"
-psycopg2-binary = "^2.9.10"
-requests = "*"
-tqdm = "^4.67.1"
-rapidfuzz = "^3.14.1"
+pdfminer.six = "*"
+pandas = "*"
+semanticscholar = "*"
+beartype = "*"
+bibtexparser = "*"
+psycopg2-binary = "*"
+rapidfuzz = "*"
 paperscraper = "*"
 
 [build-system]
