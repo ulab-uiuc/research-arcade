@@ -1,52 +1,72 @@
 [
   {
-    "id": 783535,
+    "id": "783535",
     "paragraph_id": "24026241",
-    "table_id": 191462
+    "table_id": "191462",
+    "paper_arxiv_id": "2410.22315v1",
+    "paper_section_id": "330553"
   },
   {
-    "id": 24749,
+    "id": "24749",
     "paragraph_id": "90413",
-    "table_id": 4205
+    "table_id": "4205",
+    "paper_arxiv_id": "2508.01465",
+    "paper_section_id": "8834"
   },
   {
-    "id": 378680,
+    "id": "378680",
     "paragraph_id": "3014745",
-    "table_id": 15432
+    "table_id": "15432",
+    "paper_arxiv_id": "2501.17387",
+    "paper_section_id": "27224"
   },
   {
-    "id": 60376,
+    "id": "60376",
     "paragraph_id": "209714",
-    "table_id": 2053
+    "table_id": "2053",
+    "paper_arxiv_id": "2508.00531",
+    "paper_section_id": "1121"
   },
   {
-    "id": 183118,
+    "id": "183118",
     "paragraph_id": "2863158",
-    "table_id": 9965
+    "table_id": "9965",
+    "paper_arxiv_id": "2501.17176",
+    "paper_section_id": "18029"
   },
   {
-    "id": 370761,
+    "id": "370761",
     "paragraph_id": "3058788",
-    "table_id": 16898
+    "table_id": "16898",
+    "paper_arxiv_id": "2501.18179",
+    "paper_section_id": "29911"
   },
   {
-    "id": 301752,
+    "id": "301752",
     "paragraph_id": "3375621",
-    "table_id": 28153
+    "table_id": "28153",
+    "paper_arxiv_id": "2502.03227",
+    "paper_section_id": "49960"
   },
   {
-    "id": 589732,
+    "id": "589732",
     "paragraph_id": "3426806",
-    "table_id": 30117
+    "table_id": "30117",
+    "paper_arxiv_id": "2505.01168",
+    "paper_section_id": "53236"
   },
   {
-    "id": 336585,
+    "id": "336585",
     "paragraph_id": "158174",
-    "table_id": 6884
+    "table_id": "6884",
+    "paper_arxiv_id": "2501.01717",
+    "paper_section_id": "12993"
   },
   {
-    "id": 41631,
+    "id": "41631",
     "paragraph_id": "134082",
-    "table_id": 5776
+    "table_id": "5776",
+    "paper_arxiv_id": "2501.01209",
+    "paper_section_id": "11310"
   }
 ]
