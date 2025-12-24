@@ -73,7 +73,7 @@ conda activate research_arcade
 pip install research_arcade
 ```
 
-##### PostgreSQL Setup
+##### PostgreSQL Setup (Optional)
 ```bash
 # Download Source File
 wget https://ftp.postgresql.org/pub/source/v16.2/postgresql-16.2.tar.gz
