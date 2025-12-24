@@ -70,7 +70,7 @@ conda create -n research_arcade python=3.10
 conda activate research_arcade
 
 # install related libraries
-pip install -r requirements.txt
+pip install research_arcade
 ```
 
 ##### PostgreSQL Setup
