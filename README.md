@@ -69,7 +69,7 @@ Tables are classified into **node tables** (colored) or **edge tables** (black a
 conda create -n research_arcade python=3.10
 conda activate research_arcade
 
-# install related libraries
+# install research_arcade through pip
 pip install research_arcade
 ```
 
