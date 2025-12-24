@@ -26,6 +26,7 @@ Academic data is distributed across multiple platforms (e.g., ArXiv, OpenReview)
 - **Multi-Modal**: Figures and Tables in Academic Corpora
 - **Highly Structural and Heterogeneous**: Data can be intuitively viewed as heterogeneous graphs with multi-table format
 - **Dynamically Evolving**: Manuscript (Intra-paper) Level (e.g., Paper Revision) & Community (Inter-paper) Level (e.g., Paper Citation with Timestamp)
+- **Highly Scalable**: Graph is readily extensible as new items can be added by simply appending a row to the table
 
 ### Data Illustration
 
@@ -47,10 +48,11 @@ Tables are classified into **node tables** (colored) or **edge tables** (black a
     - **OpenReview**: authorship (paper-author), comment-under-paper (paper-review), revision-of-paper (paper-revision), revision-caused-by-review (revision-review), etc.
     - **ArXiv**: citationship (paper-paper), authorship (paper-author), paragraph-of-paper (paper-paragraph), figure-of-paper (paper-figure), table-of-paper (paper-table), etc.
 - **CRUD Operations**: Full support for Create, Read, Update, and Delete operations on all entities
+- **Continuous Crawling**: Automatically crawls newly updated arXiv data and integrates it into the graph
 
 ### Setup
 #### 1. Environment Setup
-- Python ≥ 3.9 (tested on 3.12)
+- Python ≥ 3.9 (tested on 3.10)
 - PostgreSQL ≥ 14 (for SQL backend)
 - Conda ≥ 22.0 (recommended)
 - API keys:
@@ -60,7 +62,7 @@ Tables are classified into **node tables** (colored) or **edge tables** (black a
 ##### Python Setup
 ```bash
 # create a new environment
-conda create -n research_arcade python=3.12
+conda create -n research_arcade python=3.10
 conda activate research_arcade
 
 # install related libraries
@@ -233,6 +235,12 @@ research_arcade.insert_edge("openreview_papers_authors", paper_author_edge)
 research_arcade.delete_edge_by_id("openreview_papers_authors", paper_author_edge)
 ```
 
+#### Continuous Crawling
+
+```python
+research_arcade.continuous_crawling(interval_days=2, delay_days=2, paper_category='All', dest_dir="./download", arxiv_id_dest="./data")
+```
+
 # Contribution
 
 We’re working on extending support for data and operations. Contributions welcome!
@@ -247,3 +255,12 @@ This project is licensed under the MIT License – see the [LICENSE](./LICENSE) 
 
 # Citation
 
+```
+@misc{tinyscientist,
+author       = {Jingjun Xu and Chongshan Lin and Haofei Yu and Tao Feng and Jiaxuan You},
+title        = {ResearchArcade: Graph Interface for Academic Tasks},
+howpublished = {https://github.com/ulab-uiuc/research-arcade},
+note         = {Accessed: 2025-12-25},
+year         = {2025}
+}
+```
