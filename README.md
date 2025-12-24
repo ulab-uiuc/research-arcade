@@ -13,6 +13,7 @@
 # 🗞️ News
 
 - Nov 27, 2025 — Our paper is out on arXiv (<a href="https://arxiv.org/abs/2511.22036">2511.22036</a>)
+
 <!-- # 👋🏻 Introduction
 
 ResearchArcade is a graph interface for academic tasks. It utilizes a coherent multi-table format with graph structures to organize data from different sources and multiple modalities. And it preserves temporal evolution at both the manuscript and community levels. -->
