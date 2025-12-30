@@ -260,7 +260,7 @@ This project is licensed under the MIT License – see the [LICENSE](./LICENSE) 
 # Citation
 
 ```
-@misc{tinyscientist,
+@misc{researcharcade,
 author       = {Jingjun Xu and Chongshan Lin and Haofei Yu and Tao Feng and Jiaxuan You},
 title        = {ResearchArcade: Graph Interface for Academic Tasks},
 howpublished = {https://github.com/ulab-uiuc/research-arcade},
