@@ -31,7 +31,7 @@ import os
 # from paper_crawler.crawler_job import CrawlerJob
 
 from dotenv import load_dotenv
-from typing import Optional
+from typing import List, Optional
 import pandas as pd
 from datetime import date, datetime, timedelta
 import os
@@ -506,7 +506,7 @@ class ResearchArcade:
         else:
             print(f"Table {table} not found.")
             return None
-        
+    
     def get_neighborhood(self, table: str, primary_key: dict) -> Optional[pd.DataFrame]:
         # Openreview
         if table == 'openreview_arxiv':
@@ -630,6 +630,67 @@ class ResearchArcade:
         else:
             print(f"Table {table} not found.")
             return None
+
+
+    def get_k_hop_neighbor_node_features(self, table: str, k: int, accumulative: bool = False, neighbor_name: List[str]=None, neighbourhood_features: List[List[str]]=None) -> Optional[pd.DataFrame]:
+
+        """
+        Docstring for get_k_hop_neighbor_node_features
+        
+        :param self: Description
+        :param table: The name of table that the target node belongs to
+        :type table: str
+        :param accumulative: Whether to accumulate the features from all hops or just return the features from the k-th hop.
+        :type accumulative: bool, default False
+        :param k: The number of hops of neighborhood that we want to retrieve.
+        :type k: int
+        :param neighbor_name: Name of neighborhood tables that we want to retrieve. If None, retrieve all neighboring tables.
+        :type neighbor_name: List[str]
+        :param neighbourhood_features: The features of the neighborhood nodes that we want to retrieve. If None, retrieve all features. For each feature, we expect a list of feature names for each neighboring table.
+        :type neighbourhood_features: List[List[str]]
+        """
+
+        if not neighbor_name:
+            neighbor_name = self.get_all_neighbor_tables(table)
+        if not neighbourhood_features:
+            neighbourhood_features = [self.get_table_columns(n) for n in neighbor_name]
+
+        # Since we are building from node + node name to edge name, we need to establish a mapping from (node_name, node_name) -> edge_name
+        # We read from a meta file
+        edge_table_mapping = self.get_edge_table_mappings()
+
+        # Return the k-hop neighboring node features
+        # Stored in a dict
+
+        neighbor_features_dict = {}
+
+        while k > 0:
+            # Write it like a bfs function
+            for i, neighbor in enumerate(neighbor_name):
+                edge_table_key = (table, neighbor)
+                if edge_table_key in edge_table_mapping:
+                    edge_table_name = edge_table_mapping[edge_table_key]
+                    # Get the neighboring nodes
+                    neighboring_nodes = self.get_neighborhood(edge_table_name, {f"{table}_id": None})
+                    # For each neighboring node, get the features
+                    for _, row in neighboring_nodes.iterrows():
+                        primary_key = {f"{neighbor}_id": row[f"{neighbor}_id"]}
+                        neighbor_features = self.get_node_features_by_id(neighbor, primary_key)
+                        if not neighbor_features.empty:
+                            # Select only the required features
+                            selected_features = neighbor_features[neighbourhood_features[i]]
+                            print(f"Neighboring node features from table {neighbor}:\n{selected_features}")
+                        if accumulative or k == 1:
+                            neighbor_features_dict.setdefault(neighbor, []).append(selected_features)
+                        else:
+                            print(f"No neighboring nodes found in table {neighbor} for the given primary key.")
+                else:
+                    print(f"No edge table found for the combination of {table} and {neighbor}.")
+            k -= 1
+
+        return neighbor_features_dict
+
+
 
     def construct_table_from_api(self, table: str, config: dict) -> Optional[pd.DataFrame]:
         if table == "openreview_papers":
