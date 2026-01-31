@@ -690,6 +690,57 @@ class ResearchArcade:
 
         return neighbor_features_dict
 
+    def path_search(self, start_table: str, start_id: str, target_table: str, target_id: str, max_depth: int = 5) -> Optional[List[List[str]]]:
+
+        """
+        Docstring for path_search
+        This method searches for shortest paths from a starting node to a target node within a specified maximum depth in the heterogeneous graph in BFS manner.
+        :param self: Description
+        :param start_table: The name of the starting table
+        :type start_table: str
+        :param start_id: The ID of the starting node
+        :type start_id: str
+        :param target_table: The name of the target table
+        :type target_table: str
+        :param target_id: The ID of the target node
+        :type target_id: str
+        :param max_depth: The maximum depth to search for the target node, default is 5
+        :type max_depth: int
+        :return: Description
+        :rtype: List[List[str]] | None
+        """
+
+        # We first load the edge table mappings
+        edge_table_mapping = self.get_edge_table_mappings()
+
+        # For each mapping, we will be able to see the neighborhood relationships
+        neighbor_map = {}
+        for (src_table, dst_table), edge_table in edge_table_mapping.items():
+            neighbor_map.setdefault(src_table, []).append((dst_table, edge_table))
+            neighbor_map.setdefault(dst_table, []).append((src_table, edge_table))
+        # Now we perform BFS to find all paths from start to target within max_depth
+        paths = []
+        queue = [([start_table], start_id)]
+        while queue:
+            current_path, current_id = queue.pop(0)
+            current_table = current_path[-1]
+            if len(current_path) > max_depth:
+                continue
+            if current_table == target_table and current_id == target_id:
+                paths.append(current_path)
+                continue
+            for neighbor_table, edge_table in neighbor_map.get(current_table, []):
+                neighboring_nodes = self.get_neighborhood(edge_table, {f"{current_table}_id": current_id})
+                for _, row in neighboring_nodes.iterrows():
+                    neighbor_id = row[f"{neighbor_table}_id"]
+                    new_path = current_path + [neighbor_table]
+                    queue.append((new_path, neighbor_id))
+        if paths:
+            return paths
+        else:
+            print(f"No paths found from {start_table}({start_id}) to {target_table}({target_id}) within depth {max_depth}.")
+            return None
+        
 
 
     def construct_table_from_api(self, table: str, config: dict) -> Optional[pd.DataFrame]:
