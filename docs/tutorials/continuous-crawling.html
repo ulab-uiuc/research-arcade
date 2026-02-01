@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Continuous Crawling • ResearchArcade</title>
+
+  <meta name="description" content="Learn how to set up continuous crawling to automatically fetch new arXiv papers at regular intervals." />
+  <meta property="og:title" content="Continuous Crawling • ResearchArcade" />
+  <meta property="og:description" content="Learn how to set up continuous crawling to automatically fetch new arXiv papers at regular intervals." />
+  <meta property="og:image" content="../static/images/your_banner_image.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="icon" type="image/x-icon" href="../static/images/favicon.ico" />
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet" />
+  <link rel="stylesheet" href="../static/css/bulma.min.css" />
+  <link rel="stylesheet" href="../static/css/fontawesome.all.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="../static/css/index.css" />
+
+  <style>
+    /* Simple sticky TOC on large screens */
+    .toc {
+      position: sticky;
+      top: 2rem;
+      max-height: calc(100vh - 4rem);
+      overflow: auto;
+      padding-left: 1rem;
+      border-left: 1px solid #eee;
+    }
+    .toc a { display: block; padding: 0.2rem 0; font-size: 0.95rem; }
+    .toc .level-3 { padding-left: 1rem; font-size: 0.9rem; }
+    @media (max-width: 1023px) {
+      .toc { display: none; }
+    }
+    pre code { white-space: pre; }
+  </style>
+</head>
+<body>
+
+  <!-- Hero -->
+  <section class="hero is-white">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <nav class="breadcrumb" aria-label="breadcrumbs">
+          <ul>
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="../tutorials/index.html">Tutorials</a></li>
+            <li class="is-active"><a aria-current="page">Continuous Crawling</a></li>
+          </ul>
+        </nav>
+        <h1 class="title is-2">Continuous Crawling</h1>
+        <p class="subtitle is-6">Automatically fetch new arXiv papers at some regular interval to keep the dataset up-to-date.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content with TOC -->
+  <section class="section">
+    <div class="container">
+      <div class="columns">
+        <!-- Content -->
+        <div class="column is-8 is-offset-1 content" id="article">
+
+          <h2 id="introduction">Introduction</h2>
+          <p>
+            ResearchArcade supports continuous crawling, which automatically fetches new papers from arXiv at some fixed intervals. This maintains an up-to-date dataset of research papers.
+          </p>
+
+          <h2 id="prerequisites">Prerequisites</h2>
+          <p>Before setting up continuous crawling, ensure you have:</p>
+          <ul>
+            <li>ResearchArcade installed and configured</li>
+            <li>A database backend (CSV or SQL) properly set up</li>
+            <li>Sufficient disk space for downloaded papers</li>
+            <li>Stable internet connection</li>
+          </ul>
+
+          <h2 id="setup">Setup</h2>
+          <p>First, initialize your ResearchArcade instance with your backend:</p>
+
+          <h3 id="csv-backend">CSV Backend</h3>
+<pre><code class="language-python">from research_arcade import ResearchArcade
+
+db_type = "csv"
+config = {
+    "csv_dir": "./csv_data",
+}
+
+research_arcade = ResearchArcade(db_type=db_type, config=config)</code></pre>
+
+          <h3 id="sql-backend">SQL Backend</h3>
+<pre><code class="language-python">from research_arcade import ResearchArcade
+
+db_type = "sql"
+config = {
+    "host": "localhost",
+    "dbname": "DATABASE_NAME",
+    "user": "USER_NAME",
+    "password": "PASSWORD",
+    "port": "5432"
+}
+
+research_arcade = ResearchArcade(db_type=db_type, config=config)</code></pre>
+
+          <h2 id="basic-usage">Basic Usage</h2>
+          <p>The <code>continuous_crawling</code> method starts an automated process that periodically fetches new papers from arXiv:</p>
+<pre><code class="language-python">research_arcade.continuous_crawling(
+    interval_days=2,
+    delay_days=2,
+    paper_category='All',
+    dest_dir="./download",
+    arxiv_id_dest="./data"
+)</code></pre>
+
+          <h2 id="parameters">Parameters</h2>
+          <p>The <code>continuous_crawling</code> method accepts the following parameters:</p>
+
+          <h3 id="interval-days">interval_days</h3>
+          <p>
+            Specifies how frequently the crawler should run, measured in days. For example, <code>interval_days=2</code> means the crawler will check for new papers every 2 days.
+          </p>
+
+          <h3 id="delay-days">delay_days</h3>
+          <p>
+            Sets a delay before processing papers. This accounts for the fact that newly submitted arXiv papers may take some time to become fully available. A value of <code>delay_days=2</code> means the crawler will only process papers that were submitted at least 2 days ago.
+          </p>
+
+          <h3 id="paper-category">paper_category</h3>
+          <p>
+            Filters papers by arXiv category. Set to <code>'All'</code> to crawl all categories, or specify a particular category like <code>'cs.LG'</code> (Machine Learning), <code>'cs.CL'</code> (Computation and Language), or <code>'cs.AI'</code> (Artificial Intelligence).
+          </p>
+
+          <h3 id="dest-dir">dest_dir</h3>
+          <p>
+            The directory where downloaded PDF files will be stored. Ensure this directory has sufficient space and proper write permissions.
+          </p>
+
+          <h3 id="arxiv-id-dest">arxiv_id_dest</h3>
+          <p>
+            The directory where arXiv ID tracking data will be stored. This helps the crawler keep track of which papers have already been processed.
+          </p>
+
+          <h2 id="example-configurations">Example Configurations</h2>
+
+          <h3 id="daily-ml-papers">Daily Machine Learning Papers</h3>
+<pre><code class="language-python"># Crawl ML papers daily
+research_arcade.continuous_crawling(
+    interval_days=1,
+    delay_days=1,
+    paper_category='cs.LG',
+    dest_dir="./ml_papers",
+    arxiv_id_dest="./ml_data"
+)</code></pre>
+
+          <h3 id="weekly-all-cs">Weekly All CS Papers</h3>
+<pre><code class="language-python"># Crawl all CS papers weekly
+research_arcade.continuous_crawling(
+    interval_days=7,
+    delay_days=3,
+    paper_category='cs.*',
+    dest_dir="./cs_papers",
+    arxiv_id_dest="./cs_data"
+)</code></pre>
+
+          <h3 id="nlp-focused">NLP-Focused Crawling</h3>
+<pre><code class="language-python"># Focus on NLP and AI papers
+research_arcade.continuous_crawling(
+    interval_days=2,
+    delay_days=2,
+    paper_category='cs.CL',
+    dest_dir="./nlp_papers",
+    arxiv_id_dest="./nlp_data"
+)</code></pre>
+
+          <h2 id="best-practices">Best Practices</h2>
+          <ul>
+            <li><strong>Storage management:</strong> Regularly monitor disk space usage, especially when crawling all categories.</li>
+            <li><strong>Rate limiting:</strong> The crawler respects arXiv's rate limits automatically, but avoid running multiple crawlers simultaneously.</li>
+            <li><strong>Error handling:</strong> Check log files periodically for any failed downloads or parsing errors.</li>
+            <li><strong>Backup:</strong> Regularly backup your <code>arxiv_id_dest</code> directory to avoid re-processing papers after a system failure.</li>
+            <li><strong>Category selection:</strong> Start with specific categories to test your setup before expanding to broader crawls.</li>
+          </ul>
+
+          <h2 id="next-steps">Next Steps</h2>
+          <ul>
+            <li>Learn about <a href="./batch-processing.html">Batch Processing</a> for one-time bulk imports</li>
+            <li>Explore <a href="../learn/backends.html">Backend Configuration</a> for optimizing database performance</li>
+            <li>Check the <a href="../api/index.html">API Reference</a> for advanced options</li>
+          </ul>
+        </div>
+
+        <!-- TOC -->
+        <div class="column is-3">
+          <aside class="menu toc" id="toc">
+            <p class="menu-label">On this page</p>
+            <ul class="menu-list" id="toc-list">
+              <!-- populated by JS -->
+            </ul>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="content has-text-centered is-size-7">
+        <p>
+          Built with the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a>.
+          Licensed under <a href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC BY-SA 4.0</a>.
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Optional: simple JS to build the TOC and last-updated -->
+  <script>
+    (function buildTOC() {
+      const article = document.getElementById('article');
+      const tocList = document.getElementById('toc-list');
+      if (!article || !tocList) return;
+
+      const headers = article.querySelectorAll('h2, h3');
+      headers.forEach(h => {
+        const id = h.id || h.textContent.trim().toLowerCase().replace(/[^\w]+/g, '-');
+        h.id = id;
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = '#' + id;
+        a.textContent = h.textContent;
+        if (h.tagName.toLowerCase() === 'h3') a.classList.add('level-3');
+        li.appendChild(a);
+        tocList.appendChild(li);
+      });
+    })();
+
+    (function stampDate() {
+      const el = document.getElementById('last-updated');
+      if (el) el.textContent = new Date().toLocaleDateString();
+    })();
+  </script>
+</body>
+</html>
