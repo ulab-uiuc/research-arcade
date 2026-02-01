@@ -114,12 +114,12 @@
         </div>
 
         <div id="node-arxiv_papers" class="code-container">
-          <h3 class="title is-5">Deleting a ArXiv Papers Node</h3>
-          <p>Example code for deleting a arxiv papers entry:</p>
+          <h3 class="title is-5">Deleting an ArXiv Papers Node</h3>
+          <p>Example code for deleting an arxiv papers entry:</p>
           <pre><code># Delete a paper by ID
-paper_id = {&quot;arxiv_id&quot;: &quot;1706.03762v7&quot;}
-deleted_paper = research_arcade.delete_node_by_id(&quot;arxiv_papers&quot;, paper_id)
-print(&quot;Deleted paper:&quot;)
+paper_id = {"arxiv_id": "1706.03762v7"}
+deleted_paper = research_arcade.delete_node_by_id("arxiv_papers", paper_id)
+print("Deleted paper:")
 print(deleted_paper)</code></pre>
         </div>
 
@@ -138,88 +138,88 @@ print(deleted_paper)</code></pre>
         </div>
 
         <div id="node-arxiv_sections" class="code-container">
-          <div class="placeholder-text">
-            <i class="fas fa-info-circle fa-2x mb-3"></i>
-            <p>No example code available for this operation in the tutorial.</p>
-          </div>
+          <h3 class="title is-5">Deleting an ArXiv Sections Node</h3>
+          <p>Example code for deleting an arxiv sections entry:</p>
+          <pre><code>section_id = {"id": 544409}
+research_arcade.delete_node_by_id("arxiv_sections", section_id)</code></pre>
         </div>
 
         <div id="node-arxiv_paragraphs" class="code-container">
-          <div class="placeholder-text">
-            <i class="fas fa-info-circle fa-2x mb-3"></i>
-            <p>No example code available for this operation in the tutorial.</p>
-          </div>
+          <h3 class="title is-5">Deleting an ArXiv Paragraphs Node</h3>
+          <p>Example code for deleting an arxiv paragraphs entry:</p>
+          <pre><code>paragraph_id = {"id": 27428267}
+research_arcade.delete_node_by_id("arxiv_paragraphs", paragraph_id)</code></pre>
         </div>
 
         <div id="node-arxiv_figures" class="code-container">
-          <div class="placeholder-text">
-            <i class="fas fa-info-circle fa-2x mb-3"></i>
-            <p>No example code available for this operation in the tutorial.</p>
-          </div>
+          <h3 class="title is-5">Deleting an ArXiv Figures Node</h3>
+          <p>Example code for deleting an arxiv figures entry:</p>
+          <pre><code>figure_id = {"id": 836691}
+research_arcade.delete_node_by_id("arxiv_figures", figure_id)</code></pre>
         </div>
 
         <div id="node-arxiv_tables" class="code-container">
-          <div class="placeholder-text">
-            <i class="fas fa-info-circle fa-2x mb-3"></i>
-            <p>No example code available for this operation in the tutorial.</p>
-          </div>
+          <h3 class="title is-5">Deleting an ArXiv Tables Node</h3>
+          <p>Example code for deleting an arxiv tables entry:</p>
+          <pre><code>table_id = {"id": 299024}
+research_arcade.delete_node_by_id("arxiv_tables", table_id)</code></pre>
         </div>
 
         <div id="node-openreview_authors" class="code-container">
-          <h3 class="title is-5">Deleting a OpenReview Authors Node</h3>
-          <p>Example code for deleting a openreview authors entry:</p>
-          <pre><code>author_id = {&quot;author_openreview_id&quot;: &quot;~ishmam_zabir1&quot;}
-author_features = research_arcade.delete_node_by_id(&quot;openreview_authors&quot;, author_id)
-print(author_features.to_dict(orient=&quot;records&quot;)[0])</code></pre>
+          <h3 class="title is-5">Deleting an OpenReview Authors Node</h3>
+          <p>Example code for deleting an openreview authors entry:</p>
+          <pre><code>author_id = {"author_openreview_id": "~ishmam_zabir1"}
+author_features = research_arcade.delete_node_by_id("openreview_authors", author_id)
+print(author_features.to_dict(orient="records")[0])</code></pre>
         </div>
 
         <div id="node-openreview_papers" class="code-container">
-          <h3 class="title is-5">Deleting a OpenReview Papers Node</h3>
-          <p>Example code for deleting a openreview papers entry:</p>
-          <pre><code>paper_id = {&quot;paper_openreview_id&quot;: &quot;zGej22CBnS&quot;}
-paper_features = research_arcade.delete_node_by_id(&quot;openreview_papers&quot;, paper_id)
-print(paper_features.to_dict(orient=&quot;records&quot;)[0])</code></pre>
+          <h3 class="title is-5">Deleting an OpenReview Papers Node</h3>
+          <p>Example code for deleting an openreview papers entry:</p>
+          <pre><code>paper_id = {"paper_openreview_id": "zGej22CBnS"}
+paper_features = research_arcade.delete_node_by_id("openreview_papers", paper_id)
+print(paper_features.to_dict(orient="records")[0])</code></pre>
         </div>
 
         <div id="node-openreview_reviews" class="code-container">
-          <h3 class="title is-5">Deleting a OpenReview Reviews Node</h3>
-          <p>Example code for deleting a openreview reviews entry:</p>
-          <pre><code>review_id = {&quot;review_openreview_id&quot;: &quot;DHwZxFryth&quot;}
-review_features = research_arcade.delete_node_by_id(&quot;openreview_reviews&quot;, review_id)
-print(review_features.to_dict(orient=&quot;records&quot;)[0])</code></pre>
+          <h3 class="title is-5">Deleting an OpenReview Reviews Node</h3>
+          <p>Example code for deleting an openreview reviews entry:</p>
+          <pre><code>review_id = {"review_openreview_id": "DHwZxFryth"}
+review_features = research_arcade.delete_node_by_id("openreview_reviews", review_id)
+print(review_features.to_dict(orient="records")[0])</code></pre>
         </div>
 
         <div id="node-openreview_revisions" class="code-container">
-          <h3 class="title is-5">Deleting a OpenReview Revisions Node</h3>
-          <p>Example code for deleting a openreview revisions entry:</p>
-          <pre><code>revision_id = {&quot;revision_openreview_id&quot;: &quot;yfHQOp5zWc&quot;}
-revision_feature = research_arcade.delete_node_by_id(&quot;openreview_revisions&quot;, revision_id)
-print(revision_feature.to_dict(orient=&quot;records&quot;)[0])</code></pre>
+          <h3 class="title is-5">Deleting an OpenReview Revisions Node</h3>
+          <p>Example code for deleting an openreview revisions entry:</p>
+          <pre><code>revision_id = {"revision_openreview_id": "yfHQOp5zWc"}
+revision_feature = research_arcade.delete_node_by_id("openreview_revisions", revision_id)
+print(revision_feature.to_dict(orient="records")[0])</code></pre>
         </div>
 
         <div id="node-openreview_paragraphs" class="code-container">
-          <h3 class="title is-5">Deleting a OpenReview Paragraphs Node</h3>
-          <p>Example code for deleting a openreview paragraphs entry:</p>
-          <pre><code>paper_id = {&quot;paper_openreview_id&quot;: &quot;xujj_test&quot;}
-paragraph_feature = research_arcade.delete_node_by_id(&quot;openreview_paragraphs&quot;, paper_id)
+          <h3 class="title is-5">Deleting an OpenReview Paragraphs Node</h3>
+          <p>Example code for deleting an openreview paragraphs entry:</p>
+          <pre><code>paper_id = {"paper_openreview_id": "xujj_test"}
+paragraph_feature = research_arcade.delete_node_by_id("openreview_paragraphs", paper_id)
 print(len(paragraph_feature))
-print(paragraph_feature.to_dict(orient=&quot;records&quot;)[0])</code></pre>
+print(paragraph_feature.to_dict(orient="records")[0])</code></pre>
         </div>
 
         <div id="node-openreview_arxiv" class="code-container">
-          <h3 class="title is-5">Deleting a OpenReview-ArXiv Link Node</h3>
-          <p>Example code for deleting a openreview-arxiv link entry:</p>
-          <pre><code>openreview_id = {&quot;paper_openreview_id&quot;: &quot;zkNCWtw2fd&quot;}
-openreview_arxiv_df = research_arcade.delete_edge_by_id(&quot;openreview_arxiv&quot;, openreview_id)
-print(openreview_arxiv_df.to_dict(orient=&quot;records&quot;)[0])
+          <h3 class="title is-5">Deleting an OpenReview-ArXiv Link Node</h3>
+          <p>Example code for deleting an openreview-arxiv link entry:</p>
+          <pre><code>openreview_id = {"paper_openreview_id": "zkNCWtw2fd"}
+openreview_arxiv_df = research_arcade.delete_edge_by_id("openreview_arxiv", openreview_id)
+print(openreview_arxiv_df.to_dict(orient="records")[0])
 
-arxiv_id = {&quot;arxiv_id&quot;: &quot;http://arxiv.org/abs/2408.10536v1&quot;}
-openreview_arxiv_df = research_arcade.delete_edge_by_id(&quot;openreview_arxiv&quot;, arxiv_id)
-print(openreview_arxiv_df.to_dict(orient=&quot;records&quot;)[0])
+arxiv_id = {"arxiv_id": "http://arxiv.org/abs/2408.10536v1"}
+openreview_arxiv_df = research_arcade.delete_edge_by_id("openreview_arxiv", arxiv_id)
+print(openreview_arxiv_df.to_dict(orient="records")[0])
 
-openreview_arxiv_id = {&quot;paper_openreview_id&quot;: &quot;zkNCWtw2fd&quot;, &quot;arxiv_id&quot;: &quot;http://arxiv.org/abs/2408.10536v1&quot;}
-openreview_arxiv_df = research_arcade.delete_edge_by_id(&quot;openreview_arxiv&quot;, openreview_arxiv_id)
-print(openreview_arxiv_df.to_dict(orient=&quot;records&quot;)[0])</code></pre>
+openreview_arxiv_id = {"paper_openreview_id": "zkNCWtw2fd", "arxiv_id": "http://arxiv.org/abs/2408.10536v1"}
+openreview_arxiv_df = research_arcade.delete_edge_by_id("openreview_arxiv", openreview_arxiv_id)
+print(openreview_arxiv_df.to_dict(orient="records")[0])</code></pre>
         </div>
       </div>
 
@@ -256,87 +256,116 @@ print(openreview_arxiv_df.to_dict(orient=&quot;records&quot;)[0])</code></pre>
 
         <div id="edge-arxiv_paper_author" class="code-container">
           <h3 class="title is-5">Deleting an ArXiv Author-Paper Relationship</h3>
-          <p>Example code for deleting a arxiv author-paper entry:</p>
-          <pre><code>relation_id = {&#x27;paper_arxiv_id&#x27;: &#x27;1706.03762v7&#x27;, &#x27;author_id&#x27;: &#x27;ss_ashish_vaswani&#x27;}
-research_arcade.delete_edge_by_id(&quot;arxiv_paper_author&quot;, primary_key=relation_id)
-print(&quot;Relationship deleted!&quot;)</code></pre>
+          <p>Example code for deleting an arxiv author-paper entry:</p>
+          <pre><code>relation_id = {'paper_arxiv_id': '1706.03762v7', 'author_id': 'ss_ashish_vaswani'}
+research_arcade.delete_edge_by_id("arxiv_paper_author", primary_key=relation_id)
+print("Relationship deleted!")</code></pre>
         </div>
 
         <div id="edge-arxiv_paper_category" class="code-container">
-          <h3 class="title is-5">Deleting a ArXiv Paper-Category Relationship</h3>
-          <p>Example code for deleting a arxiv paper-category entry:</p>
-          <pre><code>relation_id = {&#x27;paper_arxiv_id&#x27;: &#x27;1706.03762v7&#x27;, &#x27;category_id&#x27;: &#x27;cs.AI&#x27;}
-research_arcade.delete_edge_by_id(&quot;arxiv_paper_category&quot;, primary_key=relation_id)
-print(&quot;Relationship deleted!&quot;)</code></pre>
+          <h3 class="title is-5">Deleting an ArXiv Paper-Category Relationship</h3>
+          <p>Example code for deleting an arxiv paper-category entry:</p>
+          <pre><code>relation_id = {'paper_arxiv_id': '1706.03762v7', 'category_id': 'cs.AI'}
+research_arcade.delete_edge_by_id("arxiv_paper_category", primary_key=relation_id)
+print("Relationship deleted!")</code></pre>
         </div>
 
         <div id="edge-arxiv_citation" class="code-container">
-          <h3 class="title is-5">Deleting a ArXiv Citation</h3>
-          <p>Example code for deleting a arxiv citation entry:</p>
+          <h3 class="title is-5">Deleting an ArXiv Citation</h3>
+          <p>Example code for deleting an arxiv citation entry:</p>
           <pre><code>citation_id = {
-    &#x27;citing_paper_id&#x27;: &#x27;1810.04805v2&#x27;,
-    &#x27;cited_paper_id&#x27;: &#x27;1706.03762v7&#x27;
+    'citing_paper_id': '1810.04805v2',
+    'cited_paper_id': '1706.03762v7'
 }
-research_arcade.delete_edge_by_id(&quot;arxiv_citation&quot;, primary_key=citation_id)
-print(&quot;Citation deleted!&quot;)</code></pre>
+research_arcade.delete_edge_by_id("arxiv_citation", primary_key=citation_id)
+print("Citation deleted!")</code></pre>
         </div>
 
         <div id="edge-arxiv_paper_figures" class="code-container">
-          <div class="placeholder-text">
-            <i class="fas fa-info-circle fa-2x mb-3"></i>
-            <p>No example code available for this operation in the tutorial.</p>
-          </div>
+          <h3 class="title is-5">Deleting an ArXiv Paper-Figures Relationship</h3>
+          <p>Example code for deleting an arxiv paper-figures entry:</p>
+          <pre><code># Delete by paper_arxiv_id
+paper_id = {"paper_arxiv_id": "2507.13024"}
+result = research_arcade.delete_edge_by_id("arxiv_paper_figure", paper_id)
+
+# Delete by figure_id
+figure_id = {"figure_id": 1}
+result = research_arcade.delete_edge_by_id("arxiv_paper_figure", figure_id)
+
+# Delete by both ids
+paper_figure_id = {
+    "paper_arxiv_id": "2410.23123v2",
+    "figure_id": 476323
+}
+result = research_arcade.delete_edge_by_id("arxiv_paper_figure", paper_figure_id)</code></pre>
         </div>
 
         <div id="edge-arxiv_paper_tables" class="code-container">
-          <div class="placeholder-text">
-            <i class="fas fa-info-circle fa-2x mb-3"></i>
-            <p>No example code available for this operation in the tutorial.</p>
-          </div>
+          <h3 class="title is-5">Deleting an ArXiv Paper-Tables Relationship</h3>
+          <p>Example code for deleting an arxiv paper-tables entry:</p>
+          <pre><code># Delete by paper_arxiv_id
+paper_id = {"paper_arxiv_id": "1706.03762v7"}
+result = research_arcade.delete_edge_by_id("arxiv_paper_table", paper_id)
+
+# Delete by table_id
+table_id = {"table_id": 1}
+result = research_arcade.delete_edge_by_id("arxiv_paper_table", table_id)
+
+# Delete by both ids
+paper_table_id = {
+    "paper_arxiv_id": "1706.03762v7",
+    "table_id": 1
+}
+result = research_arcade.delete_edge_by_id("arxiv_paper_table", paper_table_id)</code></pre>
         </div>
 
         <div id="edge-arxiv_paragraph_citations" class="code-container">
-          <h3 class="title is-5">Deleting arxiv_paragraph_citations Edges</h3>
-          <p>Code example placeholder - Add your Python/API code here for deleting arxiv_paragraph_citations edges</p>
+          <h3 class="title is-5">Deleting an ArXiv Paragraph-Citations Relationship</h3>
+          <p>Example code for deleting an arxiv paragraph-citations entry:</p>
+          <pre><code>paragraph_citation = {
+    'paragraph_id': 1
+}
+count = research_arcade.delete_edge_by_id('arxiv_paragraph_citation', paragraph_citation)
+print(f"Deleted {count} paragraph citations")</code></pre>
         </div>
 
         <div id="edge-arxiv_paragraph_references" class="code-container">
-          <div class="placeholder-text">
-            <i class="fas fa-info-circle fa-2x mb-3"></i>
-            <p>No example code available for this operation in the tutorial.</p>
-          </div>
+          <h3 class="title is-5">Deleting an ArXiv Paragraph-References Relationship</h3>
+          <p>Example code for deleting an arxiv paragraph-references entry:</p>
+          <pre><code>paragraph_id = {"paragraph_id": 1}
+result = research_arcade.delete_edge_by_id("arxiv_paragraph_reference", paragraph_id)</code></pre>
         </div>
 
         <div id="edge-openreview_papers_authors" class="code-container">
-          <h3 class="title is-5">Deleting a OpenReview Papers-Authors Relationship</h3>
-          <p>Example code for deleting a openreview papers-authors entry:</p>
-          <pre><code>paper_id = {&quot;paper_openreview_id&quot;: &quot;00SnKBGTsz&quot;}
-openreview_papers_authors = research_arcade.delete_edge_by_id(&quot;openreview_papers_authors&quot;, paper_id)
-print(openreview_papers_authors.to_dict(orient=&quot;records&quot;))</code></pre>
+          <h3 class="title is-5">Deleting an OpenReview Papers-Authors Relationship</h3>
+          <p>Example code for deleting an openreview papers-authors entry:</p>
+          <pre><code>paper_id = {"paper_openreview_id": "00SnKBGTsz"}
+openreview_papers_authors = research_arcade.delete_edge_by_id("openreview_papers_authors", paper_id)
+print(openreview_papers_authors.to_dict(orient="records"))</code></pre>
         </div>
 
         <div id="edge-openreview_papers_reviews" class="code-container">
-          <h3 class="title is-5">Deleting a OpenReview Papers-Reviews Relationship</h3>
-          <p>Example code for deleting a openreview papers-reviews entry:</p>
-          <pre><code>paper_review_id = {&quot;paper_openreview_id&quot;: &quot;00SnKBGTsz&quot;, &quot;review_openreview_id&quot;: &quot;13mj0Rtn5W&quot;}
-openreview_papers_reviews = research_arcade.delete_edge_by_id(&quot;openreview_papers_reviews&quot;, paper_review_id)
-print(openreview_papers_reviews.to_dict(orient=&quot;records&quot;))</code></pre>
+          <h3 class="title is-5">Deleting an OpenReview Papers-Reviews Relationship</h3>
+          <p>Example code for deleting an openreview papers-reviews entry:</p>
+          <pre><code>paper_review_id = {"paper_openreview_id": "00SnKBGTsz", "review_openreview_id": "13mj0Rtn5W"}
+openreview_papers_reviews = research_arcade.delete_edge_by_id("openreview_papers_reviews", paper_review_id)
+print(openreview_papers_reviews.to_dict(orient="records"))</code></pre>
         </div>
 
         <div id="edge-openreview_papers_revisions" class="code-container">
-          <h3 class="title is-5">Deleting a OpenReview Papers-Revisions Relationship</h3>
-          <p>Example code for deleting a openreview papers-revisions entry:</p>
-          <pre><code>paper_revision_id = {&quot;paper_openreview_id&quot;: &quot;00SnKBGTsz&quot;, &quot;revision_openreview_id&quot;: &quot;Cn0twOEX1T&quot;}
-openreview_papers_revisions = research_arcade.delete_edge_by_id(&quot;openreview_papers_revisions&quot;, paper_revision_id)
-print(openreview_papers_revisions.to_dict(orient=&quot;records&quot;))</code></pre>
+          <h3 class="title is-5">Deleting an OpenReview Papers-Revisions Relationship</h3>
+          <p>Example code for deleting an openreview papers-revisions entry:</p>
+          <pre><code>paper_revision_id = {"paper_openreview_id": "00SnKBGTsz", "revision_openreview_id": "Cn0twOEX1T"}
+openreview_papers_revisions = research_arcade.delete_edge_by_id("openreview_papers_revisions", paper_revision_id)
+print(openreview_papers_revisions.to_dict(orient="records"))</code></pre>
         </div>
 
         <div id="edge-openreview_revisions_reviews" class="code-container">
-          <h3 class="title is-5">Deleting a OpenReview Revisions-Reviews Relationship</h3>
-          <p>Example code for deleting a openreview revisions-reviews entry:</p>
-          <pre><code>revision_review_id = {&quot;revision_openreview_id&quot;: &quot;Cn0twOEX1T&quot;, &quot;review_openreview_id&quot;: &quot;13mj0Rtn5W&quot;}
-openreview_revisions_reviews = research_arcade.delete_edge_by_id(&quot;openreview_revisions_reviews&quot;, revision_review_id)
-print(openreview_revisions_reviews.to_dict(orient=&quot;records&quot;))</code></pre>
+          <h3 class="title is-5">Deleting an OpenReview Revisions-Reviews Relationship</h3>
+          <p>Example code for deleting an openreview revisions-reviews entry:</p>
+          <pre><code>revision_review_id = {"revision_openreview_id": "Cn0twOEX1T", "review_openreview_id": "13mj0Rtn5W"}
+openreview_revisions_reviews = research_arcade.delete_edge_by_id("openreview_revisions_reviews", revision_review_id)
+print(openreview_revisions_reviews.to_dict(orient="records"))</code></pre>
         </div>
       </div>
 
