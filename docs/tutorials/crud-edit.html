@@ -162,28 +162,58 @@ print(&quot;Author updated successfully!&quot;)</code></pre>
         <div id="node-arxiv_sections" class="code-container">
           <div class="placeholder-text">
             <i class="fas fa-info-circle fa-2x mb-3"></i>
-            <p>No example code available for this operation in the tutorial.</p>
+            <p>Example code for updating an existing arxiv sections entry:</p>
+            <pre><code>updated_section = {
+                &#x27;id&#x27;: 544409,
+                &#x27;title&#x27;: &#x27;Updated Section Title&#x27;,
+                &#x27;content&#x27;: &#x27;Updated content&#x27;
+            }
+            research_arcade.update_node(&quot;arxiv_sections&quot;, node_features=updated_section)
+            </code></pre>
           </div>
         </div>
 
         <div id="node-arxiv_paragraphs" class="code-container">
           <div class="placeholder-text">
             <i class="fas fa-info-circle fa-2x mb-3"></i>
-            <p>No example code available for this operation in the tutorial.</p>
+            <p>Example code for updating an existing arxiv paragraph entry:</p>
+            <pre><code>updated_paragraph = {
+                &#x27;id&#x27;: 27428268,
+                &#x27;content&#x27;: &#x27;Updated paragraph content&#x27;
+            }
+            research_arcade.update_node(&quot;arxiv_paragraphs&quot;, node_features=updated_paragraph)
+            </code></pre>
           </div>
         </div>
 
         <div id="node-arxiv_figures" class="code-container">
           <div class="placeholder-text">
             <i class="fas fa-info-circle fa-2x mb-3"></i>
-            <p>No example code available for this operation in the tutorial.</p>
+            <p>Example code for updating an existing arxiv figure entry:</p>
+            <pre><code>updated_figure = {
+                &#x27;id&#x27;: 836693,
+                &#x27;paper_arxiv_id&#x27;: 1453.1644,
+                &#x27;path&#x27;: &#x27;path&#x27;,
+                &#x27;caption&#x27;: &#x27;Updated figure caption&#x27;
+            }
+            research_arcade.update_node(&quot;arxiv_figures&quot;, node_features=updated_figure)
+            </code></pre>
           </div>
         </div>
 
         <div id="node-arxiv_tables" class="code-container">
           <div class="placeholder-text">
             <i class="fas fa-info-circle fa-2x mb-3"></i>
-            <p>No example code available for this operation in the tutorial.</p>
+            <p>Example code for updating an existing arxiv table entry:</p>
+            <pre><code>updated_table = {
+                &#x27;id&#x27;: 299024,
+                &#x27;paper_arxiv_id&#x27;: &#x27;1706.03762v7&#x27;,
+                &#x27;caption&#x27;: &#x27;Performance comparison&#x27;,
+                &#x27;label&#x27;: &#x27;label&#x27;,
+                &#x27;table_text&#x27;: &#x27;Table content here&#x27;
+            }
+            research_arcade.update_node("arxiv_tables", node_features=updated_table)
+            </code></pre>
           </div>
         </div>
 
