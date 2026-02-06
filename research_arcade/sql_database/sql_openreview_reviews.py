@@ -263,6 +263,29 @@ class SQLOpenReviewReviews:
         result = self.cur.fetchone()
 
         return result is not None
+
+    def sample_reviews(self, sample_size: int) -> Optional[pd.DataFrame]:
+        """Sample a number of reviews randomly. Returns a DataFrame with sampled reviews or None if empty."""
+        select_sql = """
+        SELECT venue, review_openreview_id, replyto_openreview_id, writer, title, content, time 
+        FROM openreview_reviews  ORDER BY RANDOM() LIMIT %s;
+        """
+        self.cur.execute(select_sql, (sample_size,))
+        rows = self.cur.fetchall()
+        if not rows:
+            return None
+        else:
+            columns = ['venue', 'review_openreview_id', 'replyto_openreview_id', 
+                    'writer', 'title', 'content', 'time']
+            # original_record = dict(zip(columns, row))
+            processed_rows = []
+            for row in rows:
+                row_list = list(row)
+                if isinstance(row_list[5], dict):
+                    row_list[5] = json.dumps(row_list[5])
+                processed_rows.append(row_list)
+            reviews_df = pd.DataFrame(processed_rows, columns=columns)
+            return reviews_df
     
     def construct_reviews_table_from_api(self, venue: str) -> None:
         # crawl review data from openreview API

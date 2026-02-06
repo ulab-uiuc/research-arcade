@@ -1,0 +1,82 @@
+{
+  "arxiv__paper__cites__paper": {
+    "source": "arxiv_papers",
+    "target": "arxiv_papers",
+    "edge_table": "arxiv_citations",
+    "directed": true,
+    "description": "Paper A cites Paper B"
+  },
+
+  "arxiv__paper__written_by__author": {
+    "source": "arxiv_papers",
+    "target": "arxiv_authors",
+    "edge_table": "arxiv_paper_authors",
+    "directed": true
+  },
+
+  "arxiv__paper__belongs_to__category": {
+    "source": "arxiv_papers",
+    "target": "arxiv_categories",
+    "edge_table": "arxiv_paper_categories",
+    "directed": true
+  },
+  
+  "arxiv__paper__contains__figure": {
+    "source": "arxiv_papers",
+    "target": "arxiv_figures",
+    "edge_table": "arxiv_paper_figures",
+    "directed": true
+  },
+
+  "arxiv__paper__contains__tables": {
+    "source": "arxiv_papers",
+    "target": "arxiv_tables",
+    "edge_table": "arxiv_paper_tables",
+    "directed": true
+  },
+
+  "arxiv__paragraph__cites__paper": {
+    "source": "arxiv_paragraphs",
+    "target": "arxiv_citations",
+    "edge_table": "arxiv_paragraph_citations",
+    "directed": true
+  },
+
+  "arxiv__paragraph__contains__figure": {
+    "source": "arxiv_paragraphs",
+    "target": "arxiv_figures",
+    "edge_table": "arxiv_paragraph_figures",
+    "directed": true
+  },
+  "arxiv__paragraph__contains__table": {
+    "source": "arxiv_paragraphs",
+    "target": "arxiv_tables",
+    "edge_table": "arxiv_paragraph_tables",
+    "directed": true
+  },
+
+  "openreview__paper__written_by__author": {
+    "source": "openreview_papers",
+    "target": "openreview_authors",
+    "edge_table": "openreview_papers_authors",
+    "directed": true
+  },
+  "openreview__paper__has__review": {
+    "source": "openreview_papers",
+    "target": "openreview_reviews",
+    "edge_table": "openreview_papers_reviews",
+    "directed": true
+  },
+  "openreview__paper__has__revision": {
+    "source": "openreview_papers",
+    "target": "openreview_revisions",
+    "edge_table": "openreview_papers_revisions",
+    "directed": true
+  },
+  "openreview__revision__has__review": {
+    "source": "openreview_revisions",
+    "target": "openreview_reviews",
+    "edge_table": "openreview_revisions_reviews",
+    "directed": true
+  }
+}

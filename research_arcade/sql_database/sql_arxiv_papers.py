@@ -245,6 +245,26 @@ class SQLArxivPapers:
         finally:
             conn.close()
 
+    def sample_papers(self, sample_size: int) -> Optional[List[Tuple]]:
+        """
+        Sample a number of papers randomly. Returns a list of sampled paper tuples or None if empty.
+        Each tuple is of the form:
+          (id, arxiv_id, base_arxiv_id, version, title, abstract, submit_date, metadata)
+        """
+        conn = self._get_connection()
+        try:
+            cur = conn.cursor()
+            cur.execute(
+                "SELECT id, arxiv_id, base_arxiv_id, version, title, abstract, submit_date, metadata "
+                "FROM arxiv_papers ORDER BY RANDOM() LIMIT %s",
+                (sample_size,)
+            )
+            rows = cur.fetchall()
+            cur.close()
+            return rows if rows else None
+        finally:
+            conn.close()
+
     # -------------------------
     # Bulk import from CSV
     # -------------------------

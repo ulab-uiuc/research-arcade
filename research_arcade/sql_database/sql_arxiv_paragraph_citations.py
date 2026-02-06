@@ -63,7 +63,6 @@ class SQLArxivParagraphCitation:
                 )
             """)
             cur.close()
-            print("Created arxiv_paragraph_citations table")
         finally:
             conn.close()
 

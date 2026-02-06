@@ -39,6 +39,16 @@ class CSVArxivParagraphs:
 
     def _save_data(self, df: pd.DataFrame):
         df.to_csv(self.csv_path, index=False)
+    
+    def sample_paragraphs(self, sample_size: int) -> Optional[pd.DataFrame]:
+        """Sample a number of paragraphs randomly. Returns a DataFrame with sampled paragraphs or None if empty."""
+        df = self._load_data()
+        
+        if df.empty:
+            return None
+        
+        sampled_df = df.sample(n=sample_size)
+        return sampled_df.reset_index(drop=True)
 
     def insert_paragraph(self, paragraph_id, content, paper_arxiv_id, paper_section, section_id=None, paragraph_in_paper_id=None):
         df = self._load_data()

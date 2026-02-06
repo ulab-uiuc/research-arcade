@@ -244,6 +244,31 @@ class SQLOpenReviewRevisions:
         result = self.cur.fetchone()
 
         return result is not None
+
+    def sample_revisions(self, sample_size: int) -> Optional[pd.DataFrame]:
+        """Sample a number of revisions randomly. Returns a DataFrame with sampled revisions or None if empty."""
+        sql = """
+        SELECT venue, original_openreview_id, revision_openreview_id, content, time
+        FROM openreview_revisions
+        ORDER BY RANDOM()
+        LIMIT %s;"""
+        self.cur.execute(sql, (sample_size,))
+        rows = self.cur.fetchall()
+        
+        if not rows:
+            return None
+        else:
+            columns = ['venue', 'original_openreview_id', 'revision_openreview_id', 'content', 'time']
+
+            processed_rows = []
+            for row in rows:
+                row_list = list(row)
+                if isinstance(row_list[3], dict):
+                    row_list[3] = json.dumps(row_list[3])
+                processed_rows.append(row_list)
+            
+            revisions_df = pd.DataFrame(processed_rows, columns=columns)
+            return revisions_df
     
     def construct_revisions_table_from_api(self, venue: str, filter_list: list, pdf_dir: str, log_file: str) -> bool:
         # crawl revision data from openreview API

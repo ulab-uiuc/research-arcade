@@ -179,7 +179,7 @@ class SQLArxivSections:
             return rows if rows else None
         finally:
             conn.close()
-
+    
     def get_all_sections(self, is_all_features=True):
         """Get all sections from the database."""
         conn = self._get_connection()
@@ -202,6 +202,24 @@ class SQLArxivSections:
             ok = cur.fetchone() is not None
             cur.close()
             return ok
+        finally:
+            conn.close()
+
+    def sample_sections(self, sample_size: int) -> Optional[List[Tuple]]:
+        """
+        Sample a number of sections randomly. Returns a list of tuples with sampled sections or None if empty.
+        Each tuple is in the form: (id, content, title, appendix, paper_arxiv_id)
+        """
+        conn = self._get_connection()
+        try:
+            cur = conn.cursor()
+            cur.execute(
+                "SELECT id, content, title, appendix, paper_arxiv_id FROM arxiv_sections ORDER BY RANDOM() LIMIT %s",
+                (sample_size,)
+            )
+            rows = cur.fetchall()
+            cur.close()
+            return rows if rows else None
         finally:
             conn.close()
 

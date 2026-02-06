@@ -173,6 +173,21 @@ class SQLArxivTable:
             return exists
         finally:
             conn.close()
+    
+    def sample_tables(self, sample_size: int) -> List[Tuple]:
+        """Sample a number of tables randomly. Returns a list of tuples."""
+        conn = self._get_connection()
+        try:
+            cur = conn.cursor()
+            cur.execute(
+                "SELECT id, paper_arxiv_id, path, caption, label, table_text FROM arxiv_tables ORDER BY RANDOM() LIMIT %s",
+                (sample_size,)
+            )
+            rows = cur.fetchall()
+            cur.close()
+            return rows
+        finally:
+            conn.close()
 
     # -------------------------
     # Bulk import from CSV

@@ -31,6 +31,16 @@ class CSVOpenReviewAuthors:
     def _save_data(self, df: pd.DataFrame) -> None:
         df.to_csv(self.csv_path, index=False)
     
+    def sample_authors(self, sample_size: int) -> Optional[pd.DataFrame]:
+        """Sample a number of authors randomly. Returns a DataFrame with sampled authors or None if empty."""
+        df = self._load_data()
+        
+        if df.empty:
+            return None
+        
+        sampled_df = df.sample(n=sample_size)
+        return sampled_df.reset_index(drop=True)
+    
     def insert_author(self, venue: str, author_openreview_id: str, 
                      author_full_name: str, email: str, affiliation: str, 
                      homepage: str, dblp: str) -> Optional[tuple]:

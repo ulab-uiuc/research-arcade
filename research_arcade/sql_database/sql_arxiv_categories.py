@@ -167,6 +167,29 @@ class SQLArxivCategory:
             return rows if rows else None
         finally:
             conn.close()
+    
+    def sample_categories(self, sample_size: int) -> Optional[List[Tuple]]:
+        """
+        Sample a number of categories randomly. Returns a list of sampled categories or None if empty.
+        Each category is represented as a tuple (id, name, description).
+        """
+        conn = self._get_connection()
+        try:
+            cur = conn.cursor()
+            cur.execute(
+                """
+                SELECT id, name, description
+                FROM arxiv_categories
+                ORDER BY RANDOM()
+                LIMIT %s
+                """,
+                (sample_size,)
+            )
+            rows = cur.fetchall()
+            cur.close()
+            return rows if rows else None
+        finally:
+            conn.close()
 
     def construct_category_table_from_api(self, arxiv_ids, dest_dir):
         """

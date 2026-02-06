@@ -175,6 +175,18 @@ class SQLArxivAuthors:
             except Exception as e:
                 print(f"Paper with arxiv id {base_arxiv_id} not found on semantic scholar: {e}")
                 continue
+    
+    def sample_authors(self, sample_size: int):
+        """Sample a number of authors randomly. Returns a list of sampled authors or None if empty."""
+        conn = self._get_connection()
+        try:
+            cur = conn.cursor()
+            cur.execute("SELECT id, semantic_scholar_id, name, homepage FROM authors ORDER BY RANDOM() LIMIT %s", (sample_size,))
+            rows = cur.fetchall()
+            cur.close()
+            return rows if rows else None
+        finally:
+            conn.close()
 
     def construct_table_from_csv(self, csv_file):
         """

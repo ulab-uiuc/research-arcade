@@ -1,3 +1,7 @@
+import json
+from pathlib import Path
+from typing import Dict, Tuple
+
 # OpenReview CSV 
 from .csv_database import (
     CSVOpenReviewArxiv, CSVOpenReviewAuthors, CSVOpenReviewPapersAuthors,
@@ -19,7 +23,6 @@ from .csv_database import (
     CSVArxivPaperTable, CSVArxivPapers, CSVArxivParagraphReference,
     CSVArxivParagraphs, CSVArxivSections, CSVArxivTable, CSVArxivParagraphCitation, CSVArxivParagraphFigure, CSVArxivParagraphTable
 )
-
 # Arxiv SQL
 from .sql_database import (
     SQLArxivAuthors, SQLArxivCategory, SQLArxivCitation, SQLArxivFigure,
@@ -27,6 +30,7 @@ from .sql_database import (
     SQLArxivPaperTable, SQLArxivPapers, SQLArxivParagraphReference,
     SQLArxivParagraphs, SQLArxivSections, SQLArxivTable, SQLArxivParagraphCitation, SQLArxivParagraphFigure, SQLArxivParagraphTable
 )
+
 import os
 # from paper_crawler.crawler_job import CrawlerJob
 
@@ -36,6 +40,7 @@ import pandas as pd
 from datetime import date, datetime, timedelta
 import os
 import time
+from typing import Dict
 from arxiv_utils.continuous_crawling import run_single_crawl, get_interval_seconds
 
 class ResearchArcade:
@@ -103,11 +108,6 @@ class ResearchArcade:
             self.arxiv_paragraph_figure = SQLArxivParagraphFigure(**config)
             self.arxiv_paragraph_table = SQLArxivParagraphTable(**config)
 
-            #TODO: currently no sql version of these two classes
-            # self.arxiv_paragraph_figure = CSVArxivParagraphFigure(**config)
-            # self.arxiv_paragraph_table = CSVArxivParagraphTable(**config)
-
-            
             """
             Below is the openreview dataset
             """
@@ -121,7 +121,6 @@ class ResearchArcade:
             self.openreview_revisions_reviews = SQLOpenReviewRevisionsReviews(**config)
             self.openreview_revisions = SQLOpenReviewRevisions(**config)
             self.openreview_paragraphs = SQLOpenReviewParagraphs(**config)
-    
 
     def insert_node(self, table: str, node_features: dict) -> Optional[tuple]:
         # Tables in openreview dataset
@@ -632,63 +631,128 @@ class ResearchArcade:
             return None
 
 
-    def get_k_hop_neighbor_node_features(self, table: str, k: int, accumulative: bool = False, neighbor_name: List[str]=None, neighbourhood_features: List[List[str]]=None) -> Optional[pd.DataFrame]:
-
+    def get_k_hop_neighbor_node_features(
+        self, 
+        table: str, 
+        node_id: int, 
+        k: int, 
+        accumulative: bool = False, 
+        neighbor_name: List[str] = None, 
+        neighbourhood_features: List[List[str]] = None
+    ) -> Optional[Dict[str, List[pd.DataFrame]]]:
         """
-        Docstring for get_k_hop_neighbor_node_features
+        Retrieve k-hop neighborhood node features using BFS traversal.
         
-        :param self: Description
         :param table: The name of table that the target node belongs to
-        :type table: str
-        :param accumulative: Whether to accumulate the features from all hops or just return the features from the k-th hop.
-        :type accumulative: bool, default False
-        :param k: The number of hops of neighborhood that we want to retrieve.
-        :type k: int
-        :param neighbor_name: Name of neighborhood tables that we want to retrieve. If None, retrieve all neighboring tables.
-        :type neighbor_name: List[str]
-        :param neighbourhood_features: The features of the neighborhood nodes that we want to retrieve. If None, retrieve all features. For each feature, we expect a list of feature names for each neighboring table.
-        :type neighbourhood_features: List[List[str]]
+        :param node_id: The ID of the starting node
+        :param k: The number of hops of neighborhood to retrieve
+        :param accumulative: Whether to accumulate features from all hops (True) 
+                            or just return features from the k-th hop (False)
+        :param neighbor_name: Name of neighborhood tables to retrieve. 
+                            If None, retrieve all neighboring tables.
+        :param neighbourhood_features: Features to retrieve for each neighboring table.
+                                    If None, retrieve all features.
+        :return: Dictionary mapping table names to lists of feature DataFrames
         """
-
+        
         if not neighbor_name:
             neighbor_name = self.get_all_neighbor_tables(table)
         if not neighbourhood_features:
             neighbourhood_features = [self.get_table_columns(n) for n in neighbor_name]
-
-        # Since we are building from node + node name to edge name, we need to establish a mapping from (node_name, node_name) -> edge_name
-        # We read from a meta file
+        
+        # Edge table mapping: (source_table, target_table) -> edge_table_name
         edge_table_mapping = self.get_edge_table_mappings()
-
-        # Return the k-hop neighboring node features
-        # Stored in a dict
-
+        
+        # BFS state: track current frontier as (table_name, node_id) tuples
+        current_frontier = [(table, node_id)]
+        visited = {(table, node_id)}  # Avoid revisiting nodes
+        
+        # Result storage
         neighbor_features_dict = {}
-
-        while k > 0:
-            # Write it like a bfs function
-            for i, neighbor in enumerate(neighbor_name):
-                edge_table_key = (table, neighbor)
-                if edge_table_key in edge_table_mapping:
-                    edge_table_name = edge_table_mapping[edge_table_key]
-                    # Get the neighboring nodes
-                    neighboring_nodes = self.get_neighborhood(edge_table_name, {f"{table}_id": None})
-                    # For each neighboring node, get the features
-                    for _, row in neighboring_nodes.iterrows():
-                        primary_key = {f"{neighbor}_id": row[f"{neighbor}_id"]}
-                        neighbor_features = self.get_node_features_by_id(neighbor, primary_key)
-                        if not neighbor_features.empty:
-                            # Select only the required features
-                            selected_features = neighbor_features[neighbourhood_features[i]]
-                            print(f"Neighboring node features from table {neighbor}:\n{selected_features}")
-                        if accumulative or k == 1:
-                            neighbor_features_dict.setdefault(neighbor, []).append(selected_features)
-                        else:
-                            print(f"No neighboring nodes found in table {neighbor} for the given primary key.")
+        
+        current_hop = 0
+        while current_hop < k and current_frontier:
+            next_frontier = []
+            
+            # Process each node in the current frontier
+            for source_table, source_id in current_frontier:
+                
+                # Determine which neighbor tables to explore from this source table
+                if source_table == table:
+                    # From the original table, use the specified neighbor_name
+                    tables_to_explore = neighbor_name
+                    features_to_retrieve = neighbourhood_features
                 else:
-                    print(f"No edge table found for the combination of {table} and {neighbor}.")
-            k -= 1
-
+                    # From intermediate tables, explore all neighbors
+                    tables_to_explore = self.get_all_neighbor_tables(source_table)
+                    features_to_retrieve = [self.get_table_columns(n) for n in tables_to_explore]
+                
+                # Explore each neighboring table
+                for i, target_table in enumerate(tables_to_explore):
+                    edge_table_key = (source_table, target_table)
+                    reverse_edge_key = (target_table, source_table)
+                    
+                    # Check both directions for edge table
+                    if edge_table_key in edge_table_mapping:
+                        edge_table_name = edge_table_mapping[edge_table_key]
+                        source_col = f"{source_table}_id"
+                        target_col = f"{target_table}_id"
+                    elif reverse_edge_key in edge_table_mapping:
+                        edge_table_name = edge_table_mapping[reverse_edge_key]
+                        source_col = f"{source_table}_id"
+                        target_col = f"{target_table}_id"
+                    else:
+                        print(f"No edge table found for {source_table} <-> {target_table}")
+                        continue
+                    
+                    # Get neighboring nodes filtered by source node ID
+                    neighboring_edges = self.get_neighborhood(
+                        edge_table_name, 
+                        {source_col: source_id}  # Filter by actual source node
+                    )
+                    
+                    if neighboring_edges is None or neighboring_edges.empty:
+                        continue
+                    
+                    # Process each neighboring node
+                    for _, row in neighboring_edges.iterrows():
+                        neighbor_id = row[target_col]
+                        neighbor_key = (target_table, neighbor_id)
+                        
+                        # Skip if already visited
+                        if neighbor_key in visited:
+                            continue
+                        visited.add(neighbor_key)
+                        
+                        # Add to next frontier for further exploration
+                        next_frontier.append(neighbor_key)
+                        
+                        # Get node features
+                        primary_key = {f"{target_table}_id": neighbor_id}
+                        neighbor_features = self.get_node_features_by_id(target_table, primary_key)
+                        
+                        if neighbor_features is None or neighbor_features.empty:
+                            print(f"No features found for {target_table} node {neighbor_id}")
+                            continue
+                        
+                        # Select only required features
+                        try:
+                            selected_features = neighbor_features[features_to_retrieve[i]]
+                        except (KeyError, IndexError):
+                            selected_features = neighbor_features
+                        
+                        # Store features based on accumulative flag
+                        # accumulative=True: store all hops
+                        # accumulative=False: only store final hop (k-th hop)
+                        if accumulative or (current_hop == k - 1):
+                            neighbor_features_dict.setdefault(target_table, []).append(selected_features)
+            
+            # Move to next hop
+            current_frontier = next_frontier
+            current_hop += 1
+        
         return neighbor_features_dict
+
 
     def path_search(self, start_table: str, start_id: str, target_table: str, target_id: str, max_depth: int = 5) -> Optional[List[List[str]]]:
 
@@ -960,6 +1024,43 @@ class ResearchArcade:
         papers_revisions_df = self.get_all_edge_features("openreview_papers_revisions")
         new_config = {"papers_reviews_df": papers_reviews_df, "papers_revisions_df": papers_revisions_df}
         self.openreview_revisions_reviews.construct_revisions_reviews_table("openreview_revisions_reviews", new_config)
+    
+    def sample_nodes(self, table_name: str, sample_size: int) -> Optional[pd.DataFrame]:
+        """
+        Samples a subset of nodes from the specified table and return the node ids and features
+        :param table_name: The name of the table to sample from
+        :type table_name: str
+        :param sample_size: The number of nodes to sample
+        :type sample_size: int
+        :return: A DataFrame containing the sampled nodes, including ids and features
+        :rtype: pd.DataFrame | None
+        """
+        if table_name == "arxiv_papers":
+            return self.arxiv_papers.sample_papers(sample_size)
+        elif table_name == "arxiv_authors":
+            return self.arxiv_authors.sample_authors(sample_size)
+        elif table_name == "arxiv_categories":
+            return self.arxiv_categories.sample_categories(sample_size)
+        elif table_name == "arxiv_figures":
+            return self.arxiv_figures.sample_figures(sample_size)
+        elif table_name == "arxiv_tables":
+            return self.arxiv_tables.sample_tables(sample_size)
+        elif table_name == "arxiv_sections":
+            return self.arxiv_sections.sample_sections(sample_size)
+        elif table_name == "arxiv_paragraphs":
+            return self.arxiv_paragraphs.sample_paragraphs(sample_size)
+        elif table_name == "openreview_papers":
+            return self.openreview_papers.sample_papers(sample_size)
+        elif table_name == "openreview_authors":
+            return self.openreview_authors.sample_authors(sample_size)
+        elif table_name == "openreview_reviews":
+            return self.openreview_reviews.sample_reviews(sample_size)
+        elif table_name == "openreview_revisions":
+            return self.openreview_revisions.sample_revisions(sample_size)
+        else:
+            print(f"Table {table_name} not found for sampling.")
+            return None
+    
         
     def continuous_crawling(self, interval_days, delay_days, paper_category, dest_dir, arxiv_id_dest):
         """
@@ -996,3 +1097,23 @@ class ResearchArcade:
                 print(f"[{datetime.now()}] Batch failed. Will retry after sleep.")
                 
             time.sleep(interval_seconds)
+    
+    def get_edge_table_mappings(self) -> Dict[Tuple[str, str], dict]:
+        """
+        Returns mapping:
+        (source_node_type, target_node_type) -> edge metadata
+        """
+        path = "research_arcade/research_arcade/edge_mappings.json"
+
+        with open(path, "r") as f:
+            raw = json.load(f)
+
+        mappings = {}
+        for edge_name, spec in raw.items():
+            key = (spec["source"], spec["target"])
+            mappings[key] = {
+                "edge_name": edge_name,
+                **spec
+            }
+
+        return mappings

@@ -39,7 +39,17 @@ class CSVArxivSections:
 
     def _save_data(self, df: pd.DataFrame):
         df.to_csv(self.csv_path, index=False)
-
+    
+    def sample_sections(self, sample_size: int) -> Optional[pd.DataFrame]:
+        """Sample a number of sections randomly. Returns a DataFrame with sampled sections or None if empty."""
+        df = self._load_data()
+        
+        if df.empty:
+            return None
+        
+        sampled_df = df.sample(n=sample_size)
+        return sampled_df.reset_index(drop=True)
+    
 
     def insert_section(self, content, title, appendix, paper_arxiv_id, section_in_paper_id):
         """Insert a section. Returns the generated section id."""

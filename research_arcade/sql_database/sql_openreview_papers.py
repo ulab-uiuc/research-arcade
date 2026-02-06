@@ -226,6 +226,24 @@ class SQLOpenReviewPapers:
         result = self.cur.fetchone()
 
         return result is not None
+
+    def sample_papers(self, sample_size: int) -> Optional[pd.DataFrame]:
+        """Sample a number of papers randomly. Returns a DataFrame with sampled papers or None if empty."""
+
+        select_sql = """
+        SELECT * FROM openreview_papers ORDER BY RANDOM() LIMIT %s;
+        """
+        self.cur.execute(select_sql, (sample_size,))
+        rows = self.cur.fetchall()
+        
+        if not rows:
+            return None
+        else:
+            columns = ['venue', 'paper_openreview_id', 'title', 'abstract',
+                    'paper_decision', 'paper_pdf_link']
+            papers_df = pd.DataFrame(rows, columns=columns)
+            return papers_df
+
     
     def construct_papers_table_from_api(self, venue: str) -> bool:
         # crawl paper data from openreview API

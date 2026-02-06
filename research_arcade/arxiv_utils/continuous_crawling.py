@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 load_dotenv()
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from research_arcade.arxiv_utils.multi_input.arxiv_crawler_new import download_with_time, extract_arxiv_ids
+from .multi_input.arxiv_crawler_new import download_with_time, extract_arxiv_ids
 
 
 def crawl_recent_arxiv_paper_new(start_date, end_date=None, path=None):

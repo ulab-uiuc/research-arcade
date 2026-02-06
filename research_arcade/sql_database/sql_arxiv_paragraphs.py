@@ -34,7 +34,7 @@ class SQLArxivParagraphs:
         )
         conn.autocommit = self.autocommit
         return conn
-
+    
     # -------------------------
     # DDL
     # -------------------------
@@ -293,6 +293,25 @@ class SQLArxivParagraphs:
             df = pd.read_sql(query, conn)
             
             return None if df.empty else df
+        finally:
+            conn.close()
+
+    def sample_paragraphs(self, sample_size: int) -> Optional[pd.DataFrame]:
+        """
+        Sample a number of paragraphs randomly.
+        Returns a DataFrame with sampled paragraphs or None if empty.
+        """
+        conn = self._get_connection()
+        try:
+            query = """
+                SELECT id, paragraph_id, content, paper_arxiv_id, paper_section, section_id, paragraph_in_paper_id
+                FROM arxiv_paragraphs
+                ORDER BY RANDOM()
+                LIMIT %s
+            """
+            df = pd.read_sql(query, conn, params=(sample_size,))
+            
+            return None if df.empty else df.reset_index(drop=True)
         finally:
             conn.close()
 

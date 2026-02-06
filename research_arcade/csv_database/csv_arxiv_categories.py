@@ -36,6 +36,15 @@ class CSVArxivCategory:
     def _save_data(self, df: pd.DataFrame):
         df.to_csv(self.csv_path, index=False)
 
+    def sample_categories(self, sample_size: int) -> Optional[pd.DataFrame]:
+        """Sample a number of categories randomly. Returns a DataFrame with sampled categories or None if empty."""
+        df = self._load_data()
+        
+        if df.empty:
+            return None
+        
+        sampled_df = df.sample(n=sample_size)
+        return sampled_df.reset_index(drop=True)
 
     def insert_category(self, name, description=None):
         df = self._load_data()

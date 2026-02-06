@@ -33,16 +33,16 @@ class SQLArxivPaperCategory:
     # -------------------------
     def create_paper_category_table(self):
         """
-        Create the arxiv_paper_category table with a composite uniqueness constraint.
+        Create the arxiv_paper_categories table with a composite uniqueness constraint.
         """
         conn = self._get_connection()
         try:
             cur = conn.cursor()
             cur.execute("""
-                CREATE TABLE IF NOT EXISTS arxiv_paper_category (
+                CREATE TABLE IF NOT EXISTS arxiv_paper_categories (
                     paper_arxiv_id VARCHAR(100) NOT NULL,
                     category_id INTEGER NOT NULL,
-                    CONSTRAINT ux_arxiv_paper_category_unique UNIQUE (paper_arxiv_id, category_id)
+                    CONSTRAINT ux_arxiv_paper_categories_unique UNIQUE (paper_arxiv_id, category_id)
                 )
             """)
             cur.close()
@@ -62,9 +62,9 @@ class SQLArxivPaperCategory:
             cur = conn.cursor()
             cur.execute(
                 """
-                INSERT INTO arxiv_paper_category (paper_arxiv_id, category_id)
+                INSERT INTO arxiv_paper_categories (paper_arxiv_id, category_id)
                 VALUES (%s, %s)
-                ON CONFLICT ON CONSTRAINT ux_arxiv_paper_category_unique DO NOTHING
+                ON CONFLICT ON CONSTRAINT ux_arxiv_paper_categories_unique DO NOTHING
                 """,
                 (paper_arxiv_id, category_id)
             )
@@ -111,7 +111,7 @@ class SQLArxivPaperCategory:
         try:
             cur = conn.cursor()
             cur.execute(
-                "SELECT paper_arxiv_id, category_id FROM arxiv_paper_category"
+                "SELECT paper_arxiv_id, category_id FROM arxiv_paper_categories"
             )
             rows = cur.fetchall()
             cur.close()
@@ -129,7 +129,7 @@ class SQLArxivPaperCategory:
             cur.execute(
                 """
                 SELECT paper_arxiv_id, category_id 
-                FROM arxiv_paper_category 
+                FROM arxiv_paper_categories 
                 WHERE paper_arxiv_id = %s
                 """,
                 (paper_arxiv_id,)
@@ -150,7 +150,7 @@ class SQLArxivPaperCategory:
             cur.execute(
                 """
                 SELECT paper_arxiv_id, category_id 
-                FROM arxiv_paper_category 
+                FROM arxiv_paper_categories 
                 WHERE category_id = %s
                 """,
                 (category_id,)
@@ -171,7 +171,7 @@ class SQLArxivPaperCategory:
             cur = conn.cursor()
             cur.execute(
                 """
-                DELETE FROM arxiv_paper_category 
+                DELETE FROM arxiv_paper_categories 
                 WHERE paper_arxiv_id = %s AND category_id = %s
                 """,
                 (paper_arxiv_id, category_id)
@@ -191,7 +191,7 @@ class SQLArxivPaperCategory:
         try:
             cur = conn.cursor()
             cur.execute(
-                "DELETE FROM arxiv_paper_category WHERE paper_arxiv_id = %s",
+                "DELETE FROM arxiv_paper_categories WHERE paper_arxiv_id = %s",
                 (paper_arxiv_id,)
             )
             count = cur.rowcount
@@ -209,7 +209,7 @@ class SQLArxivPaperCategory:
         try:
             cur = conn.cursor()
             cur.execute(
-                "DELETE FROM arxiv_paper_category WHERE category_id = %s",
+                "DELETE FROM arxiv_paper_categories WHERE category_id = %s",
                 (category_id,)
             )
             count = cur.rowcount
@@ -256,9 +256,9 @@ class SQLArxivPaperCategory:
                 psycopg2.extras.execute_values(
                     cur,
                     """
-                    INSERT INTO arxiv_paper_category (paper_arxiv_id, category_id)
+                    INSERT INTO arxiv_paper_categories (paper_arxiv_id, category_id)
                     VALUES %s
-                    ON CONFLICT ON CONSTRAINT ux_arxiv_paper_category_unique DO NOTHING
+                    ON CONFLICT ON CONSTRAINT ux_arxiv_paper_categories_unique DO NOTHING
                     """,
                     rows,
                     page_size=1000
@@ -346,9 +346,9 @@ class SQLArxivPaperCategory:
                 psycopg2.extras.execute_values(
                     cur,
                     """
-                    INSERT INTO arxiv_paper_category (paper_arxiv_id, category_id)
+                    INSERT INTO arxiv_paper_categories (paper_arxiv_id, category_id)
                     VALUES %s
-                    ON CONFLICT ON CONSTRAINT ux_arxiv_paper_category_unique DO NOTHING
+                    ON CONFLICT ON CONSTRAINT ux_arxiv_paper_categories_unique DO NOTHING
                     """,
                     rows,
                     page_size=1000

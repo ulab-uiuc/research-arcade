@@ -225,6 +225,16 @@ class SQLOpenReviewAuthors:
         result = self.cur.fetchone()
 
         return result is not None
+
+    def sample_authors(self, sample_size: int) -> Optional[pd.DataFrame]:
+        """Sample a number of authors randomly. Returns a DataFrame with sampled authors or None if empty."""
+        df = self.get_all_authors(is_all_features=True)
+        
+        if df is None or df.empty:
+            return None
+        
+        sampled_df = df.sample(n=sample_size)
+        return sampled_df.reset_index(drop=True)
     
     def construct_authors_table_from_api(self, venue: str) -> bool:
         # crawl author data from openreview API

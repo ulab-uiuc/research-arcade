@@ -194,6 +194,26 @@ class SQLArxivFigure:
         finally:
             conn.close()
 
+    def sample_figures(self, sample_size: int) -> Optional[List[Tuple]]:
+        """
+        Sample a number of figures randomly. Returns a list of tuples with sampled figures or None if empty.
+        Each tuple is of the form:
+          (id, paper_arxiv_id, path, caption, label, name)
+        """
+        conn = self._get_connection()
+        try:
+            cur = conn.cursor()
+            cur.execute(
+                "SELECT id, paper_arxiv_id, path, caption, label, name "
+                "FROM arxiv_figures ORDER BY RANDOM() LIMIT %s",
+                (sample_size,)
+            )
+            rows = cur.fetchall()
+            cur.close()
+            return rows if rows else None
+        finally:
+            conn.close()
+
     # -------------------------
     # Bulk import from CSV
     # -------------------------

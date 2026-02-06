@@ -30,6 +30,7 @@ class CSVOpenReviewRevisionsReviews:
     def _save_data(self, df: pd.DataFrame) -> None:
         df.to_csv(self.csv_path, index=False)
     
+    
     def insert_revision_reviews(self, venue: str, revision_openreview_id: str, 
                                review_openreview_id: str) -> Optional[tuple]: 
         df = self._load_data()

@@ -97,6 +97,16 @@ class CSVArxivAuthors:
         author = df[df['semantic_scholar_id'] == semantic_scholar_id]
         return author
 
+    def sample_authors(self, sample_size: int) -> Optional[pd.DataFrame]:
+        """Sample a number of authors randomly. Returns a DataFrame with sampled authors or None if empty."""
+        df = self._load_data()
+        
+        if df.empty:
+            return None
+        
+        sampled_df = df.sample(n=sample_size)
+        return sampled_df.reset_index(drop=True)
+
     def check_author_exists(self, semantic_scholar_id: int) -> bool:
         """Check if an author exists by its id."""
         df = self._load_data()

@@ -44,6 +44,16 @@ class CSVOpenReviewRevisions:
             )
         df_to_save.to_csv(self.csv_path, index=False)
     
+    def sample_revisions(self, sample_size: int) -> Optional[pd.DataFrame]:
+        """Sample a number of revisions randomly. Returns a DataFrame with sampled revisions or None if empty."""
+        df = self._load_data()
+        
+        if df.empty:
+            return None
+        
+        sampled_df = df.sample(n=sample_size)
+        return sampled_df.reset_index(drop=True)
+    
     def insert_revision(self, venue: str, original_openreview_id: str, 
                        revision_openreview_id: str, content: dict, 
                        time: str) -> Optional[tuple]:

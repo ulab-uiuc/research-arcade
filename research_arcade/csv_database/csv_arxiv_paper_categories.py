@@ -57,7 +57,7 @@ class CSVArxivPaperCategory:
         
         # Unique return
         return df2[df2['name'] == category_name]['id'].iloc[0]
-
+        
 
     def insert_paper_category_by_name(self, paper_arxiv_id, category_name):
         # search id by name
