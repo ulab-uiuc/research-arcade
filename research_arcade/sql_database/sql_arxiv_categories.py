@@ -4,7 +4,7 @@ import psycopg2
 import psycopg2.extras
 import pandas as pd
 import json
-
+from typing import Optional
 
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -123,10 +123,10 @@ class SQLArxivCategory:
         finally:
             conn.close()
 
-    def get_category_by_id(self, id: int, return_all: bool = False):
+    def get_category_by_id(self, id: int, return_all: bool = False)-> Optional[pd.DataFrame]:
         """
-        If return_all=False: returns a single tuple (id, name, description)
-        If return_all=True: returns a list of such tuples.
+        If return_all=False: returns a single df (id, name, description)
+        If return_all=True: returns a list of such df's.
         Returns None if not found.
         """
         conn = self._get_connection()
@@ -138,7 +138,13 @@ class SQLArxivCategory:
             )
             rows = cur.fetchall() if return_all else cur.fetchone()
             cur.close()
-            return rows if rows else None
+            if rows is not None:
+                if return_all:
+                    return pd.DataFrame(rows, columns=['id', 'name', 'description'])
+                else:
+                    return pd.DataFrame([rows], columns=['id', 'name', 'description'])
+            else:
+                return None
         finally:
             conn.close()
 

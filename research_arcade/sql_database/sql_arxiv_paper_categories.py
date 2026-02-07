@@ -2,6 +2,7 @@ import psycopg2
 import psycopg2.extras
 import pandas as pd
 import json
+from typing import Optional
 
 import sys
 import os
@@ -119,7 +120,7 @@ class SQLArxivPaperCategory:
         finally:
             conn.close()
 
-    def get_paper_neighboring_categories(self, paper_arxiv_id: str):
+    def get_paper_neighboring_categories(self, paper_arxiv_id: str) -> Optional[pd.DataFrame]:
         """
         Get all categories for a given paper.
         """
@@ -136,7 +137,7 @@ class SQLArxivPaperCategory:
             )
             rows = cur.fetchall()
             cur.close()
-            return rows if rows else None
+            return pd.DataFrame(rows, columns=['paper_arxiv_id', 'category_id']) if rows else None
         finally:
             conn.close()
 

@@ -145,11 +145,11 @@ class SQLArxivFigure:
         finally:
             conn.close()
 
-    def get_figure_by_id(self, id: int, return_all: bool = False):
+    def get_figure_by_id(self, id: int, return_all: bool = False) -> Optional[pd.DataFrame]:
         """
-        If return_all=False: returns a single tuple
+        If return_all=False: returns a single df
            (id, paper_arxiv_id, path, caption, label, name)
-        If return_all=True: returns a list of such tuples.
+        If return_all=True: returns a list of such df.
         Returns None if not found.
         """
         conn = self._get_connection()
@@ -162,7 +162,8 @@ class SQLArxivFigure:
             )
             rows = cur.fetchall() if return_all else cur.fetchone()
             cur.close()
-            return rows if rows else None
+            if rows is not None:
+                return pd.DataFrame(rows, columns=['id', 'paper_arxiv_id', 'path', 'caption', 'label', 'name']) if return_all else pd.DataFrame([rows], columns=['id', 'paper_arxiv_id', 'path', 'caption', 'label', 'name'])
         finally:
             conn.close()
 

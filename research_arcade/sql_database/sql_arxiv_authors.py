@@ -5,7 +5,7 @@ from semanticscholar import SemanticScholar
 import os
 import json
 import pandas as pd
-
+from typing import Optional
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from ..arxiv_utils.multi_input.multi_download import MultiDownload
@@ -110,11 +110,11 @@ class SQLArxivAuthors:
         finally:
             conn.close()
 
-    def get_author_by_id(self, id: int, return_all=False):
+    def get_author_by_id(self, id: int, return_all=False) -> Optional[pd.DataFrame]:
         """
         Get an author by its id.
-        - If return_all=False, returns a single row tuple (id, semantic_scholar_id, name, homepage).
-        - If return_all=True, returns all matching rows as a list of tuples.
+        - If return_all=False, returns a single row df (id, semantic_scholar_id, name, homepage).
+        - If return_all=True, returns all matching rows as a list of df's.
         """
         conn = self._get_connection()
         try:
@@ -125,7 +125,13 @@ class SQLArxivAuthors:
             )
             res = cur.fetchall() if return_all else cur.fetchone()
             cur.close()
-            return res if res else None
+            if res is not None:
+                if return_all:
+                    return pd.DataFrame(res, columns=['id', 'semantic_scholar_id', 'name', 'homepage'])
+                else:
+                    return pd.DataFrame([res], columns=['id', 'semantic_scholar_id', 'name', 'homepage'])
+            else:
+                return None
         finally:
             conn.close()
 

@@ -4,6 +4,7 @@ import psycopg2
 import psycopg2.extras
 import pandas as pd
 import json
+from typing import Optional
 
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))

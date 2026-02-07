@@ -2,6 +2,7 @@ import psycopg2
 import psycopg2.extras
 import pandas as pd
 import json
+from typing import Optional
 
 import os
 import sys
@@ -89,7 +90,7 @@ class SQLArxivPaperTable:
         finally:
             conn.close()
 
-    def get_paper_neighboring_tables(self, paper_arxiv_id: str):
+    def get_paper_neighboring_tables(self, paper_arxiv_id: str) -> Optional[pd.DataFrame]:
         """
         Get all tables for a given paper.
         """
@@ -106,7 +107,7 @@ class SQLArxivPaperTable:
             )
             rows = cur.fetchall()
             cur.close()
-            return rows if rows else None
+            return pd.DataFrame(rows, columns=['paper_arxiv_id', 'table_id']) if rows else None
         finally:
             conn.close()
 

@@ -176,9 +176,9 @@ class SQLArxivPapers:
         finally:
             conn.close()
 
-    def get_paper_by_id(self, arxiv_id: str):
+    def get_paper_by_id(self, arxiv_id: str) -> Optional[pd.DataFrame]:
         """
-        Get a paper by its arxiv_id. Returns a single tuple or None if not found.
+        Get a paper by its arxiv_id. Returns a single df or None if not found.
         (Named to match CSV version's get_paper_by_id)
         """
         conn = self._get_connection()
@@ -191,7 +191,10 @@ class SQLArxivPapers:
             )
             row = cur.fetchone()
             cur.close()
-            return row if row else None
+            if row is not None:
+                return pd.DataFrame([row], columns=['id', 'arxiv_id', 'base_arxiv_id', 'version', 'title', 'abstract', 'submit_date', 'metadata'])
+            else:                
+                return None
         finally:
             conn.close()
 

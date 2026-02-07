@@ -4,6 +4,7 @@ import psycopg2
 import psycopg2.extras
 import pandas as pd
 import json
+from typing import Optional
 
 class SQLArxivParagraphTable:
     def __init__(self, host: str, dbname: str, user: str, password: str, port: str):

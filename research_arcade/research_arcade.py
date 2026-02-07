@@ -1,6 +1,7 @@
 import json
 from pathlib import Path
 from typing import Dict, Tuple
+from unicodedata import category
 
 # OpenReview CSV 
 from .csv_database import (
@@ -295,7 +296,7 @@ class ResearchArcade:
             return self.arxiv_citation.insert_citation(**edge_features)
         elif table == 'arxiv_paper_author':
             return self.arxiv_paper_author.insert_paper_author(**edge_features)
-        elif table == 'arxiv_paper_category':
+        elif table == 'arxiv_paper_categories':
             return self.arxiv_paper_category.insert_paper_category(**edge_features)
         elif table == 'arxiv_paper_figure':
             return self.arxiv_paper_figure.insert_paper_figure(**edge_features)
@@ -388,7 +389,7 @@ class ResearchArcade:
             else:
                 print("For arxiv_paper_author, primary key should include 'paper_id' and/or 'author_id'.")
                 return None
-        elif table == 'arxiv_paper_category':
+        elif table == 'arxiv_paper_categories':
             # Expect keys: 'paper_id' and/or 'category_id'
             if "paper_arxiv_id" in primary_key and "category_id" in primary_key:
                 return self.arxiv_paper_category.delete_paper_category_by_id(**primary_key)
@@ -488,7 +489,7 @@ class ResearchArcade:
             return self.arxiv_citation.get_all_citations()
         elif table == 'arxiv_paper_author':
             return self.arxiv_paper_author.get_all_paper_authors()
-        elif table == 'arxiv_paper_category':
+        elif table == 'arxiv_paper_categories':
             return self.arxiv_paper_category.get_all_paper_categories()
         elif table == 'arxiv_paper_figure':
             return self.arxiv_paper_figure.get_all_paper_figures()
@@ -566,8 +567,9 @@ class ResearchArcade:
             else:
                 print("For arxiv_paper_author, provide 'paper_id' or 'author_id'.")
                 return None
-        elif table == 'arxiv_paper_category':
+        elif table == 'arxiv_paper_categories':
             if "paper_arxiv_id" in primary_key:
+                print("Getting neighboring categories for paper_id:", primary_key["paper_arxiv_id"])
                 return self.arxiv_paper_category.get_paper_neighboring_categories(**primary_key)
             elif "category_id" in primary_key:
                 return self.arxiv_paper_category.get_category_neighboring_papers(**primary_key)
@@ -662,7 +664,7 @@ class ResearchArcade:
         
         # Edge table mapping: (source_table, target_table) -> edge_table_name
         edge_table_mapping = self.get_edge_table_mappings()
-        
+
         # BFS state: track current frontier as (table_name, node_id) tuples
         current_frontier = [(table, node_id)]
         visited = {(table, node_id)}  # Avoid revisiting nodes
@@ -673,7 +675,7 @@ class ResearchArcade:
         current_hop = 0
         while current_hop < k and current_frontier:
             next_frontier = []
-            
+            print(f"Current hop: {current_hop}, Frontier: {current_frontier}")
             # Process each node in the current frontier
             for source_table, source_id in current_frontier:
                 
@@ -692,30 +694,33 @@ class ResearchArcade:
                     edge_table_key = (source_table, target_table)
                     reverse_edge_key = (target_table, source_table)
                     
+                    target_col = f"category_id"
                     # Check both directions for edge table
                     if edge_table_key in edge_table_mapping:
-                        edge_table_name = edge_table_mapping[edge_table_key]
-                        source_col = f"{source_table}_id"
-                        target_col = f"{target_table}_id"
+                        edge_table_mapping = edge_table_mapping[edge_table_key]
                     elif reverse_edge_key in edge_table_mapping:
-                        edge_table_name = edge_table_mapping[reverse_edge_key]
-                        source_col = f"{source_table}_id"
-                        target_col = f"{target_table}_id"
+                        edge_table_mapping = edge_table_mapping[reverse_edge_key]
                     else:
                         print(f"No edge table found for {source_table} <-> {target_table}")
                         continue
-                    
+                    edge_table_name = edge_table_mapping['edge_table']
                     # Get neighboring nodes filtered by source node ID
+                    key = {"paper_arxiv_id": str(source_id)}
+                    print(f"Retrieving neighbors from edge table: {edge_table_name} with key: {key}")
                     neighboring_edges = self.get_neighborhood(
-                        edge_table_name, 
-                        {source_col: source_id}  # Filter by actual source node
+                        table = edge_table_name, 
+                        primary_key = key  # Filter by actual source node
                     )
+                    print(f"Exploring edge table: {edge_table_name} for source {source_table}({source_id}) to target {target_table}")
+                    print(f"Neighboring edges found: {neighboring_edges.shape[0] if neighboring_edges is not None else 0}")
+
                     
                     if neighboring_edges is None or neighboring_edges.empty:
                         continue
                     
                     # Process each neighboring node
                     for _, row in neighboring_edges.iterrows():
+                        print(f"Processing edge row: {row.to_dict()}")
                         neighbor_id = row[target_col]
                         neighbor_key = (target_table, neighbor_id)
                         
@@ -728,7 +733,8 @@ class ResearchArcade:
                         next_frontier.append(neighbor_key)
                         
                         # Get node features
-                        primary_key = {f"{target_table}_id": neighbor_id}
+                        primary_key = {f"id": neighbor_id}
+                        print(f"Retrieving features for {target_table} node {neighbor_id} with primary key: {primary_key}")
                         neighbor_features = self.get_node_features_by_id(target_table, primary_key)
                         
                         if neighbor_features is None or neighbor_features.empty:
@@ -745,8 +751,10 @@ class ResearchArcade:
                         # accumulative=True: store all hops
                         # accumulative=False: only store final hop (k-th hop)
                         if accumulative or (current_hop == k - 1):
+                            print("Now collecting features of table: ", target_table)
+                            print(f"Selected features: {selected_features}")
                             neighbor_features_dict.setdefault(target_table, []).append(selected_features)
-            
+        
             # Move to next hop
             current_frontier = next_frontier
             current_hop += 1
@@ -911,7 +919,7 @@ class ResearchArcade:
             self.arxiv_citation.construct_table_from_csv(**config)
         elif table == "arxiv_paper_author":
             self.arxiv_paper_author.construct_table_from_csv(**config)
-        elif table == "arxiv_paper_category":
+        elif table == "arxiv_paper_categories":
             self.arxiv_paper_category.construct_table_from_csv(**config)
         elif table == "arxiv_paper_figure":
             self.arxiv_paper_figure.construct_table_from_csv(**config)
@@ -970,7 +978,7 @@ class ResearchArcade:
             self.arxiv_citation.construct_table_from_json(**config)
         elif table == "arxiv_paper_author":
             self.arxiv_paper_author.construct_table_from_json(**config)
-        elif table == "arxiv_paper_category":
+        elif table == "arxiv_paper_categories":
             self.arxiv_paper_category.construct_table_from_json(**config)
         elif table == "arxiv_paper_figure":
             self.arxiv_paper_figure.construct_table_from_json(**config)

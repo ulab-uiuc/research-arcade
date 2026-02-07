@@ -140,11 +140,11 @@ class SQLArxivSections:
         finally:
             conn.close()
 
-    def get_section_by_id(self, id: int, return_all: bool = False):
+    def get_section_by_id(self, id: int, return_all: bool = False)-> Optional[pd.DataFrame]:
         """
-        If return_all=False: returns a single tuple
+        If return_all=False: returns a single df
            (id, content, title, appendix, paper_arxiv_id)
-        If return_all=True: returns a list of such tuples.
+        If return_all=True: returns a list of such df.
         Returns None if no row found.
         """
         conn = self._get_connection()
@@ -156,7 +156,13 @@ class SQLArxivSections:
             )
             rows = cur.fetchall() if return_all else cur.fetchone()
             cur.close()
-            return rows if rows else None
+            if rows is not None:
+                if return_all:
+                    return pd.DataFrame(rows, columns=['id', 'content', 'title', 'appendix', 'paper_arxiv_id'])
+                else:
+                    return pd.DataFrame([rows], columns=['id', 'content', 'title', 'appendix', 'paper_arxiv_id'])
+            else:
+                return None
         finally:
             conn.close()
 

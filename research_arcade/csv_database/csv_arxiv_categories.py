@@ -220,7 +220,7 @@ class CSVArxivCategory:
             if external_df.empty:
                 print("No new categories to import (all categories already exist)")
                 return True
-
+            
             external_df = external_df[['id', 'name', 'description']]
 
             combined_df = pd.concat([current_df, external_df], ignore_index=True)

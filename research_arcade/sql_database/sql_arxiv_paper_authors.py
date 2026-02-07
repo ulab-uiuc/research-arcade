@@ -2,7 +2,7 @@ import psycopg2
 import psycopg2.extras
 import pandas as pd
 import json
-
+from typing import Optional
 import os
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -90,7 +90,7 @@ class SQLArxivPaperAuthor:
         finally:
             conn.close()
 
-    def get_paper_neighboring_authors(self, paper_arxiv_id: str):
+    def get_paper_neighboring_authors(self, paper_arxiv_id: str) -> Optional[pd.DataFrame]:
         """
         Get all authors for a given paper, ordered by author_sequence.
         """
@@ -108,7 +108,7 @@ class SQLArxivPaperAuthor:
             )
             rows = cur.fetchall()
             cur.close()
-            return rows if rows else None
+            return pd.DataFrame(rows, columns=['paper_arxiv_id', 'author_id', 'author_sequence', 'author_name']) if rows else None
         finally:
             conn.close()
 

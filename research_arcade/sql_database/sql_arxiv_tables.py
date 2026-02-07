@@ -129,11 +129,11 @@ class SQLArxivTable:
         finally:
             conn.close()
 
-    def get_table_by_id(self, id: int, return_all: bool = False):
+    def get_table_by_id(self, id: int, return_all: bool = False)-> Optional[pd.DataFrame]:
         """
-        If return_all=False: returns a single tuple
+        If return_all=False: returns a single df
            (id, paper_arxiv_id, path, caption, label, table_text)
-        If return_all=True: returns a list of such tuples.
+        If return_all=True: returns a list of such df's.
         Returns None if no row found.
         """
         conn = self._get_connection()
@@ -145,7 +145,13 @@ class SQLArxivTable:
             )
             rows = cur.fetchall() if return_all else cur.fetchone()
             cur.close()
-            return rows if rows else None
+            if rows is not None:
+                if return_all:
+                    return pd.DataFrame(rows, columns=['id', 'paper_arxiv_id', 'path', 'caption', 'label', 'table_text'])
+                else:
+                    return pd.DataFrame([rows], columns=['id', 'paper_arxiv_id', 'path', 'caption', 'label', 'table_text'])
+            else:
+                return None
         finally:
             conn.close()
 
