@@ -19,6 +19,7 @@ class SQLArxivEquation:
         self.password = password
         self.port = port
         self.autocommit = True
+        self.create_equations_table()
         
     def _get_connection(self):
         conn = psycopg2.connect(
@@ -190,7 +191,7 @@ class SQLArxivEquation:
     # -------------------------
     # Bulk import from CSV
     # -------------------------
-    def construct_equations_table_from_csv(self, csv_file: str) -> bool:
+    def construct_equations_table_from_csv(self, csv_file: str, dest_dir=None) -> bool:
         """
         Imports rows from a CSV with columns:
           ['paper_arxiv_id', 'label', 'equation_text']

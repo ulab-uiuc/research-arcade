@@ -149,7 +149,7 @@ class CSVArxivParagraphTable:
 
 
 
-    def construct_table_from_csv(self, csv_file):
+    def construct_table_from_csv(self, csv_file, dest_dir=None):
         """
         Construct the paragraph-table relationships from an external CSV file.
         

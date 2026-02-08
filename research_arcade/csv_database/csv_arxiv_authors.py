@@ -161,7 +161,7 @@ class CSVArxivAuthors:
         
         return df.copy()
 
-    def construct_authors_table_from_api(self, arxiv_ids, dest_dir):
+    def construct_authors_table_from_api(self, arxiv_ids, dest_dir=None):
         """
         Given arxiv ids, find the semantic scholar ids and pages of the authors
         """

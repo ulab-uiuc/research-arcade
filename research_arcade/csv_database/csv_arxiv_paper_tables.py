@@ -165,7 +165,7 @@ class CSVArxivPaperTable:
         return matched_rows.iloc[0]['id'] if len(matched_rows) > 0 else None
 
 
-    def construct_table_from_csv(self, csv_file):
+    def construct_table_from_csv(self, csv_file,dest_dir=None):
         """
         Construct the paper-table relationships from an external CSV file.
         

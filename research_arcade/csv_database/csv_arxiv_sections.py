@@ -150,7 +150,7 @@ class CSVArxivSections:
         
         return id in df['id'].values
     
-    def construct_sections_table_from_csv(self, csv_file: str):
+    def construct_sections_table_from_csv(self, csv_file: str, dest_dir=None):
         """
         Construct the sections table from an external CSV file.
         Assumes the CSV has compatible columns or can be mapped to the sections schema.

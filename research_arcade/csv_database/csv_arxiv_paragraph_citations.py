@@ -50,7 +50,7 @@ class CSVArxivParagraphCitation:
         df.to_csv(self.csv_path, index=False)
 
 
-    def construct_table_from_csv(self, csv_file: str) -> bool:
+    def construct_table_from_csv(self, csv_file: str, dest_dir=None) -> bool:
 
         if not os.path.exists(csv_file):
             print(f"Error: CSV file {csv_file} does not exist.")

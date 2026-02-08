@@ -69,7 +69,7 @@ class SQLArxivParagraphCitation:
 
     # ==================== CONSTRUCT TABLE METHODS ====================
 
-    def construct_table_from_csv(self, csv_file: str) -> bool:
+    def construct_table_from_csv(self, csv_file: str, dest_dir=None) -> bool:
         """
         Construct the paragraph-citation relationships from an external CSV file.
         

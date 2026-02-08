@@ -14,6 +14,7 @@ class SQLArxivParagraphFigure:
         self.password = password
         self.port = port
         self.autocommit = True
+        self.create_paragraph_figures_table()
 
     def _get_connection(self):
         conn = psycopg2.connect(
@@ -91,7 +92,7 @@ class SQLArxivParagraphFigure:
         finally:
             conn.close()
 
-    def construct_paragraph_figures_table_from_api(self, arxiv_ids):
+    def construct_paragraph_figures_table_from_api(self, arxiv_ids, dest_dir=None):
         """
         Translates the logic from the CSV version to SQL. 
         Matches existing references of type 'figure' to their corresponding figure and section nodes.

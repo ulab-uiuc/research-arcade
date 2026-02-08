@@ -317,7 +317,7 @@ class CSVArxivParagraphs:
             self.insert_paragraph(paragraph_id=id_zero_based, content=content, paper_arxiv_id=paper_arxiv_id, paper_section=paper_section)
 
 
-    def construct_table_from_csv(self, csv_file):
+    def construct_table_from_csv(self, csv_file, dest_dir=None):
         """
         Construct the paragraphs table from an external CSV file.
         

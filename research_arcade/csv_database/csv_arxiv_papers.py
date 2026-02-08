@@ -180,7 +180,7 @@ class CSVArxivPapers:
         
         return arxiv_id in df['arxiv_id'].values
     
-    def construct_papers_table_from_csv(self, csv_file: str):
+    def construct_papers_table_from_csv(self, csv_file: str, dest_dir=None):
         """
         Construct the papers table from an external CSV file.
         Assumes the CSV has compatible columns or can be mapped to the papers schema.

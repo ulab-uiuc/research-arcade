@@ -14,6 +14,7 @@ class SQLArxivParagraphTable:
         self.password = password
         self.port = port
         self.autocommit = True
+        self.create_paragraph_tables_table()
 
     def _get_connection(self):
         conn = psycopg2.connect(
@@ -82,7 +83,7 @@ class SQLArxivParagraphTable:
         finally:
             conn.close()
 
-    def construct_paragraph_tables_table_from_api(self, arxiv_ids):
+    def construct_paragraph_tables_table_from_api(self, arxiv_ids, dest_dir=None):
         """
         Matches existing references of type 'table' to their corresponding table and section nodes.
         """

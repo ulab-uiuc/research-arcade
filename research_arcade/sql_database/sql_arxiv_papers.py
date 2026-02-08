@@ -271,7 +271,7 @@ class SQLArxivPapers:
     # -------------------------
     # Bulk import from CSV
     # -------------------------
-    def construct_papers_table_from_csv(self, csv_file: str) -> bool:
+    def construct_papers_table_from_csv(self, csv_file: str, dest_dir=None) -> bool:
         """
         Imports rows from a CSV with required columns:
           ['arxiv_id', 'base_arxiv_id', 'version', 'title']

@@ -40,6 +40,8 @@ class CSVArxivCitation:
     
     def _save_data(self, df): 
         df.to_csv(self.csv_path, index=False)
+    
+    
 
     def insert_citation(self, citing_arxiv_id, cited_arxiv_id, bib_title, bib_key, citing_sections=None):
 
@@ -245,7 +247,7 @@ class CSVArxivCitation:
 
 
 
-    def construct_table_from_csv(self, csv_file):
+    def construct_table_from_csv(self, csv_file, dest_dir=None):
         """
         Construct the citations table from an external CSV file.
         

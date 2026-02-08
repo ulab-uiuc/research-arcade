@@ -19,6 +19,7 @@ class SQLArxivParagraphReference:
         self.password = password
         self.port = port
         self.autocommit = True
+        self.create_paragraph_references_table()
 
     def _get_connection(self):
         conn = psycopg2.connect(
@@ -270,7 +271,7 @@ class SQLArxivParagraphReference:
     # -------------------------
     # Bulk import from CSV
     # -------------------------
-    def construct_paragraph_references_table_from_csv(self, csv_file: str) -> bool:
+    def construct_paragraph_references_table_from_csv(self, csv_file: str, dest_dir=None) -> bool:
         """
         Imports rows from a CSV with columns:
             ['paragraph_id', 'paper_section', 'paper_arxiv_id', 'reference_label', 'reference_type']

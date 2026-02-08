@@ -17,6 +17,7 @@ class SQLArxivPaperCategory:
         self.password = password
         self.port = port
         self.autocommit = True
+        self.create_paper_category_table()
 
     def _get_connection(self):
         conn = psycopg2.connect(
@@ -219,7 +220,7 @@ class SQLArxivPaperCategory:
         finally:
             conn.close()
 
-    def construct_table_from_csv(self, csv_file):
+    def construct_table_from_csv(self, csv_file, dest_dir=None):
         """
         Construct the paper-category relationships from an external CSV file.
         

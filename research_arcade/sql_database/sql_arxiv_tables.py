@@ -19,6 +19,7 @@ class SQLArxivTable:
         self.password = password
         self.port = port
         self.autocommit = True
+        self.create_tables_table()
         
     def _get_connection(self):
         conn = psycopg2.connect(
@@ -198,7 +199,7 @@ class SQLArxivTable:
     # -------------------------
     # Bulk import from CSV
     # -------------------------
-    def construct_tables_table_from_csv(self, csv_file: str) -> bool:
+    def construct_tables_table_from_csv(self, csv_file: str, dest_dir=None) -> bool:
         """
         Imports rows from a CSV with columns:
           ['paper_arxiv_id', 'path', 'caption', 'label', 'table_text']

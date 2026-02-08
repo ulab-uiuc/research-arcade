@@ -136,7 +136,7 @@ class CSVArxivEquation:
         
         return df.copy()
 
-    def construct_equations_table_from_api(self, arxiv_ids, dest_dir):
+    def construct_equations_table_from_api(self, arxiv_ids, dest_dir=None):
         # Check if papers already exists in the directory
         md = MultiDownload()
         downloaded_paper_ids = []

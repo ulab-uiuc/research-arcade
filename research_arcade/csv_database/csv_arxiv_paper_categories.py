@@ -164,7 +164,7 @@ class CSVArxivPaperCategory:
 
 
 
-    def construct_table_from_csv(self, csv_file):
+    def construct_table_from_csv(self, csv_file, dest_dir=None):
         """
         Construct the paper-category relationships from an external CSV file.
         

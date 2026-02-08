@@ -1033,6 +1033,7 @@ class ResearchArcade:
         self.arxiv_sections.construct_sections_table_from_api(**config)
         self.arxiv_authors.construct_authors_table_from_api(**config)
         self.arxiv_categories.construct_category_table_from_api(**config)
+        self.arxiv_equations.construct_equations_table_from_api(**config)
         self.arxiv_figures.construct_figures_table_from_api(**config)
         self.arxiv_tables.construct_tables_table_from_api(**config)
         self.arxiv_categories.construct_category_table_from_api(**config)
@@ -1057,7 +1058,7 @@ class ResearchArcade:
         self.openreview_papers_authors.construct_papers_authors_table_from_api(config)
         self.openreview_papers_reviews.construct_papers_reviews_table_from_api(config)
         self.openreview_papers_revisions.construct_papers_revisions_table_from_api(config)
-        #
+
         papers_reviews_df = self.get_all_edge_features("openreview_papers_reviews")
         papers_revisions_df = self.get_all_edge_features("openreview_papers_revisions")
         new_config = {"papers_reviews_df": papers_reviews_df, "papers_revisions_df": papers_revisions_df}
@@ -1079,6 +1080,8 @@ class ResearchArcade:
             return self.arxiv_authors.sample_authors(sample_size)
         elif table_name == "arxiv_categories":
             return self.arxiv_categories.sample_categories(sample_size)
+        elif table_name == "arxiv_equations":
+            return self.arxiv_equations.sample_equations(sample_size)
         elif table_name == "arxiv_figures":
             return self.arxiv_figures.sample_figures(sample_size)
         elif table_name == "arxiv_tables":

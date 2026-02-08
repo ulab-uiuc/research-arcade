@@ -351,7 +351,7 @@ class SQLArxivCitation:
     # -------------------------
     # Bulk import from CSV
     # -------------------------
-    def construct_citation_table_from_csv(self, csv_file: str) -> bool:
+    def construct_citation_table_from_csv(self, csv_file: str, dest_dir=None) -> bool:
         """
         Imports rows from a CSV with columns:
           ['citing_arxiv_id', 'cited_arxiv_id', 'bib_title', 'bib_key', 

@@ -122,7 +122,7 @@ class CSVArxivFigure:
         
         return id in df['id'].values
 
-    def construct_figure_table_from_csv(self, csv_file: str):
+    def construct_figure_table_from_csv(self, csv_file: str, dest_dir=None):
         if not os.path.exists(csv_file):
             print(f"Error: CSV file {csv_file} does not exist.")
             return False

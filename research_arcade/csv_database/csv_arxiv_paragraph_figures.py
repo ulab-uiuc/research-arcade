@@ -146,7 +146,7 @@ class CSVArxivParagraphFigure:
         return count
 
 
-    def construct_table_from_csv(self, csv_file):
+    def construct_table_from_csv(self, csv_file, dest_dir=None):
         """
         Construct the paragraph-figure relationships from an external CSV file.
         

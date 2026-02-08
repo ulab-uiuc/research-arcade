@@ -108,7 +108,7 @@ class CSVArxivCategory:
         
         return id in df['id'].values
 
-
+    
 
     def construct_category_table_from_csv(self, csv_file: str):
         """
@@ -154,12 +154,12 @@ class CSVArxivCategory:
         
         return df.copy()
 
-    def construct_category_table_from_api(self, arxiv_ids, dest_dir):
+    def construct_category_table_from_api(self, arxiv_ids, dest_dir=None):
         
         downloaded_paper_ids = []
         for arxiv_id in arxiv_ids:
             paper_dir = f"{dest_dir}/{arxiv_id}/{arxiv_id}_metadata.json"
-
+            
             if not os.path.exists(paper_dir):
                 downloaded_paper_ids.append(arxiv_id)
 

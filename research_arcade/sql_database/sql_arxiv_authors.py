@@ -20,6 +20,7 @@ class SQLArxivAuthors:
         self.password = password
         self.port = port
         self.autocommit = True
+        self.create_authors_table()
 
     def _get_connection(self):
         conn = psycopg2.connect(
@@ -159,7 +160,7 @@ class SQLArxivAuthors:
         finally:
             conn.close()
 
-    def construct_authors_table_from_api(self, arxiv_ids, dest_dir):
+    def construct_authors_table_from_api(self, arxiv_ids, dest_dir=None):
         """
         Given arxiv ids, find the semantic scholar ids and pages of the authors
         """

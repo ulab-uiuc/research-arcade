@@ -232,7 +232,7 @@ class SQLArxivSections:
     # -------------------------
     # Bulk import from CSV
     # -------------------------
-    def construct_sections_table_from_csv(self, csv_file: str) -> bool:
+    def construct_sections_table_from_csv(self, csv_file: str, dest_dir=None) -> bool:
         """
         Imports rows from a CSV with columns:
           ['content', 'title', 'appendix', 'paper_arxiv_id']

@@ -21,6 +21,7 @@ class SQLArxivCategory:
         self.password = password
         self.port = port
         self.autocommit = True
+        self.create_categories_table
 
     def _get_connection(self):
         conn = psycopg2.connect(
@@ -197,7 +198,7 @@ class SQLArxivCategory:
         finally:
             conn.close()
 
-    def construct_category_table_from_api(self, arxiv_ids, dest_dir):
+    def construct_category_table_from_api(self, arxiv_ids, dest_dir=None):
         """
         Construct categories from arXiv API by downloading papers and extracting their categories.
         """
