@@ -1027,7 +1027,7 @@ class ResearchArcade:
 
 
     def construct_tables_from_arxiv_ids(self, config: dict) -> Optional[pd.DataFrame]:
-
+        
         # Use sequential construction
         self.arxiv_papers.construct_papers_table_from_api(**config)
         self.arxiv_sections.construct_sections_table_from_api(**config)

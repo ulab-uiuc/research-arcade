@@ -7,6 +7,8 @@ import json
 from typing import Optional
 
 import sys
+
+from research_arcade.research_arcade.arxiv_utils.get_paragraph_global_id import get_paragraph_global_id_sql
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from ..arxiv_utils.utils import get_paragraph_num, arxiv_ids_hashing
 
@@ -49,7 +51,8 @@ class SQLArxivParagraphReference:
                     paper_section VARCHAR(255) NOT NULL,
                     paper_arxiv_id VARCHAR(100) NOT NULL,
                     reference_label VARCHAR(255),
-                    reference_type VARCHAR(100)
+                    reference_type VARCHAR(100),
+                    paragraph_global_id INTEGER NOT NULL
                 )
             """)
             cur.close()
@@ -59,21 +62,28 @@ class SQLArxivParagraphReference:
     # -------------------------
     # CRUD
     # -------------------------
-    def insert_paragraph_reference(self, paragraph_id, paper_section, paper_arxiv_id, reference_label, reference_type) -> Optional[int]:
+    def insert_paragraph_reference(self, paragraph_id, paper_section, paper_arxiv_id, reference_label, reference_type, paragraph_global_id=None) -> Optional[int]:
         """
         Insert a paragraph reference. Returns generated id.
         """
         conn = self._get_connection()
         try:
             cur = conn.cursor()
+            if paragraph_global_id is None:
+                paragraph_global_id = get_paragraph_global_id_sql(
+                    conn=conn,
+                    paper_arxiv_id=paper_arxiv_id,
+                    paper_section_id=paper_section,
+                    paragraph_id=paragraph_id
+                )
             cur.execute(
                 """
                 INSERT INTO arxiv_paragraph_references
-                (paragraph_id, paper_section, paper_arxiv_id, reference_label, reference_type)
-                VALUES (%s, %s, %s, %s, %s)
+                (paragraph_id, paper_section, paper_arxiv_id, reference_label, reference_type, paragraph_global_id)
+                VALUES (%s, %s, %s, %s, %s, %s)
                 RETURNING id
                 """,
-                (paragraph_id, paper_section, paper_arxiv_id, reference_label, reference_type)
+                (paragraph_id, paper_section, paper_arxiv_id, reference_label, reference_type, paragraph_global_id)
             )
             res = cur.fetchone()
             cur.close()
@@ -471,11 +481,16 @@ class SQLArxivParagraphReference:
                 # Determine reference type - match CSV version prefixes
                 is_figure = ref_label.startswith("fig")
                 is_table = ref_label.startswith("tab")
+                is_equation = ref_label.startswith("eq")
                 
                 if is_figure:
                     ref_type = 'figure'
                 elif is_table:
                     ref_type = 'table'
+                elif is_equation:
+                    ref_type = 'equation'
+                else:
+                    ref_type = 'other'
                 
                 # Add to bulk insert list
                 rows.append((

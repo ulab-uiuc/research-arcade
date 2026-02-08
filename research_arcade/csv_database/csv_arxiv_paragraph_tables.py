@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Optional
 import json
 from ..arxiv_utils.utils import get_paragraph_num
+from ..arxiv_utils.get_paragraph_global_id import get_paragraph_global_id_csv
 
 
 
@@ -23,7 +24,7 @@ class CSVArxivParagraphTable:
     def create_paragraph_tables_table(self):
         df = pd.DataFrame(columns=[
             'id', 'paragraph_id', 'table_id',
-            'paper_arxiv_id', 'paper_section_id'
+            'paper_arxiv_id', 'paper_section_id', 'paragraph_global_id'
         ])
         df.to_csv(self.csv_path, index=False)
         print(f"Created paragraph_tables CSV at {self.csv_path}")
@@ -42,13 +43,23 @@ class CSVArxivParagraphTable:
     def _save_data(self, df): 
         df.to_csv(self.csv_path, index=False)
 
-    def insert_paragraph_table_table(self, paragraph_id, table_id, paper_arxiv_id, paper_section_id):
+    def insert_paragraph_table_table(self, paragraph_id, table_id, paper_arxiv_id, paper_section_id, paragraph_global_id=None) -> Optional[int]:
         df = self._load_data()
         new_id = df['id'].max() + 1 if not df.empty else 1
+
+        if paragraph_global_id is None:
+            paragraph_global_id = get_paragraph_global_id_csv(
+                csv_dir=self.csv_dir,
+                paper_arxiv_id=paper_arxiv_id,
+                paper_section_id=paper_section_id,
+                paragraph_id=paragraph_id
+            )
+
         new_row = pd.DataFrame([{
             'id': new_id, 'paragraph_id': paragraph_id,
             'table_id': table_id, 'paper_arxiv_id': paper_arxiv_id,
-            'paper_section_id': paper_section_id
+            'paper_section_id': paper_section_id,
+            'paragraph_global_id': paragraph_global_id
         }])
         df = pd.concat([df, new_row], ignore_index=True)
         self._save_data(df)

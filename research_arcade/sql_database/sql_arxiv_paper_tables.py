@@ -8,7 +8,7 @@ import os
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from typing import Optional
-
+from research_arcade.research_arcade.arxiv_utils.get_paragraph_global_id import get_paragraph_global_id_sql
 
 class SQLArxivPaperTable:
     def __init__(self, host: str, dbname: str, user: str, password: str, port: str):

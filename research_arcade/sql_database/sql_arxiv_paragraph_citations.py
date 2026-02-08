@@ -7,6 +7,7 @@ import pandas as pd
 import json
 from rapidfuzz import fuzz, process
 from collections import defaultdict
+from research_arcade.research_arcade.arxiv_utils.get_paragraph_global_id import get_paragraph_global_id_sql
 from semanticscholar import SemanticScholar
 from dotenv import load_dotenv
 from pathlib import Path
@@ -59,7 +60,7 @@ class SQLArxivParagraphCitation:
                     citing_arxiv_id VARCHAR(100) NOT NULL,
                     bib_key VARCHAR(255),
                     cited_arxiv_id VARCHAR(100),
-                    paragraph_global_id INTEGER,
+                    paragraph_global_id INTEGER NOT NULL,
                     bib_title TEXT
                 )
             """)
@@ -283,6 +284,13 @@ class SQLArxivParagraphCitation:
         conn = self._get_connection()
         try:
             cur = conn.cursor()
+            if paragraph_global_id is None:
+                paragraph_global_id = get_paragraph_global_id_sql(
+                    conn=conn,
+                    paper_arxiv_id=citing_arxiv_id,
+                    paper_section_id=paper_section,
+                    paragraph_id=paragraph_id
+                )
             cur.execute(
                 """
                 INSERT INTO arxiv_paragraph_citations 

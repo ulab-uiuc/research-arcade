@@ -5,6 +5,7 @@ import psycopg2.extras
 import pandas as pd
 import json
 from typing import Optional
+from ..arxiv_utils.get_paragraph_global_id import get_paragraph_global_id_sql
 
 class SQLArxivParagraphTable:
     def __init__(self, host: str, dbname: str, user: str, password: str, port: str):
@@ -37,25 +38,33 @@ class SQLArxivParagraphTable:
                     paragraph_id INTEGER NOT NULL,
                     table_id INTEGER NOT NULL,
                     paper_arxiv_id VARCHAR(100) NOT NULL,
-                    paper_section_id INTEGER NOT NULL
+                    paper_section_id INTEGER NOT NULL,
+                    paragraph_global_id INTEGER NOT NULL
                 )
             """)
             cur.close()
         finally:
             conn.close()
 
-    def insert_paragraph_table_table(self, paragraph_id, table_id, paper_arxiv_id, paper_section_id) -> Optional[int]:
+    def insert_paragraph_table_table(self, paragraph_id, table_id, paper_arxiv_id, paper_section_id, paragraph_global_id=None) -> Optional[int]:
         conn = self._get_connection()
         try:
             cur = conn.cursor()
+            if paragraph_global_id is None:
+                paragraph_global_id = get_paragraph_global_id_sql(
+                    conn=conn,
+                    paper_arxiv_id=paper_arxiv_id,
+                    paper_section_id=paper_section_id,
+                    paragraph_id=paragraph_id
+                )
             cur.execute(
                 """
                 INSERT INTO arxiv_paragraph_tables
-                (paragraph_id, table_id, paper_arxiv_id, paper_section_id)
-                VALUES (%s, %s, %s, %s)
+                (paragraph_id, table_id, paper_arxiv_id, paper_section_id, paragraph_global_id)
+                VALUES (%s, %s, %s, %s, %s)
                 RETURNING id
                 """,
-                (paragraph_id, table_id, paper_arxiv_id, paper_section_id)
+                (paragraph_id, table_id, paper_arxiv_id, paper_section_id, paragraph_global_id)
             )
             res = cur.fetchone()
             cur.close()

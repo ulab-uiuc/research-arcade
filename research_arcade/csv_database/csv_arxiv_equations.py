@@ -145,7 +145,7 @@ class CSVArxivEquation:
 
             if not os.path.exists(paper_dir):
                 downloaded_paper_ids.append(arxiv_id)
-
+        
         for arxiv_id in downloaded_paper_ids:
             try:
                 md.download_arxiv(input=arxiv_id, input_type="id", output_type="latex", dest_dir=dest_dir)

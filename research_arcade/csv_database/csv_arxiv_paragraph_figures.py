@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Optional
 import json
 from ..arxiv_utils.utils import get_paragraph_num
+from ..arxiv_utils.get_paragraph_global_id import get_paragraph_global_id_csv
 
 class CSVArxivParagraphFigure:
     def __init__(self, csv_dir: str):
@@ -19,9 +20,10 @@ class CSVArxivParagraphFigure:
             self.create_paragraph_figures_table()
 
     def create_paragraph_figures_table(self):
+        # TODO: search for paragraph_global_id based on 'paragraph_id', 'paper_section_id' and 'paper_arxiv_id' and insert it into the table as well
         df = pd.DataFrame(columns=[
             'id', 'paragraph_id', 'figure_id',
-            'paper_arxiv_id', 'paper_section_id'
+            'paper_arxiv_id', 'paper_section_id', 'paragraph_global_id'
         ])
         df.to_csv(self.csv_path, index=False)
         print(f"Created paragraph_figures CSV at {self.csv_path}")
@@ -40,9 +42,17 @@ class CSVArxivParagraphFigure:
     def _save_data(self, df): 
         df.to_csv(self.csv_path, index=False)
 
-    def insert_paragraph_figure_table(self, paragraph_id, figure_id, paper_arxiv_id, paper_section_id):
+    def insert_paragraph_figure_table(self, paragraph_id, figure_id, paper_arxiv_id, paper_section_id, paragraph_global_id=None):
         df = self._load_data()
         new_id = df['id'].max() + 1 if not df.empty else 1
+        if paragraph_global_id is None:
+            paragraph_global_id = get_paragraph_global_id_csv(
+                csv_dir=self.csv_dir,
+                paper_arxiv_id=paper_arxiv_id,
+                paper_section_id=paper_section_id,
+                paragraph_id=paragraph_id
+            )
+
         new_row = pd.DataFrame([{
             'id': new_id, 'paragraph_id': paragraph_id,
             'figure_id': figure_id, 'paper_arxiv_id': paper_arxiv_id,
