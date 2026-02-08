@@ -269,7 +269,7 @@ class CSVArxivParagraphCitation:
         return True
 
 
-    def get_all_paragraph_references(self) -> Optional[pd.DataFrame]:
+    def get_all_paragraph_citations(self) -> Optional[pd.DataFrame]:
         """Get all paragraph citations."""
         df = self._load_data()
         return None if df.empty else df.copy()

@@ -392,9 +392,9 @@ class SQLArxivParagraphCitation:
 
     # ==================== GET METHODS ====================
 
-    def get_all_paragraph_references(self) -> Optional[pd.DataFrame]:
+    def get_all_paragraph_citations(self) -> Optional[pd.DataFrame]:
         """
-        Get all paragraph references from the database.
+        Get all paragraph citations from the database.
         Returns DataFrame or None if empty.
         """
         conn = self._get_connection()

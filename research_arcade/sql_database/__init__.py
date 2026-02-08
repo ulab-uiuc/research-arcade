@@ -16,6 +16,7 @@ from .sql_openreview_paragraphs import SQLOpenReviewParagraphs
 from .sql_arxiv_authors import SQLArxivAuthors
 from .sql_arxiv_categories import SQLArxivCategory
 from .sql_arxiv_citations import SQLArxivCitation
+from .sql_arxiv_equations import SQLArxivEquation
 from .sql_arxiv_figures import SQLArxivFigure
 from .sql_arxiv_paper_authors import SQLArxivPaperAuthor
 from .sql_arxiv_paper_categories import SQLArxivPaperCategory
@@ -47,6 +48,7 @@ __all__ = [
     'SQLArxivAuthors',
     'SQLArxivCategory',
     'SQLArxivCitation',
+    'SQLArxivEquation',
     'SQLArxivFigure',
     'SQLArxivPaperAuthor',
     'SQLArxivPaperCategory',

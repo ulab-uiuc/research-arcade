@@ -16,6 +16,7 @@ from .csv_openreview_paragraphs import CSVOpenReviewParagraphs
 from .csv_arxiv_authors import CSVArxivAuthors
 from .csv_arxiv_categories import CSVArxivCategory
 from .csv_arxiv_citations import CSVArxivCitation
+from .csv_arxiv_equations import CSVArxivEquation
 from .csv_arxiv_figures import CSVArxivFigure
 from .csv_arxiv_paper_authors import CSVArxivPaperAuthor
 from .csv_arxiv_paper_categories import CSVArxivPaperCategory
@@ -47,6 +48,7 @@ __all__ = [
     'CSVArxivAuthors',
     'CSVArxivCategory',
     'CSVArxivCitation',
+    'CSVArxivEquation',
     'CSVArxivFigure',
     'CSVArxivPaperAuthor',
     'CSVArxivPaperCategory',

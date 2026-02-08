@@ -19,14 +19,14 @@ from .sql_database import (
 )
 # Arxiv CSV
 from .csv_database import (
-    CSVArxivAuthors, CSVArxivCategory, CSVArxivCitation, CSVArxivFigure,
+    CSVArxivAuthors, CSVArxivCategory, CSVArxivCitation, CSVArxivEquation, CSVArxivFigure,
     CSVArxivPaperAuthor, CSVArxivPaperCategory, CSVArxivPaperFigure,
     CSVArxivPaperTable, CSVArxivPapers, CSVArxivParagraphReference,
     CSVArxivParagraphs, CSVArxivSections, CSVArxivTable, CSVArxivParagraphCitation, CSVArxivParagraphFigure, CSVArxivParagraphTable
 )
 # Arxiv SQL
 from .sql_database import (
-    SQLArxivAuthors, SQLArxivCategory, SQLArxivCitation, SQLArxivFigure,
+    SQLArxivAuthors, SQLArxivCategory, SQLArxivCitation, SQLArxivEquation, SQLArxivFigure,
     SQLArxivPaperAuthor, SQLArxivPaperCategory, SQLArxivPaperFigure,
     SQLArxivPaperTable, SQLArxivPapers, SQLArxivParagraphReference,
     SQLArxivParagraphs, SQLArxivSections, SQLArxivTable, SQLArxivParagraphCitation, SQLArxivParagraphFigure, SQLArxivParagraphTable
@@ -57,6 +57,7 @@ class ResearchArcade:
             """
             self.arxiv_authors = CSVArxivAuthors(**config)
             self.arxiv_categories = CSVArxivCategory(**config)
+            self.arxiv_equations = CSVArxivEquation(**config)
             self.arxiv_figures = CSVArxivFigure(**config)
             self.arxiv_tables = CSVArxivTable(**config)
             self.arxiv_papers = CSVArxivPapers(**config)
@@ -94,6 +95,7 @@ class ResearchArcade:
             """
             self.arxiv_authors = SQLArxivAuthors(**config)
             self.arxiv_categories = SQLArxivCategory(**config)
+            self.arxiv_equations = SQLArxivEquation(**config)
             self.arxiv_figures = SQLArxivFigure(**config)
             self.arxiv_tables = SQLArxivTable(**config)
             self.arxiv_papers = SQLArxivPapers(**config)
@@ -150,6 +152,8 @@ class ResearchArcade:
             return self.arxiv_paragraphs.insert_paragraph(**node_features)
         elif table == 'arxiv_sections':
             return self.arxiv_sections.insert_section(**node_features)
+        elif table == 'arxiv_equations':
+            return self.arxiv_equations.insert_equation(**node_features)
         else:
             print(f"Table {table} not found.")
             return None
@@ -181,6 +185,8 @@ class ResearchArcade:
             return self.arxiv_paragraphs.delete_paragraph_by_id(**primary_key)
         elif table == 'arxiv_sections':
             return self.arxiv_sections.delete_section_by_id(**primary_key)
+        elif table == 'arxiv_equations':
+            return self.arxiv_equations.delete_equation_by_id(**primary_key)
         else:
             print(f"Table {table} not found.")
             return None
@@ -210,6 +216,8 @@ class ResearchArcade:
             return self.arxiv_paragraphs.update_paragraph(**node_features)
         elif table == 'arxiv_sections':
             return self.arxiv_sections.update_section(**node_features)
+        elif table == 'arxiv_equations':
+            return self.arxiv_equations.update_equation(**node_features)
         else:
             print(f"Table {table} not found.")
             return None
@@ -241,6 +249,8 @@ class ResearchArcade:
             return self.arxiv_paragraphs.get_paragraph_by_id(**primary_key)
         elif table == 'arxiv_sections':
             return self.arxiv_sections.get_section_by_id(**primary_key)
+        elif table == 'arxiv_equations':
+            return self.arxiv_equations.get_equation_by_id(**primary_key)
 
         else:
             print(f"Table {table} not found.")
@@ -274,6 +284,8 @@ class ResearchArcade:
             return self.arxiv_paragraphs.get_all_paragraphs(is_all_features=True)
         elif table == 'arxiv_sections':
             return self.arxiv_sections.get_all_sections(is_all_features=True)
+        elif table == 'arxiv_equations':
+            return self.arxiv_equations.get_all_equations(is_all_features=True)
         else:
             print(f"Table {table} not found.")
             return None
@@ -502,7 +514,7 @@ class ResearchArcade:
         elif table == 'arxiv_paragraph_table':
             return self.arxiv_paragraph_table.get_all_paragraph_tables()
         elif table == 'arxiv_paragraph_citation':
-            return self.arxiv_paragraph_citation.get_all_paragraph_references()
+            return self.arxiv_paragraph_citation.get_all_paragraph_citations()
         else:
             print(f"Table {table} not found.")
             return None
@@ -694,7 +706,25 @@ class ResearchArcade:
                     edge_table_key = (source_table, target_table)
                     reverse_edge_key = (target_table, source_table)
                     
-                    target_col = f"category_id"
+                    if target_table == "arxiv_categories":
+                        target_col = "category_id"
+                    elif target_table == "arxiv_papers":
+                        target_col = "paper_arxiv_id"
+                        if source_table == "arxiv_papers":
+                            target_col = "cited_arxiv_id"
+                    elif target_table == "arxiv_figures":
+                        target_col = "figure_id"
+                    elif target_table == "arxiv_tables":
+                        target_col = "table_id"
+                    elif target_table == "arxiv_paragraphs":
+                        target_col = "paragraph_global_id"
+                    elif target_table == "arxiv_authors":
+                        target_col = "author_id"
+                    else:
+                        print(f"Unknown target table: {target_table}")
+                        continue
+                    # if target_table == "arxiv_paragraphs":
+                    #     target_col = "paragraph_global_id"
                     # Check both directions for edge table
                     if edge_table_key in edge_table_mapping:
                         edge_table_mapping = edge_table_mapping[edge_table_key]
