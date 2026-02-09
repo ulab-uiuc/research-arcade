@@ -22,6 +22,7 @@ from .csv_arxiv_paper_authors import CSVArxivPaperAuthor
 from .csv_arxiv_paper_categories import CSVArxivPaperCategory
 from .csv_arxiv_paper_figures import CSVArxivPaperFigure
 from .csv_arxiv_paper_tables import CSVArxivPaperTable
+from .csv_arxiv_paper_equations import CSVArxivPaperEquation
 from .csv_arxiv_papers import CSVArxivPapers
 from .csv_arxiv_paragraph_references import CSVArxivParagraphReference
 from .csv_arxiv_paragraphs import CSVArxivParagraphs
@@ -30,6 +31,7 @@ from .csv_arxiv_tables import CSVArxivTable
 from .csv_arxiv_paragraph_citations import CSVArxivParagraphCitation
 from .csv_arxiv_paragraph_figures import CSVArxivParagraphFigure
 from .csv_arxiv_paragraph_tables import CSVArxivParagraphTable
+from .csv_arxiv_paragraph_equations import CSVArxivParagraphEquation
 
 __all__ = [
     # --- OpenReview ---
@@ -52,6 +54,7 @@ __all__ = [
     'CSVArxivFigure',
     'CSVArxivPaperAuthor',
     'CSVArxivPaperCategory',
+    'CSVArxivPaperEquation',
     'CSVArxivPaperFigure',
     'CSVArxivPaperTable',
     'CSVArxivPapers',
@@ -61,5 +64,6 @@ __all__ = [
     'CSVArxivTable',
     'CSVArxivParagraphCitation',
     'CSVArxivParagraphFigure',
-    'CSVArxivParagraphTable'
+    'CSVArxivParagraphTable',
+    'CSVArxivParagraphEquation'
 ]

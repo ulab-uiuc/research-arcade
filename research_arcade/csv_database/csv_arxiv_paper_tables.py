@@ -328,7 +328,7 @@ class CSVArxivPaperTable:
                 table = table_json['tabular']
                 # We don't currently store the table anywhere as a file so the table path is empty
                 path = None
-
+                
                 table_id = self.match_table_id(paper_arxiv_id=arxiv_id, label=label)
                 
                 

@@ -101,21 +101,24 @@ class SQLArxivParagraphTable:
             cur = conn.cursor()
             for arxiv_id in arxiv_ids:
                 cur.execute("""
-                    SELECT paragraph_id, paper_section, reference_label 
+                    SELECT paragraph_id, paper_section, reference_label, paragraph_global_id
                     FROM arxiv_paragraph_references 
                     WHERE paper_arxiv_id = %s AND reference_type = 'table'
                 """, (arxiv_id,))
                 refs = cur.fetchall()
-
-                for para_id_str, section_title, ref_label in refs:
+                
+                for para_id_str, section_title, ref_label, paragraph_global_id in refs:
                     label = f"\\label{{{ref_label}}}"
                     
-                    cur.execute("""
-                        SELECT id FROM arxiv_paragraphs 
-                        WHERE paper_arxiv_id = %s AND paper_section = %s AND paragraph_id = %s
-                    """, (arxiv_id, section_title, para_id_str))
-                    p_res = cur.fetchone()
-                    
+
+                    if paragraph_global_id is None:
+                        cur.execute("""
+                            SELECT id FROM arxiv_paragraphs 
+                            WHERE paper_arxiv_id = %s AND paper_section = %s AND paragraph_id = %s
+                        """, (arxiv_id, section_title, para_id_str))
+                        p_res = cur.fetchone()
+                        paragraph_global_id = p_res[0] if p_res else None
+
                     cur.execute("""
                         SELECT id FROM arxiv_tables 
                         WHERE paper_arxiv_id = %s AND label = %s
@@ -128,8 +131,9 @@ class SQLArxivParagraphTable:
                     """, (arxiv_id, section_title))
                     s_res = cur.fetchone()
 
-                    if p_res and t_res and s_res:
-                        self.insert_paragraph_table_table(p_res[0], t_res[0], arxiv_id, s_res[0])
+                    if paragraph_global_id and t_res and s_res:
+                        self.insert_paragraph_table_table(paragraph_global_id = paragraph_global_id, table_id=t_res[0], paper_arxiv_id=arxiv_id, paper_section_id=s_res[0],
+                        paragraph_id=para_id_str)
             cur.close()
         finally:
             conn.close()

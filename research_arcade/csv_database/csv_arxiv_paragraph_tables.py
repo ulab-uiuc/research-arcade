@@ -323,20 +323,22 @@ class CSVArxivParagraphTable:
                 paragraph_id = para_table['paragraph_id']
                 paper_section = para_table['paper_section']
                 reference_label = para_table['reference_label']
-                
+                paragraph_global_id = para_table['paragraph_global_id']
+                    
                 # Construct label - adjust format based on your actual data
                 label = f"\\label{{{reference_label}}}"
                 
-                # First search for the global paragraph id
-                paragraph_result = df3[(df3['paper_arxiv_id'] == arxiv_id) & 
-                                    (df3['paper_section'] == paper_section) & 
-                                    (df3['paragraph_id'] == paragraph_id)]
-                
-                if paragraph_result.empty:
-                    print(f"Warning: Paragraph not found for arxiv_id={arxiv_id}, section={paper_section}, para_id={paragraph_id}")
-                    continue
-                
-                global_paragraph_id = paragraph_result.iloc[0]['id']
+                if paragraph_global_id is None:
+                    # First search for the global paragraph id
+                    paragraph_result = df3[(df3['paper_arxiv_id'] == arxiv_id) & 
+                                        (df3['paper_section'] == paper_section) & 
+                                        (df3['paragraph_id'] == paragraph_id)]
+                    
+                    if paragraph_result.empty:
+                        print(f"Warning: Paragraph not found for arxiv_id={arxiv_id}, section={paper_section}, para_id={paragraph_id}")
+                        continue
+                    
+                    paragraph_global_id = paragraph_result.iloc[0]['id']
                 
                 # Then we fetch table id
                 table_result = df4[(df4['label'] == label) & (df4['paper_arxiv_id'] == arxiv_id)]
@@ -358,8 +360,9 @@ class CSVArxivParagraphTable:
                 section_id = section_result.iloc[0]['id']
                 
                 self.insert_paragraph_table_table(
-                    paragraph_id=global_paragraph_id, 
+                    paragraph_id=paragraph_id, 
                     table_id=table_id, 
                     paper_arxiv_id=arxiv_id, 
-                    paper_section_id=section_id
+                    paper_section_id=section_id,
+                    paragraph_global_id=paragraph_global_id
                 )

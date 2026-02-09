@@ -20,16 +20,16 @@ from .sql_database import (
 # Arxiv CSV
 from .csv_database import (
     CSVArxivAuthors, CSVArxivCategory, CSVArxivCitation, CSVArxivEquation, CSVArxivFigure,
-    CSVArxivPaperAuthor, CSVArxivPaperCategory, CSVArxivPaperFigure,
+    CSVArxivPaperAuthor, CSVArxivPaperCategory, CSVArxivPaperEquation, CSVArxivPaperFigure,
     CSVArxivPaperTable, CSVArxivPapers, CSVArxivParagraphReference,
-    CSVArxivParagraphs, CSVArxivSections, CSVArxivTable, CSVArxivParagraphCitation, CSVArxivParagraphFigure, CSVArxivParagraphTable
+    CSVArxivParagraphs, CSVArxivSections, CSVArxivTable, CSVArxivParagraphCitation, CSVArxivParagraphFigure, CSVArxivParagraphTable, CSVArxivParagraphEquation
 )
 # Arxiv SQL
 from .sql_database import (
     SQLArxivAuthors, SQLArxivCategory, SQLArxivCitation, SQLArxivEquation, SQLArxivFigure,
-    SQLArxivPaperAuthor, SQLArxivPaperCategory, SQLArxivPaperFigure,
+    SQLArxivPaperAuthor, SQLArxivPaperCategory, SQLArxivPaperEquation, SQLArxivPaperFigure,
     SQLArxivPaperTable, SQLArxivPapers, SQLArxivParagraphReference,
-    SQLArxivParagraphs, SQLArxivSections, SQLArxivTable, SQLArxivParagraphCitation, SQLArxivParagraphFigure, SQLArxivParagraphTable
+    SQLArxivParagraphs, SQLArxivSections, SQLArxivTable, SQLArxivParagraphCitation, SQLArxivParagraphFigure, SQLArxivParagraphTable, SQLArxivParagraphEquation
 )
 
 import os
@@ -66,12 +66,14 @@ class ResearchArcade:
             self.arxiv_citation = CSVArxivCitation(**config)
             self.arxiv_paper_author = CSVArxivPaperAuthor(**config)
             self.arxiv_paper_category = CSVArxivPaperCategory(**config)
+            self.arxiv_paper_equation = CSVArxivPaperEquation(**config)
             self.arxiv_paper_figure = CSVArxivPaperFigure(**config)
             self.arxiv_paper_table = CSVArxivPaperTable(**config)
             self.arxiv_paragraph_reference = CSVArxivParagraphReference(**config)
             self.arxiv_paragraph_citation = CSVArxivParagraphCitation(**config)
             self.arxiv_paragraph_figure = CSVArxivParagraphFigure(**config)
             self.arxiv_paragraph_table = CSVArxivParagraphTable(**config)
+            self.arxiv_paragraph_equation = CSVArxivParagraphEquation(**config)
             
             """
             Below is the openreview dataset
@@ -104,12 +106,14 @@ class ResearchArcade:
             self.arxiv_citation = SQLArxivCitation(**config)
             self.arxiv_paper_author = SQLArxivPaperAuthor(**config)
             self.arxiv_paper_category = SQLArxivPaperCategory(**config)
+            self.arxiv_paper_equation = SQLArxivPaperEquation(**config)
             self.arxiv_paper_figure = SQLArxivPaperFigure(**config)
             self.arxiv_paper_table = SQLArxivPaperTable(**config)
             self.arxiv_paragraph_reference = SQLArxivParagraphReference(**config)
             self.arxiv_paragraph_citation = SQLArxivParagraphCitation(**config)
             self.arxiv_paragraph_figure = SQLArxivParagraphFigure(**config)
             self.arxiv_paragraph_table = SQLArxivParagraphTable(**config)
+            self.arxiv_paragraph_equation = SQLArxivParagraphEquation(**config)
 
             """
             Below is the openreview dataset
@@ -310,6 +314,8 @@ class ResearchArcade:
             return self.arxiv_paper_author.insert_paper_author(**edge_features)
         elif table == 'arxiv_paper_categories':
             return self.arxiv_paper_category.insert_paper_category(**edge_features)
+        elif table == 'arxiv_paper_equation':
+            return self.arxiv_paper_equation.insert_paper_equation(**edge_features)
         elif table == 'arxiv_paper_figure':
             return self.arxiv_paper_figure.insert_paper_figure(**edge_features)
         elif table == 'arxiv_paper_table':
@@ -321,7 +327,9 @@ class ResearchArcade:
         elif table == 'arxiv_paragraph_table':
             return self.arxiv_paragraph_table.insert_paragraph_table_table(**edge_features)
         elif table == 'arxiv_paragraph_citation':
-            return self.arxiv_paragraph_citation.insert_paragraph_reference(**edge_features)
+            return self.arxiv_paragraph_citation.insert_paragraph_citation(**edge_features)
+        elif table == 'arxiv_paragraph_equation':
+            return self.arxiv_paragraph_equation.insert_paragraph_equation_table(**edge_features)
         else:
             print(f"Table {table} not found.")
             return None
@@ -412,6 +420,17 @@ class ResearchArcade:
             else:
                 print("For arxiv_paper_category, primary key should include 'paper_id' and/or 'category_id'.")
                 return None
+        elif table == 'arxiv_paper_equation':
+            # Expect keys: 'paper_id' and/or 'equation_id'
+            if "paper_arxiv_id" in primary_key and "equation_id" in primary_key:
+                return self.arxiv_paper_equation.delete_paper_equation_by_id(**primary_key)
+            elif "paper_arxiv_id" in primary_key:
+                return self.arxiv_paper_equation.delete_paper_equation_by_paper_id(**primary_key)
+            elif "equation_id" in primary_key:
+                return self.arxiv_paper_equation.delete_paper_equation_by_equation_id(**primary_key)
+            else:
+                print("For arxiv_paper_equation, primary key should include 'paper_id' and/or 'equation_id'.")
+                return None
         elif table == 'arxiv_paper_figure':
             # Expect keys: 'paper_id' and/or 'figure_id'
             if "paper_arxiv_id" in primary_key and "figure_id" in primary_key:
@@ -446,7 +465,7 @@ class ResearchArcade:
                 print("For arxiv_paragraph_reference, primary key should include 'paragraph_id' and/or 'reference_id'.")
                 return None
         elif table == 'arxiv_paragraph_figure':
-            # Expect keys: 'paragraph_id' and/or 'reference_id'
+            # Expect keys: 'paragraph_id' and/or 'figure_id'
             if "paragraph_id" in primary_key and "figure_id" in primary_key:
                 return self.arxiv_paragraph_figure.delete_paragraph_figure_by_paragraph_figure_id(**primary_key)
             elif "paragraph_id" in primary_key:
@@ -454,10 +473,10 @@ class ResearchArcade:
             elif "figure_id" in primary_key:
                 return self.arxiv_paragraph_figure.delete_paragraph_figure_by_figure_id(**primary_key)
             else:
-                print("For arxiv_paragraph_reference, primary key should include 'paragraph_id' and/or 'reference_id'.")
+                print("For arxiv_paragraph_figure, primary key should include 'paragraph_id' and/or 'figure_id'.")
                 return None
         elif table == 'arxiv_paragraph_table':
-            # Expect keys: 'paragraph_id' and/or 'reference_id'
+            # Expect keys: 'paragraph_id' and/or 'table_id'
             if "paragraph_id" in primary_key and "table_id" in primary_key:
                 return self.arxiv_paragraph_table.delete_paragraph_table_by_paragraph_table_id(**primary_key)
             elif "paragraph_id" in primary_key:
@@ -465,7 +484,18 @@ class ResearchArcade:
             elif "table_id" in primary_key:
                 return self.arxiv_paragraph_table.delete_paragraph_table_by_table_id(**primary_key)
             else:
-                print("For arxiv_paragraph_reference, primary key should include 'paragraph_id' and/or 'reference_id'.")
+                print("For arxiv_paragraph_table, primary key should include 'paragraph_id' and/or 'table_id'.")
+                return None
+        elif table == 'arxiv_paragraph_equation':
+            # Expect keys: 'paragraph_id' and/or 'equation_id'
+            if "paragraph_id" in primary_key and "equation_id" in primary_key:
+                return self.arxiv_paragraph_equation.delete_paragraph_equation_by_paragraph_equation_id(**primary_key)
+            elif "paragraph_id" in primary_key:
+                return self.arxiv_paragraph_equation.delete_paragraph_equation_by_paragraph_id(**primary_key)
+            elif "equation_id" in primary_key:
+                return self.arxiv_paragraph_equation.delete_paragraph_equation_by_equation_id(**primary_key)
+            else:
+                print("For arxiv_paragraph_equation, primary key should include 'paragraph_id' and/or 'equation_id'.")
                 return None
         elif table == 'arxiv_paragraph_citation':
             if "paragraph_id" in primary_key:
@@ -503,6 +533,8 @@ class ResearchArcade:
             return self.arxiv_paper_author.get_all_paper_authors()
         elif table == 'arxiv_paper_categories':
             return self.arxiv_paper_category.get_all_paper_categories()
+        elif table == 'arxiv_paper_equation':
+            return self.arxiv_paper_equation.get_all_paper_equations()
         elif table == 'arxiv_paper_figure':
             return self.arxiv_paper_figure.get_all_paper_figures()
         elif table == 'arxiv_paper_table':
@@ -511,6 +543,8 @@ class ResearchArcade:
             return self.arxiv_paragraph_reference.get_all_paragraph_references()
         elif table == 'arxiv_paragraph_figure':
             return self.arxiv_paragraph_figure.get_all_paragraph_figures()
+        elif table == 'arxiv_paragraph_equation':
+            return self.arxiv_paragraph_equation.get_all_paragraph_equations()
         elif table == 'arxiv_paragraph_table':
             return self.arxiv_paragraph_table.get_all_paragraph_tables()
         elif table == 'arxiv_paragraph_citation':
@@ -588,6 +622,14 @@ class ResearchArcade:
             else:
                 print("For arxiv_paper_category, provide 'paper_id' or 'category_id'.")
                 return None
+        elif table == 'arxiv_paper_equation':
+            if "paper_arxiv_id" in primary_key:
+                return self.arxiv_paper_equation.get_paper_neighboring_equations(**primary_key)
+            elif "equation_id" in primary_key:
+                return self.arxiv_paper_equation.get_equation_neighboring_papers(**primary_key)
+            else:
+                print("For arxiv_paper_equation, provide 'paper_id' or 'equation_id'.")
+                return None
         elif table == 'arxiv_paper_figure':
             if "paper_arxiv_id" in primary_key:
                 return self.arxiv_paper_figure.get_paper_neighboring_figures(**primary_key)
@@ -611,6 +653,14 @@ class ResearchArcade:
                 return self.arxiv_paragraph_reference.get_reference_neighboring_paragraphs(**primary_key)
             else:
                 print("For arxiv_paragraph_reference, provide 'paragraph_id' or 'reference_id'.")
+                return None
+        elif table == 'arxiv_paragraph_equation':
+            if "paragraph_id" in primary_key:
+                return self.arxiv_paragraph_equation.get_paragraph_neighboring_equations(**primary_key)
+            elif "equation_id" in primary_key:
+                return self.arxiv_paragraph_equation.get_equation_neighboring_paragraphs(**primary_key)
+            else:
+                print("For arxiv_paragraph_equation, provide 'paragraph_id' or 'equation_id'.")
                 return None
         elif table == 'arxiv_paragraph_figure':
             if "paragraph_id" in primary_key:
@@ -843,7 +893,6 @@ class ResearchArcade:
             print(f"No paths found from {start_table}({start_id}) to {target_table}({target_id}) within depth {max_depth}.")
             return None
         
-
 
     def construct_table_from_api(self, table: str, config: dict) -> Optional[pd.DataFrame]:
         if table == "openreview_papers":
@@ -1138,7 +1187,7 @@ class ResearchArcade:
                 print(f"[{datetime.now()}] Batch failed. Will retry after sleep.")
                 
             time.sleep(interval_seconds)
-    
+
     def get_edge_table_mappings(self) -> Dict[Tuple[str, str], dict]:
         """
         Returns mapping:

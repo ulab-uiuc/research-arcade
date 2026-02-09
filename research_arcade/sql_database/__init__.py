@@ -20,6 +20,7 @@ from .sql_arxiv_equations import SQLArxivEquation
 from .sql_arxiv_figures import SQLArxivFigure
 from .sql_arxiv_paper_authors import SQLArxivPaperAuthor
 from .sql_arxiv_paper_categories import SQLArxivPaperCategory
+from .sql_arxiv_paper_equations import SQLArxivPaperEquation
 from .sql_arxiv_paper_figures import SQLArxivPaperFigure
 from .sql_arxiv_paper_tables import SQLArxivPaperTable
 from .sql_arxiv_papers import SQLArxivPapers
@@ -30,6 +31,7 @@ from .sql_arxiv_paragraph_citations import SQLArxivParagraphCitation
 from .sql_arxiv_paragraph_references import SQLArxivParagraphReference
 from .sql_arxiv_paragraph_figures import SQLArxivParagraphFigure
 from .sql_arxiv_paragraph_tables import SQLArxivParagraphTable
+from .sql_arxiv_paragraph_equations import SQLArxivParagraphEquation
 
 __all__ = [
     # --- OpenReview ---
@@ -52,6 +54,7 @@ __all__ = [
     'SQLArxivFigure',
     'SQLArxivPaperAuthor',
     'SQLArxivPaperCategory',
+    'SQLArxivPaperEquation',
     'SQLArxivPaperFigure',
     'SQLArxivPaperTable',
     'SQLArxivPapers',
@@ -61,5 +64,6 @@ __all__ = [
     'SQLArxivTable',
     'SQLArxivParagraphCitation',
     'SQLArxivParagraphFigure',
-    'SQLArxivParagraphTable'
+    'SQLArxivParagraphTable',
+    'SQLArxivParagraphEquation'
 ]

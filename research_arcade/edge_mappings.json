@@ -20,6 +20,13 @@
     "edge_table": "arxiv_paper_categories",
     "directed": true
   },
+
+  "arxiv__paper__contains__equation": {
+    "source": "arxiv_papers",
+    "target": "arxiv_equations",
+    "edge_table": "arxiv_paper_equations",
+    "directed": true
+  },
   
   "arxiv__paper__contains__figure": {
     "source": "arxiv_papers",
@@ -39,6 +46,13 @@
     "source": "arxiv_paragraphs",
     "target": "arxiv_citations",
     "edge_table": "arxiv_paragraph_citations",
+    "directed": true
+  },
+
+  "arxiv__paragraph__cites__equation": {
+    "source": "arxiv_paragraphs",
+    "target": "arxiv_equations",
+    "edge_table": "arxiv_paragraph_equations",
     "directed": true
   },
 

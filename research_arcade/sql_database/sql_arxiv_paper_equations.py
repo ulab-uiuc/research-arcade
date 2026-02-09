@@ -6,6 +6,8 @@ from typing import Optional
 
 import os
 import sys
+
+from sympy import re
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from typing import Optional
 from research_arcade.research_arcade.arxiv_utils.get_paragraph_global_id import get_paragraph_global_id_sql
@@ -397,14 +399,19 @@ class SQLArxivPaperEquation:
                 continue
 
             equation_jsons = file_json.get('equation', [])
-            for equation_json in equation_jsons:
-                caption = equation_json.get('caption')
-                label = equation_json.get('label')
-                equation = equation_json.get('equation')
-                # We don't currently store the equation anywhere as a file so the equation path is empty
-                path = None
-
+            for equation_text in equation_jsons:
+                
+                label = ""
+                label_match = re.search(r'\\label\{([^}]+)\}', equation_text)
+                if label_match:
+                    label = f"\\label{{{label_match.group(1)}}}"
+                else:
+                    print(f"Warning: No label found in equation for paper {arxiv_id}. Skipping.")
+                    continue
+                
                 equation_id = self.match_equation_id(paper_arxiv_id=arxiv_id, label=label)
                 
                 if equation_id is not None:
                     self.insert_paper_equation(paper_arxiv_id=arxiv_id, equation_id=equation_id)
+                else:
+                    print(f"Warning: No matching equation found for paper {arxiv_id} with label {label}. Skipping.")

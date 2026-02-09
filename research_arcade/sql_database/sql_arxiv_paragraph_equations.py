@@ -91,7 +91,7 @@ class SQLArxivParagraphEquation:
             return ok
         finally:
             conn.close()
-
+    
     def construct_paragraph_equations_table_from_api(self, arxiv_ids, dest_dir=None):
         """
         Matches existing references of type 'equation' to their corresponding equation and section nodes.

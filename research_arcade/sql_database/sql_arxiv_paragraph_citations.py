@@ -269,7 +269,7 @@ class SQLArxivParagraphCitation:
 
     # ==================== INSERT/DELETE METHODS ====================
 
-    def insert_paragraph_reference(
+    def insert_paragraph_citation(
         self,
         paragraph_id: int,
         paper_section: str,
@@ -279,7 +279,7 @@ class SQLArxivParagraphCitation:
         paragraph_global_id: Optional[int] = None
     ) -> Optional[int]:
         """
-        Insert a paragraph reference row; returns generated id.
+        Insert a paragraph citation row; returns generated id.
         """
         conn = self._get_connection()
         try:

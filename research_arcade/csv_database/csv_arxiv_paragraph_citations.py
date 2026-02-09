@@ -5,6 +5,8 @@ from typing import Optional
 import json
 from rapidfuzz import fuzz, process
 from collections import defaultdict
+
+from research_arcade.research_arcade.arxiv_utils.get_paragraph_global_id import get_paragraph_global_id_csv
 from ..arxiv_utils.utils import get_paragraph_num, arxiv_ids_hashing
 from semanticscholar import SemanticScholar
 from dotenv import load_dotenv
@@ -176,7 +178,7 @@ class CSVArxivParagraphCitation:
             return False
 
 
-    def insert_paragraph_reference(
+    def insert_paragraph_citation(
         self,
         paragraph_id,
         paper_section,
@@ -188,6 +190,16 @@ class CSVArxivParagraphCitation:
         df = self._load_data()
         new_id = df['id'].max() + 1 if not df.empty else 1
 
+        # search for paragraph global id if they do not exists
+
+        if paragraph_global_id is None:
+            paragraph_global_id = get_paragraph_global_id_csv(
+                csv_dir=self.csv_dir,
+                paper_arxiv_id=citing_arxiv_id,
+                paper_section=paper_section,
+                paragraph_id=paragraph_id
+            )
+
         new_row = pd.DataFrame([{
             'id': new_id,
             'paragraph_id': paragraph_id,
@@ -197,6 +209,9 @@ class CSVArxivParagraphCitation:
             'cited_arxiv_id': cited_arxiv_id,
             'paragraph_global_id': paragraph_global_id
         }])
+
+
+
 
         df = pd.concat([df, new_row], ignore_index=True)
         self._save_data(df)

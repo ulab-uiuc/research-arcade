@@ -56,7 +56,8 @@ class CSVArxivParagraphFigure:
         new_row = pd.DataFrame([{
             'id': new_id, 'paragraph_id': paragraph_id,
             'figure_id': figure_id, 'paper_arxiv_id': paper_arxiv_id,
-            'paper_section_id': paper_section_id
+            'paper_section_id': paper_section_id,
+            'paragraph_global_id': paragraph_global_id
         }])
         df = pd.concat([df, new_row], ignore_index=True)
         self._save_data(df)
@@ -137,7 +138,7 @@ class CSVArxivParagraphFigure:
         return count
 
     def delete_paragraph_figure_by_paragraph_figure_id(self, paragraph_id: int, figure_id: int) -> int:
-
+        
         df = self._load_data()
         
         if df.empty:
@@ -322,19 +323,22 @@ class CSVArxivParagraphFigure:
                 paragraph_id = para_figure['paragraph_id']
                 paper_section = para_figure['paper_section']
                 reference_label = para_figure['reference_label']
+                paragraph_global_id = para_figure['paragraph_global_id']
+
                 # Construct label - adjust format based on your actual data
                 label = f"\\label{{{reference_label}}}"
-                
-                # First search for the global paragraph id
-                paragraph_result = df3[(df3['paper_arxiv_id'] == arxiv_id) & 
-                                    (df3['paper_section'] == paper_section) & 
-                                    (df3['paragraph_id'] == paragraph_id)]
-                
-                if paragraph_result.empty:
-                    print(f"Warning: Paragraph not found for arxiv_id={arxiv_id}, section={paper_section}, para_id={paragraph_id}")
-                    continue
-                
-                global_paragraph_id = paragraph_result.iloc[0]['id']
+                if paragraph_global_id is None:
+
+                    # First search for the global paragraph id
+                    paragraph_result = df3[(df3['paper_arxiv_id'] == arxiv_id) & 
+                                        (df3['paper_section'] == paper_section) & 
+                                        (df3['paragraph_id'] == paragraph_id)]
+                    
+                    if paragraph_result.empty:
+                        print(f"Warning: Paragraph not found for arxiv_id={arxiv_id}, section={paper_section}, para_id={paragraph_id}")
+                        continue
+                    
+                    global_paragraph_id = paragraph_result.iloc[0]['id']
                 print("global_paragraph_id")
                 print(global_paragraph_id)
                 
@@ -358,8 +362,9 @@ class CSVArxivParagraphFigure:
                 section_id = section_result.iloc[0]['id']
                 
                 self.insert_paragraph_figure_table(
-                    paragraph_id=global_paragraph_id, 
+                    paragraph_global_id=global_paragraph_id, 
                     figure_id=figure_id, 
                     paper_arxiv_id=arxiv_id, 
-                    paper_section_id=section_id
+                    paper_section_id=section_id,
+                    paragraph_id=paragraph_id
                 )

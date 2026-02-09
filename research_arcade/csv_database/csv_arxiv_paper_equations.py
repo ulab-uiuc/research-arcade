@@ -4,6 +4,8 @@ from pathlib import Path
 from typing import Optional
 import json
 
+from sympy import re
+
 class CSVArxivPaperEquation:
     def __init__(self, csv_dir: str):
         self.csv_dir = csv_dir
@@ -320,15 +322,19 @@ class CSVArxivPaperEquation:
                 continue
 
             equation_jsons = file_json['equation']
-            for equation_json in equation_jsons:
+            for equation_text in equation_jsons:
                 
-                caption = equation_json['caption']
-                label = equation_json['label']
-                equation = equation_json['equation']
-                # We don't currently store the equation anywhere as a file so the equation path is empty
-                path = None
-
+                label = ""
+                label_match = re.search(r'\\label\{([^}]+)\}', equation_text)
+                if label_match:
+                    label = f"\\label{{{label_match.group(1)}}}"
+                else:
+                    print(f"Warning: No label found in equation for paper {arxiv_id}. Skipping.")
+                    continue
+                
                 equation_id = self.match_equation_id(paper_arxiv_id=arxiv_id, label=label)
                 
-                
-                self.insert_paper_equation(paper_arxiv_id = arxiv_id, equation_id=equation_id)
+                if equation_id is not None:
+                    self.insert_paper_equation(paper_arxiv_id = arxiv_id, equation_id=equation_id)
+                else:
+                    print(f"Warning: No matching equation found for paper {arxiv_id} with label {label}. Skipping.")
