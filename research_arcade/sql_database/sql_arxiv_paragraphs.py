@@ -53,7 +53,7 @@ class SQLArxivParagraphs:
                     content TEXT,
                     paper_arxiv_id VARCHAR(100) NOT NULL,
                     paper_section VARCHAR(255) NOT NULL,
-                    section_id INTEGER,
+                    section_id INTEGER NOT NULL,
                     paragraph_in_paper_id INTEGER,
                     CONSTRAINT ux_arxiv_paragraphs_unique UNIQUE (paragraph_id, paper_arxiv_id, paper_section)
                 )
@@ -72,6 +72,16 @@ class SQLArxivParagraphs:
         conn = self._get_connection()
         try:
             cur = conn.cursor()
+            if section_id is None:
+                # search for it in the arxiv_sections table
+                cur.execute("""
+                    SELECT id FROM arxiv_sections WHERE paper_arxiv_id = %s AND title = %s
+                """, (paper_arxiv_id, paper_section))
+                s_res = cur.fetchone()
+                if s_res:
+                    section_id = s_res[0]
+                else:
+                    raise ValueError(f"Section {paper_section} not found for paper {paper_arxiv_id}")
             cur.execute(
                 """
                 INSERT INTO arxiv_paragraphs (paragraph_id, content, paper_arxiv_id, paper_section, section_id, paragraph_in_paper_id)
@@ -543,7 +553,7 @@ class SQLArxivParagraphs:
                 section_min_paragraph[(paper_arxiv_id, paper_section)] = int(id_number)
             else:
                 section_min_paragraph[(paper_arxiv_id, paper_section)] = min(section_min_paragraph[(paper_arxiv_id, paper_section)], int(id_number))
-
+        
         for paragraph in data:
             paragraph_id = paragraph.get('id')
             content = paragraph.get('content')

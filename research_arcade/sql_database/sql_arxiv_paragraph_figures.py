@@ -113,22 +113,24 @@ class SQLArxivParagraphFigure:
             for arxiv_id in arxiv_ids:
                 # 1. Fetch relevant references from the references table
                 cur.execute("""
-                    SELECT paragraph_id, paper_section, reference_label 
+                    SELECT paragraph_id, paper_section, reference_label, paragraph_global_id
                     FROM arxiv_paragraph_references 
                     WHERE paper_arxiv_id = %s AND reference_type = 'figure'
                 """, (arxiv_id,))
                 refs = cur.fetchall()
 
-                for para_id_str, section_title, ref_label in refs:
+                for para_id_str, section_title, ref_label, paragraph_global_id in refs:
                     label = f"\\label{{{ref_label}}}"
-                    
-                    # 2. Find Global Paragraph ID
-                    cur.execute("""
-                        SELECT id FROM arxiv_paragraphs 
-                        WHERE paper_arxiv_id = %s AND paper_section = %s AND paragraph_id = %s
-                    """, (arxiv_id, section_title, para_id_str))
-                    p_res = cur.fetchone()
-                    
+                    if paragraph_global_id is None:
+
+                        # 2. Find Global Paragraph ID
+                        cur.execute("""
+                            SELECT id FROM arxiv_paragraphs 
+                            WHERE paper_arxiv_id = %s AND paper_section = %s AND paragraph_id = %s
+                        """, (arxiv_id, section_title, para_id_str))
+                        p_res = cur.fetchone()
+                        paragraph_global_id = p_res[0] if p_res else None
+                        
                     # 3. Find Figure ID
                     cur.execute("""
                         SELECT id FROM arxiv_figures 
@@ -143,8 +145,8 @@ class SQLArxivParagraphFigure:
                     """, (arxiv_id, section_title))
                     s_res = cur.fetchone()
 
-                    if p_res and f_res and s_res:
-                        self.insert_paragraph_figure_table(p_res[0], f_res[0], arxiv_id, s_res[0])
+                    if paragraph_global_id and f_res and s_res:
+                        self.insert_paragraph_figure_table(paragraph_global_id=paragraph_global_id, figure_id=f_res[0], arxiv_id=arxiv_id, paper_section_id=s_res[0], paragraph_id=para_id_str)
             cur.close()
         finally:
             conn.close()

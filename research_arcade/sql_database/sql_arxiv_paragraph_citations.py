@@ -564,11 +564,35 @@ class SQLArxivParagraphCitation:
                 section_min_paragraph[key] = min(section_min_paragraph[key], int(id_number))
 
         # Second pass: insert citations
+        conn = self._get_connection()
         rows = []
+
         for paragraph in data:
             paragraph_id = paragraph.get("id")
             paper_arxiv_id = paragraph.get("paper_id")
             paper_section = paragraph.get("section")
+            id_number = get_paragraph_num(paragraph_id) - section_min_paragraph[(paper_arxiv_id, paper_section)]
+
+            # search for section_id based on paper_section
+            
+            cur = conn.cursor()
+            cur.execute("""
+                SELECT id FROM arxiv_sections WHERE paper_arxiv_id = %s AND title = %s
+            """, (paper_arxiv_id, paper_section))
+            section_res = cur.fetchone()
+            if not section_res:
+                print(f"Section {paper_section} not found for paper {paper_arxiv_id}")
+                continue
+            paper_section_id = section_res[0]
+            cur.close()
+            print(f"Found section_id {paper_section_id} for paper {paper_arxiv_id}, section {paper_section}")
+            paragraph_global_id = get_paragraph_global_id_sql(
+                conn=conn,
+                paper_arxiv_id=paper_arxiv_id,
+                paper_section_id=paper_section_id,
+                paragraph_id=id_number
+            )
+            print(f"Found paragraph_global_id {paragraph_global_id} for paper {paper_arxiv_id}, section {paper_section}, paragraph {paragraph_id}, id_number {id_number}")
 
             if not paragraph_id or not paper_arxiv_id or not paper_section:
                 continue
@@ -588,7 +612,7 @@ class SQLArxivParagraphCitation:
                     paper_arxiv_id,
                     bib_key,
                     None,  # cited_arxiv_id
-                    None   # paragraph_global_id
+                    paragraph_global_id   # paragraph_global_id
                 ))
 
         if not rows:

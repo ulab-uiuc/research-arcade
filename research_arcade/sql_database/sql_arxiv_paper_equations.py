@@ -398,7 +398,7 @@ class SQLArxivPaperEquation:
                 print(f"An unexpected error occurred: {e}")
                 continue
 
-            equation_jsons = file_json.get('equation', [])
+            equation_jsons = file_json.get('equations', [])
             for equation_text in equation_jsons:
                 
                 label = ""

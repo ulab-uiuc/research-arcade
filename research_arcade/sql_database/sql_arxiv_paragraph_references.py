@@ -456,6 +456,8 @@ class SQLArxivParagraphReference:
             else:
                 section_min_paragraph[key] = min(section_min_paragraph[key], int(id_number))
         
+        conn = self._get_connection()
+
         # Second pass - collect all rows for bulk insert
         rows = []
         for paragraph in data:
@@ -491,29 +493,34 @@ class SQLArxivParagraphReference:
                     ref_type = 'equation'
                 else:
                     ref_type = 'other'
+                # Consider searching for paper_section_id
+                cur = conn.cursor()
+                cur.execute("""
+                    SELECT id FROM arxiv_sections 
+                    WHERE paper_arxiv_id = %s AND title = %s
+                """, (paper_arxiv_id, paper_section))
+                s_res = cur.fetchone()
+                paper_section_id = s_res[0] if s_res else None
                 
+                paragraph_global_id = get_paragraph_global_id_sql(conn=conn, paper_arxiv_id=paper_arxiv_id, paper_section_id=paper_section_id, paragraph_id=id_zero_based)
                 # Add to bulk insert list
                 rows.append((
                     id_zero_based,
                     paper_section,
                     paper_arxiv_id,
                     ref_label,
-                    ref_type
+                    ref_type,
+                    paragraph_global_id
                 ))
+                cur.close()
         
-        # Bulk insert all rows at once
-        if not rows:
-            print("No paragraph references to import")
-            return True
-        
-        conn = self._get_connection()
         try:
             cur = conn.cursor()
             psycopg2.extras.execute_values(
                 cur,
                 """
                 INSERT INTO arxiv_paragraph_references 
-                    (paragraph_id, paper_section, paper_arxiv_id, reference_label, reference_type)
+                    (paragraph_id, paper_section, paper_arxiv_id, reference_label, reference_type, paragraph_global_id)
                 VALUES %s
                 """,
                 rows,

@@ -5,6 +5,7 @@ import psycopg2.extras
 import pandas as pd
 import json
 import sys
+import re
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from ..arxiv_utils.multi_input.multi_download import MultiDownload
 from ..arxiv_utils.graph_constructor.node_processor import NodeConstructor
@@ -369,13 +370,10 @@ class SQLArxivEquation:
             try:
                 with open(json_path, 'r') as file:
                     file_json = json.load(file)
-                    equation_jsons = file_json.get('equation', [])
-                    for equation_json in equation_jsons:
-                        label = equation_json.get('label')
-                        equation_text = equation_json.get('equation_text')
-                        
-                        # Here is the difference: we will need to manually find the label of the equation from equation_text using regular expression. An example of label is \\label{eq:mezdis}. We wll keep the whole part, including \\label{ and the }/
-                        # If the label does not exist, we leave it as blank
+                    equation_jsons = file_json.get('equations', [])
+                    print(f"Found {(equation_jsons)} in JSON for paper {arxiv_id}")
+                    for equation_text in equation_jsons:  # equation_text is already a string
+                        # Extract label from equation text
                         label = ""
                         label_match = re.search(r'\\label\{([^}]+)\}', equation_text)
                         if label_match:

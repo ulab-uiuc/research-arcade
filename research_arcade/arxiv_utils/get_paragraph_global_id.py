@@ -15,8 +15,8 @@ def get_paragraph_global_id_sql(conn, paper_arxiv_id, paper_section_id, paragrap
     try:
         cur.execute("""
             SELECT id FROM arxiv_paragraphs 
-            WHERE paper_arxiv_id = %s AND paper_section_id = %s AND paragraph_id = %s
-        """, (paper_arxiv_id, paper_section_id, paragraph_id))
+            WHERE paper_arxiv_id = %s AND section_id = %s AND paragraph_id = %s
+        """, (paper_arxiv_id, str(paper_section_id), str(paragraph_id)))
         result = cur.fetchone()
         return result[0] if result else None
     finally:

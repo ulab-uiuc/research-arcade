@@ -1080,20 +1080,24 @@ class ResearchArcade:
         # Use sequential construction
         self.arxiv_papers.construct_papers_table_from_api(**config)
         self.arxiv_sections.construct_sections_table_from_api(**config)
-        self.arxiv_authors.construct_authors_table_from_api(**config)
+        # TODO: get it back later
+        # self.arxiv_authors.construct_authors_table_from_api(**config)
         self.arxiv_categories.construct_category_table_from_api(**config)
         self.arxiv_equations.construct_equations_table_from_api(**config)
         self.arxiv_figures.construct_figures_table_from_api(**config)
         self.arxiv_tables.construct_tables_table_from_api(**config)
         self.arxiv_categories.construct_category_table_from_api(**config)
-        self.arxiv_paper_author.construct_paper_authors_table_from_api(**config)
+        # TODO: get it back later
+        # self.arxiv_paper_author.construct_paper_authors_table_from_api(**config)
         self.arxiv_paper_figure.construct_paper_figures_table_from_api(**config)
         self.arxiv_paper_table.construct_paper_tables_table_from_api(**config)
         self.arxiv_paper_category.construct_paper_category_table_from_api(**config)
-        self.arxiv_citation.construct_citations_table_from_api(**config)
+        #TODO: uncomment it once I obtain the API key
+        # self.arxiv_citation.construct_citations_table_from_api(**config)
         self.arxiv_paragraphs.construct_paragraphs_table_from_api(**config)
         self.arxiv_paragraph_reference.construct_paragraph_references_table_from_api(**config)
-        self.arxiv_paragraph_citation.construct_citations_table_from_api(**config)
+        #TODO: uncomment it once I obtain the API key
+        # self.arxiv_paragraph_citation.construct_citations_table_from_api(**config)
         self.arxiv_paragraph_figure.construct_paragraph_figures_table_from_api(**config)
         self.arxiv_paragraph_table.construct_paragraph_tables_table_from_api(**config)
 
