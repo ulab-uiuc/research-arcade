@@ -52,7 +52,7 @@
   "arxiv__paragraph__cites__equation": {
     "source": "arxiv_paragraphs",
     "target": "arxiv_equations",
-    "edge_table": "arxiv_paragraph_equations",
+    "edge_table": "arxiv_paragraph_equation",
     "directed": true
   },
 
@@ -68,6 +68,7 @@
     "edge_table": "arxiv_paragraph_tables",
     "directed": true
   },
+  
 
   "openreview__paper__written_by__author": {
     "source": "openreview_papers",

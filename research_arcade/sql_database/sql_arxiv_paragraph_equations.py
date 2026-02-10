@@ -57,6 +57,7 @@ class SQLArxivParagraphEquation:
                     paper_section_id=paper_section_id,
                     paragraph_id=paragraph_id
                 )
+                print(f"Finding paragraph_global_id for paper_arxiv_id={paper_arxiv_id}, paper_section_id={paper_section_id}, paragraph_id={paragraph_id} => {paragraph_global_id}")
             cur.execute(
                 """
                 INSERT INTO arxiv_paragraph_equations
@@ -77,6 +78,14 @@ class SQLArxivParagraphEquation:
         try:
             query = "SELECT * FROM arxiv_paragraph_equations WHERE paragraph_id = %s"
             df = pd.read_sql(query, conn, params=(paragraph_id,))
+            return None if df.empty else df.reset_index(drop=True)
+        finally:
+            conn.close()
+    def get_equation_neighboring_paragraphs(self, equation_id: int) -> Optional[pd.DataFrame]:
+        conn = self._get_connection()
+        try:
+            query = "SELECT * FROM arxiv_paragraph_equations WHERE equation_id = %s"
+            df = pd.read_sql(query, conn, params=(equation_id,))
             return None if df.empty else df.reset_index(drop=True)
         finally:
             conn.close()
@@ -101,21 +110,31 @@ class SQLArxivParagraphEquation:
             cur = conn.cursor()
             for arxiv_id in arxiv_ids:
                 cur.execute("""
-                    SELECT paragraph_id, paper_section, reference_label 
+                    SELECT paragraph_id, paper_section, reference_label, paragraph_global_id
                     FROM arxiv_paragraph_references 
                     WHERE paper_arxiv_id = %s AND reference_type = 'equation'
                 """, (arxiv_id,))
                 refs = cur.fetchall()
 
-                for para_id_str, section_title, ref_label in refs:
+                for para_id_str, section_title, ref_label, paragraph_global_id in refs:
                     label = f"\\label{{{ref_label}}}"
-                    
+                    if paragraph_global_id is None:
+
+                        # 2. Find Global Paragraph ID
+                        cur.execute("""
+                            SELECT id FROM arxiv_paragraphs 
+                            WHERE paper_arxiv_id = %s AND paper_section = %s AND paragraph_id = %s
+                        """, (arxiv_id, section_title, para_id_str))
+                        p_res = cur.fetchone()
+                        paragraph_global_id = p_res[0] if p_res else None
+
+
                     cur.execute("""
                         SELECT id FROM arxiv_paragraphs 
                         WHERE paper_arxiv_id = %s AND paper_section = %s AND paragraph_id = %s
                     """, (arxiv_id, section_title, para_id_str))
                     p_res = cur.fetchone()
-                    
+
                     cur.execute("""
                         SELECT id FROM arxiv_equations 
                         WHERE paper_arxiv_id = %s AND label = %s
@@ -129,7 +148,7 @@ class SQLArxivParagraphEquation:
                     s_res = cur.fetchone()
 
                     if p_res and e_res and s_res:
-                        self.insert_paragraph_equation_table(p_res[0], e_res[0], arxiv_id, s_res[0])
+                        self.insert_paragraph_equation_table(paragraph_id=para_id_str, equation_id=e_res[0], paper_arxiv_id=arxiv_id, paper_section_id=s_res[0], paragraph_global_id=paragraph_global_id)
             cur.close()
         finally:
             conn.close()

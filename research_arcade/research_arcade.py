@@ -706,17 +706,6 @@ class ResearchArcade:
     ) -> Optional[Dict[str, List[pd.DataFrame]]]:
         """
         Retrieve k-hop neighborhood node features using BFS traversal.
-        
-        :param table: The name of table that the target node belongs to
-        :param node_id: The ID of the starting node
-        :param k: The number of hops of neighborhood to retrieve
-        :param accumulative: Whether to accumulate features from all hops (True) 
-                            or just return features from the k-th hop (False)
-        :param neighbor_name: Name of neighborhood tables to retrieve. 
-                            If None, retrieve all neighboring tables.
-        :param neighbourhood_features: Features to retrieve for each neighboring table.
-                                    If None, retrieve all features.
-        :return: Dictionary mapping table names to lists of feature DataFrames
         """
         
         if not neighbor_name:
@@ -724,12 +713,12 @@ class ResearchArcade:
         if not neighbourhood_features:
             neighbourhood_features = [self.get_table_columns(n) for n in neighbor_name]
         
-        # Edge table mapping: (source_table, target_table) -> edge_table_name
-        edge_table_mapping = self.get_edge_table_mappings()
+        # Get edge table mapping ONCE and don't overwrite it
+        all_edge_mappings = self.get_edge_table_mappings()  # ← Renamed to avoid overwriting
 
-        # BFS state: track current frontier as (table_name, node_id) tuples
+        # BFS state
         current_frontier = [(table, node_id)]
-        visited = {(table, node_id)}  # Avoid revisiting nodes
+        visited = {(table, node_id)}
         
         # Result storage
         neighbor_features_dict = {}
@@ -737,110 +726,146 @@ class ResearchArcade:
         current_hop = 0
         while current_hop < k and current_frontier:
             next_frontier = []
-            print(f"Current hop: {current_hop}, Frontier: {current_frontier}")
-            # Process each node in the current frontier
+            print(f"Current hop: {current_hop}, Frontier size: {len(current_frontier)}")
+            
             for source_table, source_id in current_frontier:
                 
-                # Determine which neighbor tables to explore from this source table
+                # Determine which neighbor tables to explore
                 if source_table == table:
-                    # From the original table, use the specified neighbor_name
                     tables_to_explore = neighbor_name
                     features_to_retrieve = neighbourhood_features
                 else:
-                    # From intermediate tables, explore all neighbors
                     tables_to_explore = self.get_all_neighbor_tables(source_table)
                     features_to_retrieve = [self.get_table_columns(n) for n in tables_to_explore]
                 
-                # Explore each neighboring table
                 for i, target_table in enumerate(tables_to_explore):
                     edge_table_key = (source_table, target_table)
                     reverse_edge_key = (target_table, source_table)
                     
-                    if target_table == "arxiv_categories":
-                        target_col = "category_id"
-                    elif target_table == "arxiv_papers":
-                        target_col = "paper_arxiv_id"
-                        if source_table == "arxiv_papers":
-                            target_col = "cited_arxiv_id"
-                    elif target_table == "arxiv_figures":
-                        target_col = "figure_id"
-                    elif target_table == "arxiv_tables":
-                        target_col = "table_id"
-                    elif target_table == "arxiv_paragraphs":
-                        target_col = "paragraph_global_id"
-                    elif target_table == "arxiv_authors":
-                        target_col = "author_id"
-                    else:
-                        print(f"Unknown target table: {target_table}")
-                        continue
-                    # if target_table == "arxiv_paragraphs":
-                    #     target_col = "paragraph_global_id"
-                    # Check both directions for edge table
-                    if edge_table_key in edge_table_mapping:
-                        edge_table_mapping = edge_table_mapping[edge_table_key]
-                    elif reverse_edge_key in edge_table_mapping:
-                        edge_table_mapping = edge_table_mapping[reverse_edge_key]
+                    # ========== FIX 1: Determine edge table and direction ==========
+                    edge_info = None
+                    is_reversed = False
+                    
+                    if edge_table_key in all_edge_mappings:
+                        edge_info = all_edge_mappings[edge_table_key]
+                        is_reversed = False
+                    elif reverse_edge_key in all_edge_mappings:
+                        edge_info = all_edge_mappings[reverse_edge_key]
+                        is_reversed = True
                     else:
                         print(f"No edge table found for {source_table} <-> {target_table}")
                         continue
-                    edge_table_name = edge_table_mapping['edge_table']
-                    # Get neighboring nodes filtered by source node ID
-                    key = {"paper_arxiv_id": str(source_id)}
-                    print(f"Retrieving neighbors from edge table: {edge_table_name} with key: {key}")
+                    
+                    edge_table_name = edge_info['edge_table']
+                    
+                    # ========== FIX 2: Determine correct source column based on direction ==========
+                    # Get the column name for the source node in the edge table
+                    source_col = self._get_edge_column_for_table(source_table, edge_info, is_reversed)
+                    target_col = self._get_edge_column_for_table(target_table, edge_info, not is_reversed)
+                    
+                    if source_col is None:
+                        print(f"Could not determine source column for {source_table} in edge {edge_table_name}")
+                        continue
+                    
+                    # ========== FIX 3: Build correct primary key ==========
+                    primary_key = {source_col: source_id}
+                    
+                    print(f"Querying edge table: {edge_table_name} with key: {primary_key}")
                     neighboring_edges = self.get_neighborhood(
-                        table = edge_table_name, 
-                        primary_key = key  # Filter by actual source node
+                        table=edge_table_name, 
+                        primary_key=primary_key
                     )
-                    print(f"Exploring edge table: {edge_table_name} for source {source_table}({source_id}) to target {target_table}")
-                    print(f"Neighboring edges found: {neighboring_edges.shape[0] if neighboring_edges is not None else 0}")
-
+                    print(f"  Found {len(neighboring_edges) if neighboring_edges is not None else 0} edges")
                     
                     if neighboring_edges is None or neighboring_edges.empty:
                         continue
                     
                     # Process each neighboring node
                     for _, row in neighboring_edges.iterrows():
-                        print(f"Processing edge row: {row.to_dict()}")
+                        # Get neighbor ID using the target column
+                        if target_col not in row:
+                            print(f"  Target column '{target_col}' not in row. Available: {row.index.tolist()}")
+                            continue
+                        
                         neighbor_id = row[target_col]
                         neighbor_key = (target_table, neighbor_id)
                         
-                        # Skip if already visited
                         if neighbor_key in visited:
                             continue
                         visited.add(neighbor_key)
                         
-                        # Add to next frontier for further exploration
                         next_frontier.append(neighbor_key)
                         
                         # Get node features
-                        primary_key = {f"id": neighbor_id}
-                        print(f"Retrieving features for {target_table} node {neighbor_id} with primary key: {primary_key}")
-                        neighbor_features = self.get_node_features_by_id(target_table, primary_key)
+                        node_primary_key = self._get_node_primary_key(target_table, neighbor_id)
+                        neighbor_features = self.get_node_features_by_id(target_table, node_primary_key)
                         
                         if neighbor_features is None or neighbor_features.empty:
-                            print(f"No features found for {target_table} node {neighbor_id}")
+                            print(f"  No features found for {target_table} node {neighbor_id}")
                             continue
                         
                         # Select only required features
                         try:
-                            selected_features = neighbor_features[features_to_retrieve[i]]
+                            if i < len(features_to_retrieve):
+                                available_cols = [c for c in features_to_retrieve[i] if c in neighbor_features.columns]
+                                selected_features = neighbor_features[available_cols] if available_cols else neighbor_features
+                            else:
+                                selected_features = neighbor_features
                         except (KeyError, IndexError):
                             selected_features = neighbor_features
                         
-                        # Store features based on accumulative flag
-                        # accumulative=True: store all hops
-                        # accumulative=False: only store final hop (k-th hop)
                         if accumulative or (current_hop == k - 1):
-                            print("Now collecting features of table: ", target_table)
-                            print(f"Selected features: {selected_features}")
                             neighbor_features_dict.setdefault(target_table, []).append(selected_features)
-        
-            # Move to next hop
+            
             current_frontier = next_frontier
             current_hop += 1
         
         return neighbor_features_dict
 
+
+    def _get_edge_column_for_table(self, table_name: str, edge_info: dict, is_source: bool) -> Optional[str]:
+        """
+        Determine the column name in the edge table for a given node table.
+        
+        Args:
+            table_name: The node table name (e.g., 'arxiv_equations')
+            edge_info: The edge mapping info
+            is_source: Whether this table is the source in the edge relationship
+        """
+        # Map table names to their typical ID column names in edge tables
+        column_mappings = {
+            "arxiv_papers": ["paper_arxiv_id", "citing_arxiv_id", "cited_arxiv_id", "paper_id"],
+            "arxiv_paragraphs": ["paragraph_id", "paragraph_global_id"],
+            "arxiv_equations": ["equation_id"],
+            "arxiv_figures": ["figure_id"],
+            "arxiv_tables": ["table_id"],
+            "arxiv_sections": ["section_id"],
+            "arxiv_authors": ["author_id"],
+            "arxiv_categories": ["category_id"],
+        }
+        
+        # Try to get from edge_info if available
+        if is_source and "source_col" in edge_info:
+            return edge_info["source_col"]
+        if not is_source and "target_col" in edge_info:
+            return edge_info["target_col"]
+        
+        # Fallback to mapping
+        possible_cols = column_mappings.get(table_name, [])
+        return possible_cols[0] if possible_cols else None
+
+
+    def _get_node_primary_key(self, table_name: str, node_id) -> dict:
+        """
+        Build the correct primary key dict for getting node features.
+        """
+        # Most tables use 'id', but some have special primary keys
+        if table_name == "arxiv_papers":
+            return {"arxiv_id": node_id}
+        elif table_name == "arxiv_paragraphs":
+            return {"id": node_id}  # or paragraph_global_id depending on your schema
+        else:
+            return {"id": node_id}
 
     def path_search(self, start_table: str, start_id: str, target_table: str, target_id: str, max_depth: int = 5) -> Optional[List[List[str]]]:
 
@@ -1100,6 +1125,7 @@ class ResearchArcade:
         # self.arxiv_paragraph_citation.construct_citations_table_from_api(**config)
         self.arxiv_paragraph_figure.construct_paragraph_figures_table_from_api(**config)
         self.arxiv_paragraph_table.construct_paragraph_tables_table_from_api(**config)
+        self.arxiv_paragraph_equation.construct_paragraph_equations_table_from_api(**config)
 
     def construct_tables_from_venue(self, config: dict) -> Optional[pd.DataFrame]:
         self.openreview_arxiv.construct_openreview_arxiv_table_from_api(config)
