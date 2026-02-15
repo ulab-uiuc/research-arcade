@@ -32,6 +32,7 @@ from .csv_arxiv_paragraph_citations import CSVArxivParagraphCitation
 from .csv_arxiv_paragraph_figures import CSVArxivParagraphFigure
 from .csv_arxiv_paragraph_tables import CSVArxivParagraphTable
 from .csv_arxiv_paragraph_equations import CSVArxivParagraphEquation
+from .csv_arxiv_paragraph_section_reference import CSVArxivParagraphSectionReference
 
 __all__ = [
     # --- OpenReview ---
@@ -65,5 +66,6 @@ __all__ = [
     'CSVArxivParagraphCitation',
     'CSVArxivParagraphFigure',
     'CSVArxivParagraphTable',
-    'CSVArxivParagraphEquation'
+    'CSVArxivParagraphEquation',
+    'CSVArxivParagraphSectionReference'
 ]

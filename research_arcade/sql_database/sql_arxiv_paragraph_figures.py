@@ -146,7 +146,7 @@ class SQLArxivParagraphFigure:
                     s_res = cur.fetchone()
 
                     if paragraph_global_id and f_res and s_res:
-                        self.insert_paragraph_figure_table(paragraph_global_id=paragraph_global_id, figure_id=f_res[0], arxiv_id=arxiv_id, paper_section_id=s_res[0], paragraph_id=para_id_str)
+                        self.insert_paragraph_figure_table(paragraph_global_id=paragraph_global_id, figure_id=f_res[0], paper_arxiv_id=arxiv_id, paper_section_id=s_res[0], paragraph_id=para_id_str)
             cur.close()
         finally:
             conn.close()

@@ -503,6 +503,7 @@ class SQLArxivParagraphReference:
                 paper_section_id = s_res[0] if s_res else None
                 
                 paragraph_global_id = get_paragraph_global_id_sql(conn=conn, paper_arxiv_id=paper_arxiv_id, paper_section_id=paper_section_id, paragraph_id=id_zero_based)
+                print(f"Processing paragraph {paragraph_id} (zero-based {id_zero_based}) in section '{paper_section}' with paper section id {paper_section_id} of paper {paper_arxiv_id} with reference '{ref_label}' of type '{ref_type}' and global ID {paragraph_global_id}")
                 # Add to bulk insert list
                 rows.append((
                     id_zero_based,

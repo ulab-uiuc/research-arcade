@@ -81,7 +81,6 @@ class SQLArxivFigure:
                 """
                 INSERT INTO arxiv_figures (paper_arxiv_id, path, caption, label, name)
                 VALUES (%s, %s, %s, %s, %s)
-                ON CONFLICT ON CONSTRAINT ux_arxiv_figures_name_notnull DO NOTHING
                 RETURNING id
                 """,
                 (paper_arxiv_id, path, caption, label, name)
@@ -256,7 +255,6 @@ class SQLArxivFigure:
                 """
                 INSERT INTO arxiv_figures (paper_arxiv_id, path, caption, label, name)
                 VALUES %s
-                ON CONFLICT ON CONSTRAINT ux_arxiv_figures_name_notnull DO NOTHING
                 """,
                 rows,
                 page_size=1000
@@ -346,7 +344,6 @@ class SQLArxivFigure:
                     """
                     INSERT INTO arxiv_figures (paper_arxiv_id, path, caption, label, name)
                     VALUES %s
-                    ON CONFLICT ON CONSTRAINT ux_arxiv_figures_name_notnull DO NOTHING
                     """,
                     rows,
                     page_size=1000

@@ -162,7 +162,7 @@ class CSVArxivCategory:
             
             if not os.path.exists(paper_dir):
                 downloaded_paper_ids.append(arxiv_id)
-
+    
         for arxiv_id in downloaded_paper_ids:
             md = MultiDownload()
             try:

@@ -22,14 +22,14 @@ from .csv_database import (
     CSVArxivAuthors, CSVArxivCategory, CSVArxivCitation, CSVArxivEquation, CSVArxivFigure,
     CSVArxivPaperAuthor, CSVArxivPaperCategory, CSVArxivPaperEquation, CSVArxivPaperFigure,
     CSVArxivPaperTable, CSVArxivPapers, CSVArxivParagraphReference,
-    CSVArxivParagraphs, CSVArxivSections, CSVArxivTable, CSVArxivParagraphCitation, CSVArxivParagraphFigure, CSVArxivParagraphTable, CSVArxivParagraphEquation
+    CSVArxivParagraphs, CSVArxivSections, CSVArxivTable, CSVArxivParagraphCitation, CSVArxivParagraphFigure, CSVArxivParagraphTable, CSVArxivParagraphEquation, CSVArxivParagraphSectionReference
 )
 # Arxiv SQL
 from .sql_database import (
     SQLArxivAuthors, SQLArxivCategory, SQLArxivCitation, SQLArxivEquation, SQLArxivFigure,
     SQLArxivPaperAuthor, SQLArxivPaperCategory, SQLArxivPaperEquation, SQLArxivPaperFigure,
     SQLArxivPaperTable, SQLArxivPapers, SQLArxivParagraphReference,
-    SQLArxivParagraphs, SQLArxivSections, SQLArxivTable, SQLArxivParagraphCitation, SQLArxivParagraphFigure, SQLArxivParagraphTable, SQLArxivParagraphEquation
+    SQLArxivParagraphs, SQLArxivSections, SQLArxivTable, SQLArxivParagraphCitation, SQLArxivParagraphFigure, SQLArxivParagraphTable, SQLArxivParagraphEquation, SQLArxivParagraphSectionReference
 )
 
 import os
@@ -88,6 +88,8 @@ class ResearchArcade:
             self.openreview_revisions_reviews = CSVOpenReviewRevisionsReviews(**config)
             self.openreview_revisions = CSVOpenReviewRevisions(**config)
             self.openreview_paragraphs = CSVOpenReviewParagraphs(**config)
+
+
         elif db_type == 'sql':
             if config["host"] is None:
                 config["csv_dir"] = os.getenv('CSV_DATASET_FOLDER_PATH')
@@ -330,6 +332,8 @@ class ResearchArcade:
             return self.arxiv_paragraph_citation.insert_paragraph_citation(**edge_features)
         elif table == 'arxiv_paragraph_equation':
             return self.arxiv_paragraph_equation.insert_paragraph_equation_table(**edge_features)
+        elif table == 'arxiv_paragraph_section_reference':
+            return self.arxiv_paragraph_section_reference.insert_paragraph_section_reference(**edge_features)
         else:
             print(f"Table {table} not found.")
             return None
@@ -509,6 +513,16 @@ class ResearchArcade:
             else:
                 print("For arxiv_paragraph_citation, primary key should include 'paragraph_id', 'citing_arxiv_id', 'cited_arxiv_id', or 'id'.")
                 return None
+        elif table == 'arxiv_paragraph_section_reference':
+            if "paragraph_id" in primary_key:
+                return self.arxiv_paragraph_section_reference.delete_paragraph_section_reference_by_paragraph_id(**primary_key)
+            elif "section_id" in primary_key:
+                return self.arxiv_paragraph_section_reference.delete_paragraph_section_reference_by_section_id(**primary_key)
+            elif "id" in primary_key:
+                return self.arxiv_paragraph_section_reference.delete_paragraph_section_reference_by_id(**primary_key)
+            else:
+                print("For arxiv_paragraph_section_reference, primary key should include 'paragraph_id', 'section_id', or 'id'.")
+                return None
         else:
             print(f"Table {table} not found.")
             return None
@@ -549,6 +563,8 @@ class ResearchArcade:
             return self.arxiv_paragraph_table.get_all_paragraph_tables()
         elif table == 'arxiv_paragraph_citation':
             return self.arxiv_paragraph_citation.get_all_paragraph_citations()
+        elif table == 'arxiv_paragraph_section_reference':
+            return self.arxiv_paragraph_section_reference.get_all_paragraph_section_references()
         else:
             print(f"Table {table} not found.")
             return None
@@ -690,6 +706,16 @@ class ResearchArcade:
             else:
                 print("For arxiv_paragraph_citation, provide 'paragraph_id', 'paragraph_global_id', 'citing_arxiv_id', or 'cited_arxiv_id'.")
                 return None
+        elif table == 'arxiv_paragraph_section_reference':
+            if "paragraph_id" in primary_key:
+                return self.arxiv_paragraph_section_reference.get_paragraph_neighboring_section_references(**primary_key)
+            elif "section_id" in primary_key:
+                return self.arxiv_paragraph_section_reference.get_section_neighboring_paragraph_references(**primary_key)
+            elif "id" in primary_key:
+                return self.arxiv_paragraph_section_reference.get_id_neighboring_paragraph_section_references(**primary_key)
+            else:
+                print("For arxiv_paragraph_section_reference, provide 'paragraph_id', 'section_id', or 'id'.")
+                return None
         else:
             print(f"Table {table} not found.")
             return None
@@ -701,11 +727,14 @@ class ResearchArcade:
         node_id: int, 
         k: int, 
         accumulative: bool = False, 
+        # Consider using edge names directly instead of (source, target) pairs to simplify user input
+        edges_to_consider: List[Tuple[str, str]] = None,
         neighbor_name: List[str] = None, 
         neighbourhood_features: List[List[str]] = None
     ) -> Optional[Dict[str, List[pd.DataFrame]]]:
         """
         Retrieve k-hop neighborhood node features using BFS traversal.
+        Return value: a dictionary that stores the result for each target node
         """
         
         if not neighbor_name:
@@ -715,7 +744,7 @@ class ResearchArcade:
         
         # Get edge table mapping ONCE and don't overwrite it
         all_edge_mappings = self.get_edge_table_mappings()  # ← Renamed to avoid overwriting
-
+        
         # BFS state
         current_frontier = [(table, node_id)]
         visited = {(table, node_id)}
@@ -976,7 +1005,7 @@ class ResearchArcade:
             self.arxiv_paragraph_citation.construct_citations_table_from_api(**config)
         elif table == "arxiv_paragraph_figures":
             self.arxiv_paragraph_figure.construct_paragraph_figures_table_from_api(**config)
-        elif table == "arxiv_paragraph_tables":
+        elif table == "arxiv_paragraph_table":
             self.arxiv_paragraph_table.construct_paragraph_tables_table_from_api(**config)
         else:
             print(f"Table {table} does not support construction from API")
@@ -1180,8 +1209,8 @@ class ResearchArcade:
         else:
             print(f"Table {table_name} not found for sampling.")
             return None
-    
-        
+
+
     def continuous_crawling(self, interval_days, delay_days, paper_category, dest_dir, arxiv_id_dest):
         """
         Runs the crawl process in an infinite loop.

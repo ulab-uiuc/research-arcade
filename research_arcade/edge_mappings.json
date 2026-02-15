@@ -65,7 +65,7 @@
   "arxiv__paragraph__contains__table": {
     "source": "arxiv_paragraphs",
     "target": "arxiv_tables",
-    "edge_table": "arxiv_paragraph_tables",
+    "edge_table": "arxiv_paragraph_table",
     "directed": true
   },
   

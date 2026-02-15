@@ -111,9 +111,6 @@ def get_first_sentence(text: str) -> Tuple[str, bool]:
         is_complete = True
     return last_sentence, is_complete
 
-
-# flat_data: for storing the text content of the current section, ignoring the node if it is a subnode of a environment
-# recent_nodes: storing recent node texts for citation context
 def extract_section_info_from_ast(
     structured_data: Dict[str, Any],
     flat_data: List[str],
@@ -129,37 +126,46 @@ def extract_section_info_from_ast(
     next_context: str = "",
     working_path: str = "",
     flag: bool = False,
+    subsection_flat_data: List[str] = None,     # Tracks subsection content (includes subsubsections)
+    subsubsection_flat_data: List[str] = None,  # Tracks only subsubsection content
 ):
     try:
+        # Initialize if not provided
+        if subsection_flat_data is None:
+            subsection_flat_data = []
+        if subsubsection_flat_data is None:
+            subsubsection_flat_data = []
+            
         in_environment = len(env_stack) > 1
         (
             current_section_name,
             current_subsection_name,
             current_subsubsection_name,
         ) = section_names
+        
         for node in nodes:
             if isinstance(node, LatexCommentNode):
                 continue
             scope_name = ""
             node_text = node.latex_verbatim()
+            
+            # Append to all trackers
             if (not in_environment) or (not isinstance(node, LatexEnvironmentNode)):
                 flat_data.append(node_text)
+                subsection_flat_data.append(node_text)      # Always append to subsection
+                subsubsection_flat_data.append(node_text)   # Always append to subsubsection
+                
             if isinstance(node, LatexEnvironmentNode):
+                # ... (keep all existing environment handling code unchanged)
                 scope_name = node.environmentname
                 if "table" in node.environmentname:
                     table_info = parse_tableEnv(node)
                     if table_info:
                         structured_data["table"].append(table_info)
-
-                    # flat_data.append(table_info)
-                    # structured_data['table'].append(table_info)
                 elif "figure" in node.environmentname:
                     figure_info = parse_figureEnv(node)
                     if figure_info:
                         structured_data["figure"].append(figure_info)
-
-                    # flat_data.append(figure_info)
-                    # structured_data['figure'].append(figure_info)
                 elif (
                     "equation" in node.environmentname
                     or "align" in node.environmentname
@@ -199,8 +205,6 @@ def extract_section_info_from_ast(
                     unknown_info = parse_unknownEnv(node)
                     if not in_environment:
                         flat_data.append(unknown_info)
-                    # if unknown_info:
-                    #    structured_data['unknown'].append(unknown_info)
 
                 if node.environmentname == "abstract":
                     abstract = node.latex_verbatim()
@@ -223,11 +227,13 @@ def extract_section_info_from_ast(
                         except Exception as e:
                             print(e)
                     structured_data["abstract"] = abstract
+                    
             if isinstance(node, LatexMacroNode):
                 if node.macroname == "appendix":
                     if not in_environment:
                         flat_data.pop()
                     appendix = True
+                    
                 if node.macroname == "input" or node.macroname == "include":
                     if not in_environment:
                         flat_data.pop()
@@ -266,10 +272,13 @@ def extract_section_info_from_ast(
                                 next_context,
                                 working_path,
                                 True,
+                                subsection_flat_data,
+                                subsubsection_flat_data,
                             )
 
                     except Exception as e:
                         print(e)
+
                 if node.macroname == "section":
                     section_name = ""
                     for arg_node in node.nodeargd.argnlist:
@@ -280,16 +289,35 @@ def extract_section_info_from_ast(
                             section_name = clean_latex_code(
                                 arg_node.latex_verbatim()
                             ).strip("{}")
-                    # assert section_name
+                    
+                    # Save previous subsubsection content
+                    if current_subsubsection_name and current_subsection_name and current_section_name:
+                        prev_key = f"{current_section_name}::{current_subsection_name}::{current_subsubsection_name}"
+                        if prev_key in structured_data.get("subsections", {}):
+                            structured_data["subsections"][prev_key]["content"] = "".join(subsubsection_flat_data[:-1])
+                    
+                    # Save previous subsection content (includes all subsubsections)
+                    if current_subsection_name and current_section_name:
+                        prev_key = f"{current_section_name}::{current_subsection_name}"
+                        if prev_key in structured_data.get("subsections", {}):
+                            structured_data["subsections"][prev_key]["content"] = "".join(subsection_flat_data[:-1])
+                    
+                    # Save previous section
                     if current_section_name:
                         structured_data["sections"][current_section_name] = {
                             "content": "".join(flat_data[:-1]),
                             "appendix": appendix,
                         }
+                    
+                    # Clear all trackers
                     flat_data.clear()
+                    subsection_flat_data.clear()
+                    subsubsection_flat_data.clear()
+                    
                     current_section_name = section_name
                     current_subsection_name = None
                     current_subsubsection_name = None
+
                 if node.macroname == "subsection":
                     subsection_name = ""
                     for arg_node in node.nodeargd.argnlist:
@@ -300,9 +328,39 @@ def extract_section_info_from_ast(
                             subsection_name = clean_latex_code(
                                 arg_node.latex_verbatim()
                             ).strip("{}")
-                    # assert subsection_name
+                    
+                    # Save previous subsubsection content
+                    if current_subsubsection_name and current_subsection_name and current_section_name:
+                        prev_key = f"{current_section_name}::{current_subsection_name}::{current_subsubsection_name}"
+                        if prev_key in structured_data.get("subsections", {}):
+                            structured_data["subsections"][prev_key]["content"] = "".join(subsubsection_flat_data[:-1])
+                    
+                    # Save previous subsection content (includes all subsubsections)
+                    if current_subsection_name and current_section_name:
+                        prev_key = f"{current_section_name}::{current_subsection_name}"
+                        if prev_key in structured_data.get("subsections", {}):
+                            structured_data["subsections"][prev_key]["content"] = "".join(subsection_flat_data[:-1])
+                    
+                    # Clear both subsection and subsubsection trackers
+                    subsection_flat_data.clear()
+                    subsubsection_flat_data.clear()
+                    
                     current_subsection_name = subsection_name
                     current_subsubsection_name = None
+                    
+                    # Create entry immediately
+                    if current_section_name and current_subsection_name:
+                        subsection_key = f"{current_section_name}::{current_subsection_name}"
+                        if subsection_key not in structured_data.get("subsections", {}):
+                            structured_data.setdefault("subsections", {})[subsection_key] = {
+                                "title": current_subsection_name,
+                                "content": "",
+                                "parent_section": current_section_name,
+                                "parent_subsection": None,
+                                "subsection_type": "subsection",
+                                "label": None,
+                            }
+
                 if node.macroname == "subsubsection":
                     subsubsection_name = ""
                     for arg_node in node.nodeargd.argnlist:
@@ -313,9 +371,53 @@ def extract_section_info_from_ast(
                             subsubsection_name = clean_latex_code(
                                 arg_node.latex_verbatim()
                             ).strip("{}")
-                    # assert subsubsection_name
+                    
+                    # Save previous subsubsection content
+                    if current_subsubsection_name and current_subsection_name and current_section_name:
+                        prev_key = f"{current_section_name}::{current_subsection_name}::{current_subsubsection_name}"
+                        if prev_key in structured_data.get("subsections", {}):
+                            structured_data["subsections"][prev_key]["content"] = "".join(subsubsection_flat_data[:-1])
+                    
+                    # Only clear subsubsection tracker (NOT subsection - it accumulates everything)
+                    subsubsection_flat_data.clear()
+                    
                     current_subsubsection_name = subsubsection_name
-            # Recursively check child nodes if the node is an environment (e.g., document or section)
+                    
+                    # Create entry immediately
+                    if current_section_name and current_subsection_name and current_subsubsection_name:
+                        subsubsection_key = f"{current_section_name}::{current_subsection_name}::{current_subsubsection_name}"
+                        if subsubsection_key not in structured_data.get("subsections", {}):
+                            structured_data.setdefault("subsections", {})[subsubsection_key] = {
+                                "title": current_subsubsection_name,
+                                "content": "",
+                                "parent_section": current_section_name,
+                                "parent_subsection": current_subsection_name,
+                                "subsection_type": "subsubsection",
+                                "label": None,
+                            }
+
+                # Only capture sec:* labels for subsections
+                if node.macroname == "label":
+                    label_name = ""
+                    for arg_node in node.nodeargd.argnlist:
+                        if (
+                            isinstance(arg_node, LatexGroupNode)
+                            and arg_node.delimiters[0] == "{"
+                        ):
+                            label_name = arg_node.latex_verbatim().strip("{}")
+                    
+                    # Only assign labels that start with "sec:"
+                    if label_name.startswith("sec:"):
+                        if current_subsubsection_name and current_subsection_name and current_section_name:
+                            key = f"{current_section_name}::{current_subsection_name}::{current_subsubsection_name}"
+                            if key in structured_data.get("subsections", {}):
+                                structured_data["subsections"][key]["label"] = label_name
+                        elif current_subsection_name and current_section_name:
+                            key = f"{current_section_name}::{current_subsection_name}"
+                            if key in structured_data.get("subsections", {}):
+                                structured_data["subsections"][key]["label"] = label_name
+
+            # Recursively check child nodes
             if hasattr(node, "nodelist"):
                 env_stack.append(scope_name)
                 (
@@ -341,19 +443,36 @@ def extract_section_info_from_ast(
                     next_context,
                     working_path,
                     flag,
+                    subsection_flat_data,
+                    subsubsection_flat_data,
                 )
                 env_stack.pop()
 
+        # At end of document, save final content
         if (
             nodes
             and isinstance(nodes[0], LatexEnvironmentNode)
             and (nodes[0].environmentname == "document")
-            and (current_section_name)
         ):
-            structured_data["sections"][current_section_name] = {
-                "content": "".join(flat_data),
-                "appendix": appendix,
-            }
+            # Save final subsubsection
+            if current_subsubsection_name and current_subsection_name and current_section_name:
+                key = f"{current_section_name}::{current_subsection_name}::{current_subsubsection_name}"
+                if key in structured_data.get("subsections", {}):
+                    structured_data["subsections"][key]["content"] = "".join(subsubsection_flat_data)
+            
+            # Save final subsection
+            if current_subsection_name and current_section_name:
+                key = f"{current_section_name}::{current_subsection_name}"
+                if key in structured_data.get("subsections", {}):
+                    structured_data["subsections"][key]["content"] = "".join(subsection_flat_data)
+            
+            # Save final section
+            if current_section_name:
+                structured_data["sections"][current_section_name] = {
+                    "content": "".join(flat_data),
+                    "appendix": appendix,
+                }
+                
         return (
             current_section_name,
             current_subsection_name,
@@ -367,7 +486,6 @@ def extract_section_info_from_ast(
             current_subsection_name,
             current_subsubsection_name,
         )
-
 
 def extract_citations_from_ast(
     structured_data: Dict[str, Any],
@@ -519,6 +637,7 @@ def extract_citations_from_ast(
                             ).strip("{}")
                     # assert subsubsection_name
                     current_subsubsection_name = subsubsection_name
+
             """
             if isinstance(node, LatexMacroNode) and 'ref' in node.macroname:
                 for spec, argn in zip(node.nodeargd.argspec, node.nodeargd.argnlist):
@@ -1111,3 +1230,17 @@ def extract_arxiv_id():
 
 
     pass
+
+
+
+"""
+Modifications to latex_parser.py to extract subsections and subsubsections.
+
+This file shows the changes needed to add subsection extraction while
+maintaining backward compatibility with the existing JSON structure.
+
+The key changes are:
+1. Add "subsections" key to structured_data alongside "sections"
+2. Track current_subsection_name and current_subsubsection_name during parsing
+3. Extract subsection content similar to section content
+"""

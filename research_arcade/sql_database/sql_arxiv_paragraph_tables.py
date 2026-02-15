@@ -72,11 +72,22 @@ class SQLArxivParagraphTable:
         finally:
             conn.close()
 
-    def get_paragraph_neighboring_tables(self, paragraph_id: int) -> Optional[pd.DataFrame]:
+    def get_paragraph_neighboring_tables(self, paragraph_global_id: int) -> Optional[pd.DataFrame]:
         conn = self._get_connection()
         try:
-            query = "SELECT * FROM arxiv_paragraph_tables WHERE paragraph_id = %s"
-            df = pd.read_sql(query, conn, params=(paragraph_id,))
+            query = "SELECT * FROM arxiv_paragraph_tables WHERE paragraph_global_id = %s"
+            df = pd.read_sql(query, conn, params=(paragraph_global_id,))
+            return None if df.empty else df.reset_index(drop=True)
+        finally:
+            conn.close()
+
+    def get_table_neighboring_paragraphs(self, table_id: int) -> Optional[pd.DataFrame]:
+        """Get paragraph IDs that reference this table."""
+        conn = self._get_connection()
+        try:
+            # Only select what you need
+            query = "SELECT paragraph_global_id FROM arxiv_paragraph_tables WHERE table_id = %s"
+            df = pd.read_sql(query, conn, params=(table_id,))
             return None if df.empty else df.reset_index(drop=True)
         finally:
             conn.close()

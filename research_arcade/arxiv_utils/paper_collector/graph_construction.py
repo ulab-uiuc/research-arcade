@@ -13,6 +13,7 @@ from .latex_parser import (
     build_ast,
     extract_citations_from_ast,
     extract_section_info_from_ast,
+    # extract_section_info_from_ast_with_subsections,
     get_base_info,
     get_bib_names,
     load_bbl_info,
@@ -58,6 +59,7 @@ def build_citation_graph_node_info(
         "figure": [],
         "equations": [],
         "algorithm": [],
+        "subsections": {},  # NEW: Add this key
         "sections": {},
         "categories": categories,
         "published": published,
@@ -68,6 +70,7 @@ def build_citation_graph_node_info(
     key2author = {}
     key2id = {}
     if doc_node:
+        # TODO: Here, we replaced extract_section_info_from_ast with extract_section_info_from_ast_with_subsections. Check the saved results
         extract_section_info_from_ast(
             structured_data,
             [],
@@ -458,8 +461,6 @@ def build_citation_graph_thread(
         while True:
             try:
                 try:
-                    # print(f"BFS_que: {BFS_que}")
-                    # print(f"Is BFS_que empty? {BFS_que.empty()}")
                     current_paper, published = BFS_que.get(
                         timeout=10
                     )  # Timeout to avoid infinite waiting
@@ -467,21 +468,22 @@ def build_citation_graph_thread(
                     if published != "True":
                         published = datetime.fromisoformat(published)
                 except queue.Empty:
-                    # print("The queue is empty")
                     break
+                
                 print(f"Thread {str(threading.get_ident())} Processing {current_paper}")
+                
                 with cnt_lock:
                     cnt_ = cnt
-                    # print(f"constraint(published): {constraint(published)}")
                     get_citation_info = (cnt_ < scale) and constraint(published)
+                
+                # CHECK AND ADD MUST BE IN THE SAME LOCK BLOCK
                 with visited_lock:
                     if current_paper in visited:
                         continue
-                    visited.add(current_paper)
-
-                # TODO: see what would happen if we comment out this line
-                # Here, we separate the paper downloading and paper processing stages, which is different from what is was like.
-                # download_latex_source(current_paper, source_path)
+                    visited.add(current_paper)  # <-- MUST be inside the lock!
+                
+                # Now safe to download - only one thread will reach here per paper
+                download_latex_source(current_paper, source_path)
 
                 # Clear the working directory
                 thread_working_path = os.path.join(

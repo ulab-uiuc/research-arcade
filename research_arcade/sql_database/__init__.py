@@ -32,6 +32,7 @@ from .sql_arxiv_paragraph_references import SQLArxivParagraphReference
 from .sql_arxiv_paragraph_figures import SQLArxivParagraphFigure
 from .sql_arxiv_paragraph_tables import SQLArxivParagraphTable
 from .sql_arxiv_paragraph_equations import SQLArxivParagraphEquation
+from .sql_arxiv_paragraph_section_references import SQLArxivParagraphSectionReference
 
 __all__ = [
     # --- OpenReview ---
@@ -65,5 +66,6 @@ __all__ = [
     'SQLArxivParagraphCitation',
     'SQLArxivParagraphFigure',
     'SQLArxivParagraphTable',
-    'SQLArxivParagraphEquation'
+    'SQLArxivParagraphEquation',
+    'SQLArxivParagraphSectionReference'
 ]

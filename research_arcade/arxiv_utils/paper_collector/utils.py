@@ -87,7 +87,13 @@ def download_latex_source(arxiv_id: str, save_dir: str = "latex_sources"):
     # Create directory if it doesn't exist
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
+    file_path = os.path.join(save_dir, f"{arxiv_id}.tar.gz")
+    if os.path.exists(file_path):
+        print(f"File already exists: {file_path}, skipping download")
+        return  # <-- Skip if already downloaded
+    
     print("Downloading source")
+    
     # Construct the URL for downloading the LaTeX source
     source_url = f"https://export.arxiv.org//e-print/{arxiv_id}"
 
