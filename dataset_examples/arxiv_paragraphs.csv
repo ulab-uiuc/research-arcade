@@ -1,27 +1,27 @@
 id,paragraph_id,content,paper_arxiv_id,paper_section,section_id,paragraph_in_paper_id
 24859420,77,"0.6 & w.o. ACP & 0.00 & 0.25 & 0.21 & 0.19 & 0.22 & 0.20 \\ [1ex]
- 0.6 & w. ACP & 0.00 & 0.13 & 0.10 & 0.10 & 0.10 & 0.09 \\ [1ex]",2505.22632,Additional Numerical Results,378965.0,237.0
+ 0.6 & w. ACP & 0.00 & 0.13 & 0.10 & 0.10 & 0.10 & 0.09 \\ [1ex]",2505.22632,Additional Numerical Results,378965,237
 23484735,901,"\begin{lemma}
 If each $\Lambda_i$ in $\vec{\Lambda} = \{\Lambda_{i}\}_{1 \leq i \leq k}$,
 $k \geq 2$, is $f$-checkable, then $\bigoplus_{\vec{d_{0}}} 
 \vec{\Lambda}$ 
 is also $f$-checkable.
-\end{lemma}",2504.20637,Lingos,293222.0,1040.0
-135398,2,"Here, $\mathcal{A}$\mathcal{A} represents an arbitrary merging algorithm. For instance, in Task Arithmetic, $\boldsymbol{\theta}^*=\boldsymbol{\theta}_0+\lambda\sum_{i=1}^n\boldsymbol{\tau}_i$\boldsymbol{\theta}\theta^*=\boldsymbol{\theta}\theta_0+\lambda\sum_{i=1}i=1^n\boldsymbol{\tau}\tau_i.",2501.01230,Revisit Model Merging,11366.0,15.0
+\end{lemma}",2504.20637,Lingo Compositions,293222,1040
+135398,2,"Here, $\mathcal{A}$\mathcal{A} represents an arbitrary merging algorithm. For instance, in Task Arithmetic, $\boldsymbol{\theta}^*=\boldsymbol{\theta}_0+\lambda\sum_{i=1}^n\boldsymbol{\tau}_i$\boldsymbol{\theta}\theta^*=\boldsymbol{\theta}\theta_0+\lambda\sum_{i=1}i=1^n\boldsymbol{\tau}\tau_i.",2501.0123,Revisit Model Merging,11366,15
 27135923,580,"Applying the above estimates to $J_3$ defined in \eqref{eq:supp_EE}, we yield 
 \beq\label{eq:supp_J3}
 J_3 \les || \S ||_{ \cX^m}  I(s).
 \eeq",2408.04319,Nonlinear stability and vorticity blowup,,
 20388237,21,"\bibitem{alayrac2022flamingo}
-Alayrac, J.B., Donahue, J., Luc, P., Miech, A., Barr, I., Hasson, Y., Lenc, K., Mensch, A., Millican, K., Reynolds, M., et~al.: Flamingo: a visual language model for few-shot learning. Advances in neural information processing systems  \textbf{35},  23716--23736 (2022)",2505.05098,Conclusion,76378.0,40.0
+Alayrac, J.B., Donahue, J., Luc, P., Miech, A., Barr, I., Hasson, Y., Lenc, K., Mensch, A., Millican, K., Reynolds, M., et~al.: Flamingo: a visual language model for few-shot learning. Advances in neural information processing systems  \textbf{35},  23716--23736 (2022)",2505.05098,Conclusion,76378,40
 26826710,238,"\bibitem[{{Sakao} {et~al.}(2007){Sakao}, {Kano}, {Narukage}, {Kotoku}, {Bando},
   {DeLuca}, {Lundquist}, {Tsuneta}, {Harra}, {Katsukawa}, {Kubo}, {Hara},
   {Matsuzaki}, {Shimojo}, {Bookbinder}, {Golub}, {Korreck}, {Su}, {Shibasaki},
   {Shimizu}, \& {Nakatani}}]{Sakao:2007}
 {Sakao}, T., {Kano}, R., {Narukage}, N., {et~al.} 2007, Science, 318, 1585,
   \dodoi{10.1126/science.1147292}",2402.10432,The Schatten Current Sheet Model,,
-3750390,2,We look for solutions of the Gross--Pitaevskii equation,2501.13672,The Gross--Pitaevskii equation with sextic potential,13556.0,253.0
-25453861,218,what concepts from the concept list are missing from the sentence?,2303.17651,Prompts,416320.0,552.0
+3750390,2,We look for solutions of the Gross--Pitaevskii equation,2501.13672,The Gross--Pitaevskii equation with sextic potential,13556,253
+25453861,218,what concepts from the concept list are missing from the sentence?,2303.17651,Prompts,416320,552
 27428266,23,"In this proposal, we take
 the qubits to be coupled to the OCS transmon identically for easier control: $g^A=g^B$g^A=g^B. As a result, $\langle \hat{n}^C_{g,\mathrm{eff}}\rangle$\langle \hat{n}^C_{g,\mathrm{eff}}g,\mathrm{eff}\rangle becomes the same for the $|01\rangle$|01\rangle and $|10\rangle$|10\rangle qubit states. Moreover, $\langle \hat{n}^C_{g,\mathrm{eff}}\rangle$\langle \hat{n}^C_{g,\mathrm{eff}}g,\mathrm{eff}\rangle of $|00\rangle$|00\rangle, $|01\rangle$|01\rangle, and $|11\rangle$|11\rangle are evenly spaced. We define this spacing between the gate-charge shift between the logical states as $\Delta n^C_g$\Delta n^C_g:
 \begin{eqnarray}
@@ -35,4 +35,7 @@ the qubits to be coupled to the OCS transmon identically for easier control: $g^
     |\langle0|\hat{n}_2|0\rangle^D-\langle1|\hat{n}_2|1\rangle^D|}{2} .\label{eq:del_n_g_fh}",2409.08915, System and Model,,
 22879780,67,"Esta relación la reescribimos en la forma
 \label{eq:theta}
-\theta e^{c_2 \theta}c_2 \theta \geq c_1 n .",2502.13231,La teoría de la elección social y Bonami se encuentran,254554.0,244.0
+\theta e^{c_2 \theta}c_2 \theta \geq c_1 n .",2502.13231,La teoría de la elección social y Bonami se encuentran,254554,244
+27428269,3,"Aligning the positions to steps in computation time, they generate a sequence of hidden states h_t, as a function of the previous hidden state h_{t-1} and the input for position t. This inherently sequential nature precludes parallelization within training examples, which becomes critical at longer sequence lengths, as memory constraints limit batching across examples.",1706.03762v7,Introduction,1,3
+27428270,4,"Attention mechanisms have become an integral part of compelling sequence modeling and transduction models in various tasks, allowing modeling of dependencies without regard to their distance in the input or output sequences.",1706.03762v7,Introduction,1,4
+27428271,5,"In this work we propose the Transformer, a model architecture eschewing recurrence and instead relying entirely on an attention mechanism to draw global dependencies between input and output. The Transformer allows for significantly more parallelization and can reach a new state of the art in translation quality after being trained for as little as twelve hours on eight P100 GPUs.",1706.03762v7,Introduction,1,5
